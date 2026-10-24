@@ -142,22 +142,22 @@ internal sealed partial class EaselMenu
 
     private static string ToolName(PaintTool tool) => tool switch
     {
-        PaintTool.Brush => "Brush",
-        PaintTool.Broad => "Broad",
-        PaintTool.Fill => "Fill",
-        PaintTool.Ruler => "Ruler",
-        PaintTool.Knife => "Knife",
-        _ => "Dropper",
+        PaintTool.Brush => I18n.Get("tool.brush"),
+        PaintTool.Broad => I18n.Get("tool.broad"),
+        PaintTool.Fill => I18n.Get("tool.fill"),
+        PaintTool.Ruler => I18n.Get("tool.ruler"),
+        PaintTool.Knife => I18n.Get("tool.knife"),
+        _ => I18n.Get("tool.dropper"),
     };
 
     private static string ToolHelp(PaintTool tool) => tool switch
     {
-        PaintTool.Brush => "Brush (B): one cell at a time.",
-        PaintTool.Broad => "Broad brush (G): 2x2 cells at a time.",
-        PaintTool.Fill => "Fill (F): floods an area, as far as your paint goes.",
-        PaintTool.Ruler => "Ruler (L): drag for a perfectly straight line.",
-        PaintTool.Knife => "Palette knife (K): scrapes paint off. Right-click does too.",
-        _ => "Dropper (D): click a cell to mix its color.",
+        PaintTool.Brush => I18n.Get("tool.brush.help"),
+        PaintTool.Broad => I18n.Get("tool.broad.help"),
+        PaintTool.Fill => I18n.Get("tool.fill.help"),
+        PaintTool.Ruler => I18n.Get("tool.ruler.help"),
+        PaintTool.Knife => I18n.Get("tool.knife.help"),
+        _ => I18n.Get("tool.dropper.help"),
     };
 
     private static int ToolLevel(PaintTool tool) => tool switch
@@ -330,9 +330,9 @@ internal sealed partial class EaselMenu
         {
             _dryWarned = true;
             Game1.playSound("cancel");
-            Toast(_selected < 0 ? "Pick a pigment and mix it first."
-                : _rules.PaintLoads ? "Your brush is dry. Mix more paint."
-                : $"Your {Palette.All[_selected].Name} has dried. Mix it again.", Color.OrangeRed);
+            Toast(_selected < 0 ? I18n.Get("paint.pick-first")
+                : _rules.PaintLoads ? I18n.Get("paint.brush-dry")
+                : I18n.Get("paint.pigment-dried-remix", new { pigment = I18n.Pigment(_selected) }), Color.OrangeRed);
         }
         return false;
     }
@@ -342,7 +342,7 @@ internal sealed partial class EaselMenu
         if (_load <= 0 && !_dryWarned)
         {
             _dryWarned = true;
-            Toast("Brush is empty.", Color.OrangeRed, 1f);
+            Toast(I18n.Get("paint.brush-empty"), Color.OrangeRed, 1f);
         }
     }
 
@@ -362,7 +362,7 @@ internal sealed partial class EaselMenu
                 _load = 0;
                 _dryWarned = true;
                 Game1.playSound("dwop");
-                Toast($"Your {Palette.All[pigment].Name} has dried.", new Color(190, 130, 30));
+                Toast(I18n.Get("paint.pigment-dried", new { pigment = I18n.Pigment(pigment) }), new Color(190, 130, 30));
             }
         }
     }
@@ -411,13 +411,13 @@ internal sealed partial class EaselMenu
         if (_timed) _lightLeft += PaintingRules.SparkLightBonus;
         Game1.playSound("newArtifact");
 
-        string text = _sparksCaught == PaintingRules.SparksForInspired ? "Inspired!"
-            : _timed ? $"Spark! +{PaintingRules.SparkLightBonus:0}s light"
-            : $"Spark! {_sparksCaught}/{PaintingRules.SparksForInspired}";
+        string text = _sparksCaught == PaintingRules.SparksForInspired ? I18n.Get("spark.inspired")
+            : _timed ? I18n.Get("spark.light", new { seconds = PaintingRules.SparkLightBonus.ToString("0") })
+            : I18n.Get("spark.count", new { caught = _sparksCaught, needed = PaintingRules.SparksForInspired });
         if (_random.NextDouble() < 0.04 && TryFindRarePigment() is int rare)
         {
             ArtProgress.Unlock(_who, rare);
-            text = $"Spark! You found {Palette.All[rare].Name} pigment!";
+            text = I18n.Get("spark.rare", new { pigment = I18n.Pigment(rare) });
         }
         Toast(text, new Color(214, 160, 30), 2f);
     }
@@ -459,7 +459,7 @@ internal sealed partial class EaselMenu
             else
             {
                 Game1.playSound("cancel");
-                Toast($"You don't have {Palette.All[i].Name} yet.", Color.OrangeRed);
+                Toast(I18n.Get("paint.not-owned", new { pigment = I18n.Pigment(i) }), Color.OrangeRed);
             }
             return;
         }
@@ -523,7 +523,7 @@ internal sealed partial class EaselMenu
         if (!ToolUnlocked(tool))
         {
             Game1.playSound("cancel");
-            Toast($"{ToolName(tool)} unlocks at Painting level {ToolLevel(tool)}.", Color.OrangeRed);
+            Toast(I18n.Get("tool.locked", new { tool = ToolName(tool), level = ToolLevel(tool) }), Color.OrangeRed);
             return;
         }
         _tool = tool;
@@ -535,7 +535,7 @@ internal sealed partial class EaselMenu
         if (!MirrorUnlocked)
         {
             Game1.playSound("cancel");
-            Toast($"Mirror unlocks at Painting level {PaintingRules.MirrorLevel}.", Color.OrangeRed);
+            Toast(I18n.Get("tool.mirror.locked", new { level = PaintingRules.MirrorLevel }), Color.OrangeRed);
             return;
         }
         _mirror = !_mirror;
@@ -556,7 +556,7 @@ internal sealed partial class EaselMenu
         if (_canvas.IsEmpty)
         {
             Game1.playSound("cancel");
-            Toast("Paint something first.", Color.OrangeRed);
+            Toast(I18n.Get("paint.paint-first"), Color.OrangeRed);
             return;
         }
         if (_finishArmed <= 0f)
@@ -603,16 +603,16 @@ internal sealed partial class EaselMenu
 
     private void DrawTopBar(SpriteBatch b)
     {
-        string title = IsOriginal ? "Free canvas" : _subjectItems.Length == 1
-            ? "Still Life: " + ItemRegistry.GetDataOrErrorItem(_subjectItems[0]).DisplayName
-            : "Still Life";
+        string title = IsOriginal ? I18n.Get("paint.title.free") : _subjectItems.Length == 1
+            ? I18n.Get("paint.title.still-life-of", new { item = ItemRegistry.GetDataOrErrorItem(_subjectItems[0]).DisplayName })
+            : I18n.Get("paint.title.still-life");
         Ui.Text(b, title, new Vector2(_topBar.X, _topBar.Y + 4));
         if (_reference != null)
-            Ui.Text(b, $"Difficulty {_reference.Difficulty}", new Vector2(_topBar.X, _topBar.Y + 34), Game1.textColor * 0.7f);
+            Ui.Text(b, I18n.Get("paint.difficulty", new { difficulty = _reference.Difficulty }), new Vector2(_topBar.X, _topBar.Y + 34), Game1.textColor * 0.7f);
 
         if (IsOriginal) return;
 
-        string sparks = $"Sparks {_sparksCaught}/{PaintingRules.SparksForInspired}";
+        string sparks = I18n.Get("paint.sparks", new { caught = _sparksCaught, needed = PaintingRules.SparksForInspired });
         Ui.Text(b, sparks, new Vector2(_topBar.Right - Ui.TextWidth(sparks), _topBar.Y + 14),
             _sparksCaught >= PaintingRules.SparksForInspired ? new Color(150, 100, 0) : Game1.textColor);
         if (!_timed) return;
@@ -620,14 +620,14 @@ internal sealed partial class EaselMenu
         // The light meter: the session's clock, draining warm to dusk.
         int barW = Math.Min(520, _topBar.Width - 560);
         var bar = new Rectangle(_topBar.Center.X - barW / 2 + 60, _topBar.Y + 14, barW, 28);
-        Ui.Text(b, "Light", new Vector2(bar.X - 64, bar.Y));
+        Ui.Text(b, I18n.Get("paint.light"), new Vector2(bar.X - 64, bar.Y));
         Ui.Fill(b, bar, new Color(60, 40, 30));
         float frac = Math.Clamp(_lightLeft / _lightTotal, 0f, 1f);
         Ui.Fill(b, new Rectangle(bar.X + 3, bar.Y + 3, (int)((bar.Width - 6) * frac), bar.Height - 6), LightColor(frac));
         Ui.Outline(b, bar, new Color(40, 25, 15), 2);
         // Seconds left, inside the bar's right end; "paused" while the light waits for a mix.
         bool waiting = _mix != null && _rules.PauseLightWhileMixing;
-        string left = waiting ? $"{Math.Ceiling(_lightLeft):0}s, paused" : $"{Math.Ceiling(_lightLeft):0}s";
+        string left = I18n.Get(waiting ? "paint.light-left.paused" : "paint.light-left", new { seconds = Math.Ceiling(_lightLeft).ToString("0") });
         Ui.Text(b, left, new Vector2(bar.Right - 10 - Ui.TextWidth(left) * 0.8f, bar.Y + 2), Color.White * 0.9f, 0.8f);
     }
 
@@ -653,7 +653,7 @@ internal sealed partial class EaselMenu
         Ui.Paper(b, _noteArea);
         if (_reference != null)
         {
-            Ui.TextCentered(b, "Reference", _noteArea.Center.X, _noteArea.Y + 12);
+            Ui.TextCentered(b, I18n.Get("paint.reference"), _noteArea.Center.X, _noteArea.Y + 12);
             DrawCells(b, _reference.Cells, null, _refArea, CanvasColor, false);
             Ui.Fill(b, _refArea, DuskTint());
             if (_sparkCell.HasValue)
@@ -661,13 +661,13 @@ internal sealed partial class EaselMenu
         }
         else
         {
-            var lines = Game1.parseText("No reference: paint whatever you like. Originals aren't judged.", Game1.smallFont, SideWidth - 40);
+            var lines = Game1.parseText(I18n.Get("paint.no-reference"), Game1.smallFont, SideWidth - 40);
             Ui.Text(b, lines, new Vector2(_noteArea.X + 20, _noteArea.Y + 24));
         }
 
         // What's on the brush.
         int y = _noteArea.Bottom + 16;
-        Ui.Text(b, "On the brush", new Vector2(_leftCol.X, y));
+        Ui.Text(b, I18n.Get("paint.on-brush"), new Vector2(_leftCol.X, y));
         var swatch = new Rectangle(_leftCol.X, y + 34, 48, 48);
         if (_selected >= 0)
         {
@@ -682,7 +682,7 @@ internal sealed partial class EaselMenu
                 float frac = _loadMax > 0 ? Math.Clamp(_load / (float)_loadMax, 0f, 1f) : 0f;
                 Ui.Fill(b, new Rectangle(gauge.X + 2, gauge.Y + 2, (int)((gauge.Width - 4) * frac), gauge.Height - 4),
                     PaintingRenderer.CellColor((byte)_selected, _loadPurity));
-                Ui.Text(b, $"{_load} cells left", new Vector2(gauge.X, gauge.Bottom + 6), Game1.textColor * 0.7f);
+                Ui.Text(b, I18n.Get("paint.cells-left", new { cells = _load }), new Vector2(gauge.X, gauge.Bottom + 6), Game1.textColor * 0.7f);
             }
             else
             {
@@ -694,17 +694,17 @@ internal sealed partial class EaselMenu
                     float frac = Math.Clamp(wet / _rules.DryTime, 0f, 1f);
                     Ui.Fill(b, new Rectangle(gauge.X + 2, gauge.Y + 2, (int)((gauge.Width - 4) * frac), gauge.Height - 4),
                         PaintingRenderer.CellColor((byte)_selected, _loadPurity));
-                    Ui.Text(b, $"Wet for {Math.Ceiling(wet):0}s", new Vector2(gauge.X, gauge.Bottom + 4), Game1.textColor * 0.7f);
+                    Ui.Text(b, I18n.Get("paint.wet-for", new { seconds = Math.Ceiling(wet).ToString("0") }), new Vector2(gauge.X, gauge.Bottom + 4), Game1.textColor * 0.7f);
                     hintY = gauge.Bottom + 34;
                 }
                 else if (_load <= 0)
                 {
-                    Ui.Text(b, "Dried. Mix it again.", new Vector2(_leftCol.X, hintY), new Color(150, 70, 50));
+                    Ui.Text(b, I18n.Get("paint.dried"), new Vector2(_leftCol.X, hintY), new Color(150, 70, 50));
                     hintY += 30;
                 }
                 if (_loadPurity != Purity.Pure && _load > 0)
                 {
-                    var hint = Game1.parseText("Click the color again to remix it.", Game1.smallFont, SideWidth - 10);
+                    var hint = Game1.parseText(I18n.Get("paint.remix-hint"), Game1.smallFont, SideWidth - 10);
                     Ui.Text(b, hint, new Vector2(_leftCol.X, hintY), Game1.textColor * 0.7f);
                 }
             }
@@ -712,15 +712,15 @@ internal sealed partial class EaselMenu
         else
         {
             Ui.Fill(b, swatch, Color.Black * 0.1f);
-            Ui.Text(b, "Nothing yet", new Vector2(swatch.Right + 12, swatch.Y + 12), Game1.textColor * 0.6f);
+            Ui.Text(b, I18n.Get("paint.brush-nothing"), new Vector2(swatch.Right + 12, swatch.Y + 12), Game1.textColor * 0.6f);
         }
     }
 
     private static string PurityLabel(Purity p) => p switch
     {
-        Purity.Pure => "Pure",
-        Purity.Off => "A bit off",
-        _ => "Muddy",
+        Purity.Pure => I18n.Get("purity.pure"),
+        Purity.Off => I18n.Get("purity.off"),
+        _ => I18n.Get("purity.muddy"),
     };
 
     private static Color PurityColor(Purity p) => p switch
@@ -819,21 +819,21 @@ internal sealed partial class EaselMenu
                 Ui.Outline(b, r, Color.Black * 0.15f, 1);
             }
             if (r.Contains(mouse))
-                _hoverText = owned ? $"{p.Name}\nMix difficulty {p.Difficulty} ({p.Motion})" : $"{p.Name}\n(not owned)";
+                _hoverText = I18n.Pigment(i) + "\n" + (owned ? I18n.Get("pigment.hover", new { difficulty = p.Difficulty, motion = I18n.Motion(p.Motion) }) : I18n.Get("pigment.not-owned"));
         }
 
         foreach (var (tool, rect) in _toolButtons)
         {
             bool unlocked = ToolUnlocked(tool);
-            Ui.Button(b, rect, unlocked ? ToolName(tool) : $"Lv {ToolLevel(tool)}", unlocked, _tool == tool, rect.Contains(mouse));
+            Ui.Button(b, rect, unlocked ? ToolName(tool) : I18n.Get("tool.level-short", new { level = ToolLevel(tool) }), unlocked, _tool == tool, rect.Contains(mouse));
         }
-        Ui.Button(b, _mirrorButton, MirrorUnlocked ? "Mirror" : $"Lv {PaintingRules.MirrorLevel}", MirrorUnlocked, _mirror, _mirrorButton.Contains(mouse));
-        Ui.Button(b, _undoButton, "Undo", _canvas.CanUndo, false, _undoButton.Contains(mouse));
+        Ui.Button(b, _mirrorButton, MirrorUnlocked ? I18n.Get("tool.mirror") : I18n.Get("tool.level-short", new { level = PaintingRules.MirrorLevel }), MirrorUnlocked, _mirror, _mirrorButton.Contains(mouse));
+        Ui.Button(b, _undoButton, I18n.Get("tool.undo"), _canvas.CanUndo, false, _undoButton.Contains(mouse));
         if (_mirrorButton.Contains(mouse))
-            _hoverText = MirrorUnlocked ? "Mirror (M): strokes repeat across the middle." : $"Mirror unlocks at Painting level {PaintingRules.MirrorLevel}.";
+            _hoverText = MirrorUnlocked ? I18n.Get("tool.mirror.help") : I18n.Get("tool.mirror.locked", new { level = PaintingRules.MirrorLevel });
         foreach (var (tool, rect) in _toolButtons)
             if (rect.Contains(mouse))
-                _hoverText = ToolUnlocked(tool) ? ToolHelp(tool) : $"{ToolName(tool)} unlocks at Painting level {ToolLevel(tool)}.";
+                _hoverText = ToolUnlocked(tool) ? ToolHelp(tool) : I18n.Get("tool.locked", new { tool = ToolName(tool), level = ToolLevel(tool) });
     }
 
     private static float Luma(Color c) => 0.299f * c.R + 0.587f * c.G + 0.114f * c.B;
@@ -841,10 +841,10 @@ internal sealed partial class EaselMenu
     private void DrawBottomBar(SpriteBatch b, Point mouse)
     {
         string help = _mix != null
-            ? "Hold the mouse button (or Space) to lift your mix. Keep the hue inside it!"
-            : "Left: paint   Right: scrape   1-0: pigments   Z: undo   Esc: leave";
+            ? I18n.Get("paint.mix-help")
+            : I18n.Get("paint.controls");
         Ui.Text(b, help, new Vector2(_leftCol.X, _finishButton.Y + 14), Game1.textColor * 0.75f);
-        Ui.Button(b, _finishButton, _finishArmed > 0f ? "Sure?" : "Finish", _mix == null, _finishArmed > 0f, _finishButton.Contains(mouse));
+        Ui.Button(b, _finishButton, _finishArmed > 0f ? I18n.Get("paint.finish.confirm") : I18n.Get("paint.finish"), _mix == null, _finishArmed > 0f, _finishButton.Contains(mouse));
     }
 
     private void DrawLeavePrompt(SpriteBatch b, Point mouse)
@@ -852,8 +852,8 @@ internal sealed partial class EaselMenu
         b.Draw(Game1.fadeToBlackRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), Color.Black * 0.4f);
         Ui.Frame(b, _leaveBox);
         Ui.BeginOverlay(_leaveBox);
-        Ui.TextCentered(b, "Stop painting? The canvas will be lost.", _leaveBox.Center.X, _leaveBox.Y + 44);
-        Ui.Button(b, _leaveYes, "Stop", true, false, _leaveYes.Contains(mouse));
-        Ui.Button(b, _leaveNo, "Keep going", true, false, _leaveNo.Contains(mouse));
+        Ui.TextCentered(b, I18n.Get("paint.leave.prompt"), _leaveBox.Center.X, _leaveBox.Y + 44);
+        Ui.Button(b, _leaveYes, I18n.Get("paint.leave.yes"), true, false, _leaveYes.Contains(mouse));
+        Ui.Button(b, _leaveNo, I18n.Get("paint.leave.no"), true, false, _leaveNo.Contains(mouse));
     }
 }

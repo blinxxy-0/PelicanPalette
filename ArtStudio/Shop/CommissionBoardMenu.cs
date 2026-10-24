@@ -62,7 +62,7 @@ internal sealed class CommissionBoardMenu : IClickableMenu
             if (CanAcceptMore && Commissions.Accept(_who, commission))
             {
                 Game1.playSound("newArtifact");
-                Game1.addHUDMessage(new HUDMessage($"Commission taken: a {commission.ItemName} for {commission.NpcName}.") { noIcon = true });
+                Game1.addHUDMessage(new HUDMessage(I18n.Get("commission.taken", new { item = commission.ItemName, npc = commission.NpcName })) { noIcon = true });
                 Layout();
             }
             else
@@ -79,12 +79,12 @@ internal sealed class CommissionBoardMenu : IClickableMenu
         _hoverText = null;
         var mouse = new Point(Game1.getMouseX(true), Game1.getMouseY(true));
 
-        Ui.Text(b, "Commission Board", new Vector2(xPositionOnScreen + Pad + 8, yPositionOnScreen + Pad + 6));
-        string note = "Paint it, then hand it to them yourself.";
+        Ui.Text(b, I18n.Get("board.title"), new Vector2(xPositionOnScreen + Pad + 8, yPositionOnScreen + Pad + 6));
+        string note = I18n.Get("board.note");
         Ui.Text(b, note, new Vector2(xPositionOnScreen + width - Pad - 8 - Ui.TextWidth(note), yPositionOnScreen + Pad + 6), Game1.textColor * 0.65f);
 
         if (_cards.Count == 0)
-            Ui.Text(b, "No new requests today. Check back tomorrow.", new Vector2(xPositionOnScreen + Pad + 8, yPositionOnScreen + Pad + 70), Game1.textColor * 0.6f);
+            Ui.Text(b, I18n.Get("board.empty"), new Vector2(xPositionOnScreen + Pad + 8, yPositionOnScreen + Pad + 70), Game1.textColor * 0.6f);
         foreach (var (card, accept, commission) in _cards)
             DrawCard(b, card, accept, commission, mouse);
 
@@ -108,20 +108,20 @@ internal sealed class CommissionBoardMenu : IClickableMenu
 
         int x = portrait.Right + 18;
         // Three lines: who and what, the subject, then quality and time.
-        Ui.Text(b, $"{commission.NpcName} would like a painting of", new Vector2(x, card.Y + 16));
+        Ui.Text(b, I18n.Get("board.request", new { npc = commission.NpcName }), new Vector2(x, card.Y + 16));
         var item = ItemRegistry.Create(commission.ItemId);
         item.drawInMenu(b, new Vector2(x - 8, card.Y + 38), 0.75f, 1f, 0.9f, StackDrawType.Hide, Color.White, false);
         Ui.Text(b, commission.ItemName, new Vector2(x + 48, card.Y + 52));
-        string days = commission.DaysLeft <= 0 ? "last day to take it" : $"{commission.DaysLeft + 1} days to take it";
-        Ui.Text(b, $"Quality: {Commissions.QualityText(commission.MinQuality)},  {days}", new Vector2(x, card.Y + 88), Game1.textColor * 0.7f);
+        string days = commission.DaysLeft <= 0 ? I18n.Get("board.take.last-day") : I18n.Get("board.take.days", new { days = commission.DaysLeft + 1 });
+        Ui.Text(b, I18n.Get("board.quality", new { quality = Commissions.QualityText(commission.MinQuality), days }), new Vector2(x, card.Y + 88), Game1.textColor * 0.7f);
         Ui.Text(b, $"{commission.Reward}g", new Vector2(accept.X - 16 - Ui.TextWidth($"{commission.Reward}g"), card.Y + 52), new Color(120, 75, 0));
 
         bool can = CanAcceptMore;
-        Ui.Button(b, accept, "Accept", can, false, can && accept.Contains(mouse));
+        Ui.Button(b, accept, I18n.Get("board.accept"), can, false, can && accept.Contains(mouse));
         if (accept.Contains(mouse))
             _hoverText = can
-                ? $"Deliver within {Commissions.DaysToDeliver} days for {commission.Reward}g and {commission.NpcName}'s gratitude."
-                : $"You can only take on {Commissions.MaxAccepted} commissions at a time.";
+                ? I18n.Get("board.accept.hover", new { days = Commissions.DaysToDeliver, reward = commission.Reward, npc = commission.NpcName })
+                : I18n.Get("board.accept.full", new { max = Commissions.MaxAccepted });
     }
 
     private static Texture2D? TryLoadPortrait(string npc)
@@ -134,14 +134,14 @@ internal sealed class CommissionBoardMenu : IClickableMenu
     {
         var accepted = Commissions.Accepted(_who).ToList();
         int y = _activeArea.Y;
-        Ui.Text(b, $"Your commissions ({accepted.Count}/{Commissions.MaxAccepted})", new Vector2(_activeArea.X + 8, y));
+        Ui.Text(b, I18n.Get("board.yours", new { count = accepted.Count, max = Commissions.MaxAccepted }), new Vector2(_activeArea.X + 8, y));
         y += 34;
         if (accepted.Count == 0)
-            Ui.Text(b, "None yet.", new Vector2(_activeArea.X + 24, y), Game1.textColor * 0.6f);
+            Ui.Text(b, I18n.Get("board.none-yet"), new Vector2(_activeArea.X + 24, y), Game1.textColor * 0.6f);
         foreach (var c in accepted)
         {
-            string days = c.DaysLeft <= 0 ? "due today" : $"{c.DaysLeft + 1} days left";
-            Ui.Text(b, $"{c.NpcName}: {c.ItemName} ({Commissions.QualityText(c.MinQuality)}), {c.Reward}g, {days}",
+            string days = c.DaysLeft <= 0 ? I18n.Get("board.due.today") : I18n.Get("board.due.days", new { days = c.DaysLeft + 1 });
+            Ui.Text(b, I18n.Get("board.yours.line", new { npc = c.NpcName, item = c.ItemName, quality = Commissions.QualityText(c.MinQuality), reward = c.Reward, days }),
                 new Vector2(_activeArea.X + 24, y), Game1.textColor * 0.85f);
             y += 30;
         }

@@ -15,16 +15,17 @@ internal static class NeutralLabels
 {
     private const string Npc = "Sable";
 
+    // Game string -> our translation key.
     private static readonly Dictionary<string, string> Neutral = new()
     {
-        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Husband"] = "(spouse)",
-        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Wife"] = "(spouse)",
-        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Boyfriend"] = "(partner)",
-        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Girlfriend"] = "(partner)",
-        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_ExHusband"] = "(ex-spouse)",
-        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_ExWife"] = "(ex-spouse)",
-        ["Strings\\UI:SocialPage_Relationship_MarriedToOtherPlayer_MaleNpc"] = "(married)",
-        ["Strings\\UI:SocialPage_Relationship_MarriedToOtherPlayer_FemaleNpc"] = "(married)",
+        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Husband"] = "relationship.spouse",
+        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Wife"] = "relationship.spouse",
+        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Boyfriend"] = "relationship.partner",
+        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_Girlfriend"] = "relationship.partner",
+        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_ExHusband"] = "relationship.ex-spouse",
+        ["Strings\\StringsFromCSFiles:SocialPage_Relationship_ExWife"] = "relationship.ex-spouse",
+        ["Strings\\UI:SocialPage_Relationship_MarriedToOtherPlayer_MaleNpc"] = "relationship.married",
+        ["Strings\\UI:SocialPage_Relationship_MarriedToOtherPlayer_FemaleNpc"] = "relationship.married",
     };
 
     private static bool _labellingSable;
@@ -59,8 +60,8 @@ internal static class NeutralLabels
     {
         try
         {
-            if (_labellingSable && Neutral.TryGetValue(path, out string? neutral))
-                __result = neutral;
+            if (_labellingSable && Neutral.TryGetValue(path, out string? key))
+                __result = I18n.Get(key);
         }
         catch (Exception ex)
         {

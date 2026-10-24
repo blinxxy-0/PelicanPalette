@@ -42,7 +42,7 @@ internal static class ArtShop
         GameLocation.RegisterTileAction(ModEntry.Id + "_Board", (_, _, who, _) => OpenBoard(who));
         GameLocation.RegisterTileAction(ModEntry.Id + "_Sign", (_, _, _, _) =>
         {
-            Game1.drawObjectDialogue("Art Supply Shop^Canvases, pigments, brushes and frames. Paintings bought.^Open 10am to 6pm (Fridays till 5, Sundays from 1). Closed Wednesdays.");
+            Game1.drawObjectDialogue(I18n.Get("shop.sign"));
             return true;
         });
 
@@ -56,11 +56,11 @@ internal static class ArtShop
     private static bool Counter(Farmer who)
     {
         var location = who.currentLocation;
-        location.createQuestionDialogue("Welcome to the art supply shop.", new[]
+        location.createQuestionDialogue(I18n.Get("shop.counter"), new[]
         {
-            new Response("Shop", "Browse supplies (and sell paintings)"),
-            new Response("Board", "The commission board"),
-            new Response("Leave", "Leave"),
+            new Response("Shop", I18n.Get("shop.counter.shop")),
+            new Response("Board", I18n.Get("shop.counter.board")),
+            new Response("Leave", I18n.Get("shop.counter.leave")),
         }, (farmer, answer) =>
         {
             if (answer == "Shop")
@@ -78,7 +78,7 @@ internal static class ArtShop
     {
         if (Game1.player.spouse == "Sable" && Game1.player.isMarriedOrRoommates() && !SableAtCounter(location))
         {
-            Game1.addHUDMessage(new HUDMessage("A note on the till: \"Take what you need. Money in the jar. -S\"") { noIcon = true });
+            Game1.addHUDMessage(new HUDMessage(I18n.Get("shop.on-trust")) { noIcon = true });
             return Utility.TryOpenShopMenu(ShopId, "None");
         }
         return Utility.TryOpenShopMenu(ShopId, location, KeeperArea);
@@ -138,7 +138,7 @@ internal static class ArtShop
             if (painting.Quality < commission.MinQuality)
             {
                 __instance.setNewDialogue(new Dialogue(__instance, null,
-                    $"It's lovely... but I was hoping for {Commissions.QualityText(commission.MinQuality)}. Could you try again?"), add: true);
+                    I18n.Get("commission.not-good-enough", new { quality = Commissions.QualityText(commission.MinQuality) })), add: true);
                 Game1.drawDialogue(__instance);
                 return false;
             }

@@ -31,12 +31,12 @@ internal static class DevTools
 
     public static void Register(IModHelper helper, IMonitor monitor)
     {
+#if DEBUG
         AddCommand(helper, "museart_snap", "Renders the easel screens to PNGs in the mod's snapshots folder. Usage: museart_snap [level] [relaxed|normal|hard]", (_, args) =>
             Snap(helper.DirectoryPath, monitor, args));
         AddCommand(helper, "museart_export_refs", "Writes still-life references for many items to refs.json (for ArtStudio.Sim).", (_, _) =>
             ExportRefs(helper.DirectoryPath, monitor));
 
-#if DEBUG
         DevGame.Register(helper, monitor);
         AddCommand(helper, "museart_snapsocial", "In a game: renders the social page (and Sable's profile) to dialogue_snapshots/social_*.png.", (_, _) =>
         {

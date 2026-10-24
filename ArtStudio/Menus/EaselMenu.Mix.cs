@@ -147,15 +147,15 @@ internal sealed partial class EaselMenu
         {
             case Purity.Pure:
                 Game1.playSound("jingle1");
-                Toast($"Pure {Palette.All[_selected].Name}!", new Color(60, 140, 60), 1.2f);
+                Toast(I18n.Get("mix.pure", new { pigment = I18n.Pigment(_selected) }), new Color(60, 140, 60), 1.2f);
                 break;
             case Purity.Off:
                 Game1.playSound("dwop");
-                Toast("The mix is a bit off.", new Color(190, 130, 30), 1.4f);
+                Toast(I18n.Get("mix.off"), new Color(190, 130, 30), 1.4f);
                 break;
             default:
                 Game1.playSound("slimeHit");
-                Toast("Muddy! That paint won't look right.", new Color(150, 70, 50), 1.6f);
+                Toast(I18n.Get("mix.muddy"), new Color(150, 70, 50), 1.6f);
                 break;
         }
     }
@@ -173,7 +173,7 @@ internal sealed partial class EaselMenu
         var color = new Color(p.R, p.G, p.B);
 
         Ui.Paper(b, new Rectangle(_rightCol.X - 8, _rightCol.Y - 8, _rightCol.Width + 16, _rightCol.Height + 16));
-        Ui.TextCentered(b, (_mixTopUp ? "Topping up " : "Mixing ") + p.Name, _rightCol.Center.X, _rightCol.Y + 8);
+        Ui.TextCentered(b, I18n.Get(_mixTopUp ? "mix.topping-up" : "mix.mixing", new { pigment = I18n.Pigment(_mixPigment) }), _rightCol.Center.X, _rightCol.Y + 8);
 
         // Track.
         var track = _mixTrack;
@@ -205,10 +205,10 @@ internal sealed partial class EaselMenu
         Ui.Fill(b, new Rectangle(meter.X - 4, meter.Y + meter.Height / 2, meter.Width + 8, 2), Color.White * 0.8f);
 
         float timeLeft = Math.Max(0f, mix.TimeLimit - mix.Elapsed);
-        Ui.TextCentered(b, $"{timeLeft:0.0}s", _rightCol.Center.X, track.Bottom + 16, timeLeft < 1.5f ? Color.OrangeRed : Game1.textColor);
+        Ui.TextCentered(b, I18n.Get("mix.time-left", new { seconds = timeLeft.ToString("0.0") }), _rightCol.Center.X, track.Bottom + 16, timeLeft < 1.5f ? Color.OrangeRed : Game1.textColor);
         if (!_mixArmed)
-            Ui.TextCentered(b, "Hold to lift!", _rightCol.Center.X, track.Bottom + 44, Game1.textColor * 0.7f);
+            Ui.TextCentered(b, I18n.Get("mix.hold"), _rightCol.Center.X, track.Bottom + 44, Game1.textColor * 0.7f);
         else
-            Ui.TextCentered(b, $"{p.Motion} hue", _rightCol.Center.X, track.Bottom + 44, Game1.textColor * 0.6f);
+            Ui.TextCentered(b, I18n.Get("mix.motion", new { motion = I18n.Motion(p.Motion) }), _rightCol.Center.X, track.Bottom + 44, Game1.textColor * 0.6f);
     }
 }

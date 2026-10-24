@@ -77,7 +77,7 @@ internal static class ArtHooks
             int pigment = ArtItems.PigmentFor(item)!.Value;
             who.removeItemFromInventory(item);
             if (ArtProgress.Unlock(who, pigment))
-                Game1.addHUDMessage(new HUDMessage($"{Palette.All[pigment].Name} added to your palette!") { noIcon = true });
+                Game1.addHUDMessage(new HUDMessage(I18n.Get("pigment.added", new { pigment = I18n.Pigment(pigment) })) { noIcon = true });
         }
     }
 
@@ -110,7 +110,8 @@ internal static class ArtHooks
 
     public static int PaintingTaste(NPC npc, Item painting)
     {
-        bool artLover = Game1.content.Load<Dictionary<string, string>>(ArtItems.ArtLoversAsset).ContainsKey(npc.Name);
+        bool artLover = ModEntry.Config.ArtLoversLikeAnyPainting
+            && Game1.content.Load<Dictionary<string, string>>(ArtItems.ArtLoversAsset).ContainsKey(npc.Name);
         var data = PaintingData.Read(painting);
 
         int taste = painting.Quality switch
@@ -171,13 +172,13 @@ internal static class ArtHooks
     private static void FurnitureNamePostfix(Furniture __instance, ref string __result)
     {
         if (ArtItems.IsFramed(__instance) && PaintingData.Read(__instance) is PaintingData data)
-            __result = PaintingItems.Title(data) + " (Framed)";
+            __result = I18n.Get("painting.framed-name", new { title = PaintingItems.Title(data) });
     }
 
     private static void FurnitureDescriptionPostfix(Furniture __instance, ref string __result)
     {
         if (ArtItems.IsFramed(__instance) && PaintingData.Read(__instance) is PaintingData data)
-            __result = Game1.parseText(PaintingItems.Provenance(data) + "\nHang it on a wall.", Game1.smallFont, 272);
+            __result = Game1.parseText(PaintingItems.Provenance(data) + "\n" + I18n.Get("painting.framed-hint"), Game1.smallFont, 272);
     }
 
     // Turns a painting into wall furniture, using up one picture frame.
@@ -204,7 +205,7 @@ internal static class ArtHooks
         brushItem.modData[UsesKey] = used.ToString();
         if (used < brush.Durability) return false;
         who.removeItemFromInventory(brushItem);
-        Game1.addHUDMessage(new HUDMessage($"Your {brush.Name} wore out.") { noIcon = true });
+        Game1.addHUDMessage(new HUDMessage(I18n.Get("brush.worn-out", new { brush = I18n.Get("brush." + brush.Id) })) { noIcon = true });
         return true;
     }
 

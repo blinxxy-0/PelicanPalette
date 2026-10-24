@@ -17,7 +17,9 @@ namespace ArtStudio.Menus;
 internal sealed partial class EaselMenu
 {
     private const int SlotSize = 64, SlotGap = 8;
-    private static readonly string[] CanvasNames = { "Small", "Medium", "Large" };
+    private static readonly string[] CanvasKeys = { "small", "medium", "large" };
+
+    private static string CanvasName(int i) => I18n.Get("canvas." + CanvasKeys[i]);
 
     private CanvasKind _setupCanvas = CanvasKind.Small;
     private bool _setupOriginal, _setupFraming;
@@ -204,7 +206,7 @@ internal sealed partial class EaselMenu
     {
         if (PaintingSkill.Has(_who, PaintingSkill.Instance.Prolific) && _random.NextDouble() < PaintingSkill.ProlificSaveChance)
         {
-            Toast("Prolific: this one didn't use up a canvas!", new Color(60, 140, 60), 2f);
+            Toast(I18n.Get("setup.prolific"), new Color(60, 140, 60), 2f);
             return;
         }
         var canvas = _who.Items.First(i => i?.QualifiedItemId == ArtItems.QualifiedCanvasId(kind));
@@ -227,7 +229,7 @@ internal sealed partial class EaselMenu
         int slot = _who.Items.IndexOf(_setupPainting);
         _who.Items[slot] = framed;
         Game1.playSound("hammer");
-        Toast("Framed! Hang it on a wall.", new Color(60, 140, 60), 2f);
+        Toast(I18n.Get("setup.framed"), new Color(60, 140, 60), 2f);
         _setupPainting = null;
         LayoutSetup();
     }
@@ -243,14 +245,15 @@ internal sealed partial class EaselMenu
             DrawStillLifeChoice(b, left, mouse);
 
         // The bottom row: free canvas, brush, framing.
-        Ui.Button(b, _originalButton, "Free canvas", !_setupFraming, _setupOriginal, _originalButton.Contains(mouse));
-        string brushLabel = _brushItem == null ? "Hog bristle" : $"{ShortBrushName(_brush)} ({ArtHooks.UsesLeft(_brushItem, _brush)})";
+        Ui.Button(b, _originalButton, I18n.Get("paint.title.free"), !_setupFraming, _setupOriginal, _originalButton.Contains(mouse));
+        string brushLabel = _brushItem == null ? ShortBrushName(_brush) : I18n.Get("setup.brush-label", new { brush = ShortBrushName(_brush), uses = ArtHooks.UsesLeft(_brushItem, _brush) });
         Ui.Button(b, _brushButton, brushLabel, !_setupFraming, false, _brushButton.Contains(mouse));
-        Ui.Button(b, _frameButton, _setupFraming ? "Back to painting" : "Frame a painting", true, _setupFraming, _frameButton.Contains(mouse));
+        Ui.Button(b, _frameButton, _setupFraming ? I18n.Get("setup.back-to-painting") : I18n.Get("setup.frame-a-painting"), true, _setupFraming, _frameButton.Contains(mouse));
         if (_brushButton.Contains(mouse) && !_setupFraming)
-            _hoverText = $"{_brush.Name}{(_brushItem == null ? "" : $", {ArtHooks.UsesLeft(_brushItem, _brush)} paintings left in it")}.\nClick to switch brushes.";
+            _hoverText = (_brushItem == null ? I18n.Get("setup.brush-hover", new { brush = I18n.Get("brush." + _brush.Id) }) : I18n.Get("setup.brush-hover.uses", new { brush = I18n.Get("brush." + _brush.Id), uses = ArtHooks.UsesLeft(_brushItem, _brush) }))
+                + "\n" + I18n.Get("setup.brush-switch");
         if (_frameButton.Contains(mouse) && !_setupFraming)
-            _hoverText = $"Turn a painting into wall decor. Uses a picture frame (you have {FrameCount}).";
+            _hoverText = I18n.Get("setup.frame-hover", new { frames = FrameCount });
 
         if (_toastLeft > 0f && _toast != null)
             Ui.TextCentered(b, _toast, _previewArea.Center.X, _previewArea.Y - 52, _toastColor * Math.Min(1f, _toastLeft * 2f));
@@ -258,36 +261,36 @@ internal sealed partial class EaselMenu
 
     private static string ShortBrushName(BrushSpec brush) => brush.Id switch
     {
-        "sable" => "Sable",
-        "flat" => "Flat wash",
-        "rigger" => "Rigger",
-        "iridium" => "Iridium",
-        _ => "Hog bristle",
+        "sable" => I18n.Get("brush.short.sable"),
+        "flat" => I18n.Get("brush.short.flat"),
+        "rigger" => I18n.Get("brush.short.rigger"),
+        "iridium" => I18n.Get("brush.short.iridium"),
+        _ => I18n.Get("brush.short.hog"),
     };
 
     private void DrawStillLifeChoice(SpriteBatch b, int left, Point mouse)
     {
-        Ui.Text(b, "Choose a canvas", new Vector2(left, yPositionOnScreen + Pad + 30));
+        Ui.Text(b, I18n.Get("setup.choose-canvas"), new Vector2(left, yPositionOnScreen + Pad + 30));
         for (int i = 0; i < _canvasButtons.Length; i++)
         {
             var kind = (CanvasKind)i;
             bool unlocked = CanvasUnlocked(kind);
             int size = PaintingRules.CanvasSize(kind);
-            string label = !unlocked ? $"Lv {PaintingRules.CanvasUnlockLevel(kind)}"
-                : _needsSupplies ? $"{CanvasNames[i]} ({CanvasCount(kind)})"
-                : CanvasNames[i];
+            string label = !unlocked ? I18n.Get("tool.level-short", new { level = PaintingRules.CanvasUnlockLevel(kind) })
+                : _needsSupplies ? I18n.Get("setup.canvas-count", new { canvas = CanvasName(i), count = CanvasCount(kind) })
+                : CanvasName(i);
             Ui.Button(b, _canvasButtons[i], label, unlocked, _setupCanvas == kind, _canvasButtons[i].Contains(mouse));
             if (_canvasButtons[i].Contains(mouse))
                 _hoverText = unlocked
-                    ? $"{CanvasNames[i]} canvas: {size}x{size}, room for {ReferenceBuilder.MaxItems(size)} item(s)."
-                    : $"{CanvasNames[i]} canvases unlock at Painting level {PaintingRules.CanvasUnlockLevel(kind)}.";
+                    ? I18n.Get("setup.canvas-hover." + CanvasKeys[i], new { size, items = ReferenceBuilder.MaxItems(size) })
+                    : I18n.Get("setup.canvas-locked." + CanvasKeys[i], new { level = PaintingRules.CanvasUnlockLevel(kind) });
         }
 
         int max = ReferenceBuilder.MaxItems(PaintingRules.CanvasSize(_setupCanvas));
-        Ui.Text(b, max == 1 ? "Paint a still life: pick an item" : $"Paint a still life: pick up to {max} items",
+        Ui.Text(b, max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
             new Vector2(left, _canvasButtons[0].Bottom + 18));
         if (_itemSlots.Count == 0)
-            Ui.Text(b, "Nothing in your bag to paint from.", new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
+            Ui.Text(b, I18n.Get("setup.nothing-to-paint"), new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
         DrawSlots(b, mouse, slot => _setupItems.IndexOf(slot.QualifiedItemId), max > 1);
 
         // Preview of what you'll be copying.
@@ -298,31 +301,31 @@ internal sealed partial class EaselMenu
         {
             DrawCells(b, _setupPreview.Cells, null, _previewArea, new Color(243, 236, 220), false);
             float light = PaintingRules.LightSeconds(canvasSize, _setupPreview.Difficulty, _level, LightMultiplier);
-            Ui.Text(b, $"Difficulty {_setupPreview.Difficulty},  {_setupPreview.PigmentsUsed.Count} pigments", info);
-            Ui.Text(b, _rules.LightTimer ? $"{light:0} seconds of light" : "No time limit", info + new Vector2(0, 28), Game1.textColor * 0.75f);
+            Ui.Text(b, I18n.Get("setup.preview", new { difficulty = _setupPreview.Difficulty, pigments = _setupPreview.PigmentsUsed.Count }), info);
+            Ui.Text(b, _rules.LightTimer ? I18n.Get("setup.light", new { seconds = light.ToString("0") }) : I18n.Get("setup.no-time-limit"), info + new Vector2(0, 28), Game1.textColor * 0.75f);
         }
         else
         {
             Ui.Fill(b, _previewArea, new Color(243, 236, 220));
-            string msg = _setupOriginal ? "A blank canvas. Paint whatever you like." : "Pick something to paint.";
+            string msg = _setupOriginal ? I18n.Get("setup.blank-canvas") : I18n.Get("setup.pick-something");
             var lines = Game1.parseText(msg, Game1.smallFont, _previewArea.Width - 40);
             Ui.Text(b, lines, new Vector2(_previewArea.X + 20, _previewArea.Center.Y - 20), Game1.textColor * 0.7f);
         }
 
         bool ready = (_setupOriginal || _setupItems.Count > 0) && HasCanvas;
-        Ui.Button(b, _beginButton, "Begin", ready, false, ready && _beginButton.Contains(mouse));
-        string footer = !HasCanvas ? $"You need a {CanvasNames[(int)_setupCanvas].ToLowerInvariant()} canvas." : $"{ModEntry.Config.Difficulty} mode";
+        Ui.Button(b, _beginButton, I18n.Get("setup.begin"), ready, false, ready && _beginButton.Contains(mouse));
+        string footer = !HasCanvas ? I18n.Get("setup.need-canvas." + CanvasKeys[(int)_setupCanvas]) : I18n.Get("setup.mode." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant());
         Ui.Text(b, footer, new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10), !HasCanvas ? new Color(150, 70, 50) : Game1.textColor * 0.8f);
         if (!HasCanvas && _beginButton.Contains(mouse))
-            _hoverText = _setupCanvas == CanvasKind.Small ? "Craft small canvases from fiber and wood." : "Craft bigger canvases from cloth and wood.";
+            _hoverText = _setupCanvas == CanvasKind.Small ? I18n.Get("setup.craft-small") : I18n.Get("setup.craft-big");
     }
 
     private void DrawFraming(SpriteBatch b, int left, Point mouse)
     {
-        Ui.Text(b, "Frame a painting to hang it on a wall", new Vector2(left, yPositionOnScreen + Pad + 30));
-        Ui.Text(b, $"Picture frames: {FrameCount}", new Vector2(left, _canvasButtons[0].Y + 14), FrameCount > 0 ? Game1.textColor : new Color(150, 70, 50));
+        Ui.Text(b, I18n.Get("setup.frame-title"), new Vector2(left, yPositionOnScreen + Pad + 30));
+        Ui.Text(b, I18n.Get("setup.frames", new { frames = FrameCount }), new Vector2(left, _canvasButtons[0].Y + 14), FrameCount > 0 ? Game1.textColor : new Color(150, 70, 50));
         if (_itemSlots.Count == 0)
-            Ui.Text(b, "No paintings in your bag.", new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
+            Ui.Text(b, I18n.Get("setup.no-paintings"), new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
         DrawSlots(b, mouse, slot => slot == _setupPainting ? 0 : -1, false);
 
         Ui.Paper(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
@@ -334,14 +337,14 @@ internal sealed partial class EaselMenu
         }
         else
         {
-            var lines = Game1.parseText("Pick a painting to frame.", Game1.smallFont, _previewArea.Width - 40);
+            var lines = Game1.parseText(I18n.Get("setup.pick-painting"), Game1.smallFont, _previewArea.Width - 40);
             Ui.Text(b, lines, new Vector2(_previewArea.X + 20, _previewArea.Center.Y - 20), Game1.textColor * 0.7f);
         }
 
         bool ready = _setupPainting != null && FrameCount > 0;
-        Ui.Button(b, _beginButton, "Frame it", ready, false, ready && _beginButton.Contains(mouse));
+        Ui.Button(b, _beginButton, I18n.Get("setup.frame-it"), ready, false, ready && _beginButton.Contains(mouse));
         if (FrameCount == 0)
-            Ui.Text(b, "You need a picture frame.", new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10), new Color(150, 70, 50));
+            Ui.Text(b, I18n.Get("setup.need-frame"), new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10), new Color(150, 70, 50));
     }
 
     // Inventory slots; `order` gives a selected slot its number (or -1).
@@ -366,7 +369,7 @@ internal sealed partial class EaselMenu
             }
             if (rect.Contains(mouse))
                 _hoverText = wantedBy == null ? item.DisplayName
-                    : $"{item.DisplayName}\n{wantedBy.NpcName} commissioned a painting of this ({Shop.Commissions.QualityText(wantedBy.MinQuality)}).";
+                    : item.DisplayName + "\n" + I18n.Get("setup.commissioned", new { npc = wantedBy.NpcName, quality = Shop.Commissions.QualityText(wantedBy.MinQuality) });
         }
     }
 }

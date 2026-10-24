@@ -52,9 +52,9 @@ internal sealed partial class EaselMenu
         if (painted == 0)
         {
             Game1.playSound("fishEscape");
-            _critique = "The light went before you'd painted a thing.";
+            _critique = I18n.Get("critique.light-gone-blank");
             if (SableCritiques)
-                (_critique, _critiquePortrait) = ("You ran out of light before you started. Everyone does once. Start smaller.", 2);
+                (_critique, _critiquePortrait) = (I18n.Get("critique.sable.light-gone-blank"), 2);
             LayoutResults();
             return;
         }
@@ -76,9 +76,9 @@ internal sealed partial class EaselMenu
             _quality = PaintingRules.Normal;
             _xp = PaintingRules.OriginalXp;
             if (SableCritiques)
-                (_critique, _critiquePortrait) = ("An original. Don't let anyone price it for you. Including me.", 1);
+                (_critique, _critiquePortrait) = (I18n.Get("critique.sable.original"), 1);
             else
-                _critique = "An original. It's yours, whatever anyone says.";
+                _critique = I18n.Get("critique.original");
         }
 
         int subjectPrice = _subjectItems.Length == 0 ? 0 : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
@@ -97,7 +97,7 @@ internal sealed partial class EaselMenu
             Stars = _result?.Stars ?? 0f,
             Difficulty = _reference?.Difficulty ?? 0,
             Painter = _who.Name,
-            Date = $"{Utility.getSeasonNameFromNumber(Game1.seasonIndex)} {Game1.dayOfMonth}, Year {Game1.year}",
+            Date = I18n.Get("painting.date", new { season = Utility.getSeasonNameFromNumber(Game1.seasonIndex), day = Game1.dayOfMonth, year = Game1.year }),
         };
         _painting = PaintingItems.Create(data, _quality, price);
         _resultTexture = PaintingRenderer.Build(size, cells, purity, CanvasColor);
@@ -115,20 +115,20 @@ internal sealed partial class EaselMenu
     {
         string subject = SubjectPhrase(_subjectItems);
         if (_lightGone && painted < _reference!.SubjectCells * 0.6f)
-            return "The light went before you could finish it.";
+            return I18n.Get("critique.light-gone");
         if (r.Stars >= 4.5f)
-            return _purityPct < 0.9f ? "Lovely work. A cleaner mix and it would sing." : "It looks just like the real thing.";
+            return _purityPct < 0.9f ? I18n.Get("critique.great-muddy") : I18n.Get("critique.great");
         if (r.Stars <= 1f)
-            return $"Hmm... is this meant to be {subject}?";
+            return I18n.Get("critique.unrecognisable", new { subject });
         if (_purityPct < 0.7f)
-            return "The colors have gone muddy. Take more care at the palette.";
+            return I18n.Get("critique.muddy");
         if (r.Neatness < 0.7f && r.Neatness < r.Shape && r.Neatness < r.Color)
-            return "It's nice, but there are stray marks all around it.";
+            return I18n.Get("critique.messy");
         if (r.Shape < r.Color)
-            return $"The colors are right, but the shape isn't quite {subject} yet.";
+            return I18n.Get("critique.shape", new { subject });
         if (r.Stars >= 3.5f)
-            return "Very nice! A few colors aren't quite right, but it's charming.";
-        return "That's the right shape, but the colors aren't there yet.";
+            return I18n.Get("critique.good");
+        return I18n.Get("critique.colors");
     }
 
     // From 2 hearts, Sable (the art shop's owner) writes the critique.
@@ -139,22 +139,22 @@ internal sealed partial class EaselMenu
     {
         string subject = SubjectPhrase(_subjectItems);
         if (_lightGone && painted < _reference!.SubjectCells * 0.6f)
-            return ("You ran out of light. Everyone does. Paint the big shapes first.", 2);
+            return (I18n.Get("critique.sable.light-gone"), 2);
         if (r.Stars >= 4.5f)
             return _purityPct < 0.9f
-                ? ("Good bones. The mixing's muddy at the edges. Fix that and I'd hang it.", 0)
-                : ("...I'd hang that. I don't say that.", 1);
+                ? (I18n.Get("critique.sable.great-muddy"), 0)
+                : (I18n.Get("critique.sable.great"), 1);
         if (r.Stars <= 1f)
-            return ($"Is that {subject}? Don't answer. Try again.", 6);
+            return (I18n.Get("critique.sable.unrecognisable", new { subject }), 6);
         if (_purityPct < 0.7f)
-            return ("Your colors went muddy. Mud is just a color that got distracted.", 3);
+            return (I18n.Get("critique.sable.muddy"), 3);
         if (r.Neatness < 0.7f && r.Neatness < r.Shape && r.Neatness < r.Color)
-            return ("Stray marks. Every one you leave, the eye trips over.", 5);
+            return (I18n.Get("critique.sable.messy"), 5);
         if (r.Shape < r.Color)
-            return ($"Right colors, wrong shape. Look at {subject} longer than you paint it.", 0);
+            return (I18n.Get("critique.sable.shape", new { subject }), 0);
         if (r.Stars >= 3.5f)
-            return ("Close. A few of those colors are guesses. Stop guessing.", 3);
-        return ("The shape's there. Now earn the colors.", 0);
+            return (I18n.Get("critique.sable.good"), 3);
+        return (I18n.Get("critique.sable.colors"), 0);
     }
 
     private void LayoutResults()
@@ -185,7 +185,7 @@ internal sealed partial class EaselMenu
         else if (!Game1.player.addItemToInventoryBool(_painting))
             Game1.createItemDebris(_painting, Game1.player.getStandingPosition(), Game1.player.FacingDirection);
         if (_newLevel > 0)
-            Game1.addHUDMessage(new HUDMessage($"Painting level {_newLevel}!") { noIcon = true });
+            Game1.addHUDMessage(new HUDMessage(I18n.Get("results.level-up", new { level = _newLevel })) { noIcon = true });
         _resultTexture?.Dispose();
     }
 
@@ -195,7 +195,7 @@ internal sealed partial class EaselMenu
         int artSide = Math.Min(height - 2 * Pad - 140, (width - 2 * Pad) / 2 - 60);
         var art = new Rectangle(x, y + 64, artSide, artSide);
 
-        Ui.Text(b, _painting?.DisplayName ?? "No painting", new Vector2(x - 16, y + 8));
+        Ui.Text(b, _painting?.DisplayName ?? I18n.Get("results.no-painting"), new Vector2(x - 16, y + 8));
 
         var frame = new Rectangle(art.X - 16, art.Y - 16, art.Width + 32, art.Height + 32);
         Ui.Fill(b, frame, new Color(110, 70, 40));
@@ -222,13 +222,13 @@ internal sealed partial class EaselMenu
         {
             Ui.Stars(b, _result.Stars * reveal, cx, cy, 40, 8);
             cy += 64;
-            Criterion(b, "Shape", PaintingJudge.Rating(_result.Shape), cx, ref cy);
-            Criterion(b, "Color", PaintingJudge.Rating(_result.Color), cx, ref cy);
-            Criterion(b, "Neatness", PaintingJudge.Rating(_result.Neatness), cx, ref cy);
-            Criterion(b, "Mixing", $"{_purityPct * 100f:0}% pure" + (_allPure ? " (flawless)" : ""), cx, ref cy);
-            Criterion(b, "Sparks", _inspired ? $"{_sparksCaught} (Inspired!)" : _sparksCaught.ToString(), cx, ref cy);
+            Criterion(b, I18n.Get("results.shape"), I18n.Rating(_result.Shape), cx, ref cy);
+            Criterion(b, I18n.Get("results.color"), I18n.Rating(_result.Color), cx, ref cy);
+            Criterion(b, I18n.Get("results.neatness"), I18n.Rating(_result.Neatness), cx, ref cy);
+            Criterion(b, I18n.Get("results.mixing"), I18n.Get(_allPure ? "results.mixing.flawless" : "results.mixing.value", new { percent = (_purityPct * 100f).ToString("0") }), cx, ref cy);
+            Criterion(b, I18n.Get("results.sparks"), _inspired ? I18n.Get("results.sparks.inspired", new { caught = _sparksCaught }) : _sparksCaught.ToString(), cx, ref cy);
             if (_timed)
-                Criterion(b, "Light", _lightGone ? "ran out" : $"{_lightLeft:0}s to spare", cx, ref cy);
+                Criterion(b, I18n.Get("results.light"), _lightGone ? I18n.Get("results.light.ran-out") : I18n.Get("results.light.spare", new { seconds = _lightLeft.ToString("0") }), cx, ref cy);
             cy += 8;
         }
 
@@ -237,14 +237,14 @@ internal sealed partial class EaselMenu
             var star = Ui.QualityStar(_quality);
             if (star.HasValue)
                 b.Draw(Game1.mouseCursors, new Rectangle(cx, cy, 40, 40), star.Value, Color.White);
-            string qualityText = _reference == null ? "Original" : $"{Ui.QualityName(_quality)} quality";
+            string qualityText = _reference == null ? I18n.Get("results.original") : I18n.Get("results.quality", new { quality = Ui.QualityName(_quality) });
             Ui.Text(b, qualityText, new Vector2(cx + (star.HasValue ? 52 : 0), cy + 6), Ui.QualityColor(_quality));
             if (_reference != null && PaintingRules.Quality(_score, PaintingRules.MaxLevel) > _quality)
-                Ui.Text(b, "(your skill caps it here for now)", new Vector2(cx, cy + 40), Game1.textColor * 0.6f);
+                Ui.Text(b, I18n.Get("results.capped"), new Vector2(cx, cy + 40), Game1.textColor * 0.6f);
             cy += 76;
-            Ui.Text(b, $"Sells for {_painting.sellToStorePrice()}g", new Vector2(cx, cy));
+            Ui.Text(b, I18n.Get("results.sells-for", new { price = _painting.sellToStorePrice() }), new Vector2(cx, cy));
             cy += 34;
-            Ui.Text(b, $"+{_xp} Painting XP" + (_newLevel > 0 ? $"  (Level {_newLevel}!)" : ""), new Vector2(cx, cy), new Color(60, 140, 60));
+            Ui.Text(b, I18n.Get("results.xp", new { xp = _xp }) + (_newLevel > 0 ? "  " + I18n.Get("results.xp.level", new { level = _newLevel }) : ""), new Vector2(cx, cy), new Color(60, 140, 60));
             cy += 50;
         }
 
@@ -256,13 +256,13 @@ internal sealed partial class EaselMenu
             var face = new Rectangle(cx, cy, 56, 56);
             b.Draw(portrait, face, Game1.getSourceRectForStandardTileSheet(portrait, _critiquePortrait, 64, 64), Color.White);
             Ui.Outline(b, face, new Color(60, 35, 20), 2);
-            Ui.Text(b, "Sable", new Vector2(face.X + 2, face.Bottom + 4), Game1.textColor * 0.7f, 0.8f);
+            Ui.Text(b, Game1.getCharacterFromName("Sable")?.displayName ?? "Sable", new Vector2(face.X + 2, face.Bottom + 4), Game1.textColor * 0.7f, 0.8f);
             textX = face.Right + 14;
         }
         var lines = Game1.parseText($"\"{_critique}\"", Game1.smallFont, _keepButton.X - 24 - textX);
         Ui.Text(b, lines, new Vector2(textX, cy), Game1.textColor * 0.85f);
 
-        Ui.Button(b, _keepButton, _painting != null ? "Keep it" : "Close", true, false, _keepButton.Contains(MousePos));
+        Ui.Button(b, _keepButton, _painting != null ? I18n.Get("results.keep") : I18n.Get("results.close"), true, false, _keepButton.Contains(MousePos));
     }
 
     private static void Criterion(SpriteBatch b, string label, string value, int x, ref int y)

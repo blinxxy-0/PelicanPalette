@@ -36,11 +36,4 @@ public sealed record DifficultySettings(
         Difficulty.Hard => new(true, float.PositiveInfinity, true, 1f, false, 4f, 0f, 0f, 1.2f),
         _ => new(false, 25f, true, 0.9f, true, 8f, 16f, 1f, 1f),
     };
-
-    public static string Describe(Difficulty difficulty) => difficulty switch
-    {
-        Difficulty.Relaxed => "No light meter. Mix each color once, then paint at your own pace.",
-        Difficulty.Hard => "Paint runs out and must be remixed, the light never waits, sparks are fleeting. Pays 20% more.",
-        _ => "Mixed colors dry after a while, so mix what you need and use it. The light only runs while you paint.",
-    };
 }

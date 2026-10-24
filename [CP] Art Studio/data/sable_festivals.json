@@ -9,7 +9,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/spring13",
       "Entries": {
-        "Sable": "Every egg in this town is painted by hand. Badly. I love it.$h#$e#Look at that one. Purple with yellow dots. Somebody meant that."
+        "Sable": "{{i18n:festival.spring13}}"
       },
       "TextOperations": [
         {
@@ -36,7 +36,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/spring24",
       "Entries": {
-        "Sable": "Everything's one pink today. The petals, the dresses, the punch.$u#$e#...It's lovely. Don't tell anyone I said so."
+        "Sable": "{{i18n:festival.spring24}}"
       },
       "TextOperations": [
         {
@@ -63,7 +63,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/summer11",
       "Entries": {
-        "Sable": "Lewis asked if I'd paint the governor's portrait for the town hall. I said I'd think about it.$u#$e#I've thought about it."
+        "Sable": "{{i18n:festival.summer11}}"
       },
       "TextOperations": [
         {
@@ -90,7 +90,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/summer28",
       "Entries": {
-        "Sable": "I've tried for years to mix that glow. Nothing on any palette comes close.$s#$e#Maybe that's the point. Some things you just look at."
+        "Sable": "{{i18n:festival.summer28}}"
       },
       "TextOperations": [
         {
@@ -117,7 +117,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/fall16",
       "Entries": {
-        "Sable": "I'm painting signs for anyone who wants one. Three customers so far, and one of them was a dog.$h#$e#He wanted his name in red. Good taste."
+        "Sable": "{{i18n:festival.fall16}}"
       },
       "TextOperations": [
         {
@@ -135,7 +135,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/fall27",
       "Entries": {
-        "Sable": "The maze is a composition problem, if you think about it. Mostly negative space.$u#$e#...I got lost twice."
+        "Sable": "{{i18n:festival.fall27}}"
       },
       "TextOperations": [
         {
@@ -153,7 +153,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/winter8",
       "Entries": {
-        "Sable": "Ice sculpture. All the work of marble, and it's gone by spring.$s#$e#I respect that more than I can say."
+        "Sable": "{{i18n:festival.winter8}}"
       },
       "TextOperations": [
         {
@@ -180,7 +180,7 @@
       "Action": "EditData",
       "Target": "Data/Festivals/winter25",
       "Entries": {
-        "Sable": "Happy Winter Star. Everything's red and gold and candlelit. It's like standing inside an old master.$h"
+        "Sable": "{{i18n:festival.winter25}}"
       },
       "TextOperations": [
         {

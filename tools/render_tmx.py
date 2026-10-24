@@ -7,7 +7,7 @@ content red.
 
 Usage: render_tmx.py map.tmx out.png [--region x y w h] [--grid] [--sheets dir] [--scale n]
 """
-import argparse, os, xml.etree.ElementTree as ET
+import argparse, base64, gzip, os, struct, zlib, xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw
 
 DRAW_ORDER = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "Front2", "AlwaysFront", "AlwaysFront2"]
@@ -27,9 +27,22 @@ def load(tmx_path, sheets_dir):
     layers = {}
     for layer in root.findall("layer"):
         w, h = int(layer.get("width")), int(layer.get("height"))
-        data = [int(v) for v in layer.find("data").text.replace("\n", "").split(",") if v.strip()]
+        data = layer_data(layer.find("data"))
         layers[layer.get("name")] = (w, h, data)
     return root, tilesets, layers
+
+
+def layer_data(node):
+    """A layer's gids, from CSV or from base64 (optionally zlib/gzip
+    compressed), the way Tiled saves maps like SVE's."""
+    if node.get("encoding") == "base64":
+        raw = base64.b64decode(node.text.strip())
+        if node.get("compression") == "zlib":
+            raw = zlib.decompress(raw)
+        elif node.get("compression") == "gzip":
+            raw = gzip.decompress(raw)
+        return [v & 0x1FFFFFFF for v in struct.unpack(f"<{len(raw) // 4}I", raw)]   # (high bits are flip flags)
+    return [int(v) for v in node.text.replace("\n", "").split(",") if v.strip()]
 
 
 def tile_image(tilesets, gid, cache):

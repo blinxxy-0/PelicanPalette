@@ -23,6 +23,7 @@ public class ModEntry : Mod
 
     public override void Entry(IModHelper helper)
     {
+        I18n.Init(helper.Translation);
         Config = helper.ReadConfig<ModConfig>();
         var harmony = new Harmony(ModManifest.UniqueID);
         PaintingPatches.Apply(harmony, Monitor);
@@ -66,20 +67,28 @@ public class ModEntry : Mod
 
         var difficulties = Enum.GetNames(typeof(Difficulty));
         gmcm.Register(ModManifest, () => Config = new ModConfig(), () => Helper.WriteConfig(Config));
-        gmcm.AddParagraph(ModManifest, () => "How much the easel asks of you at once.");
+        gmcm.AddSectionTitle(ModManifest, () => I18n.Get("config.section.easel"));
+        gmcm.AddParagraph(ModManifest, () => I18n.Get("config.intro"));
         gmcm.AddTextOption(ModManifest,
             () => Config.Difficulty.ToString(),
             value => Config.Difficulty = Enum.Parse<Difficulty>(value),
-            () => "Painting difficulty",
-            () => string.Join("\n\n", difficulties.Select(d => $"{d}: {DifficultySettings.Describe(Enum.Parse<Difficulty>(d))}")),
-            allowedValues: difficulties);
+            () => I18n.Get("config.difficulty"),
+            () => string.Join("\n\n", difficulties.Select(d => I18n.Get("config.difficulty." + d.ToLowerInvariant()) + ": " + I18n.Get("config.difficulty." + d.ToLowerInvariant() + ".description"))),
+            allowedValues: difficulties,
+            formatAllowedValue: d => I18n.Get("config.difficulty." + d.ToLowerInvariant()));
         gmcm.AddNumberOption(ModManifest,
             () => Config.LightTimeMultiplier,
             value => Config.LightTimeMultiplier = value,
-            () => "Light time",
-            () => "Scales how long the light lasts, on top of the difficulty.",
+            () => I18n.Get("config.light"),
+            () => I18n.Get("config.light.description"),
             min: 0.5f, max: 3f, interval: 0.1f,
             formatValue: v => $"{v:0.0}x");
+        gmcm.AddSectionTitle(ModManifest, () => I18n.Get("config.section.gifts"));
+        gmcm.AddBoolOption(ModManifest,
+            () => Config.ArtLoversLikeAnyPainting,
+            value => Config.ArtLoversLikeAnyPainting = value,
+            () => I18n.Get("config.art-lovers"),
+            () => I18n.Get("config.art-lovers.description"));
     }
 
     private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)

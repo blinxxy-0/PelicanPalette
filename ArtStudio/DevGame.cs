@@ -82,7 +82,7 @@ internal static class DevGame
             sable.TryLoadSchedule();
             monitor.Log($"Now {Game1.shortDayNameFromDayOfSeason(day)} {day}; Sable's schedule '{sable.ScheduleKey}'.", LogLevel.Info);
         });
-        DevTools.AddCommand(helper, "museart_festspot", "Finds the nearest free, walkable tile to a festival spot. Usage: museart_festspot Town-Fair 19 64", (_, args) => FestSpot(monitor, args));
+        DevTools.AddCommand(helper, "museart_festspot", "Finds the nearest free, walkable tile to a festival spot (with a festival id, counting other mods' extra villagers too). Usage: museart_festspot Town-Fair 19 64 [fall16]", (_, args) => FestSpot(monitor, args));
         DevTools.AddCommand(helper, "museart_festival", "Jumps a throwaway farm to a festival and walks in, then optionally starts its main event (main), or the Flower Dance with Sable (dance). Usage: museart_festival spring24 dance", (_, args) => Festival(monitor, args));
         DevTools.AddCommand(helper, "museart_advance", "Clicks through the open dialogue box (to run events unattended), picking answer N at questions. Usage: museart_advance [times] [answer]", (_, args) =>
         {
@@ -552,9 +552,18 @@ internal static class DevGame
     {
         if (args.Length < 3 || !int.TryParse(args[1], out int px) || !int.TryParse(args[2], out int py)) return;
         var location = new GameLocation("Maps\\" + args[0], "MuseArtFestSpot");
+        // With a festival id, other mods' extra villagers count as taken too.
+        var festival = args.Length > 3 ? Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Festivals/" + args[3]) : null;
         foreach (string layerId in new[] { "Set-Up", "MainEvent", "Main-Event" })
         {
             var actors = ActorTiles(location.map, layerId);
+            if (festival != null && festival.TryGetValue(layerId + "_additionalCharacters", out string? extra))
+                foreach (string entry in extra.Split('/'))
+                {
+                    string[] parts = entry.Trim().Split(' ');
+                    if (parts.Length >= 3 && parts[0] != "Sable" && int.TryParse(parts[1], out int ax) && int.TryParse(parts[2], out int ay))
+                        actors.Add(new Point(ax, ay));
+                }
             if (actors.Count == 0) { monitor.Log($"{args[0]} has no {layerId} layer.", LogLevel.Info); continue; }
             bool Free(int x, int y) =>
                 location.isTilePassable(new xTile.Dimensions.Location(x, y), Game1.viewport) && !location.isWaterTile(x, y)
@@ -763,6 +772,28 @@ internal static class DevGame
                 if (key.StartsWith(ModEntry.Id))
                     foreach (System.Text.RegularExpressions.Match m in speak.Matches(script))
                         texts.Add(($"event {key.Split('/')[0]}", m.Groups[1].Value, m.Groups[2].Value));
+
+        // The content pack's text comes from its i18n file: every token should
+        // have resolved, in the dialogue and in the rest of what it adds.
+        var raw = texts.Select(t => (t.Where, t.Text)).ToList();
+        foreach (string location in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
+            foreach (var (key, script) in Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + location))
+                if (key.StartsWith(ModEntry.Id))
+                    raw.Add(($"event {key.Split('/')[0]}", script));
+        raw.Add(("Data/mail", Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/mail")[ModEntry.Id + "_GrandOpening"]));
+        raw.Add(("Data/Weddings", DataLoader.Weddings(Game1.content).EventScript["Sable"]));
+        raw.Add(("Data/Locations", DataLoader.Locations(Game1.content)[Shop.ArtShop.LocationName].DisplayName));
+        raw.Add(("Data/Characters", DataLoader.Characters(Game1.content)["Sable"].DisplayName));
+        foreach (var owner in DataLoader.Shops(Game1.content)[Shop.ArtShop.ShopId].Owners)
+        {
+            raw.Add(($"shop owner {owner.Id}", owner.ClosedMessage ?? ""));
+            foreach (var d in owner.Dialogues ?? new())
+                raw.Add(($"shop owner {owner.Id}", d.Dialogue ?? ""));
+        }
+        var unresolved = raw.Where(t => t.Text.Contains("{{") || t.Text.Contains("no translation")).ToList();
+        foreach (var (where, text) in unresolved)
+            monitor.Log($"[FAIL] unresolved translation ({where}): \"{text}\"", LogLevel.Error);
+        Check(monitor, $"every translated text resolved ({raw.Count} entries)", unresolved.Count == 0, $"{unresolved.Count} unresolved");
 
         int pages = 0, bad = 0;
         foreach (var (where, speaker, text) in texts)

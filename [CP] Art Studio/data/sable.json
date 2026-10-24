@@ -9,7 +9,7 @@
       "Target": "Data/Characters",
       "Entries": {
         "Sable": {
-          "DisplayName": "Sable",
+          "DisplayName": "{{i18n:sable.name}}",
           "Gender": "Undefined",
           "Age": "Adult",
           "Manner": "Neutral",
@@ -69,7 +69,7 @@
       "Action": "EditData",
       "Target": "Data/NPCGiftTastes",
       "Entries": {
-        "Sable": "Oh. Where did you find this? I'm keeping it somewhere the light can't fade it.$h/395 66 62 64 402 611 595/That's lovely. Thank you, really.$0/330 80 205 -80 -79/...I'll find a use for it. Probably.$u/178 92 167/No. Absolutely not. Take it back before it touches anything.$a/766 154 420/Thanks. I'll put it on the shelf with the other mysteries.$0/"
+        "Sable": "{{i18n:gift.love}}/395 66 62 64 402 611 595/{{i18n:gift.like}}/330 80 205 -80 -79/{{i18n:gift.dislike}}/178 92 167/{{i18n:gift.hate}}/766 154 420/{{i18n:gift.neutral}}/"
       }
     },
 
@@ -84,12 +84,12 @@
     },
 
     // ---- What they say ----
-    { "Action": "Load", "Target": "Characters/Dialogue/Sable", "FromFile": "data/sable_dialogue.json" },
+    { "Action": "Include", "FromFile": "data/sable_dialogue.json" },
     {
       "Action": "EditData",
       "Target": "Characters/Dialogue/rainy",
       "Entries": {
-        "Sable": "Rain's the best light there is. Flat and honest. Nothing to hide behind.#$b#...I'm painting inside today anyway. The canvases hate the damp."
+        "Sable": "{{i18n:dialogue.rainy}}"
       }
     },
 
@@ -102,7 +102,7 @@
       "Action": "EditData",
       "Target": "Data/Events/blinxxy.MuseArt_ArtShop",
       "Entries": {
-        "blinxxy.MuseArt_SableIntro/": "continue/7 6/farmer 7 9 0 Sable 9 4 0/skippable/pause 500/move farmer 0 -3 0/pause 300/speak Sable \"Left a little... no. Right. ...Hm.$u\"/pause 300/emote Sable 16/faceDirection Sable 2/pause 300/move Sable -1 0 3/move Sable 0 2 2/faceDirection Sable 3/faceDirection farmer 1/speak Sable \"Oh. A customer. Or a lost farmer. Same thing, in my experience.$u#$b#I'm Sable. This is the shop. Canvases, pigments, brushes. And I buy paintings, if you make any worth buying.\"/pause 300/speak Sable \"Here. Three canvases and a jar of rose. The first ones are free. That's how they get you.$h\"/addItem (O)blinxxy.MuseArt_Canvas_Small 3/addItem (O)blinxxy.MuseArt_Pigment_rose 1/pause 300/speak Sable \"The board's for commissions. People in town want paintings of the things they love. Paint them well and they'll pay you. They'll like you more, too.#$b#The counter's open ten till six. Go make something.\"/friendship Sable 25/pause 300/end"
+        "blinxxy.MuseArt_SableIntro/": "continue/7 6/farmer 7 9 0 Sable 9 4 0/skippable/pause 500/move farmer 0 -3 0/pause 300/speak Sable \"{{i18n:intro.01}}\"/pause 300/emote Sable 16/faceDirection Sable 2/pause 300/move Sable -1 0 3/move Sable 0 2 2/faceDirection Sable 3/faceDirection farmer 1/speak Sable \"{{i18n:intro.02}}\"/pause 300/speak Sable \"{{i18n:intro.03}}\"/addItem (O)blinxxy.MuseArt_Canvas_Small 3/addItem (O)blinxxy.MuseArt_Pigment_rose 1/pause 300/speak Sable \"{{i18n:intro.04}}\"/friendship Sable 25/pause 300/end"
       }
     },
 
@@ -111,29 +111,25 @@
       "Action": "EditData",
       "Target": "Characters/Dialogue/Sable",
       "Entries": {
-        "AcceptBouquet": "Is that... for me?$6#$b#I don't have anything clever to say. That's never happened before.$l",
-        "RejectBouquet_VeryLowHearts": "Flowers. For me. We've spoken, what, twice? Put them in water before they die of embarrassment.$u",
-        "RejectBouquet_LowHearts": "That's... sweet. Ask me again when I know what color your eyes are in the evening.$l",
-        "RejectBouquet": "Not yet. But don't throw those away.$l",
-        "RejectMermaidPendant": "That's a very serious shade of blue. Give me time to get used to it.$l",
-        "RejectMermaidPendant_NeedHouseUpgrade": "Where would I put my easel? Your house is one room and a bad smell. Talk to Robin first.$u",
-        "dating_Sable": "So we're... a thing. I need to sit down. I'm going to sit down.$l"
+        "AcceptBouquet": "{{i18n:dialogue.AcceptBouquet}}",
+        "RejectBouquet_VeryLowHearts": "{{i18n:dialogue.RejectBouquet_VeryLowHearts}}",
+        "RejectBouquet_LowHearts": "{{i18n:dialogue.RejectBouquet_LowHearts}}",
+        "RejectBouquet": "{{i18n:dialogue.RejectBouquet}}",
+        "RejectMermaidPendant": "{{i18n:dialogue.RejectMermaidPendant}}",
+        "RejectMermaidPendant_NeedHouseUpgrade": "{{i18n:dialogue.RejectMermaidPendant_NeedHouseUpgrade}}",
+        "dating_Sable": "{{i18n:dialogue.dating_Sable}}"
       }
     },
     {
       "Action": "EditData",
       "Target": "Data/EngagementDialogue",
       "Entries": {
-        "Sable0": "...Yes. Obviously yes.$l#$b#Give me a second, I'm mixing a lot of feelings at once.$h",
-        "Sable1": "Lewis says we'll be married in a few days. I've started three paintings of you and finished none of them. That's normal. That's fine.$l"
+        "Sable0": "{{i18n:engagement.0}}",
+        "Sable1": "{{i18n:engagement.1}}"
       }
     },
     { "Action": "Include", "FromFile": "data/sable_wedding.json" },
-    {
-      "Action": "Load",
-      "Target": "Characters/Dialogue/MarriageDialogueSable",
-      "FromFile": "data/sable_marriage_dialogue.json"
-    },
+    { "Action": "Include", "FromFile": "data/sable_marriage_dialogue.json" },
 
     // ---- Heart events ----
     { "Action": "Include", "FromFile": "data/sable_events.json" },
@@ -143,7 +139,7 @@
       "Action": "EditData",
       "Target": "Data/mail",
       "Entries": {
-        "blinxxy.MuseArt_GrandOpening": "Hello, new neighbor.^I've opened an art supply shop in Cindersap Forest, west of the path down from Marnie's. Canvases, pigments, brushes and frames, and I buy paintings, if you ever pick up a brush.^I've put two canvases in with this. No pressure. (Some pressure.)^Open 10am to 6pm (Fridays till 5, Sundays from 1). Closed Wednesdays.^   -Sable %item id (O)blinxxy.MuseArt_Canvas_Small 2 %%[#]The art shop opens"
+        "blinxxy.MuseArt_GrandOpening": "{{i18n:mail.grand-opening}} %item id (O)blinxxy.MuseArt_Canvas_Small 2 %%[#]{{i18n:mail.grand-opening.title}}"
       }
     },
     {

@@ -1,45 +1,66 @@
-# Muse Art Studio (Stardew Valley mod)
+# Art Studio
 
-A spin-off of Muse's painting game: paint pixel-art still lifes at an easel against the light, level a Painting skill, and sell or gift what you make. The plan lives in `C:\Users\blinx\.claude\plans\hey-i-m-still-super-quizzical-pine.md`.
+Paint your own pixel-art paintings at an easel, level up a new Painting skill, and sell or gift what you make. An art supply shop opens in Cindersap Forest, run by Sable, a former museum restorer who can become your partner.
 
-- `ArtStudio/`: the SMAPI mod (`blinxxy.MuseArt`). `dotnet build` deploys it to the game's `Mods` folder.
-  - `Core/`: game-free rules: canvas, judge, mixing bar, numbers. Shared with the sim.
-  - `Painting/`: items, references, per-item pixel art, Harmony patches.
-  - `Menus/`: the easel (setup → painting → results).
-  - `Shop/`: the art shop's counter, commission board and deliveries.
-- `[CP] Art Studio/`: the Content Patcher pack: the shop's map, stock and Forest patch, and Sable (`data/sable*.json`; brief in `docs/npc_brief.md`).
-- `ArtStudio.Sim/`: calibration. `dotnet run -c Release -- refs.json`
-- `tools/`: test-game launch/stop scripts, placeholder art, PNG export. `tools/art/` builds Sable's portraits and sprites from the PixelLab picks (`build_sable_*.py`) and compares them with vanilla (`compare_vanilla.py`).
-  - `build_sable_events.py` writes the heart events (`data/sable_events.json`), `build_sable_wedding.py` the wedding with gender-neutral vows, `build_spouse_areas.py` the spouse room and patio maps, `build_shop_interior.py` the shop.
+## Requirements
 
-## Testing
+- Stardew Valley 1.6.15 or later
+- [SMAPI](https://smapi.io) 4.0 or later
+- [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 2.9 or later
+- [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348)
+- Optional: [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098), to change the settings in game
 
-Use the **Stardew Art Studio (test)** desktop shortcut. It runs SMAPI on the game's own `Mods` folder (Art Studio, Content Patcher, SpaceCore, GMCM). It does not use the CurseForge modpack. **Start a new farm there:** loading a modpack save without its mods and then sleeping would save it in a broken state.
+## Installing
 
-Getting started in game:
-- Craft an **Easel** (30 wood, 10 fiber) and **Small Canvases** (5 fiber, 2 wood). You know both recipes from the start.
-- Place the easel and right-click it.
-- More recipes unlock with the Painting skill: canvases, picture frames, brushes, and pigments ground from clay, flowers, berries and gems.
+1. Install SMAPI, Content Patcher and SpaceCore.
+2. Unzip the download into your `Mods` folder. You get one `ArtStudio` folder holding two mods: `ArtStudio` (the painting) and `[CP] Art Studio` (the shop and Sable). Keep both.
+3. Run the game through SMAPI.
 
-Debug build:
-- **F8** opens the easel anywhere.
-- In the SMAPI console:
-  - `museart_supplies`: easel, canvases, brushes, frames, every pigment jar
-  - `museart_level <n>`
-  - `museart_tastes [item]`: every villager's taste for each quality
-  - `museart_paint ...`, `museart_free`, `museart_pigments ...`
+You can add it to an existing save. To remove it, sell or trash your paintings, easels and art supplies first, then delete the folder.
 
-From the title screen:
-- `museart_snap [level]` renders every easel screen to `Mods/ArtStudio/snapshots/` and writes a `layout_report.txt` of overlapping or spilling text.
-- `museart_export_refs` writes `refs.json` for the sim.
-- `museart_devgame` starts a throwaway farm that is never saved. Then:
-  - `museart_devscene` sets up the farmhouse.
-  - `museart_selftest`, then `museart_selftest sell`, then `museart_selftest sold` run the end-to-end checks.
-  - `museart_shoptest` checks the art shop; `museart_npctest` checks Sable (data, gift tastes, every schedule route, the counter).
-  - `museart_where` logs where Sable is; `museart_day <n>` (early morning) switches the day to try another schedule.
-  - `museart_festival <id> [main|dance]` jumps to a festival (e.g. `spring24 dance` dances with Sable); `museart_festspot <map> <x> <y>` checks a festival spot is walkable and clear.
-  - `museart_advance [n] [answer]` clicks through dialogue (picking an answer at questions), to play events unattended; `museart_event <id>` plays an event directly.
-  - `museart_eventpaths` walks every step of Sable's events against the real maps; `museart_route <loc> x1 y1 x2 y2` prints walkable `move` commands; `museart_dialoguefit` checks every dialogue page fits its box; `museart_snapdialogue` renders the event dialogue boxes.
-  - `museart_portrait` saves Sable's portrait of the farmer; `museart_marry [patio]` and `museart_wedding` (throwaway farm only) show the spouse room, patio and wedding.
-- Debug builds also run commands written to `Mods/ArtStudio/dev_commands.txt`.
-- `tools/launch_test.ps1 [-ModsPath dir]`, `tools/stop_test.ps1` and `tools/screenshot_test.ps1` drive a test copy of the game.
+## Playing
+
+**Getting started.** On your second day a letter arrives from the new art shop, with two canvases. You already know how to craft an **Easel** (30 wood, 10 fiber) and **Small Canvases** (5 fiber, 2 wood). Place the easel anywhere and use it.
+
+**Painting.** Pick a canvas and something from your inventory to paint, and its picture appears beside the canvas. Copy it cell by cell:
+- **Mixing** works like fishing. Click a pigment and hold to keep your mix on the moving true color until the meter fills. A clean mix paints pure color; a bad one comes out muddy.
+- **The light** runs down while you work. When it's gone, the painting is finished as it stands. Finish early and the leftover light becomes bonus experience.
+- **Inspiration sparks** sometimes appear on the canvas. Paint that cell the right pure color before the spark fades for more light; catch three and the painting is *Inspired*.
+- **Brushes** change how mixing feels and how far a mix goes. They wear out with use, like fishing tackle.
+
+The painting's quality depends on how closely you copied the picture and on your Painting level.
+
+**The Painting skill** goes from level 1 to 10. Each level gives you more light, and new levels bring new tools (broad brush, ruler, mirror, dropper), bigger canvases, new pigments and higher quality. At levels 5 and 10 you choose a profession, as with the other skills.
+
+**Selling and gifting.**
+- Sell paintings to Pierre, at the art shop (which pays 20% more), or through the shipping bin.
+- Everyone loves an iridium painting, and silver and gold ones are liked. Art lovers (Leah, Elliott, Emily, Haley, Abigail, Sebastian, Sam, Robin and Sable) like any painting. A painting of something a villager loves goes up a step. Nobody dislikes a painting.
+- A **Picture Frame** turns a painting into furniture you can hang on a wall.
+
+**The art shop** is in Cindersap Forest, west of the path down from Marnie's ranch. It's open 10am to 6pm (until 5pm on Fridays, from 1pm on Sundays) and closed on Wednesdays. It sells canvases, pigments, brushes, easels and frames, with more stock as your skill grows. The **commission board** there has villagers asking for paintings of things they love. Take a request, paint it well enough, and hand it to them for gold and friendship.
+
+**Sable** (they/them) runs the shop. They have a full schedule, festival appearances, heart events at 2, 4, 6, 8, 10 and 14 hearts, and can be dated and married. Once you're married they still keep the shop. When they're home, it runs on trust.
+
+## Settings
+
+Change these with Generic Mod Config Menu, or in `ArtStudio/ArtStudio/config.json` after one run:
+
+| Setting | Default | What it does |
+|---|---|---|
+| `Difficulty` | `Normal` | `Relaxed`: no light meter, and each color only needs mixing once. `Normal`: mixed colors dry after a while. `Hard`: paint runs out, the light never pauses and sparks fade fast, but paintings pay 20% more. |
+| `LightTimeMultiplier` | `1.0` | Gives you more (or less) light per painting, on top of the difficulty (0.5x to 3x). |
+| `ArtLoversLikeAnyPainting` | `true` | Whether art lovers like even a normal-quality painting. |
+
+## Compatibility
+
+- Works with **Stardew Valley Expanded**: the shop, Sable's schedules, events and festival spots all fit SVE's maps.
+- Other mods that change the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
+- Not yet tested in multiplayer.
+
+## Translating
+
+All text is in two files: `ArtStudio/i18n/default.json` (the easel, items, skill and shop) and `[CP] Art Studio/i18n/default.json` (Sable's dialogue, events, mail and the shop's lines). Copy each one to `<language>.json` (for example `fr.json`), translate the values, and keep the keys and anything in `{{double braces}}` as they are. In dialogue, keep the codes too: `$h`, `#$b#`, `@` and similar.
+
+## Credits
+
+By blinxxy. Art made with PixelLab and edited by hand to match the game's style.

@@ -155,10 +155,10 @@ internal static class Ui
 
     public static string QualityName(int quality) => quality switch
     {
-        1 => "Silver",
-        2 => "Gold",
-        4 => "Iridium",
-        _ => "Normal",
+        1 => I18n.Get("quality.silver"),
+        2 => I18n.Get("quality.gold"),
+        4 => I18n.Get("quality.iridium"),
+        _ => I18n.Get("quality.normal"),
     };
 
     public static Color QualityColor(int quality) => quality switch

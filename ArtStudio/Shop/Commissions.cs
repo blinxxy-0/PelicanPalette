@@ -65,7 +65,7 @@ internal static class Commissions
         {
             list.Remove(lapsed);
             if (lapsed.Accepted)
-                Game1.addHUDMessage(new HUDMessage($"{lapsed.NpcName}'s commission for a {lapsed.ItemName} painting has lapsed.") { noIcon = true });
+                Game1.addHUDMessage(new HUDMessage(I18n.Get("commission.lapsed", new { npc = lapsed.NpcName, item = lapsed.ItemName })) { noIcon = true });
         }
 
         var taken = new HashSet<string>(list.Select(c => c.Npc));
@@ -149,19 +149,19 @@ internal static class Commissions
         Game1.playSound("purchaseClick");
         npc.doEmote(Character.happyEmote);
         string line = painting.Quality > commission.MinQuality
-            ? $"Oh, this is even better than I hoped! My {commission.ItemName.ToLowerInvariant()}, exactly. Here's {commission.Reward}g, as promised."
-            : $"My {commission.ItemName.ToLowerInvariant()} painting! It's just what I asked for. Here's {commission.Reward}g, thank you.";
+            ? I18n.Get("commission.delivered.better", new { item = commission.ItemName.ToLowerInvariant(), reward = commission.Reward })
+            : I18n.Get("commission.delivered", new { item = commission.ItemName.ToLowerInvariant(), reward = commission.Reward });
         npc.setNewDialogue(new Dialogue(npc, null, line), add: true);
         Game1.drawDialogue(npc);
         if (newLevel > 0)
-            Game1.addHUDMessage(new HUDMessage($"Painting level {newLevel}!") { noIcon = true });
+            Game1.addHUDMessage(new HUDMessage(I18n.Get("results.level-up", new { level = newLevel })) { noIcon = true });
     }
 
     public static string QualityText(int quality) => quality switch
     {
-        PaintingRules.Silver => "silver or better",
-        PaintingRules.Gold => "gold or better",
-        PaintingRules.Iridium => "iridium",
-        _ => "any quality",
+        PaintingRules.Silver => I18n.Get("commission.quality.silver"),
+        PaintingRules.Gold => I18n.Get("commission.quality.gold"),
+        PaintingRules.Iridium => I18n.Get("commission.quality.iridium"),
+        _ => I18n.Get("commission.quality.any"),
     };
 }

@@ -54,30 +54,23 @@ internal static class ArtItems
 
     public static void AddObjects(IDictionary<string, ObjectData> objects)
     {
-        AddObject(objects, CanvasId(CanvasKind.Small), "Small Canvas", "A stretched canvas, 20 cells square. Paint on it at an easel.", 15, CanvasSprite);
-        AddObject(objects, CanvasId(CanvasKind.Medium), "Medium Canvas", "A stretched canvas, 28 cells square: room for two things side by side.", 50, CanvasSprite + 1);
-        AddObject(objects, CanvasId(CanvasKind.Large), "Large Canvas", "A stretched canvas, 36 cells square: room for a whole arrangement.", 120, CanvasSprite + 2);
+        AddObject(objects, CanvasId(CanvasKind.Small), I18n.Get("item.canvas.small"), I18n.Get("item.canvas.small.description"), 15, CanvasSprite);
+        AddObject(objects, CanvasId(CanvasKind.Medium), I18n.Get("item.canvas.medium"), I18n.Get("item.canvas.medium.description"), 50, CanvasSprite + 1);
+        AddObject(objects, CanvasId(CanvasKind.Large), I18n.Get("item.canvas.large"), I18n.Get("item.canvas.large.description"), 120, CanvasSprite + 2);
 
-        var brushDescriptions = new Dictionary<string, string>
-        {
-            ["flat"] = "A wide, flat brush. Each mix covers far more of the canvas.",
-            ["sable"] = "A soft round brush that makes mixing more forgiving.",
-            ["rigger"] = "A long, fine brush. Hues hold steadier, and inspiration lingers.",
-            ["iridium"] = "A brush that seems to know where the paint should go.",
-        };
         var brushPrices = new Dictionary<string, int> { ["flat"] = 150, ["sable"] = 350, ["rigger"] = 450, ["iridium"] = 1500 };
         int sprite = BrushSprite;
         foreach (var brush in Brushes.All.Where(b => b != Brushes.HogBristle))
-            AddObject(objects, BrushId(brush), brush.Name, brushDescriptions[brush.Id], brushPrices[brush.Id], sprite++, "muse_brush");
+            AddObject(objects, BrushId(brush), I18n.Get("brush." + brush.Id), I18n.Get("brush." + brush.Id + ".description"), brushPrices[brush.Id], sprite++, "muse_brush");
 
-        AddObject(objects, FrameItemId, "Picture Frame", "Frame one of your paintings at an easel to hang it on a wall.", 60, FrameSprite);
+        AddObject(objects, FrameItemId, I18n.Get("item.frame"), I18n.Get("item.frame.description"), 60, FrameSprite);
 
         for (int i = 0; i < Palette.All.Length; i++)
         {
             var p = Palette.All[i];
             if (p.Starter) continue;
-            AddObject(objects, PigmentId(i), $"{p.Name} Pigment",
-                $"A jar of ground {p.Name.ToLowerInvariant()} pigment. Your easel adds it to your palette for good.",
+            AddObject(objects, PigmentId(i), I18n.Get("item.pigment", new { pigment = I18n.Pigment(i) }),
+                I18n.Get("item.pigment.description", new { pigment = I18n.Pigment(i).ToLowerInvariant() }),
                 p.Rare ? 250 : 40, PigmentSprite + i, "muse_pigment");
         }
     }
@@ -104,8 +97,8 @@ internal static class ArtItems
         bigCraftables[EaselId] = new BigCraftableData
         {
             Name = EaselId,
-            DisplayName = "Easel",
-            Description = "Paint still lifes of anything you carry. Bring a canvas.",
+            DisplayName = I18n.Get("item.easel"),
+            Description = I18n.Get("item.easel.description"),
             Price = 100,
             Texture = BigCraftablesTexture,
             SpriteIndex = 0,
@@ -119,29 +112,29 @@ internal static class ArtItems
     {
         // Furniture data is '/'-delimited, so the texture path uses backslashes.
         string texture = FurnitureTexture.Replace('/', '\\');
-        furniture[FramedSmallId] = $"{FramedSmallId}/painting/2 2/2 2/1/250/-1/Framed Painting/0/{texture}/true";
-        furniture[FramedLargeId] = $"{FramedLargeId}/painting/3 3/3 3/1/500/-1/Framed Painting/2/{texture}/true";
+        furniture[FramedSmallId] = $"{FramedSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/0/{texture}/true";
+        furniture[FramedLargeId] = $"{FramedLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/2/{texture}/true";
     }
 
     // ingredients/unused/yield/big craftable/unlock condition/display name
     public static void AddRecipes(IDictionary<string, string> recipes)
     {
-        recipes[EaselId] = $"388 30 771 10/Home/{EaselId}/true/null/Easel";
-        recipes[CanvasId(CanvasKind.Small)] = $"771 5 388 2/Home/{CanvasId(CanvasKind.Small)}/false/null/Small Canvas";
-        recipes[CanvasId(CanvasKind.Medium)] = $"428 1 388 5/Home/{CanvasId(CanvasKind.Medium)}/false/{AtLevel(PaintingRules.CanvasUnlockLevel(CanvasKind.Medium))}/Medium Canvas";
-        recipes[CanvasId(CanvasKind.Large)] = $"428 2 709 3/Home/{CanvasId(CanvasKind.Large)}/false/{AtLevel(PaintingRules.CanvasUnlockLevel(CanvasKind.Large))}/Large Canvas";
-        recipes[FrameItemId] = $"388 10 334 1/Home/{FrameItemId}/false/{AtLevel(2)}/Picture Frame";
+        recipes[EaselId] = $"388 30 771 10/Home/{EaselId}/true/null/{I18n.Get("item.easel")}";
+        recipes[CanvasId(CanvasKind.Small)] = $"771 5 388 2/Home/{CanvasId(CanvasKind.Small)}/false/null/{I18n.Get("item.canvas.small")}";
+        recipes[CanvasId(CanvasKind.Medium)] = $"428 1 388 5/Home/{CanvasId(CanvasKind.Medium)}/false/{AtLevel(PaintingRules.CanvasUnlockLevel(CanvasKind.Medium))}/{I18n.Get("item.canvas.medium")}";
+        recipes[CanvasId(CanvasKind.Large)] = $"428 2 709 3/Home/{CanvasId(CanvasKind.Large)}/false/{AtLevel(PaintingRules.CanvasUnlockLevel(CanvasKind.Large))}/{I18n.Get("item.canvas.large")}";
+        recipes[FrameItemId] = $"388 10 334 1/Home/{FrameItemId}/false/{AtLevel(2)}/{I18n.Get("item.frame")}";
 
-        recipes[BrushId(Brushes.All[2])] = $"771 30 388 5/Home/{BrushId(Brushes.All[2])}/false/{AtLevel(2)}/Flat Wash Brush";
-        recipes[BrushId(Brushes.All[1])] = $"446 1 709 1/Home/{BrushId(Brushes.All[1])}/false/{AtLevel(3)}/Sable Round Brush";
-        recipes[BrushId(Brushes.All[3])] = $"444 1 709 1/Home/{BrushId(Brushes.All[3])}/false/{AtLevel(6)}/Rigger Brush";
-        recipes[BrushId(Brushes.All[4])] = $"337 1 446 1/Home/{BrushId(Brushes.All[4])}/false/{AtLevel(9)}/Iridium Brush";
+        recipes[BrushId(Brushes.All[2])] = $"771 30 388 5/Home/{BrushId(Brushes.All[2])}/false/{AtLevel(2)}/{I18n.Get("brush.flat")}";
+        recipes[BrushId(Brushes.All[1])] = $"446 1 709 1/Home/{BrushId(Brushes.All[1])}/false/{AtLevel(3)}/{I18n.Get("brush.sable")}";
+        recipes[BrushId(Brushes.All[3])] = $"444 1 709 1/Home/{BrushId(Brushes.All[3])}/false/{AtLevel(6)}/{I18n.Get("brush.rigger")}";
+        recipes[BrushId(Brushes.All[4])] = $"337 1 446 1/Home/{BrushId(Brushes.All[4])}/false/{AtLevel(9)}/{I18n.Get("brush.iridium")}";
 
         // Pigments ground from things found around the valley.
         void Pigment(string id, string ingredients, int level)
         {
             int i = Palette.IndexOf(id);
-            recipes[PigmentId(i)] = $"{ingredients}/Home/{PigmentId(i)}/false/{AtLevel(level)}/{Palette.All[i].Name} Pigment";
+            recipes[PigmentId(i)] = $"{ingredients}/Home/{PigmentId(i)}/false/{AtLevel(level)}/{I18n.Get("item.pigment", new { pigment = I18n.Pigment(i) })}";
         }
         Pigment("sienna", "330 3", 1);      // clay
         Pigment("rose", "402 2", 1);        // sweet pea

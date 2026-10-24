@@ -6,7 +6,8 @@
   "UniqueID": "blinxxy.MuseArt.CP",
   "UpdateKeys": [],
   "ContentPackFor": {
-    "UniqueID": "Pathoschild.ContentPatcher"
+    "UniqueID": "Pathoschild.ContentPatcher",
+    "MinimumVersion": "2.9.0"
   },
   "Dependencies": [
     { "UniqueID": "blinxxy.MuseArt" }

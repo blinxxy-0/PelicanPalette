@@ -61,8 +61,8 @@ internal static class FarmerPortrait
             Purity = new Purity[size, size],
             Subject = SubjectPrefix + who.Name,
             Stars = 5,
-            Painter = "Sable",
-            Date = $"{Utility.getSeasonNameFromNumber(Game1.seasonIndex)} {Game1.dayOfMonth}, Year {Game1.year}",
+            Painter = Game1.getCharacterFromName("Sable")?.displayName ?? "Sable",
+            Date = I18n.Get("painting.date", new { season = Utility.getSeasonNameFromNumber(Game1.seasonIndex), day = Game1.dayOfMonth, year = Game1.year }),
         };
         return PaintingItems.Create(data, SObject.bestQuality, Price);
     }

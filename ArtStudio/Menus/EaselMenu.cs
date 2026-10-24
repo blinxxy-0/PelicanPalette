@@ -229,9 +229,10 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     private static string SubjectPhrase(IReadOnlyList<string> itemIds)
     {
-        if (itemIds.Count == 0) return "anything";
-        if (itemIds.Count > 1) return "this still life";
+        if (itemIds.Count == 0) return I18n.Get("subject.anything");
+        if (itemIds.Count > 1) return I18n.Get("subject.still-life");
         string name = ItemRegistry.GetDataOrErrorItem(itemIds[0]).DisplayName.ToLowerInvariant();
-        return ("aeiou".IndexOf(name[0]) >= 0 ? "an " : "a ") + name;
+        // (English needs "a" or "an"; a translation can leave {{article}} out.)
+        return I18n.Get("subject.item", new { item = name, article = "aeiou".IndexOf(name[0]) >= 0 ? "an" : "a" });
     }
 }

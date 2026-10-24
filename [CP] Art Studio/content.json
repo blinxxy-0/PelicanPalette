@@ -16,7 +16,7 @@
       "Target": "Data/Locations",
       "Entries": {
         "blinxxy.MuseArt_ArtShop": {
-          "DisplayName": "Art Supply Shop",
+          "DisplayName": "{{i18n:location.art-shop}}",
           "DefaultArrivalTile": { "X": 7, "Y": 9 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ArtShop" }
         }
@@ -52,16 +52,16 @@
               "Name": "Sable",
               "Condition": "!DAY_OF_WEEK Wednesday",
               "Dialogues": [
-                { "Id": "Canvas", "Dialogue": "Canvases are by the window. Don't buy the big ones until you've ruined a few small ones." },
-                { "Id": "Pigment", "Dialogue": "The pigments are ground fresh. Mostly. Don't sniff the cerulean." },
-                { "Id": "Brush", "Dialogue": "A good brush forgives you. A cheap one remembers everything." },
-                { "Id": "Selling", "Dialogue": "Selling? Let me see it. I'll give you a fair price. I'm the only one around here who knows what fair is." }
+                { "Id": "Canvas", "Dialogue": "{{i18n:shop.owner.canvas}}" },
+                { "Id": "Pigment", "Dialogue": "{{i18n:shop.owner.pigment}}" },
+                { "Id": "Brush", "Dialogue": "{{i18n:shop.owner.brush}}" },
+                { "Id": "Selling", "Dialogue": "{{i18n:shop.owner.selling}}" }
               ]
             },
             {
               "Id": "Closed",
               "Name": "None",
-              "ClosedMessage": "Nobody's at the counter. Open 10am to 6pm (Fridays till 5, Sundays from 1). Closed Wednesdays."
+              "ClosedMessage": "{{i18n:shop.closed}}"
             }
           ],
           "SalableItemTags": [ "muse_painting" ],

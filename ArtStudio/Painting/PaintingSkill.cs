@@ -37,12 +37,12 @@ internal sealed class PaintingSkill : Skills.Skill
         ExperienceBarColor = new Color(205, 110, 160);
 
         // SpaceCore expects this order: the two level-5 professions, then the four at level 10.
-        PleinAir = Add(helper, "PleinAir", "Plein Air", $"The light lasts {Percent(PleinAirLight)} longer and inspiration sparks come more often.", 0);
-        Gallerist = Add(helper, "Gallerist", "Gallerist", $"Your paintings are worth {Percent(GalleristPrice)} more.", 1);
-        SteadyHand = Add(helper, "SteadyHand", "Steady Hand", "Your mixes never turn muddy: at worst, they come out a bit off.", 2);
-        Visionary = Add(helper, "Visionary", "Visionary", "An Inspired painting counts for twice as much toward its quality.", 3);
-        PatronsFavorite = Add(helper, "PatronsFavorite", "Patron's Favorite", $"Paintings you give as gifts earn {Percent(PatronFriendship)} more friendship.", 4);
-        Prolific = Add(helper, "Prolific", "Prolific", $"A {ProlificSaveChance:P0} chance that starting a painting doesn't use up the canvas.", 5);
+        PleinAir = Add(helper, "PleinAir", I18n.Get("profession.plein-air"), I18n.Get("profession.plein-air.description", new { percent = Percent(PleinAirLight) }), 0);
+        Gallerist = Add(helper, "Gallerist", I18n.Get("profession.gallerist"), I18n.Get("profession.gallerist.description", new { percent = Percent(GalleristPrice) }), 1);
+        SteadyHand = Add(helper, "SteadyHand", I18n.Get("profession.steady-hand"), I18n.Get("profession.steady-hand.description"), 2);
+        Visionary = Add(helper, "Visionary", I18n.Get("profession.visionary"), I18n.Get("profession.visionary.description"), 3);
+        PatronsFavorite = Add(helper, "PatronsFavorite", I18n.Get("profession.patrons-favorite"), I18n.Get("profession.patrons-favorite.description", new { percent = Percent(PatronFriendship) }), 4);
+        Prolific = Add(helper, "Prolific", I18n.Get("profession.prolific"), I18n.Get("profession.prolific.description", new { chance = ProlificSaveChance.ToString("P0") }), 5);
 
         ProfessionsForLevels.Add(new ProfessionPair(5, PleinAir, Gallerist));
         ProfessionsForLevels.Add(new ProfessionPair(10, SteadyHand, Visionary, PleinAir));
@@ -70,31 +70,31 @@ internal sealed class PaintingSkill : Skills.Skill
 
     private static string Percent(float multiplier) => $"{(multiplier - 1f) * 100f:0}%";
 
-    public override string GetName() => "Painting";
+    public override string GetName() => I18n.Get("skill.name");
 
     public override List<string> GetExtraLevelUpInfo(int level)
     {
-        var lines = new List<string> { "+3% more light per painting" };
-        if (level == PaintingRules.BroadBrushLevel) lines.Add("Broad brush: paint 2x2 cells at once");
-        if (level == PaintingRules.RulerLevel) lines.Add("Ruler: drag out perfectly straight lines");
-        if (level == PaintingRules.MirrorLevel) lines.Add("Mirror: strokes repeat across the middle");
-        if (level == PaintingRules.EyedropperLevel) lines.Add("Dropper: click the canvas to pick its color");
-        if (level == PaintingRules.CanvasUnlockLevel(CanvasKind.Medium)) lines.Add("Medium canvases: still lifes of two items");
-        if (level == PaintingRules.CanvasUnlockLevel(CanvasKind.Large)) lines.Add("Large canvases: still lifes of three items");
+        var lines = new List<string> { I18n.Get("skill.level-up.light") };
+        if (level == PaintingRules.BroadBrushLevel) lines.Add(I18n.Get("skill.level-up.broad"));
+        if (level == PaintingRules.RulerLevel) lines.Add(I18n.Get("skill.level-up.ruler"));
+        if (level == PaintingRules.MirrorLevel) lines.Add(I18n.Get("skill.level-up.mirror"));
+        if (level == PaintingRules.EyedropperLevel) lines.Add(I18n.Get("skill.level-up.dropper"));
+        if (level == PaintingRules.CanvasUnlockLevel(CanvasKind.Medium)) lines.Add(I18n.Get("skill.level-up.medium"));
+        if (level == PaintingRules.CanvasUnlockLevel(CanvasKind.Large)) lines.Add(I18n.Get("skill.level-up.large"));
         if (PaintingRules.MaxQuality(level) > PaintingRules.MaxQuality(level - 1))
-            lines.Add($"Your paintings can now reach {QualityName(PaintingRules.MaxQuality(level))} quality");
+            lines.Add(I18n.Get("skill.level-up.quality", new { quality = QualityName(PaintingRules.MaxQuality(level)) }));
         return lines;
     }
 
     public override string GetSkillPageHoverText(int level) =>
-        $"+{level * 3}% light per painting\nBest quality: {QualityName(PaintingRules.MaxQuality(level))}";
+        I18n.Get("skill.hover", new { percent = level * 3, quality = QualityName(PaintingRules.MaxQuality(level)) });
 
     private static string QualityName(int quality) => quality switch
     {
-        PaintingRules.Silver => "silver",
-        PaintingRules.Gold => "gold",
-        PaintingRules.Iridium => "iridium",
-        _ => "normal",
+        PaintingRules.Silver => I18n.Get("quality.silver.lower"),
+        PaintingRules.Gold => I18n.Get("quality.gold.lower"),
+        PaintingRules.Iridium => I18n.Get("quality.iridium.lower"),
+        _ => I18n.Get("quality.normal.lower"),
     };
 
     public static bool Has(Farmer who, Profession profession) => who.HasCustomProfession(profession);

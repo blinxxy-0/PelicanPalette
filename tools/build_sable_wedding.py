@@ -10,16 +10,19 @@ default script.
 Usage: build_sable_wedding.py <exports dir> <content pack dir>
 """
 import json, os, re, sys
+from cp_i18n import Strings
 
-VOWS = ('speak Lewis "@... %spouse...#$b#As the mayor of Pelican Town, and regional bearer of the '
-        'matrimonial seal, I now pronounce you... married!$h"')
+VOWS = ("@... %spouse...#$b#As the mayor of Pelican Town, and regional bearer of the "
+        "matrimonial seal, I now pronounce you... married!$h")
 
 
 def main():
     exports, pack = sys.argv[1], sys.argv[2]
     default = json.load(open(os.path.join(exports, "Data_Weddings.json"), encoding="utf-8"))["EventScript"]["default"]
     gendered = re.compile(r'speak Lewis "\[GenderedText \[SpouseGenderedText .*?\]\]\]\]"')
-    script, n = gendered.subn(lambda _: VOWS, default)
+    strings = Strings(pack, ["wedding."])
+    vows = 'speak Lewis "' + strings.add("wedding.vows", VOWS) + '"'
+    script, n = gendered.subn(lambda _: vows, default)
     if n != 1:
         sys.exit(f"expected the gendered vows exactly once, found {n}; has the game's wedding changed?")
     changes = {"Changes": [{
@@ -33,7 +36,8 @@ def main():
     out = os.path.join(pack, "data", "sable_wedding.json")
     with open(out, "w", encoding="utf-8") as f:
         f.write(header + json.dumps(changes, indent=2, ensure_ascii=False) + "\n")
-    print("wrote", out)
+    strings.save()
+    print("wrote", out, "and", strings.path)
 
 
 if __name__ == "__main__":
