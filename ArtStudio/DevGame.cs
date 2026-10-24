@@ -370,11 +370,11 @@ internal static class DevGame
     {
         if (!Context.IsWorldReady) return;
         if (args.FirstOrDefault() == "outside")
-            Game1.warpFarmer("Forest", 82, 36, 0);
+            Game1.warpFarmer("Forest", 83, 36, 0);
         else if (args.Length == 3 && int.TryParse(args[1], out int x) && int.TryParse(args[2], out int y))
             Game1.warpFarmer(args[0], x, y, 2);
         else
-            Game1.warpFarmer(Shop.ArtShop.LocationName, 7, 7, 0);
+            Game1.warpFarmer(Shop.ArtShop.LocationName, 9, 11, 0);
     }
 
     private static void ShopTest(IModHelper helper, IMonitor monitor, string[] args)
@@ -394,15 +394,15 @@ internal static class DevGame
         var shop = Game1.getLocationFromName(Shop.ArtShop.LocationName);
         Check(monitor, "the art shop location exists", shop != null);
         var forest = Game1.getLocationFromName("Forest");
-        string? door = forest?.doesTileHaveProperty(82, 33, "Action", "Buildings");
-        Check(monitor, "the Forest has the shop's door", door?.StartsWith("LockedDoorWarp 7 9 " + Shop.ArtShop.LocationName) == true, door ?? "none");
-        Check(monitor, "the building blocks movement", forest != null && !forest.isTilePassable(new xTile.Dimensions.Location(79, 32), Game1.viewport));
+        string? door = forest?.doesTileHaveProperty(83, 33, "Action", "Buildings");
+        Check(monitor, "the Forest has the shop's door", door?.StartsWith("LockedDoorWarp 9 13 " + Shop.ArtShop.LocationName) == true, door ?? "none");
+        Check(monitor, "the building blocks movement", forest != null && !forest.isTilePassable(new xTile.Dimensions.Location(80, 32), Game1.viewport));
         Check(monitor, "the yard fence blocks movement", forest != null && !forest.isTilePassable(new xTile.Dimensions.Location(78, 37), Game1.viewport));
-        Check(monitor, "the yard gate is open", forest != null && forest.isTilePassable(new xTile.Dimensions.Location(82, 37), Game1.viewport));
+        Check(monitor, "the yard gate is open", forest != null && forest.isTilePassable(new xTile.Dimensions.Location(83, 37), Game1.viewport));
         Check(monitor, "the signpost has its action", forest?.doesTileHaveProperty(87, 33, "Action", "Buildings") == ModEntry.Id + "_Sign");
         Check(monitor, "the shop's counter has its action", shop?.doesTileHaveProperty(3, 5, "Action", "Buildings") == ModEntry.Id + "_Counter");
-        Check(monitor, "the commission board has its action", shop?.doesTileHaveProperty(9, 3, "Action", "Buildings") == ModEntry.Id + "_Board");
-        Check(monitor, "the shop's exit leads back to the Forest", shop?.warps.Any(w => w.TargetName == "Forest" && w.TargetX == 82 && w.TargetY == 34) == true);
+        Check(monitor, "the commission board has its action", shop?.doesTileHaveProperty(7, 3, "Action", "Buildings") == ModEntry.Id + "_Board");
+        Check(monitor, "the shop's exit leads back to the Forest", shop?.warps.Any(w => w.TargetName == "Forest" && w.TargetX == 83 && w.TargetY == 34) == true);
 
         var stock = DataLoader.Shops(Game1.content).TryGetValue(Shop.ArtShop.ShopId, out var data) ? data : null;
         Check(monitor, "the shop has stock", stock?.Items?.Count > 10, $"{stock?.Items?.Count ?? 0} entries");
@@ -633,12 +633,18 @@ internal static class DevGame
         if (!Context.IsWorldReady) return;
         foreach (string locationName in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
         {
-            var location = Game1.getLocationFromName(locationName);
             var events = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + locationName);
             foreach (var (key, script) in events.Where(e => e.Key.StartsWith(ModEntry.Id)))
             {
                 string id = key.Split('/')[0];
                 var commands = Event.ParseCommands(script);
+                // An event that moves to a temporary map before anyone walks
+                // (the exhibition's gallery) is checked against that map.
+                var location = Game1.getLocationFromName(locationName);
+                string? temporary = commands.Skip(3).TakeWhile(c => !c.StartsWith("move "))
+                    .FirstOrDefault(c => c.StartsWith("changeToTemporaryMap "))?.Split(' ')[1];
+                if (temporary != null)
+                    location = new GameLocation("Maps\\" + temporary, "Temp");
                 var at = new System.Collections.Generic.Dictionary<string, Point>();
                 var props = new System.Collections.Generic.HashSet<Point>();
                 var problems = new System.Collections.Generic.List<string>();

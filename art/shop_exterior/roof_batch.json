@@ -1,0 +1,42 @@
+{
+  "batch": "stardew-artshop-roof",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {"width": 112, "height": 112},
+    "no_background": true,
+    "style_usage": "Stardew Valley building pixel art: palette, outline weight, how the roofs are shaded in rows of tiles or shingles with light ridges, dark gable edges and deep shadow under the eaves, and the high top-down front camera where the roof fills over half the building",
+    "reference_usage": "camera, silhouette and roof planes: the lighter teal is roof facing up toward the viewer, the darker teal is roof facing forward, the darkest band is the shadow under the eaves; keep this outline and the roof taking more than half the height"
+  },
+  "jobs": {
+    "gable_a": {
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/roof_gable_guide.png",
+      "description": "a cozy art supply shop in Stardew Valley pixel art, seen from above and in front like the town buildings: a big deep blue-green wooden shingle roof filling the top half, rows of shingles with light ridge highlights and darker lower rows, a front-facing gable on the left with a round attic window, a brick chimney, dark shadow under the eaves; warm cream walls with brown timber beams, a wide display window full of small colorful paintings, a green wooden door, a palette-shaped hanging sign, potted flowers. Building only, transparent background."
+    },
+    "gable_b": {
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/roof_gable_guide.png",
+      "description": "Stardew Valley style painter's shop building, high top-down front view: a large teal tiled roof that takes up most of the building, shaded in planes, lighter where it faces up and darker where it faces forward, with a front gable over the shop window and a chimney; cream plaster and dark wood beams below, a big paned shop window showing paintings on easels, a green door with a little window, flowers in pots by the door. Building only, nothing around it, transparent background."
+    },
+    "cross_a": {
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/shop_style.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/roof_cross_guide.png",
+      "description": "a small art supply shop cottage in Stardew Valley pixel art, built like Leah's cottage: two roof sections in blue-green shingles seen from above, a wide roof on the left and a tall front gable on the right over the door, shingle rows shaded light at the top and dark at the bottom, dark eave shadows, a brick chimney; cream walls with brown timber frame, a wide display window full of colorful paintings, a green door, a palette-shaped shop sign, flowers. Building only, transparent background."
+    },
+    "cross_b": {
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/roof_cross_guide.png",
+      "description": "Stardew Valley pixel art art shop, high front view from above: a deep teal shingle roof in two parts, a broad roof on the left and a steep gable facing front on the right, strong shading between the roof planes and a light ridge line, chimney on the left; warm cream walls with timber beams, a large window full of paintings, a green door under the gable, a hanging palette sign, flower pots. Building only, transparent background."
+    },
+    "dormer_a": {
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/roof_dormer_guide.png",
+      "description": "a charming art supply shop in Stardew Valley pixel art, seen from above and in front: a tall steep blue-green shingle roof covering the top half, rows of shingles shaded from a light ridge to darker eaves, a small dormer window with its own little roof set into the slope, a brick chimney, deep shadow under the eaves; cream walls with brown beams, a wide display window of small paintings, a green door, a palette-shaped hanging sign, potted flowers. Building only, transparent background."
+    },
+    "dormer_b": {
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/shop_style.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/roof_dormer_guide.png",
+      "description": "Stardew Valley style cottage shop for painters, high top-down front view: a big teal wooden shingle roof filling most of the picture with a dormer window and a chimney, the roof clearly three dimensional with light upper rows and shadowed lower rows; cream walls, timber beams, a display window full of colorful paintings, a green door, a palette sign on an iron bracket, flowers. Building only, transparent background."
+    }
+  }
+}

@@ -11,13 +11,20 @@
       "Target": "Maps/blinxxy.MuseArt_ArtShop",
       "FromFile": "assets/ArtShop.tmx"
     },
+    // The same room dressed as a gallery, for Sable's exhibition (the
+    // 14-heart event switches to it with changeToTemporaryMap).
+    {
+      "Action": "Load",
+      "Target": "Maps/blinxxy.MuseArt_ArtShopGallery",
+      "FromFile": "assets/ArtShopGallery.tmx"
+    },
     {
       "Action": "EditData",
       "Target": "Data/Locations",
       "Entries": {
         "blinxxy.MuseArt_ArtShop": {
           "DisplayName": "{{i18n:location.art-shop}}",
-          "DefaultArrivalTile": { "X": 7, "Y": 9 },
+          "DefaultArrivalTile": { "X": 9, "Y": 13 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ArtShop" }
         }
       }
@@ -30,7 +37,7 @@
       "Action": "EditMap",
       "Target": "Maps/Forest",
       "FromFile": "assets/ArtShopExteriorPatch.tmx",
-      "ToArea": { "X": 76, "Y": 28, "Width": 13, "Height": 11 },
+      "ToArea": { "X": 76, "Y": 27, "Width": 13, "Height": 12 },
       "PatchMode": "Overlay"
     },
 

@@ -1,0 +1,173 @@
+{
+  "batch": "stardew-artshop-interior",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "no_background": true,
+    "style_usage": "Stardew Valley interior pixel art: palette, outline weight, how goods on shelves are drawn as small bright shapes in rows, wood grain and shading, and the high top-down front camera where furniture shows its front with the top as a band above it",
+    "reference_usage": "camera and outline: the front face square-on with its top seen as a band above it; keep this size and shape, bottom edge on the floor"
+  },
+  "jobs": {
+    "shelf_paints": {
+      "image_size": {
+        "width": 64,
+        "height": 64
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/shelf_unit_guide.png",
+      "description": "one freestanding art supply store shelf in Stardew Valley style: a warm wooden shop shelf, or a white painted shop shelf, with three shelves stocked in neat rows of colorful paint tubes, little jars of pigment, and bottles of ink, with a few bigger jars and a cup of brushes standing on top. Furniture only, transparent background."
+    },
+    "shelf_brushes": {
+      "image_size": {
+        "width": 64,
+        "height": 64
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/shelf_unit_guide.png",
+      "description": "one freestanding craft store shelf in Stardew Valley style: wooden shelves stocked with rows of paintbrushes in cups, sketchbooks and paper pads, boxes of colored pencils, pastels, balls of yarn, with rolled paper and a jar of brushes on top. Furniture only, transparent background."
+    },
+    "shelf_mixed": {
+      "image_size": {
+        "width": 64,
+        "height": 64
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/shelf_unit_guide.png",
+      "description": "one shop display shelf of art supplies, Stardew Valley pixel art: either a shelf of paint jars sorted by color like a rainbow, or a shelf of small canvases, palettes and palette knives, or a shelf of clay, glue, scissors and craft paper; a few items standing on the top. Furniture only, transparent background."
+    },
+    "wall_racks": {
+      "image_size": {
+        "width": 64,
+        "height": 64
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_bins.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/wall_shelf_guide.png",
+      "description": "one tall narrow piece of shop furniture standing against a wall, Stardew Valley pixel art: a pegboard hung with brushes, scissors and palette knives, or a wooden cubby shelf full of colored paper and paint tubes sorted by color, or a rack of blank canvases of different sizes standing upright. Furniture only, transparent background."
+    },
+    "props_bins": {
+      "image_size": {
+        "width": 32,
+        "height": 32
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_bins.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/small_prop_guide.png",
+      "description": "one small art shop prop on the floor, Stardew Valley pixel art: a wooden crate full of paint tubes, or a barrel of paintbrushes, or a bin of rolled paper, or a basket of yarn balls, or a stack of blank canvases, or a crate of picture frames. Prop only, transparent background."
+    },
+    "paintings": {
+      "image_size": {
+        "width": 32,
+        "height": 32
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/leah_wall.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/painting_guide.png",
+      "description": "one framed painting to hang on a wall, Stardew Valley pixel art: a landscape of a valley river, or a seaside with a lighthouse, or mountains at sunset, or a still life of fruit in a bowl, or a bunch of flowers, or a farmhouse in snow, or a night sky over a forest, or an abstract of bold color shapes; wooden or gold frame. Painting only, transparent background."
+    },
+    "gallery": {
+      "image_size": {
+        "width": 64,
+        "height": 64
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/wall_shelf_guide.png",
+      "description": "one piece of art gallery exhibition furniture, Stardew Valley pixel art: a white display plinth with a small sculpture on top, or a freestanding white gallery wall panel with one framed painting on it, or a pair of brass posts with a red velvet rope, or a small round table with wine glasses and cheese, or a tall spotlight on a stand. Furniture only, transparent background."
+    },
+    "low_paints": {
+      "image_size": {
+        "width": 64,
+        "height": 64
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/low_shelf_guide.png",
+      "description": "one low wide display shelf for the middle of an art supply shop floor, Stardew Valley pixel art, waist high: a warm wooden shelf with two shelves stocked in neat rows of colorful paint tubes, pigment jars and ink bottles, and a row of bigger paint jars and brush cups standing on the top. Furniture only, transparent background."
+    },
+    "low_craft": {
+      "image_size": {
+        "width": 64,
+        "height": 64
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/low_shelf_guide.png",
+      "description": "one low wide shop display shelf, Stardew Valley pixel art, waist high: wooden, with two shelves of sketchbooks, paper pads, boxes of colored pencils and pastels, balls of yarn, or small blank canvases and palettes, and a few things standing on top. Furniture only, transparent background."
+    },
+    "small_paints": {
+      "image_size": {
+        "width": 48,
+        "height": 48
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/low_shelf_small_guide.png",
+      "description": "one small low display shelf for an art supply shop, Stardew Valley pixel art, 3 tiles wide and knee high: a warm wooden shelf with two shelves of neat rows of colorful paint tubes and little pigment jars, a few brush cups on top. Small and simple like Pierre's shop shelves. Furniture only, transparent background."
+    },
+    "small_craft": {
+      "image_size": {
+        "width": 48,
+        "height": 48
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/low_shelf_small_guide.png",
+      "description": "one small low display shelf for a craft store, Stardew Valley pixel art, 3 tiles wide and knee high: wooden, two shelves of sketchbooks, paper pads, colored pencil boxes and balls of yarn, a palette on top. Small and simple like Pierre's shop shelves. Furniture only, transparent background."
+    },
+    "small_racks": {
+      "image_size": {
+        "width": 48,
+        "height": 48
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_bins.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/tall_rack_small_guide.png",
+      "description": "one narrow bookcase-sized piece of art shop furniture against a wall, Stardew Valley pixel art, 2 tiles wide and 3 tall like Leah's bookcase: a cubby shelf of colored paper and paint tubes, or a rack of upright blank canvases, or a shelf of jars and brushes. Furniture only, transparent background."
+    },
+    "side_column": {
+      "image_size": {
+        "width": 32,
+        "height": 96
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_bins.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/side_column_guide.png",
+      "description": "a narrow column of wooden cubbies fixed to a shop's left wall, Stardew Valley pixel art, exactly like the column of seed bins on the left wall of Pierre's shop: one tile wide, five cubbies stacked top to bottom, each full of paint tubes or pigment jars of one color, red, yellow, green, blue, purple. Only the column on the left, transparent background."
+    },
+    "small_paintings": {
+      "image_size": {
+        "width": 32,
+        "height": 32
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/leah_wall.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/painting_small_guide.png",
+      "description": "one small framed painting hung on a wall, Stardew Valley pixel art, the size of the paintings in Leah's house: a landscape of a river valley, or a lighthouse by the sea, or mountains at sunset, or a still life of fruit, or flowers in a vase, or a snowy cabin, or a night sky, or a bold abstract of color blocks or stripes. Wooden or gold frame, painting only, transparent background."
+    },
+    "small_gallery": {
+      "image_size": {
+        "width": 48,
+        "height": 48
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/gallery_small_guide.png",
+      "description": "one piece of art gallery exhibition furniture, small, Stardew Valley pixel art: a freestanding white gallery panel with one framed painting, or a white panel with a few small framed portraits, or a white plinth with a small bust, or a small round table with wine glasses and cheese. At most 3 tiles wide. Furniture only, transparent background."
+    },
+    "wall_bins": {
+      "image_size": {
+        "width": 32,
+        "height": 32
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/pierre_bins.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/wall_bin_guide.png",
+      "description": "one small open wooden bin seen from above, Stardew Valley pixel art, exactly like the seed bins along the left wall of Pierre's shop, full of one kind of art supply: paint tubes of one color, or paintbrushes, or colored pencils, or chalk pastels, or balls of yarn, or rolled paper, or blocks of clay, or tubes of glitter, or crayons, or sticks of charcoal. Bin only, transparent background."
+    },
+    "front_paints": {
+      "image_size": {
+        "width": 48,
+        "height": 48
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/style_front_shelf.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/low_shelf_small_guide.png",
+      "description": "one small low display shelf for an art supply shop, Stardew Valley pixel art, the same front-facing angle, size and wood as the style image: two shelves with neat rows of colorful paint tubes, pigment jars and ink bottles, brush cups and a jar on top. Furniture only, transparent background."
+    },
+    "band_paintings": {
+      "image_size": {
+        "width": 32,
+        "height": 32
+      },
+      "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/leah_wall.png",
+      "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_interior/painting_band_guide.png",
+      "description": "one small framed painting hung on a wall, Stardew Valley pixel art, small like the paintings in Leah's house, wider than tall: a river valley, a lighthouse, mountains at sunset, a still life of fruit, flowers in a vase, a snowy cabin, a night sky, a farm field, or a bold abstract of color blocks or stripes. Wooden or gold frame, painting only, transparent background."
+    }
+  }
+}

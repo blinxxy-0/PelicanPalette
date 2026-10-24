@@ -34,7 +34,7 @@ def events():
 
     # ---- 2 hearts: "Don't laugh" (the shop, after closing) ----------------
     shop["blinxxy.MuseArt_Sable2h/Friendship Sable 500/Time 1800 2000/!DayOfWeek Wed"] = script(
-        "continue", "10 6", "farmer 7 9 0 Sable 12 8 0", "skippable",
+        "continue", "11 9", "farmer 9 13 0 Sable 14 12 0", "skippable",
         "pause 800", "move farmer 0 -1 0", "move farmer 4 0 1", "pause 600",
         "emote Sable 16", "faceDirection Sable 3", "pause 300",
         speak("Sable", "Oh. It's after hours.$6#$b#...You can stay. Don't touch anything."),
@@ -85,8 +85,8 @@ def events():
     # Your answer is remembered (mail flags) for the 10-heart event, and the
     # next day Sable says what they did with the letter.
     shop["blinxxy.MuseArt_Sable6h/Friendship Sable 1500/Time 1800 2000/SawEvent blinxxy.MuseArt_Sable4h"] = script(
-        "continue", "5 5", "farmer 7 9 0 Sable 3 4 2", "skippable",
-        "pause 600", "move farmer 0 -3 0", "move farmer -4 0 3", "faceDirection farmer 0", "pause 600",
+        "continue", "5 7", "farmer 9 13 0 Sable 3 4 2", "skippable",
+        "pause 600", "move farmer 0 -7 0", "move farmer -6 0 3", "faceDirection farmer 0", "pause 600",
         speak("Sable", "The Zuzu City Museum wants me back. Head of restoration. Double the pay, my old studio. A window.$s"),
         "pause 400",
         speak("Sable", "I told myself I came here for the painting. But I've been restoring it for a year. I could finish it tomorrow."),
@@ -133,9 +133,9 @@ def events():
     # The first line answers your 6-heart choice, and the portrait is made
     # from your farmer as they look today (both by the C# mod's event commands).
     shop["blinxxy.MuseArt_Sable10h/Dating Sable/Friendship Sable 2500/Time 1800 2000/SawEvent blinxxy.MuseArt_Sable8h"] = script(
-        "continue", "7 6", "farmer 7 9 0 Sable 8 7 3", "skippable",
-        "addBigProp 7 6 blinxxy.MuseArt_Easel",
-        "pause 700", "move farmer 0 -1 0", "pause 500",
+        "continue", "9 9", "farmer 9 13 0 Sable 10 10 3", "skippable",
+        "addBigProp 9 8 blinxxy.MuseArt_Easel",
+        "pause 700", "move farmer 0 -3 0", "pause 500",
         "blinxxy.MuseArt_LetterAnswer",
         speak("Sable", "It's the first original I've finished in ten years.#$b#Don't say anything until you've looked at it properly."),
         "pause 400", "faceDirection Sable 0", "pause 300",
@@ -154,9 +154,12 @@ def events():
 
     # ---- 14 hearts: the exhibition (married; the shop, a sunny evening) ----
     shop["blinxxy.MuseArt_Sable14h/Spouse Sable/Friendship Sable 3500/Time 1800 2000/Weather sunny/SawEvent blinxxy.MuseArt_Sable10h"] = script(
-        "continue", "8 6",
-        "farmer 7 9 0 Sable 12 8 0 Evelyn 8 4 0 George 7 4 0 Leah 11 5 0 Elliott 6 6 1 Emily 6 4 0 Haley 10 5 3 Robin 2 6 0 Lewis 5 8 1",
+        "continue", "9 8",
+        "farmer 9 13 0 Sable 16 12 0 Evelyn 6 10 0 George 7 10 0 Leah 13 10 0 Elliott 10 7 1 Emily 3 6 0 Haley 11 8 3 Robin 12 5 0 Lewis 10 11 0",
         "skippable",
+        # The same room dressed as a gallery (Maps/blinxxy.MuseArt_ArtShopGallery):
+        # panels, wine, a bust; the shelves cleared from the floor.
+        "changeToTemporaryMap blinxxy.MuseArt_ArtShopGallery false",
         "pause 800", "move farmer 0 -1 0", "pause 500",
         "message " + q("Sable's paintings hang on every wall. Evelyn's landscape is in the middle, and your portrait is beside it."),
         "pause 300", "faceDirection Lewis 0",
@@ -170,7 +173,7 @@ def events():
         speak("Robin", "I built every one of those frames, you know. Just saying."),
         speak("Evelyn", "Forty years, and it's back on a wall in the forest. Isn't that something, George?"),
         speak("George", "Hmph. Best painting in the room.#$b#...After the farmer's."),
-        "pause 500", "move Sable -4 0 3", "faceDirection farmer 1", "pause 300",
+        "pause 500", "move Sable -6 0 3", "faceDirection farmer 1", "pause 300",
         speak("Sable", "Ten years of nothing. Then one farmer walks in with a lot of brown on them.$l"),
         "pause 300",
         speak("Sable", "Thank you for ruining my quiet, empty life.$h"),

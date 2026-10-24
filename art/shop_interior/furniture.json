@@ -1,0 +1,200 @@
+{
+ "bins_column": {
+  "x": 0,
+  "y": 0,
+  "w": 2,
+  "h": 7
+ },
+ "rack_cubbies": {
+  "x": 2,
+  "y": 0,
+  "w": 3,
+  "h": 3
+ },
+ "rack_canvases": {
+  "x": 5,
+  "y": 0,
+  "w": 3,
+  "h": 3
+ },
+ "rack_paper": {
+  "x": 8,
+  "y": 0,
+  "w": 3,
+  "h": 3
+ },
+ "gallery_panel_landscape": {
+  "x": 11,
+  "y": 0,
+  "w": 2,
+  "h": 3
+ },
+ "gallery_panel_portraits": {
+  "x": 13,
+  "y": 0,
+  "w": 2,
+  "h": 3
+ },
+ "gallery_wine": {
+  "x": 0,
+  "y": 7,
+  "w": 2,
+  "h": 3
+ },
+ "gallery_bust": {
+  "x": 2,
+  "y": 7,
+  "w": 1,
+  "h": 3
+ },
+ "low_paints": {
+  "x": 3,
+  "y": 7,
+  "w": 3,
+  "h": 2
+ },
+ "low_tubes": {
+  "x": 6,
+  "y": 7,
+  "w": 3,
+  "h": 2
+ },
+ "low_craft": {
+  "x": 9,
+  "y": 7,
+  "w": 3,
+  "h": 2
+ },
+ "low_craft_b": {
+  "x": 12,
+  "y": 7,
+  "w": 3,
+  "h": 2
+ },
+ "crate_tubes": {
+  "x": 0,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "barrel_brushes": {
+  "x": 2,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "bin_paper": {
+  "x": 4,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "basket_yarn": {
+  "x": 6,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "stack_canvases": {
+  "x": 8,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "crate_frames": {
+  "x": 10,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "painting_river": {
+  "x": 12,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "painting_lighthouse": {
+  "x": 14,
+  "y": 10,
+  "w": 2,
+  "h": 2
+ },
+ "painting_sunset_sea": {
+  "x": 0,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_snow_cabin": {
+  "x": 2,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_night": {
+  "x": 4,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_flowers": {
+  "x": 6,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_fruit_jug": {
+  "x": 8,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_cabin": {
+  "x": 10,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_tree": {
+  "x": 12,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_blocks": {
+  "x": 14,
+  "y": 12,
+  "w": 2,
+  "h": 2
+ },
+ "painting_mosaic": {
+  "x": 0,
+  "y": 14,
+  "w": 2,
+  "h": 2
+ },
+ "painting_stripes": {
+  "x": 2,
+  "y": 14,
+  "w": 2,
+  "h": 2
+ },
+ "easel_lighthouse": {
+  "x": 4,
+  "y": 14,
+  "w": 1,
+  "h": 2
+ },
+ "easel_sunset": {
+  "x": 5,
+  "y": 14,
+  "w": 1,
+  "h": 2
+ },
+ "easel_tree": {
+  "x": 6,
+  "y": 14,
+  "w": 1,
+  "h": 2
+ }
+}

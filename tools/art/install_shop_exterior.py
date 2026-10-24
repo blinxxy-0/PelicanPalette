@@ -1,10 +1,15 @@
 """Installs the art shop's exterior from its PixelLab render.
 
-Takes shop_b_1 (the user's pick, 2026-10-23: a classic storefront with a
-big roof seen from above, like Leah's cottage), and crops it to exactly
-6x6 tiles, so it can be used as a map tilesheet. Renders with chimney
-smoke baked in (shop_a_1 had some) get rows 0..SMOKE_BOTTOM cleared first;
-the game draws its own smoke.
+Takes gable_b_1 (the user's pick, 2026-10-24, from the deeper-roof batch
+art/shop_exterior/roof_batch.json: a big teal roof with a front gable over
+the display window and a chimney on the right) and sets it on a 7x7-tile
+sheet so it can be used as a map tilesheet: its base on the bottom row,
+its right edge on the sheet's (which puts the door inside one tile
+column). The puff of smoke drawn above the chimney is cleared: it's a loose
+cluster of pixels apart from the building, and a painted puff never moves.
+
+The first exterior (shop_b_1, 2026-10-23, 6x6) had a short, flat roof; the
+user found it "almost 2d" next to the game's buildings.
 
 Usage: install_shop_exterior.py <render.png> <out tilesheet.png> [mockup args...]
   mockup: --mock <exports dir> <map x> <map y> <out.png>
@@ -14,18 +19,21 @@ Usage: install_shop_exterior.py <render.png> <out tilesheet.png> [mockup args...
 import os, subprocess, sys
 from PIL import Image
 
-SMOKE_BOTTOM = -1          # last row of baked-in smoke to clear (-1: none in shop_b_1)
-CROP = (8, 8, 104, 104)    # 96x96: the building, base on the bottom row
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_shop_furniture import drop_specks
+
+TILES = 7
 
 
 def install(src, out):
     im = Image.open(src).convert("RGBA")
-    px = im.load()
-    for y in range(SMOKE_BOTTOM + 1):
-        for x in range(im.width):
-            px[x, y] = (0, 0, 0, 0)
-    sheet = im.crop(CROP)
-    assert sheet.getbbox()[3] == sheet.height, "building base must sit on the bottom row"
+    im.putalpha(im.getchannel("A").point(lambda a: 255 if a >= 128 else 0))
+    building = drop_specks(im)
+    building = building.crop(building.getbbox())
+    size = TILES * 16
+    assert building.width <= size and building.height <= size
+    sheet = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    sheet.alpha_composite(building, (size - building.width, size - building.height))
     sheet.save(out)
     return sheet
 

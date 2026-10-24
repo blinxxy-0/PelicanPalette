@@ -7,7 +7,7 @@ sheet frame for frame: the body spans rows 6-32 or 7-32 with the same
 Fixes on top of the render:
   - The back view showed the apron as a cream panel over the whole back.
     Aprons tie behind, so the cream there becomes the turtleneck's rust,
-    with the apron's straps and waist tie added back in cream.
+    with the apron's straps added back in cream, crossed in an X.
   - Vanilla clean-up: no pure-black outlines, and one shared palette
     (vanilla NPC frames measure 10-30 colours).
 
@@ -71,19 +71,17 @@ def fix_back_view(sheet):
         left, right = xs[0], xs[-1]
         for x, y in cream:
             px[x, y] = rust_for(px[x, y], ramp) + (255,)
-        # Two straps down the back and a small bow at the waist, at a fixed
-        # height on the body (from the top of the head) so they don't jump
-        # between frames; the head-bob carries them with the body.
+        # The straps cross in an X between the shoulder blades. It's centred
+        # on the shoulders (not on wherever the render's cream was, which sat
+        # off to one side) and hangs at a fixed height from the top of the
+        # head, so the head-bob carries it and it doesn't jump between frames.
         head = sheet.crop((x0, y0, x0 + 16, y0 + 32)).getbbox()[1] + y0
-        waist = head + 16
-        for y in range(head + 11, waist):
-            for x in (left + 2, right - 2):
-                if px[x, y][3]:
-                    px[x, y] = light
-        middle = (left + right) // 2
-        for x, y in ((middle, waist), (middle - 1, waist - 1), (middle + 1, waist - 1), (middle - 1, waist + 1), (middle + 1, waist + 1)):
-            if px[x, y][3]:
-                px[x, y] = light
+        shoulders = [x for x in range(x0, x0 + 16) if px[x, head + 11][3]]
+        mid = (shoulders[0] + shoulders[-1]) // 2          # left of the centre pair
+        for dy, dx in enumerate((2, 1, 0, 0, 1, 2)):
+            for x in (mid - dx, mid + 1 + dx):
+                if px[x, head + 11 + dy][3]:
+                    px[x, head + 11 + dy] = light
     return sheet
 
 

@@ -1,9 +1,11 @@
 """Builds the map patch that puts the art shop and its yard into Cindersap
 Forest, in the open grass west of the path down from Marnie's ranch.
 
-The 6x6-tile building (ArtShopExterior.png) is its own tilesheet: its wall
+The 7x7-tile building (ArtShopExterior.png) is its own tilesheet: its wall
 rows go on Buildings (blocking movement), the roof on Front (the farmer
-walks behind it), and its door tiles get a LockedDoorWarp into the shop.
+walks behind it), and its door tile gets a LockedDoorWarp into the shop.
+It was 6x6 until the deeper roof (2026-10-24), which grew it a row upward;
+the yard stayed where it was in the Forest.
 Around it, vanilla Forest tiles make a yard like the other houses have:
 a wooden fence on the west and south (Marnie's fence pieces) with a gate
 onto the riverside path, stepping stones from the door to the gate and
@@ -22,12 +24,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "art
 from stepping_stones import tiles as stone_tiles
 from xml.sax.saxutils import quoteattr
 
-PATCH_X, PATCH_Y, W, H = 76, 28, 13, 11     # Forest tiles 76-88, 28-38
+PATCH_X, PATCH_Y, W, H = 76, 27, 13, 12     # Forest tiles 76-88, 27-38
 HOUSE_X, HOUSE_Y = 2, 0                       # building's top-left within the patch
-HOUSE = 6
-WALL_ROWS = (3, 4, 5)                         # rows of the building sheet that are walls
-DOOR_COLS = (3, 4)                            # columns of its door (bottom row)
-DOOR_ACTION = "LockedDoorWarp 7 9 blinxxy.MuseArt_ArtShop 900 2000"
+HOUSE = 7
+WALL_ROWS = (4, 5, 6)                         # rows of the building sheet that are walls
+DOOR_COLS = (5,)                              # columns of its door (bottom row)
+DOOR_ACTION = "LockedDoorWarp 9 13 blinxxy.MuseArt_ArtShop 900 2000"
+YARD_Y = 1                                    # the yard's rows, below the patch's top row (the roof's)
 SIGN_ACTION = "blinxxy.MuseArt_Sign"
 
 # Vanilla Forest tiles (spring_outdoorsTileSheet, which the game swaps per season).
@@ -78,9 +81,9 @@ def main():
         actions.append(("Buildings", HOUSE_X + c, door_y, DOOR_ACTION))
 
     # Fence: down the west side from beside the house, then along the south.
-    fence_x, fence_y = 0, 9
-    put("Front", fence_x, 3, POST_CAP)
-    for y in range(4, fence_y - 1):
+    fence_x, fence_y = 0, 9 + YARD_Y
+    put("Front", fence_x, 3 + YARD_Y, POST_CAP)
+    for y in range(4 + YARD_Y, fence_y - 1):
         put("Buildings", fence_x, y, POST)
     put("Buildings", fence_x, fence_y - 1, CORNER_UPPER)
     put("Buildings", fence_x, fence_y, CORNER)
@@ -104,13 +107,13 @@ def main():
 
     # Barrels by the west fence, a display easel in the yard, a signpost by the path.
     for x in (1, 2):
-        put("Front", x, 6, BARREL_FRONT)
-        put("Buildings", x, 7, BARREL_BASE)
-    put("Front", 4, 6, YARD_FIRST)
-    put("Buildings", 4, 7, YARD_FIRST + 1)
-    put("Front", 11, 4, SIGN_FRONT)
-    put("Buildings", 11, 5, SIGN_BASE)
-    actions.append(("Buildings", 11, 5, SIGN_ACTION))
+        put("Front", x, 6 + YARD_Y, BARREL_FRONT)
+        put("Buildings", x, 7 + YARD_Y, BARREL_BASE)
+    put("Front", 4, 6 + YARD_Y, YARD_FIRST)
+    put("Buildings", 4, 7 + YARD_Y, YARD_FIRST + 1)
+    put("Front", 11, 4 + YARD_Y, SIGN_FRONT)
+    put("Buildings", 11, 5 + YARD_Y, SIGN_BASE)
+    actions.append(("Buildings", 11, 5 + YARD_Y, SIGN_ACTION))
 
     write(os.path.join(out_dir, "ArtShopExteriorPatch.tmx"), layers, actions)
     print("wrote patch; door at Forest", PATCH_X + door_x - 1, PATCH_Y + door_y, "-", PATCH_X + door_x, PATCH_Y + door_y,
