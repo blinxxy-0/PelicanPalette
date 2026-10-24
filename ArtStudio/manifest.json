@@ -1,0 +1,14 @@
+{
+  "Name": "Art Studio",
+  "Author": "blinxxy",
+  "Version": "0.1.0",
+  "Description": "Paint your own pixel-art paintings at an easel, level up a Painting skill, and sell or gift your work.",
+  "UniqueID": "blinxxy.MuseArt",
+  "EntryDll": "ArtStudio.dll",
+  "MinimumApiVersion": "4.0.0",
+  "Dependencies": [
+    { "UniqueID": "spacechase0.SpaceCore", "MinimumVersion": "1.28.0" },
+    { "UniqueID": "spacechase0.GenericModConfigMenu", "IsRequired": false }
+  ],
+  "UpdateKeys": []
+}

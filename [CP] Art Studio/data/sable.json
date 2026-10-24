@@ -1,0 +1,109 @@
+// Sable Okoro: the art shop's owner. A former Zuzu City museum restorer who
+// stopped painting their own work; they/them; marriage candidate.
+// (Heart events, the wedding and married life come in a later pack file.)
+{
+  "Changes": [
+    // ---- Who they are ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "Entries": {
+        "Sable": {
+          "DisplayName": "Sable",
+          "Gender": "Undefined",
+          "Age": "Adult",
+          "Manner": "Neutral",
+          "SocialAnxiety": "Neutral",
+          "Optimism": "Neutral",
+          "IsDarkSkinned": true,
+          "BirthSeason": "Fall",
+          "BirthDay": 9,
+          "HomeRegion": "Town",
+          "CanBeRomanced": true,
+          "Calendar": "AlwaysShown",
+          "SocialTab": "AlwaysShown",
+          // Out of town, so not part of the introductions quest.
+          "IntroductionsQuest": false,
+          // They dance (frames 40-47), visit Ginger Island, and take part in
+          // the Winter Star, giving art supplies as a secret friend.
+          "FlowerDanceCanDance": true,
+          "WinterStarGifts": [
+            { "Id": "Canvases", "ItemId": "(O)blinxxy.MuseArt_Canvas_Small", "MinStack": 3, "MaxStack": 3 },
+            { "Id": "Rose", "ItemId": "(O)blinxxy.MuseArt_Pigment_rose" },
+            { "Id": "Brush", "ItemId": "(O)blinxxy.MuseArt_Brush_sable" }
+          ],
+          "Home": [
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ArtShop", "Tile": { "X": 13, "Y": 5 }, "Direction": "up" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/Sable", "FromFile": "assets/sable/sprites.png" },
+    { "Action": "Load", "Target": "Portraits/Sable", "FromFile": "assets/sable/portraits.png" },
+
+    // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
+    // Loves: coffee, the gems that grind into pigment (amethyst, aquamarine,
+    // ruby), sweet pea, blackberry cobbler, fairy rose.
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "Entries": {
+        "Sable": "Oh. Where did you find this? I'm keeping it somewhere the light can't fade it.$h/395 66 62 64 402 611 595/That's lovely. Thank you, really.$0/330 80 205 -80 -79/...I'll find a use for it. Probably.$u/178 92 167/No. Absolutely not. Take it back before it touches anything.$a/766 154 420/Thanks. I'll put it on the shelf with the other mysteries.$0/"
+      }
+    },
+
+    // ---- A day in their life ----
+    // Mon/Tue/Thu/Sat: plein-air painting by the river first thing, then the
+    // counter 10-6. Wednesday: the shop's closed; the museum, then Evelyn's.
+    // Friday night at the Saloon. Sunday mornings at the beach.
+    {
+      "Action": "Load",
+      "Target": "Characters/schedules/Sable",
+      "FromFile": "data/sable_schedule.json"
+    },
+
+    // ---- What they say ----
+    { "Action": "Load", "Target": "Characters/Dialogue/Sable", "FromFile": "data/sable_dialogue.json" },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "Entries": {
+        "Sable": "Rain's the best light there is. Flat and honest. Nothing to hide behind.#$b#...I'm painting inside today anyway. The canvases hate the damp."
+      }
+    },
+
+    // ---- The festivals ----
+    { "Action": "Include", "FromFile": "data/sable_festivals.json" },
+
+    // ---- First visit: hanging the commission board, three canvases and a jar of rose ----
+    { "Action": "Load", "Target": "Data/Events/blinxxy.MuseArt_ArtShop", "FromFile": "data/blank.json" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Events/blinxxy.MuseArt_ArtShop",
+      "Entries": {
+        "blinxxy.MuseArt_SableIntro/": "continue/7 6/farmer 7 9 0 Sable 9 4 0/skippable/pause 500/move farmer 0 -3 0/pause 300/speak Sable \"Left a little... no. Right. ...Hm.$u\"/pause 300/emote Sable 16/faceDirection Sable 2/pause 300/move Sable -1 0 3/move Sable 0 2 2/faceDirection Sable 3/faceDirection farmer 1/speak Sable \"Oh. A customer. Or a lost farmer. Same thing, in my experience.$u#$b#I'm Sable. This is the shop. Canvases, pigments, brushes. And I buy paintings, if you make any worth buying.\"/pause 300/speak Sable \"Here. Three canvases and a jar of rose. The first ones are free. That's how they get you.$h\"/addItem (O)blinxxy.MuseArt_Canvas_Small 3/addItem (O)blinxxy.MuseArt_Pigment_rose 1/pause 300/speak Sable \"The board's for commissions. People in town want paintings of the things they love. Paint them well and they'll pay you. They'll like you more, too.#$b#The counter's open ten till six. Go make something.\"/friendship Sable 25/pause 300/end"
+      }
+    },
+
+    // ---- The grand opening letter, with two canvases to start ----
+    {
+      "Action": "EditData",
+      "Target": "Data/mail",
+      "Entries": {
+        "blinxxy.MuseArt_GrandOpening": "Hello, new neighbor.^I've opened an art supply shop in Cindersap Forest, west of the path down from Marnie's. Canvases, pigments, brushes and frames, and I buy paintings, if you ever pick up a brush.^I've put two canvases in with this. No pressure. (Some pressure.)^Open 10am to 6pm (Fridays till 5, Sundays from 1). Closed Wednesdays.^   -Sable %item id (O)blinxxy.MuseArt_Canvas_Small 2 %%[#]The art shop opens"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/TriggerActions",
+      "Entries": {
+        "blinxxy.MuseArt_GrandOpening": {
+          "Id": "blinxxy.MuseArt_GrandOpening",
+          "Trigger": "DayStarted",
+          "Condition": "DAYS_PLAYED 2, !PLAYER_HAS_MAIL Current blinxxy.MuseArt_GrandOpening Any",
+          "Actions": [ "AddMail Current blinxxy.MuseArt_GrandOpening" ]
+        }
+      }
+    }
+  ]
+}

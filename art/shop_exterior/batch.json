@@ -1,0 +1,16 @@
+{
+  "batch": "stardew-artshop-exterior",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {"width": 112, "height": 112},
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/shop_style.png",
+    "style_usage": "Stardew Valley pixel art style: palette, outline weight, shingle and plank texture, lighting, and the front-on 3/4 camera of the cottage",
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/shop_exterior/shop_guide.png",
+    "reference_usage": "exact camera angle and silhouette: front face square-on, roof seen as a band above it, no side faces visible"
+  },
+  "jobs": {
+    "shop_a": {"description": "a small cozy art supply shop cottage in Stardew Valley style, seen straight from the front: teal shingled gable roof with a small brick chimney, cream plaster walls with dark timber framing, a wide shop display window on the left showing small framed paintings and jars of paint, a wooden front door with a little round window, a hanging wooden sign above the door painted like an artist's palette, a flower box under the small right window. Isolated building only, no ground, no grass, no path, transparent background."},
+    "shop_b": {"description": "a charming painter's shop building in Stardew Valley pixel art, front elevation: blue-green wooden shingle roof, warm cream walls with brown wooden beams, a large paned display window full of colorful paintings on easels, a green wooden door, a palette-shaped shop sign hanging from an iron bracket, potted flowers by the door. Building only, nothing around it, no ground, transparent background."}
+  }
+}

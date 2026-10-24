@@ -1,0 +1,18 @@
+{
+  "batch": "stardew-sable-neutral",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {"width": 64, "height": 64},
+    "no_background": true,
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/sable_identity.png",
+    "reference_usage": "the character's identity: face, skin tone, teal-streaked dark hair, glasses on the head, rust turtleneck, cream apron straps. Keep the design, change only the framing"
+  },
+  "jobs": {
+    "neutral_leah": {"style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/style_leah.png",
+      "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: the head is large, fills about two thirds of the frame width, top of the hair near the top edge, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured outlines",
+      "description": "Stardew Valley portrait of Sable, nonbinary painter: warm brown skin, short dark hair with a bold teal fringe sweeping to one side, round glasses pushed up on top of the head, silver hoop earring, rust orange turtleneck, cream canvas apron straps with tiny paint flecks, faint calm smile. Close bust portrait, head large in frame, three-quarter view"},
+    "neutral_elliott": {"style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/style_elliott.png",
+      "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured outlines",
+      "description": "Stardew Valley portrait of Sable, nonbinary painter: warm brown skin, short dark hair with a bold teal fringe sweeping to one side, round glasses pushed up on top of the head, silver hoop earring, rust orange turtleneck, cream canvas apron straps with tiny paint flecks, faint calm smile. Close bust portrait, head large in frame, three-quarter view"}
+  }
+}

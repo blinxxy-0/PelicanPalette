@@ -1,0 +1,93 @@
+{
+  "Format": "2.9.0",
+  "DynamicTokens": [
+    { "Name": "ShopId", "Value": "blinxxy.MuseArt_ArtShop" },
+    { "Name": "PaintingLevel", "Value": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current" }
+  ],
+  "Changes": [
+    // The shop's interior: a new location with its own map.
+    {
+      "Action": "Load",
+      "Target": "Maps/blinxxy.MuseArt_ArtShop",
+      "FromFile": "assets/ArtShop.tmx"
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_ArtShop": {
+          "DisplayName": "Art Supply Shop",
+          "DefaultArrivalTile": { "X": 7, "Y": 9 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ArtShop" }
+        }
+      }
+    },
+
+    // The building and its yard, in the quiet grass west of the path down
+    // from Marnie's (Leah's cottage is further east). The door leads inside
+    // between 9am and 8pm; a gate opens onto the riverside path.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/Forest",
+      "FromFile": "assets/ArtShopExteriorPatch.tmx",
+      "ToArea": { "X": 76, "Y": 28, "Width": 13, "Height": 11 },
+      "PatchMode": "Overlay"
+    },
+
+    // Sable, who runs the shop.
+    { "Action": "Include", "FromFile": "data/sable.json" },
+
+    // What the shop sells. Stock widens with the Painting skill. It also
+    // buys paintings (at a premium; see the C# mod).
+    {
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "Entries": {
+        "{{ShopId}}": {
+          // Sable serves from behind the counter (see data/sable.json for
+          // their hours); otherwise the shop is closed.
+          "Owners": [
+            {
+              "Id": "Sable",
+              "Name": "Sable",
+              "Condition": "!DAY_OF_WEEK Wednesday",
+              "Dialogues": [
+                { "Id": "Canvas", "Dialogue": "Canvases are by the window. Don't buy the big ones until you've ruined a few small ones." },
+                { "Id": "Pigment", "Dialogue": "The pigments are ground fresh. Mostly. Don't sniff the cerulean." },
+                { "Id": "Brush", "Dialogue": "A good brush forgives you. A cheap one remembers everything." },
+                { "Id": "Selling", "Dialogue": "Selling? Let me see it. I'll give you a fair price. I'm the only one around here who knows what fair is." }
+              ]
+            },
+            {
+              "Id": "Closed",
+              "Name": "None",
+              "ClosedMessage": "Nobody's at the counter. Open 10am to 6pm (Fridays till 5, Sundays from 1). Closed Wednesdays."
+            }
+          ],
+          "SalableItemTags": [ "muse_painting" ],
+          "Items": [
+            { "Id": "Easel", "ItemId": "(BC)blinxxy.MuseArt_Easel", "Price": 300 },
+            { "Id": "CanvasSmall", "ItemId": "(O)blinxxy.MuseArt_Canvas_Small", "Price": 25 },
+            { "Id": "CanvasMedium", "ItemId": "(O)blinxxy.MuseArt_Canvas_Medium", "Price": 80, "Condition": "{{PaintingLevel}} 4" },
+            { "Id": "CanvasLarge", "ItemId": "(O)blinxxy.MuseArt_Canvas_Large", "Price": 200, "Condition": "{{PaintingLevel}} 7" },
+            { "Id": "Frame", "ItemId": "(O)blinxxy.MuseArt_PictureFrame", "Price": 150 },
+
+            { "Id": "Sienna", "ItemId": "(O)blinxxy.MuseArt_Pigment_sienna", "Price": 120 },
+            { "Id": "Rose", "ItemId": "(O)blinxxy.MuseArt_Pigment_rose", "Price": 120 },
+            { "Id": "Marigold", "ItemId": "(O)blinxxy.MuseArt_Pigment_marigold", "Price": 120 },
+            { "Id": "Leaf", "ItemId": "(O)blinxxy.MuseArt_Pigment_leaf", "Price": 120 },
+            { "Id": "Snow", "ItemId": "(O)blinxxy.MuseArt_Pigment_snow", "Price": 200, "Condition": "{{PaintingLevel}} 3" },
+            { "Id": "Plum", "ItemId": "(O)blinxxy.MuseArt_Pigment_plum", "Price": 200, "Condition": "{{PaintingLevel}} 3" },
+            { "Id": "Cerulean", "ItemId": "(O)blinxxy.MuseArt_Pigment_cerulean", "Price": 200, "Condition": "{{PaintingLevel}} 3" },
+            { "Id": "Violet", "ItemId": "(O)blinxxy.MuseArt_Pigment_violet", "Price": 1500, "Condition": "{{PaintingLevel}} 8" },
+
+            { "Id": "BrushFlat", "ItemId": "(O)blinxxy.MuseArt_Brush_flat", "Price": 400, "Condition": "{{PaintingLevel}} 2" },
+            { "Id": "BrushSable", "ItemId": "(O)blinxxy.MuseArt_Brush_sable", "Price": 900, "Condition": "{{PaintingLevel}} 3" },
+            { "Id": "BrushRigger", "ItemId": "(O)blinxxy.MuseArt_Brush_rigger", "Price": 1200, "Condition": "{{PaintingLevel}} 6" },
+            { "Id": "BrushIridium", "ItemId": "(O)blinxxy.MuseArt_Brush_iridium", "Price": 7500, "Condition": "{{PaintingLevel}} 9" }
+          ]
+        }
+      }
+    }
+  ]
+}

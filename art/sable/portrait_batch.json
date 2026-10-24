@@ -1,0 +1,14 @@
+{
+  "batch": "stardew-sable-portrait",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {"width": 64, "height": 64},
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/style_portraits.png",
+    "style_usage": "Stardew Valley character portraits: exact pixel density at 64x64, bust framing (head and shoulders), large expressive eyes, cel shading in 3-4 tone hue-shifted ramps, dark coloured (not black) outlines, about 30 colours, flat transparent background"
+  },
+  "jobs": {
+    "sable_a": {"description": "Stardew Valley style character portrait of Sable, an androgynous nonbinary painter around 30, warm brown skin, short asymmetric dark brown hair with one teal streak, round wire glasses pushed up on top of the head, rust orange turtleneck with sleeves rolled, cream canvas apron with small paint smears over it, small silver hoop earrings, a pencil behind one ear, calm dry slight smile, head and shoulders facing slightly left"},
+    "sable_b": {"description": "portrait of a nonbinary artist in the exact Stardew Valley portrait art style: medium-dark brown skin, neat short dark hair swept to one side with a teal dyed streak, round glasses resting on the hair, rust turtleneck, paint-splattered cream work apron straps on the shoulders, silver hoop earring, pencil tucked behind ear, thoughtful neutral expression, bust portrait, three-quarter view"}
+  }
+}

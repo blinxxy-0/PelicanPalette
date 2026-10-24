@@ -1,0 +1,21 @@
+{
+  // Shop days (Mon, Tue, Thu, Sat): painting by the river first thing, the
+  // counter 10 to 6, the commission board at closing, then the easels, and
+  // the evening at the bookshelf.
+  "spring": "800 Forest 88 40 2/1000 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 9 4 0/1900 blinxxy.MuseArt_ArtShop 12 8 0/2200 blinxxy.MuseArt_ArtShop 13 5 0",
+  // Summer: out earlier, before the light gets sharp.
+  "summer": "700 Forest 88 40 2/1000 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 9 4 0/1900 blinxxy.MuseArt_ArtShop 12 8 0/2200 blinxxy.MuseArt_ArtShop 13 5 0",
+  // Winter: too cold for the yard; painting inside before opening.
+  "winter": "800 blinxxy.MuseArt_ArtShop 12 8 0/1000 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 9 4 0/1900 blinxxy.MuseArt_ArtShop 12 8 0/2200 blinxxy.MuseArt_ArtShop 13 5 0",
+  // Rain: inside all day; the shop still opens (but not on Wednesdays; the
+  // shop data checks the day).
+  "rain": "900 blinxxy.MuseArt_ArtShop 12 8 0/1000 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 12 8 0/2200 blinxxy.MuseArt_ArtShop 13 5 0",
+  // Wednesday, the shop's closed: the museum in the morning, then tea at
+  // Evelyn's.
+  "Wed": "800 blinxxy.MuseArt_ArtShop 12 8 0/900 ArchaeologyHouse 32 8 0/1430 JoshHouse 6 20 3/1800 blinxxy.MuseArt_ArtShop 12 8 0/2200 blinxxy.MuseArt_ArtShop 13 5 0",
+  // Friday: the yard easel, the counter till 5, then the Saloon with Leah
+  // and Elliott.
+  "Fri": "800 Forest 80 36 0/1000 blinxxy.MuseArt_ArtShop 3 4 2/1700 Saloon 4 21 0/2330 blinxxy.MuseArt_ArtShop 13 5 0",
+  // Sunday: the beach in the morning; the shop opens after lunch.
+  "Sun": "700 Beach 46 22 2/1130 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 9 4 0/1900 blinxxy.MuseArt_ArtShop 12 8 0/2200 blinxxy.MuseArt_ArtShop 13 5 0"
+}

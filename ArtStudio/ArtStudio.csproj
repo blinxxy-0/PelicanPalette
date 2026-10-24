@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>ArtStudio</AssemblyName>
+    <RootNamespace>ArtStudio</RootNamespace>
+    <Version>0.1.0</Version>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnableHarmony>true</EnableHarmony>
+    <ModFolderName>ArtStudio</ModFolderName>
+    <!-- .NET 6 is past end of life, but it's what Stardew 1.6 runs on. -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <!-- SpaceCore is built against a newer System.Reflection.Metadata; the game supplies its own at runtime. -->
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
+  </ItemGroup>
+
+  <!-- The Content Patcher pack (the shop's building, interior and stock) deploys alongside. -->
+  <ItemGroup>
+    <ContentPacks Include="..\[CP] Art Studio" Version="$(Version)" />
+  </ItemGroup>
+
+  <!-- SpaceCore provides the custom skill framework; it's installed alongside, never bundled. -->
+  <ItemGroup>
+    <Reference Include="SpaceCore">
+      <HintPath>$(GamePath)\Mods\SpaceCore\SpaceCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <!-- SMAPI's TMX library, used by the debug map exporter. -->
+    <Reference Include="TMXTile">
+      <HintPath>$(GamePath)\smapi-internal\TMXTile.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,18 @@
+bin/
+obj/
+.vs/
+*.user
+
+# Derived from the game's own sprites: never commit.
+ArtStudio.Sim/refs.json
+
+# Style references and review sheets: these contain vanilla portraits and
+# sprites (crops for PixelLab or side-by-side checks). Regenerate them with
+# the tools/art scripts from your own game export.
+art/**/style_*.png
+art/shop_exterior/shop_style.png
+art/**/*_review.png
+art/**/*_picks.png
+art/**/*_vs_vanilla.png
+art/sable/walk_zoom.png
+art/sable/blush_check.png

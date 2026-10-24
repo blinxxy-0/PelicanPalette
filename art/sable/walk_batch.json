@@ -1,0 +1,17 @@
+{
+  "batch": "stardew-sable-walk",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {"width": 64, "height": 128},
+    "no_background": true,
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/identity_portrait.png",
+    "reference_usage": "the character's identity and colours: warm brown skin, dark hair with a teal fringe, round glasses on top of the head, rust turtleneck, cream apron. Draw this person as a tiny full-body walking sprite, not a portrait",
+    "description": "Stardew Valley NPC walking sprite sheet of Sable, a nonbinary painter: 4 rows by 4 columns of 16x32 pixel frames. Row 1: walking toward the viewer (facing down). Row 2: walking right (side view). Row 3: walking away (back view). Row 4: walking left (side view). Each row is a 4-frame walk cycle. Full body: dark hair with teal fringe, glasses on the head, rust orange turtleneck, cream canvas apron to the knees, dark brown trousers, brown boots. Exactly the same sheet layout, character size, proportions and pixel style as the reference sheet"
+  },
+  "jobs": {
+    "walk_elliott": {"style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/style_walk_elliott.png",
+      "style_usage": "exact Stardew Valley NPC sprite sheet: 16x32 frames in a 4x4 grid, row order down/right/up/left, character about 28 px tall, big head, few colours, dark coloured outlines"},
+    "walk_leah": {"style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/style_walk_leah.png",
+      "style_usage": "exact Stardew Valley NPC sprite sheet: 16x32 frames in a 4x4 grid, row order down/right/up/left, character about 27 px tall, big head, few colours, dark coloured outlines"}
+  }
+}

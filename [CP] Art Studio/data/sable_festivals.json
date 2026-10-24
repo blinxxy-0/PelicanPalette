@@ -1,0 +1,198 @@
+// Sable at the eight festivals: a spot at each (and during the main event,
+// where there is one; the Festival of Ice calls that layer Main-Event),
+// added to the festival's extra-characters list so other mods' NPCs keep
+// theirs, and a line for each. Spots were checked with the
+// museart_festspot debug command: walkable, not water, clear of every villager.
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/spring13",
+      "Entries": {
+        "Sable": "Every egg in this town is painted by hand. Badly. I love it.$h#$e#Look at that one. Purple with yellow dots. Somebody meant that."
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 14 67 1",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "Sable 14 67 1",
+          "Delimiter": "/"
+        }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/spring24",
+      "Entries": {
+        "Sable": "Everything's one pink today. The petals, the dresses, the punch.$u#$e#...It's lovely. Don't tell anyone I said so."
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 7 24 1",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "Sable 7 24 1",
+          "Delimiter": "/"
+        }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/summer11",
+      "Entries": {
+        "Sable": "Lewis asked if I'd paint the governor's portrait for the town hall. I said I'd think about it.$u#$e#I've thought about it."
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 37 22 1",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "Sable 37 22 0",
+          "Delimiter": "/"
+        }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/summer28",
+      "Entries": {
+        "Sable": "I've tried for years to mix that glow. Nothing on any palette comes close.$s#$e#Maybe that's the point. Some things you just look at."
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 66 23 2",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "Sable 67 24 2",
+          "Delimiter": "/"
+        }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/fall16",
+      "Entries": {
+        "Sable": "I'm painting signs for anyone who wants one. Three customers so far, and one of them was a dog.$h#$e#He wanted his name in red. Good taste."
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 19 64 2",
+          "Delimiter": "/"
+        }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/fall27",
+      "Entries": {
+        "Sable": "The maze is a composition problem, if you think about it. Mostly negative space.$u#$e#...I got lost twice."
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 22 64 1",
+          "Delimiter": "/"
+        }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/winter8",
+      "Entries": {
+        "Sable": "Ice sculpture. All the work of marble, and it's gone by spring.$s#$e#I respect that more than I can say."
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 70 16 0",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Main-Event_additionalCharacters"
+          ],
+          "Value": "Sable 60 35 1",
+          "Delimiter": "/"
+        }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/winter25",
+      "Entries": {
+        "Sable": "Happy Winter Star. Everything's red and gold and candlelit. It's like standing inside an old master.$h"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "Sable 32 60 2",
+          "Delimiter": "/"
+        }
+      ]
+    }
+  ]
+}
