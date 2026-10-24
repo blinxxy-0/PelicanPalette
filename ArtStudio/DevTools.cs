@@ -38,6 +38,16 @@ internal static class DevTools
 
 #if DEBUG
         DevGame.Register(helper, monitor);
+        AddCommand(helper, "museart_snapsocial", "In a game: renders the social page (and Sable's profile) to dialogue_snapshots/social_*.png.", (_, _) =>
+        {
+            if (!Context.IsWorldReady) return;
+            string dir = Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+            Directory.CreateDirectory(dir);
+            AtViewport(1280, 720, () => Render(new GameMenu(GameMenu.socialTab), Path.Combine(dir, "social_1280.png")));
+            monitor.Log("Social page rendered.", LogLevel.Info);
+        });
+        AddCommand(helper, "museart_snapdialogue", "In a game: renders the narration boxes and the longest spoken pages of Sable's events at both UI sizes, to dialogue_snapshots.", (_, _) =>
+            SnapDialogue(helper.DirectoryPath, monitor));
 
         // Debug builds also run console commands dropped into dev_commands.txt
         // (one per line), so tests can drive a game launched without a console.
@@ -117,6 +127,60 @@ internal static class DevTools
         File.WriteAllLines(Path.Combine(dir, "layout_report.txt"), report.Count > 0 ? report : new List<string> { "No layout problems found." });
         foreach (string line in report) monitor.Log(line, LogLevel.Warn);
         monitor.Log($"Snapshots written to {dir}; {report.Count} layout problem(s).", report.Count > 0 ? LogLevel.Warn : LogLevel.Info);
+    }
+
+    // Event dialogue as the player sees it: every 'message' box and every
+    // spoken page, rendered (not measured) at both sizes.
+    private static void SnapDialogue(string modDir, IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        string dir = Path.Combine(modDir, "dialogue_snapshots");
+        if (Directory.Exists(dir))
+            foreach (string old in Directory.GetFiles(dir))
+                File.Delete(old);
+        Directory.CreateDirectory(dir);
+
+        var message = new System.Text.RegularExpressions.Regex(@"message ""([^""]*)""");
+        var speak = new System.Text.RegularExpressions.Regex(@"speak (\w+) ""([^""]*)""");
+        var boxes = new List<(string Name, Func<IClickableMenu> Make)>();
+        int n = 0;
+        foreach (string location in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
+        foreach (var (key, script) in Game1.content.Load<Dictionary<string, string>>("Data/Events/" + location))
+        {
+            if (!key.StartsWith(ModEntry.Id)) continue;
+            foreach (System.Text.RegularExpressions.Match m in message.Matches(script))
+            {
+                string text = m.Groups[1].Value;
+                boxes.Add(($"message_{n++}", () => Opened(new DialogueBox(Game1.parseText(text)))));
+            }
+            foreach (string command in Event.ParseCommands(script).Where(c => c.StartsWith("quickQuestion ")))
+            {
+                string[] parts = command.Substring("quickQuestion ".Length).Split("(break)")[0].Split('#');
+                var responses = parts.Skip(1).Select((text, i) => new Response(i.ToString(), text)).ToArray();
+                boxes.Add(($"question_{n++}", () => Opened(new DialogueBox(parts[0], responses))));
+            }
+            foreach (System.Text.RegularExpressions.Match m in speak.Matches(script))
+            {
+                string speaker = m.Groups[1].Value;
+                foreach (string page in m.Groups[2].Value.Split(new[] { "#$b#", "#$e#" }, StringSplitOptions.None))
+                    boxes.Add(($"speak_{n++}_{speaker}", () => Opened(new DialogueBox(new Dialogue(Game1.getCharacterFromName(speaker), null, page)))));
+            }
+        }
+
+        // As it looks once open and fully typed out (it opens with a grow
+        // animation that draws only the frame).
+        static DialogueBox Opened(DialogueBox box)
+        {
+            box.transitioning = false;
+            box.transitionInitialized = true;
+            box.finishTyping();
+            return box;
+        }
+
+        foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
+        foreach (var (name, make) in boxes)
+            AtViewport(w, h, () => Render(make(), Path.Combine(dir, $"{name}_{w}.png")));
+        monitor.Log($"Dialogue snapshots written to {dir} ({boxes.Count} boxes).", LogLevel.Info);
     }
 
     private static IEnumerable<(string Name, Func<IClickableMenu> Make)> Scenarios(int level)
@@ -228,7 +292,8 @@ internal static class DevTools
         var device = Game1.graphics.GraphicsDevice;
         int w = Game1.uiViewport.Width, h = Game1.uiViewport.Height;
         using var target = new RenderTarget2D(device, w, h);
-        using var batch = new SpriteBatch(device);
+        // The game's own batch: some vanilla menus draw parts with it directly.
+        var batch = Game1.spriteBatch;
         var previous = device.GetRenderTargets();
         device.SetRenderTarget(target);
         device.Clear(new Color(90, 120, 80));

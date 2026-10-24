@@ -1,0 +1,20 @@
+{
+  "batch": "stardew-sable-studio-sized",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/style_rooms.png",
+    "style_usage": "Stardew Valley interior furniture style and pixel density: one pixel of detail per game pixel, warm palette, dark brown outlines, the front-and-top camera",
+    "image_size": {
+      "width": 48,
+      "height": 48
+    },
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/pick_easel_13.png",
+    "reference_usage": "the object design to reproduce: same parts, colors and layout, smaller"
+  },
+  "jobs": {
+    "easel": {
+      "description": "this exact easel design (a canvas turned to face away so its wooden back and cross brace show, a blue paint rag over one corner), redrawn smaller as a 2 tile wide by 3 tile tall Stardew Valley furniture sprite, centered. Single object, transparent background."
+    }
+  }
+}

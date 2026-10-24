@@ -1,0 +1,20 @@
+{
+  "batch": "stardew-sable-studio",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/style_rooms.png",
+    "style_usage": "Stardew Valley interior furniture style: warm palette, dark brown outlines, soft wood shading, pixel density and the front-and-top camera of these bedroom furnishings",
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/guide_box.png",
+    "reference_usage": "camera angle only: the front face square-on with the top surface visible above it, no side faces"
+  },
+  "jobs": {
+    "easel": {
+      "description": "one Stardew Valley style object: a wooden artist's easel holding a canvas turned to face away, so only the plain wooden back of the canvas frame and its cross brace show, a paint rag hanging over one corner. Single object, transparent background."
+    }
+  }
+}

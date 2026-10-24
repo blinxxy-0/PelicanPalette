@@ -1,0 +1,48 @@
+{
+  "tiles_wide": 8,
+  "tiles_high": 8,
+  "pieces": {
+    "desk": {
+      "x": 0,
+      "y": 0,
+      "cols": 3,
+      "rows": 3
+    },
+    "cabinet": {
+      "x": 3,
+      "y": 0,
+      "cols": 2,
+      "rows": 3
+    },
+    "easel": {
+      "x": 5,
+      "y": 0,
+      "cols": 2,
+      "rows": 3
+    },
+    "rack": {
+      "x": 0,
+      "y": 3,
+      "cols": 2,
+      "rows": 2
+    },
+    "table": {
+      "x": 2,
+      "y": 3,
+      "cols": 2,
+      "rows": 2
+    },
+    "rug": {
+      "x": 4,
+      "y": 3,
+      "cols": 3,
+      "rows": 3
+    },
+    "board": {
+      "x": 0,
+      "y": 6,
+      "cols": 2,
+      "rows": 2
+    }
+  }
+}

@@ -27,6 +27,16 @@
           // They dance (frames 40-47), visit Ginger Island, and take part in
           // the Winter Star, giving art supplies as a secret friend.
           "FlowerDanceCanDance": true,
+          "KissSpriteIndex": 28,
+          "KissSpriteFacingRight": true,
+          // Married: a studio corner in the farmhouse, and an easel on the patio
+          // (Sable paints there from behind: frames 32-34).
+          "SpouseRoom": { "MapAsset": "blinxxy.MuseArt_SableSpouseRoom", "MapSourceRect": { "X": 0, "Y": 0, "Width": 6, "Height": 9 } },
+          "SpousePatio": {
+            "MapAsset": "blinxxy.MuseArt_SableSpousePatio",
+            "MapSourceRect": { "X": 0, "Y": 0, "Width": 4, "Height": 4 },
+            "SpriteAnimationFrames": [ [ 32, 300 ], [ 32, 300 ], [ 33, 300 ], [ 33, 300 ], [ 32, 300 ], [ 33, 300 ], [ 34, 1500 ] ]
+          },
           "WinterStarGifts": [
             { "Id": "Canvases", "ItemId": "(O)blinxxy.MuseArt_Canvas_Small", "MinStack": 3, "MaxStack": 3 },
             { "Id": "Rose", "ItemId": "(O)blinxxy.MuseArt_Pigment_rose" },
@@ -40,6 +50,17 @@
     },
     { "Action": "Load", "Target": "Characters/Sable", "FromFile": "assets/sable/sprites.png" },
     { "Action": "Load", "Target": "Portraits/Sable", "FromFile": "assets/sable/portraits.png" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_SableSpouseRoom", "FromFile": "assets/SableSpouseRoom.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_SableSpousePatio", "FromFile": "assets/SableSpousePatio.tmx" },
+    // Painting at an easel (from behind, brush up and down), and asleep.
+    {
+      "Action": "EditData",
+      "Target": "Data/AnimationDescriptions",
+      "Entries": {
+        "sable_paint": "34/32 32 32 33 33 33 32 32 32 33 33 33 34 34 34 34 34 34/34",
+        "sable_sleep": "39/39/39"
+      }
+    },
 
     // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
     // Loves: coffee, the gems that grind into pigment (amethyst, aquamarine,
@@ -84,6 +105,38 @@
         "blinxxy.MuseArt_SableIntro/": "continue/7 6/farmer 7 9 0 Sable 9 4 0/skippable/pause 500/move farmer 0 -3 0/pause 300/speak Sable \"Left a little... no. Right. ...Hm.$u\"/pause 300/emote Sable 16/faceDirection Sable 2/pause 300/move Sable -1 0 3/move Sable 0 2 2/faceDirection Sable 3/faceDirection farmer 1/speak Sable \"Oh. A customer. Or a lost farmer. Same thing, in my experience.$u#$b#I'm Sable. This is the shop. Canvases, pigments, brushes. And I buy paintings, if you make any worth buying.\"/pause 300/speak Sable \"Here. Three canvases and a jar of rose. The first ones are free. That's how they get you.$h\"/addItem (O)blinxxy.MuseArt_Canvas_Small 3/addItem (O)blinxxy.MuseArt_Pigment_rose 1/pause 300/speak Sable \"The board's for commissions. People in town want paintings of the things they love. Paint them well and they'll pay you. They'll like you more, too.#$b#The counter's open ten till six. Go make something.\"/friendship Sable 25/pause 300/end"
       }
     },
+
+    // ---- Romance: the bouquet, the pendant, being engaged, being married ----
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/Sable",
+      "Entries": {
+        "AcceptBouquet": "Is that... for me?$6#$b#I don't have anything clever to say. That's never happened before.$l",
+        "RejectBouquet_VeryLowHearts": "Flowers. For me. We've spoken, what, twice? Put them in water before they die of embarrassment.$u",
+        "RejectBouquet_LowHearts": "That's... sweet. Ask me again when I know what color your eyes are in the evening.$l",
+        "RejectBouquet": "Not yet. But don't throw those away.$l",
+        "RejectMermaidPendant": "That's a very serious shade of blue. Give me time to get used to it.$l",
+        "RejectMermaidPendant_NeedHouseUpgrade": "Where would I put my easel? Your house is one room and a bad smell. Talk to Robin first.$u",
+        "dating_Sable": "So we're... a thing. I need to sit down. I'm going to sit down.$l"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/EngagementDialogue",
+      "Entries": {
+        "Sable0": "...Yes. Obviously yes.$l#$b#Give me a second, I'm mixing a lot of feelings at once.$h",
+        "Sable1": "Lewis says we'll be married in a few days. I've started three paintings of you and finished none of them. That's normal. That's fine.$l"
+      }
+    },
+    { "Action": "Include", "FromFile": "data/sable_wedding.json" },
+    {
+      "Action": "Load",
+      "Target": "Characters/Dialogue/MarriageDialogueSable",
+      "FromFile": "data/sable_marriage_dialogue.json"
+    },
+
+    // ---- Heart events ----
+    { "Action": "Include", "FromFile": "data/sable_events.json" },
 
     // ---- The grand opening letter, with two canvases to start ----
     {

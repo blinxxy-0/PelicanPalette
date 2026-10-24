@@ -26,11 +26,20 @@ internal static class DevGame
         // its own save-loaded handler gives up (and before the day starts).
         helper.Events.GameLoop.SaveLoaded += EnsureSkillTable;
 
+        // Test copies run behind whatever the user is doing: keep updating when
+        // unfocused, from the title screen on. Only in memory; the shared
+        // preferences file is never saved from here.
+        helper.Events.GameLoop.UpdateTicked += (_, _) =>
+        {
+            if (Game1.options != null)
+                Game1.options.pauseWhenOutOfFocus = false;
+        };
+
         DevTools.AddCommand(helper, "museart_devgame", "Starts a throwaway new farm from the title screen. It is never saved (don't sleep in it).", (_, _) => NewGame(monitor));
         DevTools.AddCommand(helper, "museart_devscene", "Sets up the farmhouse with an easel, a framed painting and supplies, at Painting level 6.", (_, _) => Scene(monitor));
         DevTools.AddCommand(helper, "museart_selftest", "Runs a painting through the real easel flow and checks canvases, XP, brush wear and selling. Then run 'museart_selftest sell' and 'museart_selftest sold', a second apart.", (_, args) => SelfTest(monitor, args));
         DevTools.AddCommand(helper, "museart_export_map", "Writes game maps and their tilesheets to the mod's exports folder. Usage: museart_export_map Forest LeahHouse ...", (_, args) => ExportMaps(helper, monitor, args));
-        DevTools.AddCommand(helper, "museart_warp", "Warps to the art shop. Usage: museart_warp shop|outside", (_, args) => Warp(args));
+        DevTools.AddCommand(helper, "museart_warp", "Warps to the art shop, or anywhere. Usage: museart_warp shop|outside|<location> <x> <y>", (_, args) => Warp(args));
         DevTools.AddCommand(helper, "museart_shoptest", "Checks the art shop: location, door, counter, stock, premium and commission deliveries. Run 'museart_shoptest premium' a second later to finish.", (_, args) => ShopTest(helper, monitor, args));
         DevTools.AddCommand(helper, "museart_export_tex", "Writes game textures to the mod's exports folder. Usage: museart_export_tex Portraits/Leah Characters/Leah ...", (_, args) =>
         {
@@ -75,17 +84,78 @@ internal static class DevGame
         });
         DevTools.AddCommand(helper, "museart_festspot", "Finds the nearest free, walkable tile to a festival spot. Usage: museart_festspot Town-Fair 19 64", (_, args) => FestSpot(monitor, args));
         DevTools.AddCommand(helper, "museart_festival", "Jumps a throwaway farm to a festival and walks in, then optionally starts its main event (main), or the Flower Dance with Sable (dance). Usage: museart_festival spring24 dance", (_, args) => Festival(monitor, args));
-        DevTools.AddCommand(helper, "museart_advance", "Clicks through the open dialogue box (to run events unattended). Usage: museart_advance [times]", (_, args) =>
+        DevTools.AddCommand(helper, "museart_advance", "Clicks through the open dialogue box (to run events unattended), picking answer N at questions. Usage: museart_advance [times] [answer]", (_, args) =>
         {
             int times = args.Length > 0 && int.TryParse(args[0], out int n) ? n : 1;
+            int answer = args.Length > 1 && int.TryParse(args[1], out int a) ? a : 0;
             for (int i = 0; i < times && Game1.activeClickableMenu is DialogueBox box; i++)
             {
                 box.finishTyping();
+                bool question = box.isQuestion && box.responses?.Length > answer;
+                if (question)
+                {
+                    monitor.Log($"Answering: {box.responses[answer].responseText}", LogLevel.Info);
+                    box.selectedResponse = answer;
+                }
                 box.receiveLeftClick(0, 0, true);
+                if (question)
+                    break;                       // the answer closes the box over the next few frames
             }
             monitor.Log($"{Game1.timeOfDay}: event {Game1.CurrentEvent?.id ?? "none"}, menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}; "
                 + $"canvases {Game1.player.Items.CountId("(O)" + ModEntry.Id + "_Canvas_Small")}, rose {Game1.player.Items.CountId("(O)" + ModEntry.Id + "_Pigment_rose")}, "
                 + $"met Sable {Game1.player.friendshipData.ContainsKey("Sable")}", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_event", "Plays an event by ID wherever it is, ignoring its conditions. Usage: museart_event blinxxy.MuseArt_Sable2h", (_, args) =>
+        {
+            if (!Context.IsWorldReady || args.Length == 0) return;
+            bool found = Game1.PlayEvent(args[0], checkPreconditions: false, checkSeen: false);
+            monitor.Log(found ? $"Playing {args[0]}." : $"No event {args[0]}.", found ? LogLevel.Info : LogLevel.Error);
+        });
+        DevTools.AddCommand(helper, "museart_eventpaths", "Walks every step of Sable's events against the real maps and reports anyone walking through walls, furniture, props or each other.", (_, _) => EventPaths(monitor));
+        DevTools.AddCommand(helper, "museart_route", "Prints event 'move' commands for the shortest walkable route. Usage: museart_route JoshHouse 9 23 6 19 [x y ...]", (_, args) => Route(monitor, args));
+        DevTools.AddCommand(helper, "museart_tiles", "Says whether each tile can be stood on. Usage: museart_tiles JoshHouse 2 19 5 20", (_, args) => Tiles(monitor, args));
+        DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
+        DevTools.AddCommand(helper, "museart_portrait", "Makes Sable's portrait of the current farmer and saves it (and the farmer as rendered) to exports/portrait.png.", (_, _) =>
+        {
+            if (!Context.IsWorldReady) return;
+            var painting = FarmerPortrait.Create(Game1.player);
+            var data = PaintingData.Read(painting)!;
+            using var texture = PaintingRenderer.Build(data.Size, data.Cells, data.Purity, new Color(0xF3, 0xE5, 0xC2));
+            string dir = System.IO.Path.Combine(helper.DirectoryPath, "exports");
+            System.IO.Directory.CreateDirectory(dir);
+            using (var stream = System.IO.File.Create(System.IO.Path.Combine(dir, "portrait.png")))
+                texture.SaveAsPng(stream, texture.Width, texture.Height);
+            var framed = ArtHooks.Frame(painting);
+            monitor.Log($"Portrait: '{painting.DisplayName}', framed as '{framed.DisplayName}': {framed.getDescription().Replace("\n", " ")}", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_marry", "Throwaway farm only: marries the farmer to Sable (house upgraded), lays out the spouse room and patio, and puts Sable in their room. 'patio' puts them at the patio instead.", (_, args) => Marry(monitor, args));
+        DevTools.AddCommand(helper, "museart_wedding", "Throwaway farm only: plays the wedding to Sable (as on the wedding morning).", (_, _) => Wedding(monitor));
+        DevTools.AddCommand(helper, "museart_export_weddings", "Writes Data/Weddings to the exports folder as JSON.", (_, _) =>
+        {
+            string dir = System.IO.Path.Combine(helper.DirectoryPath, "exports");
+            System.IO.Directory.CreateDirectory(dir);
+            var data = DataLoader.Weddings(Game1.content);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(dir, "Data_Weddings.json"),
+                System.Text.Json.JsonSerializer.Serialize(data, new System.Text.Json.JsonSerializerOptions { WriteIndented = true, IncludeFields = true }));
+            monitor.Log("Exported Data/Weddings.", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_marriedtest", "Throwaway farm only: checks a married Sable still runs the shop (rainy days too) and the shop opens on trust when they're out.", (_, _) =>
+        {
+            if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;
+            Marry(monitor, Array.Empty<string>());
+            var sable = Game1.getCharacterFromName("Sable");
+            string day = Game1.shortDayNameFromDayOfSeason(Game1.dayOfMonth);
+            bool wasRaining = Game1.isRaining;
+            Game1.isRaining = true;
+            bool loaded = sable.TryLoadSchedule();
+            Check(monitor, $"married, on a rainy {day} Sable still goes to the shop", loaded && sable.ScheduleKey == "marriage_" + day, sable.ScheduleKey ?? "no schedule");
+            Game1.isRaining = wasRaining;
+            sable.TryLoadSchedule();
+            Check(monitor, $"married, on a dry {day} Sable goes to the shop", sable.ScheduleKey == "marriage_" + day, sable.ScheduleKey ?? "no schedule");
+
+            var shop = Game1.RequireLocation(Shop.ArtShop.LocationName);
+            Check(monitor, "with Sable out, the shop opens on trust for their spouse", Shop.ArtShop.OpenShop(shop) && Game1.activeClickableMenu is ShopMenu);
+            CloseDialogue();
         });
         DevTools.AddCommand(helper, "museart_menu", "Opens a game menu for screenshots. Usage: museart_menu skills|easel|inventory", (_, args) => OpenMenu(args));
     }
@@ -301,6 +371,8 @@ internal static class DevGame
         if (!Context.IsWorldReady) return;
         if (args.FirstOrDefault() == "outside")
             Game1.warpFarmer("Forest", 82, 36, 0);
+        else if (args.Length == 3 && int.TryParse(args[1], out int x) && int.TryParse(args[2], out int y))
+            Game1.warpFarmer(args[0], x, y, 2);
         else
             Game1.warpFarmer(Shop.ArtShop.LocationName, 7, 7, 0);
     }
@@ -542,6 +614,220 @@ internal static class DevGame
                 monitor.Log($"Main event of {id}: Sable {(actor != null ? $"is at {actor.TilePoint}, frame {actor.Sprite.currentFrame}" : "is missing")}.", actor != null ? LogLevel.Info : LogLevel.Error);
             }, 6000);
         }, 3000);
+    }
+
+    // Replays each event's 'move' commands from the actors' starting tiles:
+    // every tile a character steps onto (and every starting tile) must be
+    // walkable on the map, and not under a prop or another character.
+    private static void EventPaths(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        foreach (string locationName in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
+        {
+            var location = Game1.getLocationFromName(locationName);
+            var events = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + locationName);
+            foreach (var (key, script) in events.Where(e => e.Key.StartsWith(ModEntry.Id)))
+            {
+                string id = key.Split('/')[0];
+                var commands = Event.ParseCommands(script);
+                var at = new System.Collections.Generic.Dictionary<string, Point>();
+                var props = new System.Collections.Generic.HashSet<Point>();
+                var problems = new System.Collections.Generic.List<string>();
+                string[] actors = commands[2].Split(' ');
+                for (int i = 0; i + 2 < actors.Length; i += 4)
+                    at[actors[i]] = new Point(int.Parse(actors[i + 1]), int.Parse(actors[i + 2]));
+
+                bool Walkable(Point p) => location.isTilePassable(new xTile.Dimensions.Location(p.X, p.Y), Game1.viewport);
+                foreach (var (who, p) in at)
+                    if (!Walkable(p))
+                        problems.Add($"{who} starts on a blocked tile {p}");
+
+                foreach (string command in commands.Skip(3))
+                {
+                    string[] args = ArgUtility.SplitBySpaceQuoteAware(command);
+                    if (args[0] == "addBigProp" && args.Length > 2)
+                        props.Add(new Point(int.Parse(args[1]), int.Parse(args[2])));
+                    else if (args[0] == "warp" && args.Length > 3 && at.ContainsKey(args[1]))
+                        at[args[1]] = new Point(int.Parse(args[2]), int.Parse(args[3]));
+                    else if (args[0] == "move")
+                    {
+                        for (int i = 1; i + 2 < args.Length; i += 4)
+                        {
+                            string who = args[i];
+                            if (!at.TryGetValue(who, out var p) || !int.TryParse(args[i + 1], out int dx) || !int.TryParse(args[i + 2], out int dy)) continue;
+                            var step = new Point(Math.Sign(dx), 0);
+                            for (int n = 0; n < Math.Abs(dx) + Math.Abs(dy); n++)
+                            {
+                                if (n == Math.Abs(dx)) step = new Point(0, Math.Sign(dy));
+                                p = new Point(p.X + step.X, p.Y + step.Y);
+                                string? blocker = !Walkable(p) ? "a wall or furniture"
+                                    : props.Contains(p) ? "a prop"
+                                    : at.FirstOrDefault(a => a.Key != who && a.Value == p).Key;
+                                if (blocker != null)
+                                    problems.Add($"{who} walks into {blocker} at {p} ('{command}')");
+                            }
+                            at[who] = p;
+                        }
+                    }
+                }
+                Check(monitor, $"{id}: everyone walks around walls and furniture", problems.Count == 0, string.Join("; ", problems));
+            }
+        }
+    }
+
+    // Breadth-first search over walkable tiles, printed as event moves (one
+    // per straight run). Extra coordinate pairs are tiles to treat as taken
+    // (other actors standing there).
+    private static void Route(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady || args.Length < 5) return;
+        var location = Game1.getLocationFromName(args[0]);
+        int[] n = args.Skip(1).Select(int.Parse).ToArray();
+        var start = new Point(n[0], n[1]);
+        var goal = new Point(n[2], n[3]);
+        var taken = new System.Collections.Generic.HashSet<Point>();
+        for (int i = 4; i + 1 < n.Length; i += 2)
+            taken.Add(new Point(n[i], n[i + 1]));
+        bool Walkable(Point p) => !taken.Contains(p) && location.isTilePassable(new xTile.Dimensions.Location(p.X, p.Y), Game1.viewport);
+
+        var from = new System.Collections.Generic.Dictionary<Point, Point> { [start] = start };
+        var queue = new System.Collections.Generic.Queue<Point>(new[] { start });
+        while (queue.Count > 0 && !from.ContainsKey(goal))
+        {
+            var p = queue.Dequeue();
+            foreach (var d in new[] { new Point(0, -1), new Point(0, 1), new Point(-1, 0), new Point(1, 0) })
+            {
+                var next = new Point(p.X + d.X, p.Y + d.Y);
+                if (from.ContainsKey(next) || !Walkable(next) || Math.Abs(next.X - start.X) > 40 || Math.Abs(next.Y - start.Y) > 40) continue;
+                from[next] = p;
+                queue.Enqueue(next);
+            }
+        }
+        if (!from.ContainsKey(goal) || !Walkable(goal))
+        {
+            monitor.Log($"No walkable route in {args[0]} from {start} to {goal}.", LogLevel.Error);
+            return;
+        }
+        var path = new System.Collections.Generic.List<Point> { goal };
+        while (path[^1] != start)
+            path.Add(from[path[^1]]);
+        path.Reverse();
+        var moves = new System.Collections.Generic.List<string>();
+        for (int i = 1; i < path.Count; )
+        {
+            var d = new Point(path[i].X - path[i - 1].X, path[i].Y - path[i - 1].Y);
+            int run = 0;
+            while (i < path.Count && path[i].X - path[i - 1].X == d.X && path[i].Y - path[i - 1].Y == d.Y) { run++; i++; }
+            int facing = d.X > 0 ? 1 : d.X < 0 ? 3 : d.Y > 0 ? 2 : 0;
+            moves.Add($"move farmer {d.X * run} {d.Y * run} {facing}");
+        }
+        monitor.Log($"Route in {args[0]} {start} -> {goal}: {string.Join("/", moves)}", LogLevel.Info);
+    }
+
+    // Whether each tile can be stood on. Usage: museart_tiles JoshHouse 2 19 5 20
+    private static void Tiles(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady || args.Length < 3) return;
+        var location = Game1.getLocationFromName(args[0]);
+        int[] n = args.Skip(1).Select(int.Parse).ToArray();
+        for (int i = 0; i + 1 < n.Length; i += 2)
+            monitor.Log($"{args[0]} {n[i]},{n[i + 1]}: {(location.isTilePassable(new xTile.Dimensions.Location(n[i], n[i + 1]), Game1.viewport) ? "walkable" : "blocked")}", LogLevel.Info);
+    }
+
+    // A dialogue page too tall for the box beside the portrait gets cut into a
+    // second box mid-word (DialogueBox.checkDialogue). Measure each page with
+    // the game's own text layout for that box (1200x384, minus the portrait).
+    private static void DialogueFit(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var sable = Game1.getCharacterFromName("Sable");
+        var texts = new System.Collections.Generic.List<(string Where, string Speaker, string Text)>();
+        void AddAll(string asset, string speaker, Func<string, bool>? keep = null)
+        {
+            foreach (var (key, text) in Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>(asset))
+                if (keep == null || keep(key))
+                    texts.Add(($"{asset}:{key}", speaker, text));
+        }
+        AddAll("Characters/Dialogue/Sable", "Sable");
+        AddAll("Characters/Dialogue/MarriageDialogueSable", "Sable");
+        AddAll("Characters/Dialogue/rainy", "Sable", k => k == "Sable");
+        AddAll("Data/EngagementDialogue", "Sable", k => k.StartsWith("Sable"));
+        foreach (string festival in new[] { "spring13", "spring24", "summer11", "summer28", "fall16", "fall27", "winter8", "winter25" })
+            AddAll("Data/Festivals/" + festival, "Sable", k => k == "Sable");
+        string[] tastes = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/NPCGiftTastes")["Sable"].Split('/');
+        for (int i = 0; i < tastes.Length; i += 2)
+            texts.Add(($"Data/NPCGiftTastes:Sable[{i}]", "Sable", tastes[i]));
+        var speak = new System.Text.RegularExpressions.Regex(@"speak (\w+) ""([^""]*)""");
+        foreach (string location in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
+            foreach (var (key, script) in Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + location))
+                if (key.StartsWith(ModEntry.Id))
+                    foreach (System.Text.RegularExpressions.Match m in speak.Matches(script))
+                        texts.Add(($"event {key.Split('/')[0]}", m.Groups[1].Value, m.Groups[2].Value));
+
+        int pages = 0, bad = 0;
+        foreach (var (where, speaker, text) in texts)
+        {
+            var npc = Game1.getCharacterFromName(speaker) ?? sable;
+            // (Items in [brackets] are a gift, taken out before it's shown.)
+            var dialogue = new Dialogue(npc, null, System.Text.RegularExpressions.Regex.Replace(text, @"\[[^\]]*\]", ""));
+            foreach (var line in dialogue.dialogues)
+            {
+                if (string.IsNullOrWhiteSpace(line.Text)) continue;
+                pages++;
+                string overflow = StardewValley.BellsAndWhistles.SpriteText.getSubstringBeyondHeight(line.Text, 1200 - 460 - 20, 384 - 16);
+                if (overflow.Length > 0)
+                {
+                    bad++;
+                    monitor.Log($"[FAIL] too long for one box ({where}): \"{line.Text}\" (spills: \"{overflow}\")", LogLevel.Error);
+                }
+            }
+        }
+        Check(monitor, $"every dialogue page fits its box ({pages} pages)", bad == 0, bad > 0 ? $"{bad} too long" : "");
+    }
+
+    private static void Marry(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;      // never on a real save
+        var who = Game1.player;
+        var sable = Game1.getCharacterFromName("Sable");
+        who.friendshipData["Sable"] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
+        who.spouse = "Sable";
+        who.HouseUpgradeLevel = 1;
+        var house = Utility.getHomeOfFarmer(who);
+        house.setMapForUpgradeLevel(1);
+        house.showSpouseRoom();
+        Game1.getFarm().addSpouseOutdoorArea("Sable");
+        if (args.FirstOrDefault() == "patio")
+        {
+            sable.setUpForOutdoorPatioActivity();
+            monitor.Log($"Sable is on the patio at {sable.TilePoint} (spot {Game1.getFarm().spousePatioSpot}).", LogLevel.Info);
+        }
+        else
+        {
+            var spot = house.GetSpouseRoomSpot();
+            Game1.warpCharacter(sable, house, spot.ToVector2());
+            monitor.Log($"Married. Sable is in the spouse room at {spot}.", LogLevel.Info);
+        }
+    }
+
+    private static void Wedding(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;      // never on a real save
+        var who = Game1.player;
+        // On the morning of the wedding the game has already switched you from engaged to married.
+        who.friendshipData["Sable"] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
+        who.spouse = "Sable";
+        who.HouseUpgradeLevel = Math.Max(1, who.HouseUpgradeLevel);   // as the pendant requires
+        var wedding = Utility.getWeddingEvent(who);
+        if (wedding == null)
+        {
+            monitor.Log("No wedding event.", LogLevel.Error);
+            return;
+        }
+        monitor.Log("Wedding script: " + string.Join(" / ", wedding.eventCommands), LogLevel.Info);
+        Game1.weddingsToday.Add(who.UniqueMultiplayerID);
+        Game1.warpFarmer("Town", 50, 60, 2);
+        monitor.Log("Walking into the wedding.", LogLevel.Info);
     }
 
     private static void OpenMenu(string[] args)

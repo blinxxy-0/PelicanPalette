@@ -32,7 +32,10 @@ internal sealed class PaintingData
 
     public bool IsOriginal => Subject == OriginalSubject;
 
-    public string[] SubjectItems => IsOriginal ? Array.Empty<string>() : Subject.Split('|');
+    // A portrait of the farmer, by Sable (the 10-heart event): "portrait:<name>".
+    public bool IsPortrait => FarmerPortrait.IsPortrait(Subject);
+
+    public string[] SubjectItems => IsOriginal || IsPortrait ? Array.Empty<string>() : Subject.Split('|');
 
     public void WriteTo(Item item)
     {

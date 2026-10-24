@@ -10,6 +10,7 @@ A spin-off of Muse's painting game: paint pixel-art still lifes at an easel agai
 - `[CP] Art Studio/`: the Content Patcher pack: the shop's map, stock and Forest patch, and Sable (`data/sable*.json`; brief in `docs/npc_brief.md`).
 - `ArtStudio.Sim/`: calibration. `dotnet run -c Release -- refs.json`
 - `tools/`: test-game launch/stop scripts, placeholder art, PNG export. `tools/art/` builds Sable's portraits and sprites from the PixelLab picks (`build_sable_*.py`) and compares them with vanilla (`compare_vanilla.py`).
+  - `build_sable_events.py` writes the heart events (`data/sable_events.json`), `build_sable_wedding.py` the wedding with gender-neutral vows, `build_spouse_areas.py` the spouse room and patio maps, `build_shop_interior.py` the shop.
 
 ## Testing
 
@@ -37,6 +38,8 @@ From the title screen:
   - `museart_shoptest` checks the art shop; `museart_npctest` checks Sable (data, gift tastes, every schedule route, the counter).
   - `museart_where` logs where Sable is; `museart_day <n>` (early morning) switches the day to try another schedule.
   - `museart_festival <id> [main|dance]` jumps to a festival (e.g. `spring24 dance` dances with Sable); `museart_festspot <map> <x> <y>` checks a festival spot is walkable and clear.
-  - `museart_advance [n]` clicks through dialogue, to play events unattended.
+  - `museart_advance [n] [answer]` clicks through dialogue (picking an answer at questions), to play events unattended; `museart_event <id>` plays an event directly.
+  - `museart_eventpaths` walks every step of Sable's events against the real maps; `museart_route <loc> x1 y1 x2 y2` prints walkable `move` commands; `museart_dialoguefit` checks every dialogue page fits its box; `museart_snapdialogue` renders the event dialogue boxes.
+  - `museart_portrait` saves Sable's portrait of the farmer; `museart_marry [patio]` and `museart_wedding` (throwaway farm only) show the spouse room, patio and wedding.
 - Debug builds also run commands written to `Mods/ArtStudio/dev_commands.txt`.
 - `tools/launch_test.ps1 [-ModsPath dir]`, `tools/stop_test.ps1` and `tools/screenshot_test.ps1` drive a test copy of the game.

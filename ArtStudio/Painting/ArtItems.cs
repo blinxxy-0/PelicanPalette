@@ -147,6 +147,7 @@ internal static class ArtItems
         Pigment("rose", "402 2", 1);        // sweet pea
         Pigment("marigold", "18 2", 1);     // daffodil
         Pigment("leaf", "20 2", 1);         // leek
+        Pigment("peach", "634 2", 1);       // apricot
         Pigment("snow", "80 1", 3);         // quartz
         Pigment("plum", "410 3", 3);        // blackberry
         Pigment("cerulean", "258 3", 3);    // blueberry

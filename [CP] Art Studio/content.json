@@ -76,6 +76,7 @@
             { "Id": "Rose", "ItemId": "(O)blinxxy.MuseArt_Pigment_rose", "Price": 120 },
             { "Id": "Marigold", "ItemId": "(O)blinxxy.MuseArt_Pigment_marigold", "Price": 120 },
             { "Id": "Leaf", "ItemId": "(O)blinxxy.MuseArt_Pigment_leaf", "Price": 120 },
+            { "Id": "Peach", "ItemId": "(O)blinxxy.MuseArt_Pigment_peach", "Price": 120 },
             { "Id": "Snow", "ItemId": "(O)blinxxy.MuseArt_Pigment_snow", "Price": 200, "Condition": "{{PaintingLevel}} 3" },
             { "Id": "Plum", "ItemId": "(O)blinxxy.MuseArt_Pigment_plum", "Price": 200, "Condition": "{{PaintingLevel}} 3" },
             { "Id": "Cerulean", "ItemId": "(O)blinxxy.MuseArt_Pigment_cerulean", "Price": 200, "Condition": "{{PaintingLevel}} 3" },

@@ -1,0 +1,20 @@
+{
+  "batch": "stardew-sable-studio-sized",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/style_rooms.png",
+    "style_usage": "Stardew Valley interior furniture style and pixel density: one pixel of detail per game pixel, warm palette, dark brown outlines, the front-and-top camera",
+    "image_size": {
+      "width": 48,
+      "height": 48
+    },
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/pick_cabinet_4.png",
+    "reference_usage": "the object design to reproduce: same parts, colors and layout, smaller"
+  },
+  "jobs": {
+    "cabinet": {
+      "description": "this exact pigment cabinet design (open shelves of glass pigment jars, amethyst and ruby crystals, a mortar and pestle, two drawers), redrawn smaller as a narrow 2 tile wide by 3 tile tall Stardew Valley furniture sprite, centered. Single object, transparent background."
+    }
+  }
+}

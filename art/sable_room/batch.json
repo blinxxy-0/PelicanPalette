@@ -1,0 +1,20 @@
+{
+  "batch": "stardew-sable-studio",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {"width": 64, "height": 64},
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/style_rooms.png",
+    "style_usage": "Stardew Valley interior furniture style: warm palette, dark brown outlines, soft wood shading, pixel density and the front-and-top camera of these bedroom furnishings",
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/guide_box.png",
+    "reference_usage": "camera angle only: the front face square-on with the top surface visible above it, no side faces"
+  },
+  "jobs": {
+    "desk": {"description": "one piece of Stardew Valley style furniture for a painting restorer's studio: a wooden work desk with a magnifying lamp on a bent arm, a small cracked landscape painting lying flat on the desk being repaired, tiny solvent bottles and a jar of cotton swabs. Single object, transparent background."},
+    "cabinet": {"description": "one piece of Stardew Valley style furniture: a tall narrow wooden cabinet with open shelves of small glass jars full of colorful ground pigment powder (teal, rust red, ochre yellow, violet), a stone mortar and pestle, and a few raw purple amethyst and red ruby crystals. Single object, transparent background."},
+    "easel": {"description": "one Stardew Valley style object: a wooden artist's easel holding a canvas turned to face away, so only the plain wooden back of the canvas frame and its cross brace show, a paint rag hanging over one corner. Single object, transparent background."},
+    "small": {"description": "one small Stardew Valley style object for a painter's room: a stack of empty ornate gold picture frames leaning together, OR a little round wooden side table with a coffee mug and a glass jar of pink sweet pea flowers, OR a wooden drying rack holding small painted canvases. Single object, transparent background."},
+    "rug": {"description": "a Stardew Valley style rug seen from above lying flat on a floor: a rectangular cream canvas drop cloth with frayed edges, splattered and dripped with teal, rust red and ochre paint. Rug only, transparent background."},
+    "board": {"description": "a Stardew Valley style wall decoration seen straight on: a wooden-framed cork pinboard covered in pencil sketches of trees and faces, small paint color swatches and a pressed flower. Single object, transparent background."}
+  }
+}

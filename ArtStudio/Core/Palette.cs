@@ -40,6 +40,7 @@ public static class Palette
         new("violet", "Iridium Violet", 0x8E5DDB, 75, MixMotion.Dart, false, true),
         new("aquamarine", "Aquamarine", 0x3CC7B4, 70, MixMotion.Mixed, false, true),
         new("ruby", "Ruby Red", 0xE3204F, 80, MixMotion.Dart, false, true),
+        new("peach", "Peach", 0xF2B48C, 25, MixMotion.Smooth, false),     // light skin; darker skin is sienna and umber
     };
 
     // Pigments close enough that a viewer would call one "a bit off" for the

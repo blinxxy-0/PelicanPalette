@@ -1,0 +1,20 @@
+{
+  "batch": "stardew-sable-studio-sized",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/style_rooms.png",
+    "style_usage": "Stardew Valley interior furniture style and pixel density: one pixel of detail per game pixel, warm palette, dark brown outlines, the front-and-top camera",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/guide_box.png",
+    "reference_usage": "camera angle only: the front face square-on with the top surface visible above it"
+  },
+  "jobs": {
+    "table": {
+      "description": "one small Stardew Valley style furniture sprite, 1 tile wide by 2 tiles tall: a little round wooden side table with a steaming coffee mug and a small glass jar of pink and purple sweet pea flowers on it. Single object, transparent background."
+    }
+  }
+}

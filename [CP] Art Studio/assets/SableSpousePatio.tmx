@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="4" height="4" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="1">
+  <tileset firstgid="1" name="p" tilewidth="16" tileheight="16" tilecount="64" columns="4">
+    <image source="paths" width="64" height="256" />
+  </tileset>
+  <tileset firstgid="65" name="z_blinxxy.MuseArt_ArtShopYard" tilewidth="16" tileheight="16" tilecount="6" columns="1">
+    <image source="ArtShopYard.png" width="16" height="96" />
+  </tileset>
+  <tileset firstgid="71" name="z_blinxxy.MuseArt_SableStudio" tilewidth="16" tileheight="16" tilecount="64" columns="8">
+    <image source="SableStudio.png" width="128" height="128" />
+  </tileset>
+  <layer id="1" name="Back" width="4" height="4">
+    <data encoding="csv">
+0,0,0,0,
+0,0,0,0,
+0,0,0,0,
+0,0,0,0
+    </data>
+  </layer>
+  <layer id="2" name="Back2" width="4" height="4">
+    <data encoding="csv">
+0,0,0,0,
+0,0,0,0,
+0,0,0,0,
+0,0,0,0
+    </data>
+  </layer>
+  <layer id="3" name="Buildings" width="4" height="4">
+    <data encoding="csv">
+0,0,0,0,
+0,0,0,0,
+0,0,66,0,
+105,106,0,0
+    </data>
+  </layer>
+  <layer id="4" name="Paths" width="4" height="4">
+    <data encoding="csv">
+0,0,0,0,
+0,0,0,0,
+0,0,0,0,
+0,0,8,0
+    </data>
+  </layer>
+  <layer id="5" name="Front" width="4" height="4">
+    <data encoding="csv">
+0,0,0,0,
+0,0,65,0,
+97,98,0,0,
+0,0,0,0
+    </data>
+  </layer>
+  <layer id="6" name="AlwaysFront" width="4" height="4">
+    <data encoding="csv">
+0,0,0,0,
+0,0,0,0,
+0,0,0,0,
+0,0,0,0
+    </data>
+  </layer>
+</map>

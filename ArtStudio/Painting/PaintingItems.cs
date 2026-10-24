@@ -46,7 +46,9 @@ internal static class PaintingItems
         // follows the subject's own (translated) name, the way "Blueberry
         // Wine" follows the blueberry's.
         var subjects = data.SubjectItems;
-        if (subjects.Length == 1)
+        if (data.IsPortrait)
+            item.displayNameFormat = Title(data);
+        else if (subjects.Length == 1)
         {
             item.preservedParentSheetIndex.Value = subjects[0];
             item.displayNameFormat = "Still Life: %PRESERVED_DISPLAY_NAME";
@@ -61,9 +63,11 @@ internal static class PaintingItems
         return item;
     }
 
-    // "Still Life: Parsnip", "Still Life with Melon", "Original Painting".
+    // "Still Life: Parsnip", "Still Life with Melon", "Original Painting",
+    // "Portrait of Tester".
     public static string Title(PaintingData data)
     {
+        if (data.IsPortrait) return "Portrait of " + FarmerPortrait.SitterName(data.Subject);
         var subjects = data.SubjectItems;
         if (subjects.Length == 0) return "Original Painting";
         string first = ItemRegistry.GetDataOrErrorItem(subjects[0]).DisplayName;
@@ -73,7 +77,9 @@ internal static class PaintingItems
     // Shown under the item's name: who painted it, when, and of what.
     public static string Provenance(PaintingData data)
     {
-        string subject = data.IsOriginal
+        string subject = data.IsPortrait
+            ? $"A portrait of {FarmerPortrait.SitterName(data.Subject)}."
+            : data.IsOriginal
             ? "An original work."
             : "Painted from life: " + string.Join(", ", data.SubjectItems.Select(id => ItemRegistry.GetDataOrErrorItem(id).DisplayName)) + ".";
         var signature = new[] { string.IsNullOrEmpty(data.Painter) ? null : "By " + data.Painter, data.Date }

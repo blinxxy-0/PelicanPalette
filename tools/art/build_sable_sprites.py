@@ -11,6 +11,10 @@ Fixes on top of the render:
   - Vanilla clean-up: no pure-black outlines, and one shared palette
     (vanilla NPC frames measure 10-30 colours).
 
+Special frames: the kiss (28, facing right), painting at an easel from
+behind (32-34), the wedding in the festival outfit (36 front, 37 facing
+left to the farmer, 38 the kiss), and sleeping (39).
+
 Then the Flower Dance frames (40-47, sheet rows 10-11; rows 4-9 stay empty
 for the special animations to come). A they/them partner dances in the
 line facing away from the camera, which uses frames 44-47 like Elliott's;
@@ -130,6 +134,104 @@ def add_dance_rows(sheet):
     return tall
 
 
+# Colours of the walk sheet the special frames are drawn with.
+SKIN, SKIN_SHADE, LASH = (160, 87, 56), (124, 65, 52), (65, 16, 20)
+RUST, RUST_SHADE, OUTLINE = (173, 68, 38), (121, 37, 24), (52, 10, 20)
+BRUSH_HANDLE, BRUSH_TIP, BLUSH = (122, 89, 71), (17, 80, 74), (205, 110, 96)
+
+
+def frame_at(sheet, index):
+    return sheet.crop(((index % 4) * 16, (index // 4) * 32, (index % 4) * 16 + 16, (index // 4) * 32 + 32))
+
+
+def put_frame(sheet, index, frame):
+    x, y = (index % 4) * 16, (index // 4) * 32
+    sheet.paste(Image.new("RGBA", (16, 32), (0, 0, 0, 0)), (x, y))
+    sheet.alpha_composite(frame, (x, y))
+
+
+def close_eye(frame, lean):
+    """Lean the head a pixel (lean = -1 left, 1 right) and close the eye
+    (the eye-white pixel becomes skin, the pupil a lash), with a little blush."""
+    top = frame.getbbox()[1]
+    out = Image.new("RGBA", frame.size, (0, 0, 0, 0))
+    out.alpha_composite(frame.crop((0, top + 11, 16, 32)), (0, top + 11))
+    head = frame.crop((max(0, -lean), 0, 16 - max(0, lean), top + 11))
+    out.alpha_composite(head, (max(0, lean), 0))
+    px = out.load()
+    for y in range(top + 5, top + 10):
+        for x in range(16):
+            p = px[x, y]
+            if p[3] and p[0] > 235 and p[1] > 220:            # the eye white
+                px[x, y] = SKIN + (255,)
+                pupil = (x + lean, y)
+                if 0 <= pupil[0] < 16 and px[pupil][3]:
+                    px[pupil] = LASH + (255,)
+                if px[x, y + 1][3]:
+                    px[x, y + 1] = BLUSH + (255,)
+                return out
+    return out
+
+
+def kiss_frame(side):
+    """Facing right, head leaned in, eyes closed, a little blush."""
+    return close_eye(side, lean=1)
+
+
+def painting_frame(back, raise_by):
+    """From behind, the right arm up at the easel holding a brush; raise_by
+    is how far above the shoulder the hand is."""
+    out = back.copy()
+    px = out.load()
+    top = back.getbbox()[1]
+    shoulder = top + 12
+    for y in range(shoulder, top + 19):      # the hanging arm goes
+        if px[13, y][3]:
+            px[13, y] = (0, 0, 0, 0)
+        if px[12, y][3]:
+            px[12, y] = OUTLINE + (255,)
+    for y in range(shoulder - raise_by, shoulder + 1):   # the raised sleeve
+        px[13, y] = RUST + (255,)
+        px[14, y] = OUTLINE + (255,)
+    hand = shoulder - raise_by - 1
+    px[13, hand] = SKIN + (255,)
+    px[14, hand] = SKIN_SHADE + (255,)
+    px[14, hand - 1] = BRUSH_HANDLE + (255,)
+    px[15, hand - 2] = BRUSH_TIP + (255,)
+    return out
+
+
+def sleep_frame(front):
+    """Front view with the eyes closed (the bed's blanket covers the rest)."""
+    out = front.copy()
+    px = out.load()
+    top = front.getbbox()[1]
+    for x in range(3, 13):
+        p = px[x, top + 7]
+        if p[3] and (p[0] > 200 or p[:3] in ((48, 39, 43), (79, 22, 20), (65, 16, 20))):
+            px[x, top + 7] = SKIN + (255,)
+    for x in (4, 5, 10, 11):
+        px[x, top + 7] = LASH + (255,)
+    return out
+
+
+def add_special_frames(sheet):
+    """Kiss (28), painting at an easel (32-34), the wedding (36 front, 37
+    facing the farmer on their left, 38 the kiss), sleeping (39). The wedding
+    outfit is the festival one: cream jacket, a flower in the hair."""
+    front, side, back, left = frame_at(sheet, 0), frame_at(sheet, 4), frame_at(sheet, 8), frame_at(sheet, 12)
+    put_frame(sheet, 28, kiss_frame(side))
+    put_frame(sheet, 32, painting_frame(back, raise_by=3))
+    put_frame(sheet, 33, painting_frame(back, raise_by=1))
+    put_frame(sheet, 34, back)
+    wed_left = dance_frame(left, back=False)
+    put_frame(sheet, 36, dance_frame(front, back=False))
+    put_frame(sheet, 37, wed_left)
+    put_frame(sheet, 38, close_eye(wed_left, lean=-1))
+    put_frame(sheet, 39, sleep_frame(front))
+    return sheet
+
+
 def main():
     src, out = sys.argv[1], sys.argv[2]
     sheet = Image.open(src).convert("RGBA")
@@ -138,6 +240,7 @@ def main():
     sheet = fix_back_view(sheet)
     sheet = quantize(recolour_black(sheet), COLOURS)
     sheet = add_dance_rows(sheet)
+    sheet = add_special_frames(sheet)
     sheet.save(out)
     counts = []
     for r in (0, 1, 2, 3, 10, 11):

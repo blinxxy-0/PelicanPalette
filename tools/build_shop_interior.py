@@ -32,7 +32,7 @@ def read(path):
     layers = {}
     for l in root.findall("layer"):
         data = [int(v) for v in l.find("data").text.replace("\n", "").split(",") if v.strip()]
-        layers[l.get("name")] = (w, data)
+        layers[l.get("name")] = (int(l.get("width") or w), data)   # layers can be a different size from the map
     props = {p.get("name"): p.get("value") for p in root.find("properties").findall("property")} if root.find("properties") is not None else {}
     return sets, layers, props
 

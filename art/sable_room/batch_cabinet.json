@@ -1,0 +1,20 @@
+{
+  "batch": "stardew-sable-studio",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/style_rooms.png",
+    "style_usage": "Stardew Valley interior furniture style: warm palette, dark brown outlines, soft wood shading, pixel density and the front-and-top camera of these bedroom furnishings",
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/guide_box.png",
+    "reference_usage": "camera angle only: the front face square-on with the top surface visible above it, no side faces"
+  },
+  "jobs": {
+    "cabinet": {
+      "description": "one piece of Stardew Valley style furniture: a tall narrow wooden cabinet with open shelves of small glass jars full of colorful ground pigment powder (teal, rust red, ochre yellow, violet), a stone mortar and pestle, and a few raw purple amethyst and red ruby crystals. Single object, transparent background."
+    }
+  }
+}

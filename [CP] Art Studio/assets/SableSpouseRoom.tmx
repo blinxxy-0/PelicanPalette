@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="6" height="9" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="1">
+  <tileset firstgid="1" name="indoor" tilewidth="16" tileheight="16" tilecount="2176" columns="32">
+    <image source="townInterior" width="512" height="1088" />
+  </tileset>
+  <tileset firstgid="2177" name="p" tilewidth="16" tileheight="16" tilecount="64" columns="4">
+    <image source="paths" width="64" height="256" />
+  </tileset>
+  <tileset firstgid="2241" name="v15_TownInterior2" tilewidth="16" tileheight="16" tilecount="1312" columns="32">
+    <image source="townInterior_2" width="512" height="656" />
+  </tileset>
+  <tileset firstgid="3553" name="z_blinxxy.MuseArt_SableStudio" tilewidth="16" tileheight="16" tilecount="64" columns="8">
+    <image source="SableStudio.png" width="128" height="128" />
+  </tileset>
+  <layer id="1" name="Back" width="6" height="9">
+    <data encoding="csv">
+2538,2538,2538,2538,2538,2538,
+2570,2570,2570,2570,2570,2570,
+2538,2538,2538,2538,2538,2538,
+575,576,575,576,575,576,
+607,607,607,607,607,607,
+639,639,639,639,639,639,
+607,607,607,607,607,607,
+639,639,639,639,639,639,
+607,607,607,607,607,608
+    </data>
+  </layer>
+  <layer id="2" name="Back2" width="6" height="9">
+    <data encoding="csv">
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,3581,3582,3583,0,0,
+0,3589,3590,3591,0,0,
+0,3597,3598,3599,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="3" name="Buildings" width="6" height="9">
+    <data encoding="csv">
+2538,2538,2538,2538,2538,2538,
+81,81,81,81,81,81,
+113,113,113,113,113,113,
+3561,3562,3563,0,3572,3573,
+3569,3570,3571,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,3574,3575,
+3585,3586,3587,3588,0,0
+    </data>
+  </layer>
+  <layer id="4" name="Paths" width="6" height="9">
+    <data encoding="csv">
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,2184,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="5" name="Front" width="6" height="9">
+    <data encoding="csv">
+3601,3602,0,257,0,0,
+3609,3610,0,289,3556,3557,
+3553,3554,3555,0,3564,3565,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,3558,3559,
+0,0,0,0,3566,3567,
+3577,3578,3579,3580,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="6" name="AlwaysFront" width="6" height="9">
+    <data encoding="csv">
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+</map>

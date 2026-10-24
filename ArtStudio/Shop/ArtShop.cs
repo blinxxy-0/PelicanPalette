@@ -71,10 +71,18 @@ internal static class ArtShop
         return true;
     }
 
-    // The shop only opens while Sable is behind the counter; otherwise the
-    // shop data's closed entry tells you the hours.
-    public static bool OpenShop(GameLocation location) =>
-        Utility.TryOpenShopMenu(ShopId, location, KeeperArea);
+    // The shop opens while Sable is behind the counter; otherwise the shop
+    // data's closed entry tells you the hours. Married to Sable, you're never
+    // turned away: when they're out, the till is left on trust for you.
+    public static bool OpenShop(GameLocation location)
+    {
+        if (Game1.player.spouse == "Sable" && Game1.player.isMarriedOrRoommates() && !SableAtCounter(location))
+        {
+            Game1.addHUDMessage(new HUDMessage("A note on the till: \"Take what you need. Money in the jar. -S\"") { noIcon = true });
+            return Utility.TryOpenShopMenu(ShopId, "None");
+        }
+        return Utility.TryOpenShopMenu(ShopId, location, KeeperArea);
+    }
 
     public static bool SableAtCounter(GameLocation location) =>
         location.characters.Any(npc => npc.Name == "Sable" && KeeperArea.Contains(npc.TilePoint));

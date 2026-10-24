@@ -1,0 +1,20 @@
+{
+  "batch": "stardew-sable-studio",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/style_rooms.png",
+    "style_usage": "Stardew Valley interior furniture style: warm palette, dark brown outlines, soft wood shading, pixel density and the front-and-top camera of these bedroom furnishings",
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable_room/guide_box.png",
+    "reference_usage": "camera angle only: the front face square-on with the top surface visible above it, no side faces"
+  },
+  "jobs": {
+    "desk": {
+      "description": "one piece of Stardew Valley style furniture for a painting restorer's studio: a wooden work desk with a magnifying lamp on a bent arm, a small cracked landscape painting lying flat on the desk being repaired, tiny solvent bottles and a jar of cotton swabs. Single object, transparent background."
+    }
+  }
+}
