@@ -47,14 +47,15 @@ def write(path, w, h, tilesets, grid, gid_of):
     open(path, "w", encoding="utf-8").write("\n".join(lines) + "\n")
 
 
-def place(grid, piece, x, y, solid=None, layer=None):
+def place(grid, piece, x, y, solid=None, layer=None, top=None):
     """A piece from SableStudio.png with its top-left tile at (x, y). Its last
     `solid` rows go on Buildings (you can't walk through them), the rest on
-    Front (drawn over anyone behind); or all of it on `layer`."""
+    Front (drawn over anyone behind), its first row on `top` if given (to sit
+    in front of wall decor); or all of it on `layer`."""
     p = STUDIO["pieces"][piece]
     for j in range(p["rows"]):
         for i in range(p["cols"]):
-            target = layer or ("Buildings" if j >= p["rows"] - solid else "Front")
+            target = layer or ("Buildings" if j >= p["rows"] - solid else top if j == 0 and top else "Front")
             grid[target][y + j][x + i] = ("studio", (p["y"] + j) * STUDIO["tiles_wide"] + p["x"] + i)
 
 
@@ -109,10 +110,10 @@ def room(exports, out):
         for x in range(W):
             if y == 1 and x != 3:
                 grid["Front"][y][x] = None
-    place(grid, "board", 0, 0, solid=0)          # sketches and swatches, on the wall
-    place(grid, "desk", 0, 2, solid=2)           # the restoration desk; its lamp over the wainscot
+    place(grid, "board", 1, 0, solid=0)          # sketches and swatches, on the wall by the window
+    place(grid, "desk", 0, 1, solid=1, top="AlwaysFront")   # the restoration desk against the wall; its lamp in front of the board
     place(grid, "cabinet", 4, 1, solid=1)        # ground pigments, amethyst, ruby, mortar
-    place(grid, "rug", 1, 5, layer="Back2")      # the drop cloth
+    place(grid, "rug", 1, 4, layer="Back2")      # the drop cloth, in front of the desk
     place(grid, "easel", 4, 5, solid=1)          # the canvas they keep turned to the wall
     place(grid, "rack", 0, 7, solid=1)           # small canvases drying
     place(grid, "table", 2, 7, solid=1)          # coffee and sweet peas
