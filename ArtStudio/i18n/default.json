@@ -374,7 +374,7 @@
   "record.reward.renown": "Renown",
   "record.reward.iridium": "A gift",
   "record.reward-hover.tubes": "Three tubes of aquamarine paint (and the colour).",
-  "record.reward-hover.palette": "Your Palette's wells hold 450 cells instead of 300.",
+  "record.reward-hover.palette": "Every Palette's wells hold half as much again.",
   "record.reward-hover.renown": "Every painting you make is worth 10% more.",
   "record.reward-hover.iridium": "A letter from Sable, with an iridium brush.",
   "record.reached": "Reached!",

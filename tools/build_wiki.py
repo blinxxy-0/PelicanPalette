@@ -560,7 +560,7 @@ Net gold per in-game hour of painting (sale price minus canvas and paint, divide
 
 
 def record():
-    perks = {"tubes": "Three tubes of Aquamarine paint (and the colour)", "palette": "Your Palette's wells hold 450 cells instead of 300",
+    perks = {"tubes": "Three tubes of Aquamarine paint (and the colour)", "palette": "Every Palette's wells hold half as much again",
              "renown": f'Every painting you make is worth {DATA["market"]["renown"]}x', "iridium": "A letter from Sable, with an Iridium Brush"}
     rows = "\n".join(f'| {c["subjects"]} | {perks[c["perk"]]} |' for c in DATA["catalogue"])
     page("Painting Record", f"""

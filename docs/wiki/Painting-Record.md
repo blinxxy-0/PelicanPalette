@@ -16,6 +16,6 @@ A subject's first painting ever sells for more. Painting the same subject again 
 | Different subjects | Reward |
 |---|---|
 | 5 | Three tubes of Aquamarine paint (and the colour) |
-| 15 | Your Palette's wells hold 450 cells instead of 300 |
+| 15 | Every Palette's wells hold half as much again |
 | 30 | Every painting you make is worth 1.1x |
 | 50 | A letter from Sable, with an Iridium Brush |
