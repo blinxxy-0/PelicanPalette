@@ -10,9 +10,16 @@ ArtStudio.Sim/refs.json
 # sprites (crops for PixelLab or side-by-side checks). Regenerate them with
 # the tools/art scripts from your own game export.
 art/**/style_*.png
+art/**/*_style.png
+art/**/review/
+art/shop_interior/leah_wall.png
+art/shop_interior/pierre_*.png
 art/shop_exterior/shop_style.png
 art/**/*_review.png
 art/**/*_picks.png
 art/**/*_vs_vanilla.png
 art/sable/walk_zoom.png
 art/sable/blush_check.png
+
+# Before/after sheets made for review in chat.
+docs/media/review/
