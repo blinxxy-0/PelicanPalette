@@ -115,6 +115,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_eventpaths", "Walks every step of Sable's events against the real maps and reports anyone walking through walls, furniture, props or each other.", (_, _) => EventPaths(monitor));
         DevTools.AddCommand(helper, "museart_route", "Prints event 'move' commands for the shortest walkable route. Usage: museart_route JoshHouse 9 23 6 19 [x y ...]", (_, args) => Route(monitor, args));
         DevTools.AddCommand(helper, "museart_tiles", "Says whether each tile can be stood on. Usage: museart_tiles JoshHouse 2 19 5 20", (_, args) => Tiles(monitor, args));
+        DevTools.AddCommand(helper, "museart_outfittest", "Checks Sable dresses for the weather: the coat outdoors in winter, everyday clothes indoors and in other seasons, the linen shirt on Ginger Island.", (_, args) => OutfitTest(monitor, args));
         DevTools.AddCommand(helper, "museart_portraittest", "Portraits of villagers: who'll sit, the reference, painting one, its price and time, gifting it, and portrait commissions.", (_, _) => PortraitTest(monitor));
         DevTools.AddCommand(helper, "museart_painttest", "Paint as a resource: the Palette, tubes, spending paint, and the Pigment Mill. Run 'museart_painttest', then 'museart_painttest check' a second later.", (_, args) => PaintTest(monitor, args));
         DevTools.AddCommand(helper, "museart_knowtest", "Pigments as knowledge, and painting taking time. Run 'museart_knowtest', then 'museart_knowtest close', then 'museart_knowtest check' a few seconds later.", (_, args) => KnowTest(monitor, args));
@@ -794,6 +795,41 @@ internal static class DevGame
         Check(monitor, "a large painting started at midnight would run too late", ArtHooks.FinishTime(PaintingRules.Minutes(CanvasKind.Large)) > PaintingRules.LatestFinish);
         Check(monitor, "a small one at midnight still fits", ArtHooks.FinishTime(PaintingRules.Minutes(CanvasKind.Small)) <= PaintingRules.LatestFinish);
         Game1.timeOfDay = 1200;
+    }
+
+    private static void OutfitTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        if (args.FirstOrDefault() == "festival")
+        {
+            // Run during a festival: the festival's own Sable.
+            var actor = Game1.CurrentEvent?.actors.FirstOrDefault(a => a.Name == "Sable");
+            Check(monitor, $"at the festival Sable wears {args.ElementAtOrDefault(1) ?? "the coat"}", actor != null && actor.Sprite.textureName.Value.EndsWith(args.ElementAtOrDefault(2) ?? "Sable_Winter"),
+                actor == null ? "no Sable here" : actor.Sprite.textureName.Value);
+            return;
+        }
+        var sable = Game1.getCharacterFromName("Sable");
+        if (sable == null) return;
+        var home = sable.currentLocation;
+        var season = Game1.season;
+        string? Wearing(string location, Season s, bool island = false)
+        {
+            Game1.season = s;
+            Game1.warpCharacter(sable, location, sable.TilePoint);
+            if (island) sable.wearIslandAttire(); else sable.wearNormalClothes();
+            sable.ChooseAppearance();
+            return sable.LastAppearanceId;
+        }
+        Check(monitor, "the winter coat outdoors in winter", Wearing("Forest", Season.Winter) == "Winter", Wearing("Forest", Season.Winter) ?? "everyday");
+        Check(monitor, "everyday clothes indoors in winter", Wearing(Shop.ArtShop.LocationName, Season.Winter) == null);
+        Check(monitor, "everyday clothes outdoors in spring", Wearing("Forest", Season.Spring) == null);
+        Check(monitor, "the linen shirt on Ginger Island", Wearing("IslandSouth", Season.Summer, island: true) == "Island");
+        string sprite = sable.Sprite.textureName.Value, portrait = sable.Portrait?.Name ?? "";
+        Check(monitor, "the island outfit loads its own sheets", sprite.EndsWith("Sable_Beach") && portrait.EndsWith("Sable_Beach"), $"{sprite}, {portrait}");
+        sable.wearNormalClothes();
+        Game1.season = season;
+        Game1.warpCharacter(sable, home.NameOrUniqueName, sable.TilePoint);
+        sable.ChooseAppearance();
     }
 
     private static void PortraitTest(IMonitor monitor)

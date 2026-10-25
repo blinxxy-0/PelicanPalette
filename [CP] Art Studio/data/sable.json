@@ -42,6 +42,13 @@
             { "Id": "Rose", "ItemId": "(O)blinxxy.MuseArt_Pigment_rose" },
             { "Id": "Brush", "ItemId": "(O)blinxxy.MuseArt_Brush_sable" }
           ],
+          // Dressed for the weather like the other villagers: a coat and
+          // scarf outdoors in winter (so at the Ice Festival and the Feast of
+          // the Winter Star), and a linen shirt on Ginger Island.
+          "Appearance": [
+            { "Id": "Winter", "Season": "Winter", "Indoors": false, "Outdoors": true, "Portrait": "Portraits/Sable_Winter", "Sprite": "Characters/Sable_Winter" },
+            { "Id": "Island", "IsIslandAttire": true, "Portrait": "Portraits/Sable_Beach", "Sprite": "Characters/Sable_Beach" }
+          ],
           "Home": [
             { "Id": "Default", "Location": "blinxxy.MuseArt_ArtShop", "Tile": { "X": 13, "Y": 5 }, "Direction": "up" }
           ]
@@ -50,6 +57,10 @@
     },
     { "Action": "Load", "Target": "Characters/Sable", "FromFile": "assets/sable/sprites.png" },
     { "Action": "Load", "Target": "Portraits/Sable", "FromFile": "assets/sable/portraits.png" },
+    { "Action": "Load", "Target": "Characters/Sable_Winter", "FromFile": "assets/sable/sprites_winter.png" },
+    { "Action": "Load", "Target": "Portraits/Sable_Winter", "FromFile": "assets/sable/portraits_winter.png" },
+    { "Action": "Load", "Target": "Characters/Sable_Beach", "FromFile": "assets/sable/sprites_beach.png" },
+    { "Action": "Load", "Target": "Portraits/Sable_Beach", "FromFile": "assets/sable/portraits_beach.png" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_SableSpouseRoom", "FromFile": "assets/SableSpouseRoom.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_SableSpousePatio", "FromFile": "assets/SableSpousePatio.tmx" },
     // Painting at an easel (from behind, brush up and down), and asleep.

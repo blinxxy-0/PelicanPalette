@@ -50,7 +50,7 @@ The painting's quality depends on how closely you copied the picture and on your
 
 **The art shop** is in Cindersap Forest, west of the path down from Marnie's ranch. It's open 10am to 6pm (until 5pm on Fridays, from 1pm on Sundays) and closed on Wednesdays. It sells canvases, pigments, paint tubes, palettes, brushes, easels, frames and the Pigment Mill, with more stock as your skill grows. The **commission board** there has villagers asking for paintings of things they love. Take a request, paint it well enough, and hand it to them for gold and friendship.
 
-**Sable** (they/them) runs the shop. They have a full schedule, festival appearances, heart events at 2, 4, 6, 8, 10 and 14 hearts, and can be dated and married. Once you're married they still keep the shop. When they're home, it runs on trust.
+**Sable** (they/them) runs the shop, and dresses for the weather like everyone else: a coat and scarf outdoors in winter, a linen shirt on Ginger Island. They have a full schedule, festival appearances, heart events at 2, 4, 6, 8, 10 and 14 hearts, and can be dated and married. Once you're married they still keep the shop. When they're home, it runs on trust.
 
 ## Settings
 

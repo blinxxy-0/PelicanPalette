@@ -1,0 +1,48 @@
+{
+  "batch": "stardew-sable-outfits",
+  "common": {
+    "endpoint": "edit-image-pixen"
+  },
+  "jobs": {
+    "winter_walk_1": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/walk_base.png",
+      "description": "this sprite sheet of the same character walking in four directions, now dressed for winter: a long plum-purple wool coat over their clothes, buttoned, and a chunky mustard-yellow knit scarf wrapped at the neck; keep exactly the same poses, frames, hair, goggles, face, skin and boots, and the same pixel-art style and outline",
+      "seed": 1
+    },
+    "winter_portrait_1": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/portrait_base.png",
+      "description": "the same character, same face, expression, hair, goggles and skin, now wearing a plum-purple wool winter coat with a chunky mustard-yellow knit scarf wrapped around the neck instead of the rust turtleneck and cream apron; same pixel-art style, colours and outline weight",
+      "seed": 1
+    },
+    "beach_walk_1": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/walk_base.png",
+      "description": "this sprite sheet of the same character walking in four directions, now dressed for a tropical beach: a loose pale sky-blue short-sleeved linen shirt, open at the collar, and sand-coloured shorts, bare arms below the sleeves and bare legs, simple sandals; keep exactly the same poses, frames, hair, goggles, face and skin, and the same pixel-art style and outline",
+      "seed": 1
+    },
+    "beach_portrait_1": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/portrait_base.png",
+      "description": "the same character, same face, expression, hair, goggles and skin, now wearing a loose pale sky-blue short-sleeved linen shirt open at the collar, showing the neck and collarbones, instead of the rust turtleneck and cream apron; same pixel-art style, colours and outline weight",
+      "seed": 1
+    },
+    "winter_walk_2": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/walk_base.png",
+      "description": "this sprite sheet of the same character walking in four directions, now dressed for winter: a long plum-purple wool coat over their clothes, buttoned, and a chunky mustard-yellow knit scarf wrapped at the neck; keep exactly the same poses, frames, hair, goggles, face, skin and boots, and the same pixel-art style and outline",
+      "seed": 2
+    },
+    "winter_portrait_2": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/portrait_base.png",
+      "description": "the same character, same face, expression, hair, goggles and skin, now wearing a plum-purple wool winter coat with a chunky mustard-yellow knit scarf wrapped around the neck instead of the rust turtleneck and cream apron; same pixel-art style, colours and outline weight",
+      "seed": 2
+    },
+    "beach_walk_2": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/walk_base.png",
+      "description": "this sprite sheet of the same character walking in four directions, now dressed for a tropical beach: a loose pale sky-blue short-sleeved linen shirt, open at the collar, and sand-coloured shorts, bare arms below the sleeves and bare legs, simple sandals; keep exactly the same poses, frames, hair, goggles, face and skin, and the same pixel-art style and outline",
+      "seed": 2
+    },
+    "beach_portrait_2": {
+      "image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/sable/outfits/portrait_base.png",
+      "description": "the same character, same face, expression, hair, goggles and skin, now wearing a loose pale sky-blue short-sleeved linen shirt open at the collar, showing the neck and collarbones, instead of the rust turtleneck and cream apron; same pixel-art style, colours and outline weight",
+      "seed": 2
+    }
+  }
+}
