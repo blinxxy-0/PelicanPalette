@@ -73,5 +73,11 @@ def image():
 
 
 if __name__ == "__main__":
-    image().save(sys.argv[1])
-    print("wrote", sys.argv[1])
+    # The easel is sprite 0; the sheet's other sprites (the Pigment Mill, 1)
+    # are kept.
+    import os
+    path = sys.argv[1]
+    sheet = Image.open(path).convert("RGBA") if os.path.exists(path) else Image.new("RGBA", (16, 32), (0, 0, 0, 0))
+    sheet.paste(image(), (0, 0))
+    sheet.save(path)
+    print("wrote", path)

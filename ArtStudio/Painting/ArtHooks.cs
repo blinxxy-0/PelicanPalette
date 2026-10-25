@@ -49,7 +49,14 @@ internal static class ArtHooks
 
         helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         helper.Events.GameLoop.DayEnding += OnDayEnding;
+        helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
         helper.Events.Player.InventoryChanged += OnInventoryChanged;
+        helper.Events.Display.MenuChanged += OnMenuChanged;
+
+        // Shop stock and other conditions can ask whether you know a colour:
+        // "blinxxy.MuseArt_KNOWS_PIGMENT <player> <pigment id>".
+        GameStateQuery.Register(ModEntry.Id + "_KNOWS_PIGMENT", (query, context) =>
+            GameStateQuery.Helpers.WithPlayer(context.Player, query[1], who => ArtProgress.Owns(who, Palette.IndexOf(query[2]))));
     }
 
     // ---- The easel ----
@@ -65,20 +72,80 @@ internal static class ArtHooks
 
     public static void OpenEasel(Farmer who)
     {
-        AbsorbPigments(who);
+        LearnPigments(who);
         Game1.activeClickableMenu = new EaselMenu(who);
     }
 
-    // Pigment jars in the bag go onto the palette for good when you sit down to paint.
-    private static void AbsorbPigments(Farmer who)
+    // A pigment is knowledge, like a recipe: the jar you buy, are given or
+    // grind is learned the moment it reaches your bag, and never stays
+    // there. (Checked a few times a second rather than inside the inventory
+    // event, which fires mid-change.)
+    private static void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
+    {
+        if (e.IsMultipleOf(15) && Context.IsWorldReady)
+            LearnPigments(Game1.player);
+    }
+
+    private static void LearnPigments(Farmer who)
     {
         foreach (var item in who.Items.Where(i => ArtItems.PigmentFor(i) != null).ToList())
         {
             int pigment = ArtItems.PigmentFor(item)!.Value;
             who.removeItemFromInventory(item);
-            if (ArtProgress.Unlock(who, pigment))
-                Game1.addHUDMessage(new HUDMessage(I18n.Get("pigment.added", new { pigment = I18n.Pigment(pigment) })) { noIcon = true });
+            Learn(who, pigment);
         }
+        // A tube of a colour you don't know yet (milled, or a gift) teaches
+        // it too, and stays in the bag as paint.
+        foreach (var tube in who.Items.Where(i => ArtItems.TubeFor(i) != null))
+            Learn(who, ArtItems.TubeFor(tube)!.Value);
+        // A new Palette comes with the starter colours.
+        foreach (var palette in who.Items.Where(ArtItems.IsPalette))
+            PaletteItem.Initialize(palette);
+    }
+
+    private static void Learn(Farmer who, int pigment)
+    {
+        if (!ArtProgress.Unlock(who, pigment)) return;
+        Game1.playSound("newRecipe");
+        Game1.addHUDMessage(new HUDMessage(I18n.Get("pigment.learned", new { pigment = I18n.Pigment(pigment) })) { noIcon = true });
+    }
+
+    // ---- Painting takes time ----
+
+    // Minutes of painting done since the easel opened. The clock moves on
+    // when you step away from it, behind a fade, so a run of paintings costs
+    // its time all at once and the clock never jumps under an open menu.
+    private static int _pendingMinutes;
+
+    public static int PendingMinutes => _pendingMinutes;
+
+    public static void AddPaintingTime(int minutes) => _pendingMinutes += minutes;
+
+    // When a painting started now (after the ones already done) would end.
+    public static int FinishTime(int minutes) => Utility.ModifyTime(Game1.timeOfDay, _pendingMinutes + minutes);
+
+    private static void OnMenuChanged(object? sender, MenuChangedEventArgs e)
+    {
+        if (e.OldMenu is not EaselMenu || e.NewMenu != null || _pendingMinutes <= 0) return;
+        int minutes = _pendingMinutes;
+        _pendingMinutes = 0;
+        PassTime(minutes);
+    }
+
+    // The clock runs on by `minutes`, ten minutes at a time as the game's own
+    // does (so schedules, machines and lighting all follow). In multiplayer
+    // the shared clock kept running while you painted, so nothing is added.
+    public static void PassTime(int minutes)
+    {
+        if (Context.IsMultiplayer) return;
+        Game1.globalFadeToBlack(() =>
+        {
+            int target = Math.Min(Utility.ModifyTime(Game1.timeOfDay, minutes), PaintingRules.LatestFinish);
+            while (Game1.timeOfDay < target)
+                Game1.performTenMinuteClockUpdate();
+            Game1.globalFadeToClear();
+            Game1.addHUDMessage(new HUDMessage(I18n.Get("painting.time-passed", new { time = Game1.getTimeOfDayString(Game1.timeOfDay) })) { noIcon = true });
+        });
     }
 
     private static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)

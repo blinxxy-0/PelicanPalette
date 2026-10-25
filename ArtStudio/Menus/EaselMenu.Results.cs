@@ -29,6 +29,7 @@ internal sealed partial class EaselMenu
 
     private void Finish(bool lightGone)
     {
+        ArtHooks.AddPaintingTime(PaintingRules.Minutes(_canvasKind));
         _mix = null;
         _lightGone = lightGone;
         _stage = EaselStage.Results;

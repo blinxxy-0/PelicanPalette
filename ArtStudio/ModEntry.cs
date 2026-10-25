@@ -45,7 +45,7 @@ public class ModEntry : Mod
         DevTools.AddCommand(helper, "museart_free", "Starts a free-canvas painting. Usage: museart_free [small|medium|large]", FreeCommand);
         DevTools.AddCommand(helper, "museart_level", "Sets your Painting level. Usage: museart_level <0-10>", LevelCommand);
         DevTools.AddCommand(helper, "museart_pigments", "Sets owned pigments. Usage: museart_pigments all|starter|<id> ...", PigmentsCommand);
-        DevTools.AddCommand(helper, "museart_supplies", "Gives you an easel, canvases, a brush of each kind, picture frames and every pigment jar.", SuppliesCommand);
+        DevTools.AddCommand(helper, "museart_supplies", "Gives you an easel, canvases, a brush of each kind, picture frames, a palette and two tubes of every colour.", SuppliesCommand);
         DevTools.AddCommand(helper, "museart_tastes", "Prints how every villager would take a painting of each quality. Usage: museart_tastes [item id of the subject]", TastesCommand);
         DevTools.AddCommand(helper, "museart_difficulty", "Prints the reference difficulty for some items. Usage: museart_difficulty [item IDs...]", DifficultyCommand);
         DevTools.Register(helper, Monitor);
@@ -105,6 +105,8 @@ public class ModEntry : Mod
             e.Edit(asset => ArtItems.AddBigCraftables(asset.AsDictionary<string, BigCraftableData>().Data));
         else if (name.IsEquivalentTo("Data/Furniture"))
             e.Edit(asset => ArtItems.AddFurniture(asset.AsDictionary<string, string>().Data));
+        else if (name.IsEquivalentTo("Data/Machines"))
+            e.Edit(asset => ArtItems.AddMachines(asset.AsDictionary<string, StardewValley.GameData.Machines.MachineData>().Data));
         else if (name.IsEquivalentTo("Data/CraftingRecipes"))
             e.Edit(asset => ArtItems.AddRecipes(asset.AsDictionary<string, string>().Data));
         else if (name.IsEquivalentTo("Data/Shops"))
@@ -220,7 +222,8 @@ public class ModEntry : Mod
             ItemRegistry.Create("(O)" + ArtItems.FrameItemId, 5),
         };
         items.AddRange(Brushes.All.Where(b => b != Brushes.HogBristle).Select(b => ItemRegistry.Create("(O)" + ArtItems.BrushId(b))));
-        items.AddRange(Enumerable.Range(0, Palette.All.Length).Where(i => !Palette.All[i].Starter).Select(i => ItemRegistry.Create("(O)" + ArtItems.PigmentId(i))));
+        items.Add(ItemRegistry.Create("(O)" + ArtItems.PaletteId));
+        items.AddRange(Enumerable.Range(0, Palette.All.Length).Select(i => ItemRegistry.Create("(O)" + ArtItems.TubeId(i), 2)));
         foreach (var item in items)
             Game1.player.addItemByMenuIfNecessary(item);
         Monitor.Log($"Gave {items.Count} painting supplies.", LogLevel.Info);

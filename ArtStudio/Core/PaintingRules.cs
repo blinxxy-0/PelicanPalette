@@ -21,6 +21,19 @@ public static class PaintingRules
         _ => 36,
     };
 
+    // A painting takes part of your day, like fishing or chopping wood: the
+    // clock moves on by this much when you finish one. It's what keeps a
+    // day's painting income in proportion.
+    public static int Minutes(CanvasKind kind) => kind switch
+    {
+        CanvasKind.Small => 60,
+        CanvasKind.Medium => 120,
+        _ => 180,
+    };
+
+    // The latest a painting may end (2am: past it, the farmer passes out).
+    public const int LatestFinish = 2600;
+
     public static int CanvasUnlockLevel(CanvasKind kind) => kind switch
     {
         CanvasKind.Small => 0,

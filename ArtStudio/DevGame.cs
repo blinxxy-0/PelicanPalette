@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using ArtStudio.Core;
+using ArtStudio.Menus;
 using ArtStudio.Painting;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -114,6 +115,8 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_eventpaths", "Walks every step of Sable's events against the real maps and reports anyone walking through walls, furniture, props or each other.", (_, _) => EventPaths(monitor));
         DevTools.AddCommand(helper, "museart_route", "Prints event 'move' commands for the shortest walkable route. Usage: museart_route JoshHouse 9 23 6 19 [x y ...]", (_, args) => Route(monitor, args));
         DevTools.AddCommand(helper, "museart_tiles", "Says whether each tile can be stood on. Usage: museart_tiles JoshHouse 2 19 5 20", (_, args) => Tiles(monitor, args));
+        DevTools.AddCommand(helper, "museart_painttest", "Paint as a resource: the Palette, tubes, spending paint, and the Pigment Mill. Run 'museart_painttest', then 'museart_painttest check' a second later.", (_, args) => PaintTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_knowtest", "Pigments as knowledge, and painting taking time. Run 'museart_knowtest', then 'museart_knowtest close', then 'museart_knowtest check' a few seconds later.", (_, args) => KnowTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
         DevTools.AddCommand(helper, "museart_portrait", "Makes Sable's portrait of the current farmer and saves it (and the farmer as rendered) to exports/portrait.png.", (_, _) =>
         {
@@ -206,6 +209,8 @@ internal static class DevGame
         var who = Game1.player;
         ArtProgress.SetLevel(who, 6);
         ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length));
+        if (who.MaxItems < 36)
+            who.increaseBackpackSize(36 - who.MaxItems);     // room for the test items
 
         var house = Utility.getHomeOfFarmer(who);
         if (who.currentLocation != house)
@@ -245,6 +250,7 @@ internal static class DevGame
         who.addItemToInventory(ItemRegistry.Create(ArtItems.QualifiedCanvasId(CanvasKind.Small), 5));
         who.addItemToInventory(ItemRegistry.Create("(O)24", 3));
         who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.FrameItemId, 2));
+        who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.PaletteId));
         who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.BrushId(Brushes.All[1])));
         who.Position = new Vector2(easelTile.X, easelTile.Y + 1) * 64f;
         who.FacingDirection = 0;
@@ -423,7 +429,11 @@ internal static class DevGame
             SObject Painting(int quality) => PaintingItems.Create(new PaintingData { Size = 20, Cells = cells, Purity = new Purity[20, 20], Subject = "(O)24" }, quality, 200);
 
             var weak = Painting(PaintingRules.Normal);
-            who.addItemToInventory(weak);
+            if (!who.addItemToInventoryBool(weak))
+            {
+                Check(monitor, "the bag has room for the test paintings", false);
+                return;
+            }
             who.CurrentToolIndex = who.Items.IndexOf(weak);
             pierre.tryToReceiveActiveObject(who);
             Check(monitor, "a painting below the asked quality is turned down", who.Items.Contains(weak) && Shop.Commissions.Accepted(who).Any());
@@ -752,6 +762,90 @@ internal static class DevGame
     // A dialogue page too tall for the box beside the portrait gets cut into a
     // second box mid-word (DialogueBox.checkDialogue). Measure each page with
     // the game's own text layout for that box (1200x384, minus the portrait).
+    // Part one of the paint rework (docs/painting_depth.md): a pigment is
+    // learned the moment its jar reaches the bag, the shop stops offering
+    // known ones, and finishing paintings moves the clock on.
+    private static void KnowTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        int sienna = Palette.IndexOf("sienna");
+        if (args.FirstOrDefault() == "close")
+        {
+            Game1.exitActiveMenu();         // a tick after opening, so the menu change registers
+            return;
+        }
+        if (args.FirstOrDefault() != "check")
+        {
+            ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length).Where(i => Palette.All[i].Starter));
+            Check(monitor, "the shop condition sees an unknown pigment", !GameStateQuery.CheckConditions(ModEntry.Id + "_KNOWS_PIGMENT Current sienna"));
+            who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.PigmentId(sienna)));
+            Game1.timeOfDay = 1000;
+            ArtHooks.AddPaintingTime(PaintingRules.Minutes(CanvasKind.Medium));
+            Game1.activeClickableMenu = new EaselMenu(who);
+            return;
+        }
+        Check(monitor, "a pigment jar is learned on pickup", ArtProgress.Owns(who, sienna));
+        Check(monitor, "the learned jar leaves the bag", !who.Items.Any(i => ArtItems.PigmentFor(i) != null));
+        Check(monitor, "the shop condition sees a known pigment", GameStateQuery.CheckConditions(ModEntry.Id + "_KNOWS_PIGMENT Current sienna"));
+        Check(monitor, "closing the easel after painting moves the clock on", Game1.timeOfDay == 1200, $"10:00 -> {Game1.timeOfDay}");
+        Game1.timeOfDay = 2400;
+        Check(monitor, "a large painting started at midnight would run too late", ArtHooks.FinishTime(PaintingRules.Minutes(CanvasKind.Large)) > PaintingRules.LatestFinish);
+        Check(monitor, "a small one at midnight still fits", ArtHooks.FinishTime(PaintingRules.Minutes(CanvasKind.Small)) <= PaintingRules.LatestFinish);
+        Game1.timeOfDay = 1200;
+    }
+
+    // Part two of the paint rework (docs/painting_depth.md).
+    private static void PaintTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        int charcoal = Palette.IndexOf("charcoal"), sienna = Palette.IndexOf("sienna");
+        if (args.FirstOrDefault() != "check")
+        {
+            ModEntry.Config.Difficulty = Difficulty.Normal;
+            ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length).Where(i => Palette.All[i].Starter));
+            foreach (var old in who.Items.Where(i => ArtItems.IsPalette(i) || ArtItems.TubeFor(i) != null).ToList())
+                who.removeItemFromInventory(old);
+            who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.PaletteId));
+            who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.TubeId(charcoal), 3));
+            who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.TubeId(sienna)));
+            return;                         // the pickup check runs on the next ticks
+        }
+
+        var palette = PaletteItem.Find(who);
+        Check(monitor, "a new palette comes with the starter colours", palette != null
+            && Enumerable.Range(0, Palette.All.Length).All(i => PaletteItem.Read(palette)[i] == (Palette.All[i].Starter ? PaletteItem.TubeCells : 0)));
+        Check(monitor, "a tube of a new colour teaches it", ArtProgress.Owns(who, sienna));
+        if (palette == null) return;
+
+        var menu = new EaselMenu(who);
+        var paint = PaletteItem.Read(palette);
+        Check(monitor, "the easel squeezes tubes into the palette, up to a full well", paint[charcoal] == PaletteItem.WellCells
+            && who.Items.FirstOrDefault(i => ArtItems.TubeFor(i) == charcoal)?.Stack == 1, $"charcoal {paint[charcoal]}");
+        Check(monitor, "a tube of a colour just learned goes in too", paint[sienna] == PaletteItem.TubeCells, $"sienna {paint[sienna]}");
+
+        int before = paint[sienna];
+        int painted = menu.DevFillWith(sienna);
+        int after = PaletteItem.Read(palette)[sienna];
+        Check(monitor, "painting spends one cell of paint per cell", painted > 0 && after == before - painted, $"{painted} painted, {before} -> {after}");
+        Check(monitor, "an empty colour can't be painted with", after == 0 && menu.DevFillWith(sienna) == 0);
+
+        // The Pigment Mill: clay in, two tubes of sienna out.
+        var location = Game1.currentLocation;
+        var tile = new Vector2(who.TilePoint.X, who.TilePoint.Y - 2);
+        location.objects.Remove(tile);
+        var mill = (SObject)ItemRegistry.Create(ArtItems.QualifiedMillId);
+        location.objects.Add(tile, mill);
+        bool accepted = mill.performObjectDropInAction(ItemRegistry.Create("(O)330"), false, who);
+        var output = mill.heldObject.Value;
+        Check(monitor, "the Pigment Mill grinds clay into sienna tubes", accepted && output?.QualifiedItemId == "(O)" + ArtItems.TubeId(sienna) && output.Stack == 2,
+            output == null ? "nothing" : $"{output.Stack} {output.QualifiedItemId}, ready in {mill.MinutesUntilReady} minutes");
+        bool refused = !mill.performObjectDropInAction(ItemRegistry.Create("(O)24"), true, who);
+        Check(monitor, "the mill turns away things that aren't pigment", refused);
+        location.objects.Remove(tile);
+    }
+
     private static void DialogueFit(IMonitor monitor)
     {
         if (!Context.IsWorldReady) return;
@@ -800,6 +894,26 @@ internal static class DevGame
         foreach (var (where, text) in unresolved)
             monitor.Log($"[FAIL] unresolved translation ({where}): \"{text}\"", LogLevel.Error);
         Check(monitor, $"every translated text resolved ({raw.Count} entries)", unresolved.Count == 0, $"{unresolved.Count} unresolved");
+
+        // A line can pick between alternatives at random ($c chance#A#B,
+        // chained for more); check every alternative, not just one roll.
+        static System.Collections.Generic.IEnumerable<string> Alternatives(string text)
+        {
+            while (text.StartsWith("$c "))
+            {
+                string[] parts = text.Split('#', 3);
+                yield return parts[1];
+                text = parts.Length > 2 ? parts[2] : "";
+            }
+            yield return text;
+        }
+        string? random = texts.Select(t => t.Text).FirstOrDefault(t => t.StartsWith("$c "));
+        if (random != null)
+        {
+            var seen = Enumerable.Range(0, 30).Select(_ => new Dialogue(sable, null, random).dialogues.FirstOrDefault()?.Text).Distinct().Count();
+            Check(monitor, "a line with random alternatives picks between them", seen > 1, $"{seen} different in 30");
+        }
+        texts = texts.SelectMany(t => Alternatives(t.Text).Select(alt => (t.Where, t.Speaker, alt))).ToList();
 
         int pages = 0, bad = 0;
         foreach (var (where, speaker, text) in texts)

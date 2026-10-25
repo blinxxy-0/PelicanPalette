@@ -102,7 +102,7 @@
       "Action": "EditData",
       "Target": "Data/Events/blinxxy.MuseArt_ArtShop",
       "Entries": {
-        "blinxxy.MuseArt_SableIntro/": "continue/9 8/farmer 9 13 0 Sable 7 4 0/skippable/pause 500/move farmer 0 -7 0/pause 300/speak Sable \"{{i18n:intro.01}}\"/pause 300/emote Sable 16/faceDirection Sable 2/pause 300/move Sable 1 0 1/move Sable 0 2 2/faceDirection Sable 1/faceDirection farmer 3/speak Sable \"{{i18n:intro.02}}\"/pause 300/speak Sable \"{{i18n:intro.03}}\"/addItem (O)blinxxy.MuseArt_Canvas_Small 3/addItem (O)blinxxy.MuseArt_Pigment_rose 1/pause 300/speak Sable \"{{i18n:intro.04}}\"/friendship Sable 25/pause 300/end"
+        "blinxxy.MuseArt_SableIntro/": "continue/9 8/farmer 9 13 0 Sable 7 4 0/skippable/pause 500/move farmer 0 -7 0/pause 300/speak Sable \"{{i18n:intro.01}}\"/pause 300/emote Sable 16/faceDirection Sable 2/pause 300/move Sable 1 0 1/move Sable 0 2 2/faceDirection Sable 1/faceDirection farmer 3/speak Sable \"{{i18n:intro.02}}\"/pause 300/speak Sable \"{{i18n:intro.03}}\"/addItem (O)blinxxy.MuseArt_Canvas_Small 3/addItem (O)blinxxy.MuseArt_Pigment_rose 1/addItem (O)blinxxy.MuseArt_Palette 1/pause 300/speak Sable \"{{i18n:intro.04}}\"/friendship Sable 25/pause 300/end"
       }
     },
 

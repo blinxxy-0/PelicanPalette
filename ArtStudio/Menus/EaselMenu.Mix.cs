@@ -63,6 +63,12 @@ internal sealed partial class EaselMenu
 
     private void StartMix(int pigment)
     {
+        if (PaintLeft(pigment) <= 0)
+        {
+            Game1.playSound("cancel");
+            Toast(I18n.Get("paint.out", new { pigment = I18n.Pigment(pigment) }), Color.OrangeRed, 2.5f);
+            return;
+        }
         var p = Palette.All[pigment];
         _mixTopUp = _rules.PaintLoads && pigment == _selected && _load > 0;
         _mixPigment = pigment;

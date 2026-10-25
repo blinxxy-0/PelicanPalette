@@ -77,6 +77,24 @@ internal sealed partial class EaselMenu
 
     internal void DevToast(string text) => Toast(text, new Color(214, 160, 30), 2f);
 
+    // Fills from the top-left cell with a pigment through the real paint
+    // path (load and Palette both spent); returns the cells painted.
+    internal int DevFillWith(int pigment)
+    {
+        _canvas.Clear();
+        _selected = pigment;
+        _loadPurity = Purity.Pure;
+        _load = _loadMax = 100000;
+        _dryWarned = false;
+        FillAt(new Point(0, 0));
+        int painted = 0;
+        foreach (byte c in _canvas.Snapshot())
+            if (c != PixelCanvas.Blank) painted++;
+        return painted;
+    }
+
+    internal int DevPaintLeft(int pigment) => PaintLeft(pigment);
+
     internal void DevLeavePrompt() => _confirmLeave = true;
 
     internal void DevLevelUp(int level) => _newLevel = level;

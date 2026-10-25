@@ -117,6 +117,7 @@ def items():
     canvas(d, 32, 10, 12)
     canvas(d, 48, 12, 14)
     # 4-7: sable, flat wash, rigger, iridium brushes (Brushes.All order after hog bristle).
+    # Placeholders only: tools/art/brushes.py draws the real ones over these.
     brush(d, 64, WOOD_DARK, (80, 50, 30, 255))
     brush(d, 80, WOOD, (200, 170, 120, 255), width=2, length=9, tip=3)
     brush(d, 96, (40, 40, 40, 255), (120, 80, 50, 255), length=9, tip=5)

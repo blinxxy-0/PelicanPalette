@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using ArtStudio.Core;
 using ArtStudio.Painting;
@@ -27,6 +28,13 @@ internal sealed partial class EaselMenu : IClickableMenu
     private BrushSpec _brush;
     private Item? _brushItem;
     private readonly DifficultySettings _rules;
+
+    // Paint (docs/painting_depth.md): the Palette in the bag, and how many
+    // cells of each colour it holds. Relaxed paints for free.
+    private readonly Item? _palette;
+    private readonly int[] _paint = new int[Palette.All.Length];
+    // (Only in a loaded game: the title-screen snapshots have no Palette.)
+    private static bool UsesPaint => PaletteItem.Required && StardewModdingAPI.Context.IsWorldReady;
     private EaselStage _stage = EaselStage.Setup;
 
     private MouseState _mouse, _prevMouse;
@@ -48,6 +56,13 @@ internal sealed partial class EaselMenu : IClickableMenu
         _owned = ArtProgress.OwnedPigments(who);
         _brush = brush ?? Brushes.HogBristle;
         _rules = DifficultySettings.For(ModEntry.Config.Difficulty);
+        if (UsesPaint && (_palette = PaletteItem.Find(who)) != null)
+        {
+            int tubes = PaletteItem.Refill(who, _palette).Values.Sum();
+            _paint = PaletteItem.Read(_palette);
+            if (tubes > 0)
+                Toast(I18n.Get("palette.refilled", new { tubes }), new Color(60, 140, 60), 2.5f);
+        }
         Reposition();
         EnterSetup();
     }

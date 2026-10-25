@@ -20,13 +20,22 @@ You can add it to an existing save. To remove it, sell or trash your paintings, 
 
 ## Playing
 
-**Getting started.** On your second day a letter arrives from the new art shop, with two canvases. You already know how to craft an **Easel** (30 wood, 10 fiber) and **Small Canvases** (5 fiber, 2 wood). Place the easel anywhere and use it.
+**Getting started.** On your second day a letter arrives from the new art shop, with two canvases. You already know how to craft an **Easel** (30 wood, 10 fiber), **Small Canvases** (5 fiber, 2 wood) and a **Palette** (10 wood). Sable also gives you a Palette on your first visit to the shop. Place the easel anywhere and use it, with a Palette in your bag.
 
 **Painting.** Pick a canvas and something from your inventory to paint, and its picture appears beside the canvas. Copy it cell by cell:
 - **Mixing** works like fishing. Click a pigment and hold to keep your mix on the moving true color until the meter fills. A clean mix paints pure color; a bad one comes out muddy.
 - **The light** runs down while you work. When it's gone, the painting is finished as it stands. Finish early and the leftover light becomes bonus experience.
 - **Inspiration sparks** sometimes appear on the canvas. Paint that cell the right pure color before the spark fades for more light; catch three and the painting is *Inspired*.
 - **Brushes** change how mixing feels and how far a mix goes. They wear out with use, like fishing tackle.
+
+A painting takes part of your day: about 1 hour for a small canvas, 2 for medium and 3 for large. The clock moves on when you step away from the easel, and it won't start a painting that would run past 2am.
+
+**Colours and paint.**
+- **Colours are knowledge.** You start knowing eight. Learn more by buying their pigment from Sable, or from the first tube of a new colour you get. You never lose a colour you know.
+- **Paint is what you spend.** Your **Palette** holds paint for each colour, up to 300 cells' worth, and every cell you paint uses one. A new Palette comes with the eight starter colours.
+- **Refilling:** **paint tubes** (100 cells each) top the Palette up automatically when you sit down at an easel. The setup screen warns you if you're low on a colour the subject needs.
+- **Where tubes come from:** Sable sells tubes of every colour you know. A **Pigment Mill** (unlocked at Painting level 1, or bought from Sable) grinds tubes overnight from clay, coal, stone, flowers, berries, minerals and gems. Milling something new can teach you a colour.
+- **Relaxed difficulty** paints for free and doesn't need a Palette.
 
 The painting's quality depends on how closely you copied the picture and on your Painting level.
 
@@ -37,7 +46,7 @@ The painting's quality depends on how closely you copied the picture and on your
 - Everyone loves an iridium painting, and silver and gold ones are liked. Art lovers (Leah, Elliott, Emily, Haley, Abigail, Sebastian, Sam, Robin and Sable) like any painting. A painting of something a villager loves goes up a step. Nobody dislikes a painting.
 - A **Picture Frame** turns a painting into furniture you can hang on a wall.
 
-**The art shop** is in Cindersap Forest, west of the path down from Marnie's ranch. It's open 10am to 6pm (until 5pm on Fridays, from 1pm on Sundays) and closed on Wednesdays. It sells canvases, pigments, brushes, easels and frames, with more stock as your skill grows. The **commission board** there has villagers asking for paintings of things they love. Take a request, paint it well enough, and hand it to them for gold and friendship.
+**The art shop** is in Cindersap Forest, west of the path down from Marnie's ranch. It's open 10am to 6pm (until 5pm on Fridays, from 1pm on Sundays) and closed on Wednesdays. It sells canvases, pigments, paint tubes, palettes, brushes, easels, frames and the Pigment Mill, with more stock as your skill grows. The **commission board** there has villagers asking for paintings of things they love. Take a request, paint it well enough, and hand it to them for gold and friendship.
 
 **Sable** (they/them) runs the shop. They have a full schedule, festival appearances, heart events at 2, 4, 6, 8, 10 and 14 hearts, and can be dated and married. Once you're married they still keep the shop. When they're home, it runs on trust.
 

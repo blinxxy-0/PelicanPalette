@@ -1,0 +1,17 @@
+{
+  "batch": "stardew-artshop-pigment-mill",
+  "common": {
+    "endpoint": "generate-image-v2",
+    "no_background": true,
+    "image_size": {"width": 32, "height": 32},
+    "style_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/paint/machines_style.png",
+    "style_usage": "Stardew Valley artisan machine pixel art: palette, outline, wood and metal shading, size (one tile wide, two tall) and the front-on view with the top seen from above, like the keg, preserves jar and oil maker",
+    "reference_image": "C:/Users/blinx/OneDrive/Desktop/MuseStardew/art/paint/mill_guide.png",
+    "reference_usage": "outline and size: a machine one tile wide and two tall, standing on the floor"
+  },
+  "jobs": {
+    "pigment_mill": {
+      "description": "one Stardew Valley artisan machine, a Pigment Mill for grinding colors: a wooden stand with a round stone grinding wheel on top turned by a little iron crank handle, a small chute at the front with colorful pigment powder and a paint tube coming out, a few dabs of bright paint on the wood. Same size and style as the keg and preserves jar. Machine only, transparent background."
+    }
+  }
+}

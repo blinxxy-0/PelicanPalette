@@ -301,16 +301,35 @@ internal sealed partial class EaselMenu
             return;
         }
         if (!HasPaint()) return;
+        int budget = Math.Min(_load, PaintLeft(_selected)), before = budget;
         foreach (var (a, b) in Mirrored(from, to))
-            _canvas.Line(a.X, a.Y, b.X, b.Y, (byte)_selected, _loadPurity, BrushSize, ref _load);
+            _canvas.Line(a.X, a.Y, b.X, b.Y, (byte)_selected, _loadPurity, BrushSize, ref budget);
+        Spend(before - budget);
         AfterPaint();
     }
 
     private void FillAt(Point cell)
     {
         if (!HasPaint()) return;
-        _canvas.Fill(cell.X, cell.Y, (byte)_selected, _loadPurity, ref _load);
+        int budget = Math.Min(_load, PaintLeft(_selected)), before = budget;
+        _canvas.Fill(cell.X, cell.Y, (byte)_selected, _loadPurity, ref budget);
+        Spend(before - budget);
         AfterPaint();
+    }
+
+    // Cells of a colour left on the Palette (unlimited when paint is free).
+    private int PaintLeft(int pigment) => !UsesPaint ? int.MaxValue / 2 : pigment >= 0 ? _paint[pigment] : 0;
+
+    // Painted cells come off the brush's load and out of the Palette.
+    private void Spend(int cells)
+    {
+        if (cells <= 0) return;
+        _load -= cells;
+        if (!UsesPaint || _palette == null) return;
+        _paint[_selected] = Math.Max(0, _paint[_selected] - cells);
+        PaletteItem.Write(_palette, _paint);
+        if (_paint[_selected] == 0)
+            Toast(I18n.Get("paint.out", new { pigment = I18n.Pigment(_selected) }), Color.OrangeRed, 2.5f);
     }
 
     // With the mirror on, every stroke is repeated reflected across the
@@ -325,6 +344,16 @@ internal sealed partial class EaselMenu
 
     private bool HasPaint()
     {
+        if (_selected >= 0 && _load > 0 && PaintLeft(_selected) <= 0)
+        {
+            if (!_dryWarned)
+            {
+                _dryWarned = true;
+                Game1.playSound("cancel");
+                Toast(I18n.Get("paint.out", new { pigment = I18n.Pigment(_selected) }), Color.OrangeRed, 2.5f);
+            }
+            return false;
+        }
         if (_selected >= 0 && _load > 0) return true;
         if (!_dryWarned)
         {
@@ -806,6 +835,13 @@ internal sealed partial class EaselMenu
                     Ui.Text(b, ((slot + 1) % 10).ToString(), new Vector2(r.X + 4, r.Y + 2), Luma(color) > 140 ? Game1.textColor : Color.White, 0.8f);
                 if (used != null && used.Contains(i))
                     Ui.Fill(b, new Rectangle(r.Right - 12, r.Y + 6, 6, 6), Luma(color) > 140 ? Color.Black * 0.6f : Color.White * 0.9f);
+                // How much paint the Palette has left of it: a gauge up the right edge.
+                if (UsesPaint)
+                {
+                    int h = (int)((r.Height - 8) * Math.Clamp(_paint[i] / (float)PaletteItem.WellCells, 0f, 1f));
+                    Ui.Fill(b, new Rectangle(r.Right - 7, r.Y + 4, 4, r.Height - 8), Color.Black * 0.35f);
+                    Ui.Fill(b, new Rectangle(r.Right - 7, r.Bottom - 4 - h, 4, h), _paint[i] > 0 ? Color.White * 0.9f : Color.OrangeRed);
+                }
                 // Colors already mixed (when paint doesn't run out): a strip in the purity's color.
                 if (_mixed.TryGetValue(i, out var mixed))
                 {
@@ -819,7 +855,8 @@ internal sealed partial class EaselMenu
                 Ui.Outline(b, r, Color.Black * 0.15f, 1);
             }
             if (r.Contains(mouse))
-                _hoverText = I18n.Pigment(i) + "\n" + (owned ? I18n.Get("pigment.hover", new { difficulty = p.Difficulty, motion = I18n.Motion(p.Motion) }) : I18n.Get("pigment.not-owned"));
+                _hoverText = I18n.Pigment(i) + "\n" + (owned ? I18n.Get("pigment.hover", new { difficulty = p.Difficulty, motion = I18n.Motion(p.Motion) })
+                    + (UsesPaint ? "\n" + I18n.Get("pigment.paint-left", new { cells = _paint[i] }) : "") : I18n.Get("pigment.not-owned"));
         }
 
         foreach (var (tool, rect) in _toolButtons)

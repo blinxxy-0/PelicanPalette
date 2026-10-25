@@ -1,3 +1,4 @@
+using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -188,12 +189,43 @@ internal sealed partial class EaselMenu
         }
     }
 
+    // A painting may not run past 2am (in multiplayer the clock is shared
+    // and keeps running anyway, so there's no extra time to add).
+    private bool TooLate => !Context.IsMultiplayer && Context.IsWorldReady
+        && ArtHooks.FinishTime(PaintingRules.Minutes(_setupCanvas)) > PaintingRules.LatestFinish;
+
+    private bool NeedsPalette => UsesPaint && _palette == null;
+
+    // Colours the subject needs more of than the Palette holds (cells of each
+    // in the reference, against what's left).
+    private List<int> ShortColours()
+    {
+        if (!UsesPaint || _palette == null || _setupPreview == null) return new List<int>();
+        var need = new int[Palette.All.Length];
+        foreach (byte c in _setupPreview.Cells)
+            if (c != PixelCanvas.Blank && c < need.Length)
+                need[c]++;
+        return Enumerable.Range(0, need.Length).Where(i => need[i] > _paint[i]).ToList();
+    }
+
     private void TryBegin()
     {
         if (!_setupOriginal && _setupItems.Count == 0) return;
         if (!HasCanvas)
         {
             Game1.playSound("cancel");
+            return;
+        }
+        if (TooLate)
+        {
+            Game1.playSound("cancel");
+            Toast(I18n.Get("setup.too-late"), new Color(150, 70, 50), 2.5f);
+            return;
+        }
+        if (NeedsPalette)
+        {
+            Game1.playSound("cancel");
+            Toast(I18n.Get("setup.need-palette"), new Color(150, 70, 50), 3f);
             return;
         }
         Game1.playSound("bigSelect");
@@ -314,8 +346,16 @@ internal sealed partial class EaselMenu
 
         bool ready = (_setupOriginal || _setupItems.Count > 0) && HasCanvas;
         Ui.Button(b, _beginButton, I18n.Get("setup.begin"), ready, false, ready && _beginButton.Contains(mouse));
-        string footer = !HasCanvas ? I18n.Get("setup.need-canvas." + CanvasKeys[(int)_setupCanvas]) : I18n.Get("setup.mode." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant());
-        Ui.Text(b, footer, new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10), !HasCanvas ? new Color(150, 70, 50) : Game1.textColor * 0.8f);
+        // Under Begin: what's missing, or else the mode and how long it takes.
+        int hours = PaintingRules.Minutes(_setupCanvas) / 60;
+        var shortOf = ShortColours();
+        bool warn = !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
+        string footer = !HasCanvas ? I18n.Get("setup.need-canvas." + CanvasKeys[(int)_setupCanvas])
+            : TooLate ? I18n.Get("setup.too-late-short")
+            : NeedsPalette ? I18n.Get("setup.need-palette-short")
+            : shortOf.Count > 0 ? I18n.Get("setup.low-paint", new { pigments = string.Join(", ", shortOf.Take(3).Select(I18n.Pigment)) })
+            : I18n.Get("setup.mode-takes", new { mode = I18n.Get("setup.mode." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()), hours });
+        Ui.Text(b, footer, new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10), warn ? new Color(150, 70, 50) : Game1.textColor * 0.8f);
         if (!HasCanvas && _beginButton.Contains(mouse))
             _hoverText = _setupCanvas == CanvasKind.Small ? I18n.Get("setup.craft-small") : I18n.Get("setup.craft-big");
     }
