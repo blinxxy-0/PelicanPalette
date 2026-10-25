@@ -29,7 +29,7 @@ internal sealed partial class EaselMenu
 
     private void Finish(bool lightGone)
     {
-        ArtHooks.AddPaintingTime(PaintingRules.Minutes(_canvasKind));
+        ArtHooks.AddPaintingTime(PaintingRules.Minutes(_canvasKind, IsSitterSubject(_subjectItems)));
         _mix = null;
         _lightGone = lightGone;
         _stage = EaselStage.Results;
@@ -66,7 +66,8 @@ internal sealed partial class EaselMenu
             float inspiredBonus = Has(PaintingSkill.Instance.Visionary) ? PaintingSkill.VisionaryInspiredBonus : PaintingRules.InspiredBonus;
             _score = PaintingRules.Score(_result.Stars, _level, _inspired, _allPure, inspiredBonus);
             _quality = PaintingRules.Quality(_score, _level);
-            _xp = (int)Math.Round(PaintingRules.Xp(_result.Stars, _reference.Difficulty, size) * _rules.RewardMultiplier);
+            _xp = (int)Math.Round(PaintingRules.Xp(_result.Stars, _reference.Difficulty, size) * _rules.RewardMultiplier
+                * (IsSitterSubject(_subjectItems) ? PaintingRules.PortraitXp : 1f));
             if (SableCritiques)
                 (_critique, _critiquePortrait) = SableCritique(_result, painted);
             else
@@ -82,9 +83,10 @@ internal sealed partial class EaselMenu
                 _critique = I18n.Get("critique.original");
         }
 
-        int subjectPrice = _subjectItems.Length == 0 ? 0 : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
+        bool portrait = IsSitterSubject(_subjectItems);
+        int subjectPrice = portrait ? 1000 : _subjectItems.Length == 0 ? 0 : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
         int price = _reference != null
-            ? (int)Math.Round(PaintingRules.Value(size, _reference.Difficulty, subjectPrice, _level) * _rules.RewardMultiplier)
+            ? (int)Math.Round(PaintingRules.Value(size, _reference.Difficulty, subjectPrice, _level) * _rules.RewardMultiplier * (portrait ? PaintingRules.PortraitValue : 1f))
             : PaintingRules.OriginalValue(size);
         if (Has(PaintingSkill.Instance.Gallerist))
             price = (int)Math.Round(price * PaintingSkill.GalleristPrice);

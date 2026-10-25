@@ -145,6 +145,14 @@ internal sealed partial class EaselMenu
 
     internal void DevKeep() => KeepAndClose();
 
+    internal void DevSetCanvas(CanvasKind kind)
+    {
+        _setupCanvas = kind;
+        RefreshPreview();
+    }
+
+    internal bool DevSitterOffered(string npc) => _sitterSlots.Any(s => s.Npc == npc);
+
     internal void DevSetup(params string[] itemIds)
     {
         _setupItems.Clear();

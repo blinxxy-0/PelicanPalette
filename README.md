@@ -39,6 +39,8 @@ A painting takes part of your day: about 1 hour for a small canvas, 2 for medium
 
 The painting's quality depends on how closely you copied the picture and on your Painting level.
 
+**Portraits.** Once you have medium canvases (Painting level 4), friends at 4 or more hearts will sit for a portrait: pick their face under the items on the easel. A portrait takes an hour longer than a still life and sells for about 75% more. The sitter always loves being given theirs. Friends at 4+ hearts can also post portrait requests on the commission board.
+
 **The Painting skill** goes from level 1 to 10. Each level gives you more light, and new levels bring new tools (broad brush, ruler, mirror, dropper), bigger canvases, new pigments and higher quality. At levels 5 and 10 you choose a profession, as with the other skills.
 
 **Selling and gifting.**

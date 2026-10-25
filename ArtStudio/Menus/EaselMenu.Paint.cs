@@ -67,7 +67,9 @@ internal sealed partial class EaselMenu
         int size = PaintingRules.CanvasSize(kind);
         _canvas = new PixelCanvas(size);
         _subjectItems = itemIds.ToArray();
-        _reference = itemIds.Count > 0 ? ReferenceBuilder.StillLife(itemIds, size, _owned) : null;
+        _reference = IsSitterSubject(itemIds) ? Sitters.Portrait(Sitters.NpcOf(itemIds[0]), size, _owned)
+            : itemIds.Count > 0 ? ReferenceBuilder.StillLife(itemIds, size, _owned)
+            : null;
 
         _timed = !IsOriginal && _rules.LightTimer;
         _lightTotal = _lightLeft = _timed

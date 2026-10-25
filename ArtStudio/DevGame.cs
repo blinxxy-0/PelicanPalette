@@ -115,6 +115,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_eventpaths", "Walks every step of Sable's events against the real maps and reports anyone walking through walls, furniture, props or each other.", (_, _) => EventPaths(monitor));
         DevTools.AddCommand(helper, "museart_route", "Prints event 'move' commands for the shortest walkable route. Usage: museart_route JoshHouse 9 23 6 19 [x y ...]", (_, args) => Route(monitor, args));
         DevTools.AddCommand(helper, "museart_tiles", "Says whether each tile can be stood on. Usage: museart_tiles JoshHouse 2 19 5 20", (_, args) => Tiles(monitor, args));
+        DevTools.AddCommand(helper, "museart_portraittest", "Portraits of villagers: who'll sit, the reference, painting one, its price and time, gifting it, and portrait commissions.", (_, _) => PortraitTest(monitor));
         DevTools.AddCommand(helper, "museart_painttest", "Paint as a resource: the Palette, tubes, spending paint, and the Pigment Mill. Run 'museart_painttest', then 'museart_painttest check' a second later.", (_, args) => PaintTest(monitor, args));
         DevTools.AddCommand(helper, "museart_knowtest", "Pigments as knowledge, and painting taking time. Run 'museart_knowtest', then 'museart_knowtest close', then 'museart_knowtest check' a few seconds later.", (_, args) => KnowTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
@@ -795,6 +796,73 @@ internal static class DevGame
         Game1.timeOfDay = 1200;
     }
 
+    private static void PortraitTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        ModEntry.Config.Difficulty = Difficulty.Relaxed;     // portraits, not paint, are under test here
+        ArtProgress.SetLevel(who, 6);
+        foreach (var (npc, hearts) in new[] { ("Abigail", 5), ("Leah", 2), ("Haley", 0) })
+        {
+            if (!who.friendshipData.ContainsKey(npc)) who.friendshipData.Add(npc, new Friendship());
+            who.friendshipData[npc].Points = hearts * 250;
+        }
+        var sitters = Sitters.Available(who);
+        Check(monitor, "a friend at 4+ hearts will sit for a portrait", sitters.Contains("Abigail"), string.Join(", ", sitters));
+        Check(monitor, "nobody under 4 hearts will", !sitters.Contains("Leah") && !sitters.Contains("Haley"));
+
+        var all = Enumerable.Range(0, Palette.All.Length).ToList();
+        var large = Sitters.Portrait("Abigail", PaintingRules.CanvasSize(CanvasKind.Large), all);
+        var medium = Sitters.Portrait("Abigail", PaintingRules.CanvasSize(CanvasKind.Medium), all);
+        int painted = large.Cells.Cast<byte>().Count(c => c != PixelCanvas.Blank);
+        Check(monitor, "the portrait reference is a real picture", painted > 300 && large.PigmentsUsed.Count >= 5,
+            $"{painted} cells, {large.PigmentsUsed.Count} colours, difficulty {large.Difficulty} (medium {medium.Difficulty})");
+
+        // Through the easel: offered, refused on a small canvas, painted on a medium one.
+        var menu = new EaselMenu(who);
+        Game1.activeClickableMenu = menu;
+        Check(monitor, "the easel offers Abigail as a sitter", menu.DevSitterOffered("Abigail") && !menu.DevSitterOffered("Leah"));
+        menu.DevSetCanvas(CanvasKind.Small);
+        menu.DevBeginFromSetup(Sitters.SubjectFor("Abigail"));
+        Check(monitor, "a portrait won't start on a small canvas", !menu.DevIsPainting);
+        int pendingBefore = ArtHooks.PendingMinutes;
+        who.addItemToInventory(ItemRegistry.Create(ArtItems.QualifiedCanvasId(CanvasKind.Medium)));
+        menu.DevSetCanvas(CanvasKind.Medium);
+        menu.DevBeginFromSetup(Sitters.SubjectFor("Abigail"));
+        Check(monitor, "a portrait starts on a medium canvas", menu.DevIsPainting);
+        menu.DevPaintPartly(1f, 3);
+        menu.DevFinish(false);
+        var portrait = menu.DevPainting;
+        Check(monitor, "it's a portrait of Abigail", portrait?.DisplayName == I18n.Get("painting.title.portrait", new { name = Sitters.DisplayName("Abigail") }), portrait?.DisplayName ?? "none");
+        Check(monitor, "a medium portrait takes 3 hours", ArtHooks.PendingMinutes - pendingBefore == 180, $"{ArtHooks.PendingMinutes - pendingBefore} minutes");
+        var data = portrait == null ? null : PaintingData.Read(portrait);
+        int stillLife = data == null ? 0 : (int)(PaintingRules.Value(PaintingRules.CanvasSize(CanvasKind.Medium), data.Difficulty, 1000, 6));
+        Check(monitor, "a portrait sells for more than a still life would", portrait != null && portrait.Price > stillLife, $"{portrait?.Price}g vs {stillLife}g");
+        if (portrait != null)
+        {
+            Check(monitor, "the sitter loves their portrait", ArtHooks.PaintingTaste(Game1.getCharacterFromName("Abigail"), portrait) == NPC.gift_taste_love);
+            var commission = new Shop.Commission { Npc = "Abigail", ItemId = Sitters.SubjectFor("Abigail") };
+            Check(monitor, "it fills a portrait commission", commission.Matches(portrait));
+            Check(monitor, "but not someone else's", !new Shop.Commission { Npc = "Leah", ItemId = Sitters.SubjectFor("Leah") }.Matches(portrait));
+        }
+        menu.DevKeep();
+        Game1.exitActiveMenu();
+
+        // The board: portrait requests only ever come from friends who'd sit.
+        Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+        var asked = new System.Collections.Generic.List<Shop.Commission>();
+        for (int seed = 0; seed < 60; seed++)
+        {
+            Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+            Shop.Commissions.NewDay(who, monitor, new Random(seed));
+            asked.AddRange(Shop.Commissions.Posted(who).Where(c => c.IsPortrait));
+        }
+        Check(monitor, "the board posts portrait commissions", asked.Count > 0, $"{asked.Count} in 60 days");
+        Check(monitor, "only from friends at 4+ hearts", asked.All(c => Sitters.CanSitFor(who, c.Npc)), string.Join(", ", asked.Select(c => c.Npc).Distinct()));
+        Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+        ModEntry.Config.Difficulty = Difficulty.Normal;
+    }
+
     // Part two of the paint rework (docs/painting_depth.md).
     private static void PaintTest(IMonitor monitor, string[] args)
     {
@@ -1009,6 +1077,23 @@ internal static class DevGame
                     "museart_" + Game1.currentLocation.NameOrUniqueName, () => { });
                 break;
             case "board":
+                Game1.activeClickableMenu = new Shop.CommissionBoardMenu(Game1.player);
+                break;
+            case "portrait":
+                // The easel with a friend picked to sit (museart_menu portrait Abigail).
+                var sitting = new EaselMenu(Game1.player);
+                sitting.DevSetCanvas(CanvasKind.Medium);
+                sitting.DevSetup(Sitters.SubjectFor(args.ElementAtOrDefault(1) ?? "Abigail"));
+                Game1.activeClickableMenu = sitting;
+                break;
+            case "portraitboard":
+                // The board with a portrait request at the top.
+                var list = new System.Collections.Generic.List<Shop.Commission>
+                {
+                    new() { Npc = args.ElementAtOrDefault(1) ?? "Abigail", ItemId = Sitters.SubjectFor(args.ElementAtOrDefault(1) ?? "Abigail"), MinQuality = PaintingRules.Silver, Reward = 1450, ExpiresOn = Game1.Date.TotalDays + 2 },
+                    new() { Npc = "Leah", ItemId = "(O)348", MinQuality = PaintingRules.Normal, Reward = 300, ExpiresOn = Game1.Date.TotalDays + 2 },
+                };
+                Shop.Commissions.Save(Game1.player, list);
                 Game1.activeClickableMenu = new Shop.CommissionBoardMenu(Game1.player);
                 break;
             case "useeasel":

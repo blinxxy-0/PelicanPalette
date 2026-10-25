@@ -46,7 +46,7 @@ internal static class PaintingItems
         // follows the subject's own (translated) name, the way "Blueberry
         // Wine" follows the blueberry's.
         var subjects = data.SubjectItems;
-        if (data.IsPortrait)
+        if (data.IsPortrait || data.IsSitter)
             item.displayNameFormat = Title(data);
         else if (subjects.Length == 1)
         {
@@ -68,6 +68,7 @@ internal static class PaintingItems
     public static string Title(PaintingData data)
     {
         if (data.IsPortrait) return I18n.Get("painting.title.portrait", new { name = FarmerPortrait.SitterName(data.Subject) });
+        if (data.IsSitter) return I18n.Get("painting.title.portrait", new { name = Sitters.DisplayName(Sitters.NpcOf(data.Subject)) });
         var subjects = data.SubjectItems;
         if (subjects.Length == 0) return I18n.Get("painting.title.original");
         string first = ItemRegistry.GetDataOrErrorItem(subjects[0]).DisplayName;
@@ -79,6 +80,8 @@ internal static class PaintingItems
     {
         string subject = data.IsPortrait
             ? I18n.Get("painting.provenance.portrait", new { name = FarmerPortrait.SitterName(data.Subject) })
+            : data.IsSitter
+            ? I18n.Get("painting.provenance.sitter", new { name = Sitters.DisplayName(Sitters.NpcOf(data.Subject)) })
             : data.IsOriginal
             ? I18n.Get("painting.provenance.original")
             : I18n.Get("painting.provenance.from-life", new { items = string.Join(", ", data.SubjectItems.Select(id => ItemRegistry.GetDataOrErrorItem(id).DisplayName)) });

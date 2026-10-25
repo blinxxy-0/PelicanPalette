@@ -31,6 +31,14 @@ public static class PaintingRules
         _ => 180,
     };
 
+    // Portraits of villagers you're close to: more detailed than a still
+    // life, so they take an hour longer, sell for more and teach more.
+    public const int PortraitHearts = 4;
+    public const int PortraitExtraMinutes = 60;
+    public const float PortraitValue = 1.75f, PortraitXp = 1.3f;
+    public static bool PortraitFits(CanvasKind kind) => kind != CanvasKind.Small;
+    public static int Minutes(CanvasKind kind, bool portrait) => Minutes(kind) + (portrait ? PortraitExtraMinutes : 0);
+
     // The latest a painting may end (2am: past it, the farmer passes out).
     public const int LatestFinish = 2600;
 

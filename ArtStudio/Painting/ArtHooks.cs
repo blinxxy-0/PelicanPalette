@@ -180,6 +180,9 @@ internal static class ArtHooks
         bool artLover = ModEntry.Config.ArtLoversLikeAnyPainting
             && Game1.content.Load<Dictionary<string, string>>(ArtItems.ArtLoversAsset).ContainsKey(npc.Name);
         var data = PaintingData.Read(painting);
+        // Your portrait of someone, given to them: always loved.
+        if (data != null && data.IsSitter && Sitters.NpcOf(data.Subject) == npc.Name)
+            return NPC.gift_taste_love;
 
         int taste = painting.Quality switch
         {

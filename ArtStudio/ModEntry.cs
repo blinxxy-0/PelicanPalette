@@ -51,10 +51,18 @@ public class ModEntry : Mod
         DevTools.Register(helper, Monitor);
 
 #if DEBUG
-        // F8 opens the easel anywhere in debug builds.
+        // F8 opens the easel anywhere, but only in debug builds and only once
+        // switched on with museart_devkeys: play-testing a debug build should
+        // still mean buying an easel.
+        bool devKeys = false;
+        DevTools.AddCommand(helper, "museart_devkeys", "Turns the F8 open-the-easel-anywhere key on or off for this session (off by default).", (_, _) =>
+        {
+            devKeys = !devKeys;
+            Monitor.Log($"F8 opens the easel: {(devKeys ? "on" : "off")}.", LogLevel.Info);
+        });
         helper.Events.Input.ButtonPressed += (_, e) =>
         {
-            if (e.Button == SButton.F8 && Context.IsPlayerFree)
+            if (devKeys && e.Button == SButton.F8 && Context.IsPlayerFree)
                 ArtHooks.OpenEasel(Game1.player);
         };
 #endif

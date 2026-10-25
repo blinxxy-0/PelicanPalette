@@ -62,7 +62,8 @@ internal sealed class CommissionBoardMenu : IClickableMenu
             if (CanAcceptMore && Commissions.Accept(_who, commission))
             {
                 Game1.playSound("newArtifact");
-                Game1.addHUDMessage(new HUDMessage(I18n.Get("commission.taken", new { item = commission.ItemName, npc = commission.NpcName })) { noIcon = true });
+                Game1.addHUDMessage(new HUDMessage(commission.IsPortrait ? I18n.Get("commission.taken.portrait", new { npc = commission.NpcName })
+                    : I18n.Get("commission.taken", new { item = commission.ItemName, npc = commission.NpcName })) { noIcon = true });
                 Layout();
             }
             else
@@ -108,10 +109,21 @@ internal sealed class CommissionBoardMenu : IClickableMenu
 
         int x = portrait.Right + 18;
         // Three lines: who and what, the subject, then quality and time.
-        Ui.Text(b, I18n.Get("board.request", new { npc = commission.NpcName }), new Vector2(x, card.Y + 16));
-        var item = ItemRegistry.Create(commission.ItemId);
-        item.drawInMenu(b, new Vector2(x - 8, card.Y + 38), 0.75f, 1f, 0.9f, StackDrawType.Hide, Color.White, false);
-        Ui.Text(b, commission.ItemName, new Vector2(x + 48, card.Y + 52));
+        if (commission.IsPortrait)
+        {
+            // A portrait of themself: their face as the subject, and the canvas it needs.
+            Ui.Text(b, I18n.Get("board.request.portrait", new { npc = commission.NpcName }), new Vector2(x, card.Y + 16));
+            if (texture != null)
+                b.Draw(texture, new Rectangle(x, card.Y + 44, 40, 40), new Rectangle(0, 0, 64, 64), Color.White);
+            Ui.Text(b, I18n.Get("board.portrait-canvas"), new Vector2(x + 48, card.Y + 52));
+        }
+        else
+        {
+            Ui.Text(b, I18n.Get("board.request", new { npc = commission.NpcName }), new Vector2(x, card.Y + 16));
+            var item = ItemRegistry.Create(commission.ItemId);
+            item.drawInMenu(b, new Vector2(x - 8, card.Y + 38), 0.75f, 1f, 0.9f, StackDrawType.Hide, Color.White, false);
+            Ui.Text(b, commission.ItemName, new Vector2(x + 48, card.Y + 52));
+        }
         string days = commission.DaysLeft <= 0 ? I18n.Get("board.take.last-day") : I18n.Get("board.take.days", new { days = commission.DaysLeft + 1 });
         Ui.Text(b, I18n.Get("board.quality", new { quality = Commissions.QualityText(commission.MinQuality), days }), new Vector2(x, card.Y + 88), Game1.textColor * 0.7f);
         Ui.Text(b, $"{commission.Reward}g", new Vector2(accept.X - 16 - Ui.TextWidth($"{commission.Reward}g"), card.Y + 52), new Color(120, 75, 0));

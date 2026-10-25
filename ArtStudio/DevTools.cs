@@ -38,6 +38,15 @@ internal static class DevTools
             ExportRefs(helper.DirectoryPath, monitor));
 
         DevGame.Register(helper, monitor);
+        AddCommand(helper, "museart_snapmenu", "In a game: renders whatever menu is open to dialogue_snapshots/<name>.png. Usage: museart_snapmenu <name>", (_, args) =>
+        {
+            if (!Context.IsWorldReady || Game1.activeClickableMenu == null) return;
+            string dir = Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+            Directory.CreateDirectory(dir);
+            var menu = Game1.activeClickableMenu;
+            Render(menu, Path.Combine(dir, (args.FirstOrDefault() ?? "menu") + ".png"));     // at the window's size, where the menu was laid out
+            monitor.Log("Menu rendered.", LogLevel.Info);
+        });
         AddCommand(helper, "museart_snapsocial", "In a game: renders the social page (and Sable's profile) to dialogue_snapshots/social_*.png.", (_, _) =>
         {
             if (!Context.IsWorldReady) return;

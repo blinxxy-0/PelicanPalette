@@ -35,7 +35,10 @@ internal sealed class PaintingData
     // A portrait of the farmer, by Sable (the 10-heart event): "portrait:<name>".
     public bool IsPortrait => FarmerPortrait.IsPortrait(Subject);
 
-    public string[] SubjectItems => IsOriginal || IsPortrait ? Array.Empty<string>() : Subject.Split('|');
+    // A portrait of a villager, painted by the player: "sitter:<name>".
+    public bool IsSitter => Sitters.IsSitter(Subject);
+
+    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter ? Array.Empty<string>() : Subject.Split('|');
 
     public void WriteTo(Item item)
     {

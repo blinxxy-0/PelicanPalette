@@ -321,5 +321,17 @@
   "pigment.paint-left": "Paint left: {{cells}} cells",
   "setup.need-palette": "You need a palette to paint. Craft one from 10 wood, or buy one from Sable.",
   "setup.need-palette-short": "You need a palette (10 wood)",
-  "setup.low-paint": "Low on {{pigments}}"
+  "setup.low-paint": "Low on {{pigments}}",
+  "setup.pick-portrait": "Or paint a portrait of a friend:",
+  "setup.portrait-hover": "A portrait of {{name}}. Needs a medium or large canvas, and takes an hour longer than a still life.",
+  "setup.portrait-canvas": "A portrait needs a medium or large canvas.",
+  "setup.portrait-canvas-short": "Portraits need a bigger canvas",
+  "painting.provenance.sitter": "A portrait of {{name}}, painted from life",
+  "commission.portrait": "a portrait",
+  "commission.taken.portrait": "Commission taken: a portrait of {{npc}}.",
+  "commission.lapsed.portrait": "{{npc}}'s portrait commission has lapsed.",
+  "commission.delivered.portrait": "Is that really how I look? ...I love it. Here's {{reward}}g, thank you.",
+  "commission.delivered.portrait.better": "Oh! You've made me look like I'm about to say something clever. Here's {{reward}}g, and then some gratitude.",
+  "board.request.portrait": "{{npc}} would like a portrait painted",
+  "board.portrait-canvas": "Medium or large canvas"
 }

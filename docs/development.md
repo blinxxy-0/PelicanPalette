@@ -24,7 +24,7 @@ Getting started in game:
 - More recipes unlock with the Painting skill: canvases, picture frames, brushes, and pigments ground from clay, flowers, berries and gems.
 
 Debug build:
-- **F8** opens the easel anywhere.
+- **F8** opens the easel anywhere, once switched on with `museart_devkeys` (off by default).
 - In the SMAPI console:
   - `museart_supplies`: easel, canvases, brushes, frames, every pigment jar
   - `museart_level <n>`

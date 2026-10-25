@@ -8,6 +8,12 @@ Planning notes, 2026-10-25.
 - Paint as a resource (1C): the Palette with 300-cell wells, 100-cell tubes priced 8/12/20/60g, and the Pigment Mill (`ArtItems.MillRecipes`).
 - Relaxed difficulty paints for free.
 
+Also built (2026-10-25), at your request: **portraits of villagers** (`Painting/Sitters.cs`).
+- From 4 hearts, on medium or large canvases.
+- They take an hour longer, sell for 1.75x and give 1.3x XP.
+- The sitter loves receiving theirs.
+- Portrait commissions come only from friends at 4+ hearts.
+
 Not built yet: section 2's price check against real playtests, and everything in section 4. Each section gives the options and a recommendation, then lists the decisions for you.
 
 ## Where it stands

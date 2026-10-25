@@ -30,6 +30,11 @@ internal sealed partial class EaselMenu
 
     private Rectangle[] _canvasButtons = Array.Empty<Rectangle>();
     private readonly List<(Rectangle Rect, Item Item)> _itemSlots = new();
+    private readonly List<(Rectangle Rect, string Npc)> _sitterSlots = new();
+    private int _sitterLabelY;
+
+    private static bool IsSitterSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Sitters.IsSitter(ids[0]);
+    private bool SetupPortrait => IsSitterSubject(_setupItems);
     private Rectangle _originalButton, _brushButton, _frameButton, _beginButton, _previewArea;
 
     // Debug commands paint without supplies; the easel itself needs them.
@@ -61,8 +66,13 @@ internal sealed partial class EaselMenu
         _frameButton = new Rectangle(x + 2 * (rowW + 12), rowY, rowW, 56);
 
         _itemSlots.Clear();
+        _sitterSlots.Clear();
         int gridX = x, gridY = y + 110;
         int cols = Math.Max(1, (_previewArea.X - 40 - gridX) / (SlotSize + SlotGap));
+        // Below the items, the villagers who'll sit for a portrait: keep a
+        // label and one row for them.
+        var sitters = _setupFraming || !StardewModdingAPI.Context.IsWorldReady ? new List<string>() : Sitters.Available(_who);
+        int itemsBottom = sitters.Count > 0 ? rowY - 12 - 40 - SlotSize - 8 : rowY - 12;
         int n = 0;
         foreach (var item in Game1.player.Items)
         {
@@ -72,10 +82,14 @@ internal sealed partial class EaselMenu
                 : ReferenceBuilder.CanPaint(item) && !_itemSlots.Any(s => s.Item.QualifiedItemId == item.QualifiedItemId);
             if (!wanted) continue;
             var rect = new Rectangle(gridX + n % cols * (SlotSize + SlotGap), gridY + n / cols * (SlotSize + SlotGap), SlotSize, SlotSize);
-            if (rect.Bottom > rowY - 12) break;
+            if (rect.Bottom > itemsBottom) break;
             _itemSlots.Add((rect, item));
             n++;
         }
+        int rows = n == 0 ? 1 : (n + cols - 1) / cols;
+        _sitterLabelY = gridY + rows * (SlotSize + SlotGap) + 4;
+        for (int i = 0; i < sitters.Count && i < cols; i++)
+            _sitterSlots.Add((new Rectangle(gridX + i * (SlotSize + SlotGap), _sitterLabelY + 36, SlotSize, SlotSize), sitters[i]));
     }
 
     private bool CanvasUnlocked(CanvasKind kind) => _level >= PaintingRules.CanvasUnlockLevel(kind);
@@ -105,9 +119,9 @@ internal sealed partial class EaselMenu
         int max = ReferenceBuilder.MaxItems(size);
         while (_setupItems.Count > max)
             _setupItems.RemoveAt(_setupItems.Count - 1);
-        _setupPreview = !_setupOriginal && !_setupFraming && _setupItems.Count > 0
-            ? ReferenceBuilder.StillLife(_setupItems, size, _owned)
-            : null;
+        _setupPreview = _setupOriginal || _setupFraming || _setupItems.Count == 0 ? null
+            : SetupPortrait ? (PaintingRules.PortraitFits(_setupCanvas) ? Sitters.Portrait(Sitters.NpcOf(_setupItems[0]), size, _owned) : null)
+            : ReferenceBuilder.StillLife(_setupItems, size, _owned);
     }
 
     private void UpdateSetup()
@@ -142,6 +156,7 @@ internal sealed partial class EaselMenu
                 return;
             }
             _setupOriginal = false;
+            if (SetupPortrait) _setupItems.Clear();
             string id = item.QualifiedItemId;
             if (_setupItems.Contains(id))
                 _setupItems.Remove(id);
@@ -151,6 +166,24 @@ internal sealed partial class EaselMenu
                 if (_setupItems.Count >= max)
                     _setupItems.RemoveAt(0);
                 _setupItems.Add(id);
+            }
+            RefreshPreview();
+            return;
+        }
+
+        foreach (var (rect, npc) in _sitterSlots)
+        {
+            if (!rect.Contains(x, y)) continue;
+            Game1.playSound("smallSelect");
+            _setupOriginal = false;
+            string subject = Sitters.SubjectFor(npc);
+            bool again = _setupItems.Contains(subject);
+            _setupItems.Clear();
+            if (!again)
+            {
+                _setupItems.Add(subject);
+                if (!PaintingRules.PortraitFits(_setupCanvas) && CanvasUnlocked(CanvasKind.Medium))
+                    _setupCanvas = CanvasKind.Medium;
             }
             RefreshPreview();
             return;
@@ -192,7 +225,7 @@ internal sealed partial class EaselMenu
     // A painting may not run past 2am (in multiplayer the clock is shared
     // and keeps running anyway, so there's no extra time to add).
     private bool TooLate => !Context.IsMultiplayer && Context.IsWorldReady
-        && ArtHooks.FinishTime(PaintingRules.Minutes(_setupCanvas)) > PaintingRules.LatestFinish;
+        && ArtHooks.FinishTime(PaintingRules.Minutes(_setupCanvas, SetupPortrait)) > PaintingRules.LatestFinish;
 
     private bool NeedsPalette => UsesPaint && _palette == null;
 
@@ -211,6 +244,12 @@ internal sealed partial class EaselMenu
     private void TryBegin()
     {
         if (!_setupOriginal && _setupItems.Count == 0) return;
+        if (SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas))
+        {
+            Game1.playSound("cancel");
+            Toast(I18n.Get("setup.portrait-canvas"), new Color(150, 70, 50), 2.5f);
+            return;
+        }
         if (!HasCanvas)
         {
             Game1.playSound("cancel");
@@ -324,6 +363,7 @@ internal sealed partial class EaselMenu
         if (_itemSlots.Count == 0)
             Ui.Text(b, I18n.Get("setup.nothing-to-paint"), new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
         DrawSlots(b, mouse, slot => _setupItems.IndexOf(slot.QualifiedItemId), max > 1);
+        DrawSitters(b, left, mouse);
 
         // Preview of what you'll be copying.
         Ui.Paper(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
@@ -347,10 +387,12 @@ internal sealed partial class EaselMenu
         bool ready = (_setupOriginal || _setupItems.Count > 0) && HasCanvas;
         Ui.Button(b, _beginButton, I18n.Get("setup.begin"), ready, false, ready && _beginButton.Contains(mouse));
         // Under Begin: what's missing, or else the mode and how long it takes.
-        int hours = PaintingRules.Minutes(_setupCanvas) / 60;
+        int hours = PaintingRules.Minutes(_setupCanvas, SetupPortrait) / 60;
         var shortOf = ShortColours();
-        bool warn = !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
-        string footer = !HasCanvas ? I18n.Get("setup.need-canvas." + CanvasKeys[(int)_setupCanvas])
+        bool portraitTooSmall = SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas);
+        bool warn = portraitTooSmall || !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
+        string footer = portraitTooSmall ? I18n.Get("setup.portrait-canvas-short")
+            : !HasCanvas ? I18n.Get("setup.need-canvas." + CanvasKeys[(int)_setupCanvas])
             : TooLate ? I18n.Get("setup.too-late-short")
             : NeedsPalette ? I18n.Get("setup.need-palette-short")
             : shortOf.Count > 0 ? I18n.Get("setup.low-paint", new { pigments = string.Join(", ", shortOf.Take(3).Select(I18n.Pigment)) })
@@ -388,6 +430,32 @@ internal sealed partial class EaselMenu
     }
 
     // Inventory slots; `order` gives a selected slot its number (or -1).
+    // Friends who'll sit for a portrait: their faces, a gold ribbon if one
+    // of them has commissioned it.
+    private void DrawSitters(SpriteBatch b, int left, Point mouse)
+    {
+        if (_sitterSlots.Count == 0) return;
+        Ui.Text(b, I18n.Get("setup.pick-portrait"), new Vector2(left, _sitterLabelY));
+        foreach (var (rect, npc) in _sitterSlots)
+        {
+            b.Draw(Game1.menuTexture, rect, Game1.getSourceRectForStandardTileSheet(Game1.menuTexture, 10), Color.White);
+            var texture = Sitters.PortraitTexture(npc);
+            if (texture != null)
+                b.Draw(texture, new Rectangle(rect.X + 4, rect.Y + 4, rect.Width - 8, rect.Height - 8), new Rectangle(0, 0, 64, 64), Color.White);
+            if (_setupItems.Contains(Sitters.SubjectFor(npc)))
+                Ui.Outline(b, rect, new Color(214, 160, 30), 4);
+            var wantedBy = Shop.Commissions.Accepted(_who).FirstOrDefault(c => c.ItemId == Sitters.SubjectFor(npc));
+            if (wantedBy != null)
+            {
+                Ui.Fill(b, new Rectangle(rect.Right - 14, rect.Y + 4, 10, 14), new Color(214, 160, 30));
+                Ui.Fill(b, new Rectangle(rect.Right - 12, rect.Y + 18, 6, 4), new Color(150, 100, 0));
+            }
+            if (rect.Contains(mouse))
+                _hoverText = I18n.Get("setup.portrait-hover", new { name = Sitters.DisplayName(npc) })
+                    + (wantedBy == null ? "" : "\n" + I18n.Get("setup.commissioned", new { npc = wantedBy.NpcName, quality = Shop.Commissions.QualityText(wantedBy.MinQuality) }));
+        }
+    }
+
     private void DrawSlots(SpriteBatch b, Point mouse, Func<Item, int> order, bool numbered)
     {
         foreach (var (rect, item) in _itemSlots)

@@ -22,7 +22,10 @@ internal sealed class Commission
     public int ExpiresOn { get; set; }
     public bool Accepted { get; set; }
 
-    public string ItemName => ItemRegistry.GetDataOrErrorItem(ItemId).DisplayName;
+    // A villager can ask for their own portrait ("sitter:<name>") instead of an item.
+    public bool IsPortrait => Sitters.IsSitter(ItemId);
+
+    public string ItemName => IsPortrait ? I18n.Get("commission.portrait") : ItemRegistry.GetDataOrErrorItem(ItemId).DisplayName;
 
     public string NpcName => Game1.getCharacterFromName(Npc)?.displayName ?? Npc;
 
@@ -30,7 +33,7 @@ internal sealed class Commission
 
     public bool Matches(Item item) =>
         PaintingItems.IsPainting(item)
-        && PaintingData.Read(item)?.SubjectItems.Contains(ItemId) == true;
+        && PaintingData.Read(item)?.Subject.Split('|').Contains(ItemId) == true;
 }
 
 internal static class Commissions
@@ -41,6 +44,8 @@ internal static class Commissions
     public const int DaysToAccept = 3, DaysToDeliver = 7;
     public const int FriendshipReward = 100, XpReward = 40;
     public const float PatronRewardMultiplier = 1.5f;
+    // How often a friend who'd sit for a portrait asks for one instead of an item.
+    public const double PortraitChance = 0.35;
 
     public static List<Commission> All(Farmer who)
     {
@@ -65,7 +70,8 @@ internal static class Commissions
         {
             list.Remove(lapsed);
             if (lapsed.Accepted)
-                Game1.addHUDMessage(new HUDMessage(I18n.Get("commission.lapsed", new { npc = lapsed.NpcName, item = lapsed.ItemName })) { noIcon = true });
+                Game1.addHUDMessage(new HUDMessage(lapsed.IsPortrait ? I18n.Get("commission.lapsed.portrait", new { npc = lapsed.NpcName })
+                    : I18n.Get("commission.lapsed", new { npc = lapsed.NpcName, item = lapsed.ItemName })) { noIcon = true });
         }
 
         var taken = new HashSet<string>(list.Select(c => c.Npc));
@@ -91,15 +97,6 @@ internal static class Commissions
         if (clients.Count == 0) return null;
         var npc = clients[random.Next(clients.Count)];
 
-        var tastes = Game1.NPCGiftTastes[npc.Name].Split('/');
-        var wanted = tastes.ElementAtOrDefault(1)?.Split(' ').Concat(tastes.ElementAtOrDefault(3)?.Split(' ') ?? Array.Empty<string>())
-            .Where(id => id.Length > 0 && !id.StartsWith("-"))
-            .Select(id => ItemRegistry.Create(ItemRegistry.QualifyItemId(id) ?? id, allowNull: true))
-            .Where(i => i != null && ReferenceBuilder.CanPaint(i))
-            .ToList();
-        if (wanted == null || wanted.Count == 0) return null;
-        var subject = wanted[random.Next(wanted.Count)]!;
-
         int minQuality = level switch
         {
             < 3 => PaintingRules.Normal,
@@ -108,8 +105,32 @@ internal static class Commissions
             _ => random.NextDouble() < 0.3 ? PaintingRules.Iridium : PaintingRules.Gold,
         };
         float qualityFactor = 1f + minQuality * 0.25f;
-        int value = PaintingRules.Value(PaintingRules.CanvasSize(CanvasKind.Small), 50, subject.salePrice(), level);
         float multiplier = PaintingSkill.Has(who, PaintingSkill.Instance.PatronsFavorite) ? PatronRewardMultiplier : 1f;
+
+        // Their own portrait: only from someone close enough to sit for it,
+        // and once the player has a canvas big enough.
+        if (level >= PaintingRules.CanvasUnlockLevel(CanvasKind.Medium) && Sitters.CanSitFor(who, npc.Name) && random.NextDouble() < PortraitChance)
+        {
+            int portraitValue = (int)(PaintingRules.Value(PaintingRules.CanvasSize(CanvasKind.Medium), 70, 1000, level) * PaintingRules.PortraitValue);
+            return new Commission
+            {
+                Npc = npc.Name,
+                ItemId = Sitters.SubjectFor(npc.Name),
+                MinQuality = minQuality,
+                Reward = (int)Math.Round(portraitValue * qualityFactor * 1.5f * multiplier / 10f) * 10,
+                ExpiresOn = Game1.Date.TotalDays + DaysToAccept,
+            };
+        }
+
+        var tastes = Game1.NPCGiftTastes[npc.Name].Split('/');
+        var wanted = tastes.ElementAtOrDefault(1)?.Split(' ').Concat(tastes.ElementAtOrDefault(3)?.Split(' ') ?? Array.Empty<string>())
+            .Where(id => id.Length > 0 && !id.StartsWith("-"))
+            .Select(id => ItemRegistry.Create(ItemRegistry.QualifyItemId(id) ?? id, allowNull: true))
+            .Where(i => i != null && ReferenceBuilder.CanPaint(i))
+            .ToList();
+        if (wanted == null || wanted.Count == 0) return null;
+        var subject = wanted[random.Next(wanted.Count)]!;
+        int value = PaintingRules.Value(PaintingRules.CanvasSize(CanvasKind.Small), 50, subject.salePrice(), level);
         int reward = (int)Math.Round(value * qualityFactor * 1.5f * multiplier / 10f) * 10;
 
         return new Commission
@@ -148,9 +169,10 @@ internal static class Commissions
 
         Game1.playSound("purchaseClick");
         npc.doEmote(Character.happyEmote);
-        string line = painting.Quality > commission.MinQuality
-            ? I18n.Get("commission.delivered.better", new { item = commission.ItemName.ToLowerInvariant(), reward = commission.Reward })
-            : I18n.Get("commission.delivered", new { item = commission.ItemName.ToLowerInvariant(), reward = commission.Reward });
+        bool better = painting.Quality > commission.MinQuality;
+        string line = commission.IsPortrait
+            ? I18n.Get(better ? "commission.delivered.portrait.better" : "commission.delivered.portrait", new { reward = commission.Reward })
+            : I18n.Get(better ? "commission.delivered.better" : "commission.delivered", new { item = commission.ItemName.ToLowerInvariant(), reward = commission.Reward });
         npc.setNewDialogue(new Dialogue(npc, null, line), add: true);
         Game1.drawDialogue(npc);
         if (newLevel > 0)
