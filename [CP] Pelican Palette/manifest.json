@@ -4,7 +4,7 @@
   "Version": "1.0.0",
   "Description": "The art supply shop in Cindersap Forest, for the Pelican Palette painting mod.",
   "UniqueID": "blinxxy.MuseArt.CP",
-  "UpdateKeys": [],
+  "UpdateKeys": [ "Nexus:54599" ],
   "ContentPackFor": {
     "UniqueID": "Pathoschild.ContentPatcher",
     "MinimumVersion": "2.9.0"

@@ -6,7 +6,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 
 - `description.bbcode` is the page's Description. Paste it into the description editor's BBCode mode.
   - `{{name.png}}` marks an image. Upload each image (below) to the mod's Images tab first. Then replace each placeholder with that image's direct link: right-click the image, then "Copy image address".
-  - `{{wiki}}` is the wiki's address.
+  - The wiki link points at https://github.com/blinxxy-0/PelicanPalette/wiki. Run `tools/build_wiki.py` and push `docs/wiki` to the wiki repo (`PelicanPalette.wiki.git`) when it changes.
 - The release zip is `ArtStudio/bin/Release/net6.0/PelicanPalette 1.0.0.zip`. Build it with `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false`.
 - Images, all in `docs/media/`:
   - `page/`: `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description.
@@ -25,7 +25,11 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
   - Content Patcher (1915)
   - SpaceCore (1348)
   - Generic Mod Config Menu (5098), optional
-- **Permissions:** your call. A common choice is no reuploads, no asset reuse without asking, and translations allowed with credit (`README.md` explains how to translate).
+- **Permissions** (matching `LICENSE`: MIT code, art and writing reserved):
+  - Upload to other sites: no
+  - Modify and re-upload: no, for the art and writing; the code is MIT on GitHub
+  - Use assets: no, without asking
+  - Translations: yes, with credit (`README.md` explains how)
 - **Changelog:** paste `CHANGELOG.md`'s 1.0.0 section into the Changelogs tab.
 
 ## Images tab: suggested order and captions
@@ -46,6 +50,6 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 14. `farmhouse_varnish.png`: *A Varnishing Cabinet, curing a painting*
 15. `event_gallery_1.png`: *A gallery evening at the shop*
 
-## After the first upload
+## Updates
 
-Add the page's ID to both manifests' `UpdateKeys` (`"UpdateKeys": ["Nexus:<id>"]`), so SMAPI can tell players when there's an update.
+Both manifests already have `"UpdateKeys": [ "Nexus:54599" ]`, so SMAPI will tell players when there's an update. Bump `Version` in both for each new release.

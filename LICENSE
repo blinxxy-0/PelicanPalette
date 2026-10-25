@@ -1,0 +1,46 @@
+Pelican Palette is licensed in two parts.
+
+== Code: MIT License ==
+
+This covers the source code and build files: the ArtStudio/ and
+ArtStudio.Sim/ projects (C#), the tools/ scripts, and the project and
+solution files.
+
+Copyright (c) 2026 blinxxy
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+== Art and writing: all rights reserved ==
+
+Copyright (c) 2026 blinxxy. All rights reserved.
+
+This covers everything that isn't code: all images (the art/ folder, the
+content pack's assets, and docs/media), the maps, the character Sable,
+and all writing (dialogue, events, letters, item text, the i18n files
+and the wiki). You may not reuse, edit or redistribute them, in whole or
+in part, without written permission.
+
+Translations are welcome: you may translate the mod's i18n files and
+share your translation for use with Pelican Palette, with credit.
+
+== Not covered ==
+
+Stardew Valley and its content belong to ConcernedApe. This repository
+contains none of the game's files; its maps refer to the game's own
+tilesheets by name.

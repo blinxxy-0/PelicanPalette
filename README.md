@@ -2,6 +2,8 @@
 
 Paint your own pixel-art paintings at an easel, level up a new Painting skill, and sell or gift what you make. An art supply shop opens in Cindersap Forest, run by Sable, a former museum restorer who can become your partner.
 
+The full guide, with every item, recipe, pigment, price and heart event, is on the [wiki](https://github.com/blinxxy-0/PelicanPalette/wiki).
+
 ## Requirements
 
 - Stardew Valley 1.6.15 or later
@@ -96,3 +98,7 @@ All text is in two files: `PelicanPalette/i18n/default.json` (the easel, items, 
 ## Credits
 
 By blinxxy. Art made with PixelLab and edited by hand to match the game's style.
+
+## License
+
+The code is MIT-licensed. The art and writing (Sable included) are all rights reserved, though translations are welcome. See [LICENSE](LICENSE).
