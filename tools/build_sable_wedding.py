@@ -1,4 +1,4 @@
-"""Writes Sable's wedding ([CP] Art Studio/data/sable_wedding.json).
+"""Writes Sable's wedding ([CP] Pelican Palette/data/sable_wedding.json).
 
 The game's wedding script picks Lewis's vows by gender ("husband and wife",
 "wife and husband"...), and falls back to the female wording for anyone

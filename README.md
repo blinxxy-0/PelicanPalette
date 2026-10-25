@@ -1,4 +1,4 @@
-# Art Studio
+# Pelican Palette
 
 Paint your own pixel-art paintings at an easel, level up a new Painting skill, and sell or gift what you make. An art supply shop opens in Cindersap Forest, run by Sable, a former museum restorer who can become your partner.
 
@@ -13,7 +13,7 @@ Paint your own pixel-art paintings at an easel, level up a new Painting skill, a
 ## Installing
 
 1. Install SMAPI, Content Patcher and SpaceCore.
-2. Unzip the download into your `Mods` folder. You get one `ArtStudio` folder holding two mods: `ArtStudio` (the painting) and `[CP] Art Studio` (the shop and Sable). Keep both.
+2. Unzip the download into your `Mods` folder. You get one `PelicanPalette` folder holding two mods: `PelicanPalette` (the painting) and `[CP] Pelican Palette` (the shop and Sable). Keep both.
 3. Run the game through SMAPI.
 
 You can add it to an existing save. To remove it, sell or trash your paintings, easels and art supplies first, then delete the folder.
@@ -69,7 +69,7 @@ The painting's quality depends on how closely you copied the picture and on your
 
 ## Settings
 
-Change these with Generic Mod Config Menu, or in `ArtStudio/ArtStudio/config.json` after one run:
+Change these with Generic Mod Config Menu, or in `PelicanPalette/PelicanPalette/config.json` after one run:
 
 | Setting | Default | What it does |
 |---|---|---|
@@ -85,7 +85,7 @@ Change these with Generic Mod Config Menu, or in `ArtStudio/ArtStudio/config.jso
 
 ## Translating
 
-All text is in two files: `ArtStudio/i18n/default.json` (the easel, items, skill and shop) and `[CP] Art Studio/i18n/default.json` (Sable's dialogue, events, mail and the shop's lines). Copy each one to `<language>.json` (for example `fr.json`), translate the values, and keep the keys and anything in `{{double braces}}` as they are. In dialogue, keep the codes too: `$h`, `#$b#`, `@` and similar.
+All text is in two files: `PelicanPalette/i18n/default.json` (the easel, items, skill and shop) and `[CP] Pelican Palette/i18n/default.json` (Sable's dialogue, events, mail and the shop's lines). Copy each one to `<language>.json` (for example `fr.json`), translate the values, and keep the keys and anything in `{{double braces}}` as they are. In dialogue, keep the codes too: `$h`, `#$b#`, `@` and similar.
 
 ## Credits
 

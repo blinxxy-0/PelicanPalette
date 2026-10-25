@@ -1,4 +1,4 @@
-Art Studio works in co-op. Every player needs the mod installed.
+Pelican Palette works in co-op. Every player needs the mod installed.
 
 **Each player has their own:**
 - Painting skill, professions and known colours

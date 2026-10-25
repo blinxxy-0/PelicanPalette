@@ -1,4 +1,5 @@
-"""The mod page's art: wooden sign headings and the framed banner.
+"""The mod page's art: wooden sign headings, the framed banner, and the
+title card (the banner with the mod's name across it).
 
 The heading text is the game's own bold pixel font, rendered in game by
 `museart_signtext` (at the font's 3x scale) into docs/media/signtext/. Each
@@ -137,17 +138,76 @@ def banner(media, out_png, panels):
     return canvas
 
 
+def outlined(text, scale, fill_top, fill_bottom, outline=(46, 26, 16, 255), width=2):
+    """The rendered heading scaled up (nearest), filled with a vertical
+    gradient, ringed with a dark outline `width` font-pixels thick and a
+    drop shadow, the way the game's own title lettering sits on art."""
+    text = text.crop(text.getbbox())
+    text = text.resize((text.width * scale, text.height * scale), Image.NEAREST)
+    alpha = text.getchannel("A").point(lambda a: 255 if a > 128 else 0)
+    w, h = text.size
+    fill = Image.new("RGBA", (w, h))
+    for y in range(h):
+        t = y / max(1, h - 1)
+        c = tuple(int(fill_top[i] + (fill_bottom[i] - fill_top[i]) * t) for i in range(3)) + (255,)
+        for x in range(w):
+            fill.putpixel((x, y), c)
+    fill.putalpha(alpha)
+    pad = width * scale * 2
+    out = Image.new("RGBA", (w + 2 * pad, h + 2 * pad), (0, 0, 0, 0))
+    ring = Image.new("RGBA", (w, h), outline)
+    ring.putalpha(alpha)
+    step = max(1, scale)
+    r = width * scale
+    for dx in range(-r, r + 1, step):
+        for dy in range(-r, r + 1, step):
+            out.alpha_composite(ring, (pad + dx, pad + dy))
+    shadow = Image.new("RGBA", (w, h), (20, 12, 8, 200))
+    shadow.putalpha(alpha)
+    base = Image.new("RGBA", out.size, (0, 0, 0, 0))
+    base.alpha_composite(shadow, (pad + r + step * 2, pad + r + step * 2))
+    base.alpha_composite(out)
+    base.alpha_composite(fill, (pad, pad))
+    return base
+
+
+def title_card(media, out_png, title_png, subtitle_png):
+    """The banner, with the mod's name across the top of all three panels."""
+    card = Image.open(os.path.join(media, "page", "banner.png")).convert("RGBA")
+    title = outlined(Image.open(title_png).convert("RGBA"), 2, (255, 246, 214), (246, 190, 82), width=2)
+    sub = outlined(Image.open(subtitle_png).convert("RGBA"), 1, (255, 250, 236), (238, 222, 188), width=2)
+    # A soft dark band behind the words, so they read over grass, floor and canvas alike.
+    band_h = title.height + sub.height + 18
+    top = 44
+    band = Image.new("RGBA", (card.width, band_h), (0, 0, 0, 0))
+    for y in range(band_h):
+        edge = min(y, band_h - 1 - y) / (band_h * 0.35)
+        a = int(110 * min(1.0, edge))
+        for x in range(card.width):
+            band.putpixel((x, y), (30, 18, 12, a))
+    card.alpha_composite(band, (0, top))
+    card.alpha_composite(title, ((card.width - title.width) // 2, top))
+    card.alpha_composite(sub, ((card.width - sub.width) // 2, top + title.height + 2))
+    card.save(out_png)
+    return card
+
+
 def main():
     media = sys.argv[1]
     out = os.path.join(media, "page")
     os.makedirs(out, exist_ok=True)
     for f in sorted(os.listdir(os.path.join(media, "signtext"))):
+        if f.startswith("sign_a_painting_mod"):        # the title card's subtitle, not a heading
+            continue
         sign(os.path.join(media, "signtext", f), os.path.join(out, f.replace("sign_", "header_")))
     banner(media, os.path.join(out, "banner.png"), [
         ("shop_exterior.png", 610, 300),
         ("event_gallery_1.png", 600, 380),
         ("setup_portrait.png", 1030, 300),
     ])
+    title_card(media, os.path.join(out, "title_card.png"),
+               os.path.join(media, "signtext", "sign_pelican_palette.png"),
+               os.path.join(media, "signtext", "sign_a_painting_mod_for_stardew_valley.png"))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
-![Art Studio](images/page/banner.png)
+![Pelican Palette](images/page/title_card.png)
 
-**Art Studio** is a mod for Stardew Valley that adds painting:
+**Pelican Palette** is a mod for Stardew Valley that adds painting:
 - a minigame as hands-on as fishing,
 - a Painting skill,
 - an art supply shop in Cindersap Forest,

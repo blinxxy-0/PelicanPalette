@@ -1,4 +1,4 @@
-"""Writes Sable's heart events ([CP] Art Studio/data/sable_events.json).
+"""Writes Sable's heart events ([CP] Pelican Palette/data/sable_events.json).
 
 Event scripts are long '/'-separated strings with nested quoting, so they're
 built here from readable pieces instead of being edited by hand. The story

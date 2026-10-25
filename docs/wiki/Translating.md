@@ -1,6 +1,6 @@
 All of the mod's text is in two files:
-- `ArtStudio/i18n/default.json`: the easel, items, skill and shop.
-- `[CP] Art Studio/i18n/default.json`: Sable's dialogue, events, mail and the shop's lines.
+- `PelicanPalette/i18n/default.json`: the easel, items, skill and shop.
+- `[CP] Pelican Palette/i18n/default.json`: Sable's dialogue, events, mail and the shop's lines.
 
 To translate:
 1. Copy each file to `<language>.json`, for example `fr.json`.

@@ -1,4 +1,4 @@
-"""Placeholder sprites for every Art Studio item, until the real art pass.
+"""Placeholder sprites for every Pelican Palette item, until the real art pass.
 
 Writes into ArtStudio/assets/: items.png (16x16 cells, 16 per row),
 bigcraftables.png (the easel, drawn by art/easel.py), furniture.png (2x2 and 3x3 picture

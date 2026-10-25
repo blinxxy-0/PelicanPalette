@@ -1,6 +1,8 @@
-# Art Studio: development notes
+# Pelican Palette: development notes
 
 For players, see the [README](../README.md).
+
+The mod was called Art Studio until its 1.0.0 release; the code project, its `ArtStudio/` folder and the `blinxxy.MuseArt` IDs keep the old name, so saves made before the rename still load.
 
 A spin-off of Muse's painting game: paint pixel-art still lifes at an easel against the light, level a Painting skill, and sell or gift what you make. The plan lives in `C:\Users\blinx\.claude\plans\hey-i-m-still-super-quizzical-pine.md`.
 
@@ -9,7 +11,7 @@ A spin-off of Muse's painting game: paint pixel-art still lifes at an easel agai
   - `Painting/`: items, references, per-item pixel art, Harmony patches.
   - `Menus/`: the easel (setup → painting → results).
   - `Shop/`: the art shop's counter, commission board and deliveries.
-- `[CP] Art Studio/`: the Content Patcher pack: the shop's map, stock and Forest patch, and Sable (`data/sable*.json`; brief in `docs/npc_brief.md`).
+- `[CP] Pelican Palette/`: the Content Patcher pack: the shop's map, stock and Forest patch, and Sable (`data/sable*.json`; brief in `docs/npc_brief.md`).
 - `ArtStudio.Sim/`: calibration. `dotnet run -c Release -- refs.json`
 - `tools/`: test-game launch/stop scripts, placeholder art, PNG export. `tools/art/` builds Sable's portraits and sprites from the PixelLab picks (`build_sable_*.py`) and compares them with vanilla (`compare_vanilla.py`).
   - `build_sable_events.py` writes the heart events (`data/sable_events.json`), `build_sable_wedding.py` the wedding with gender-neutral vows, `build_spouse_areas.py` the spouse room and patio maps, `build_shop_interior.py` the shop.

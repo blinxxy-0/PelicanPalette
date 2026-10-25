@@ -1,4 +1,4 @@
-"""Builds the Art Studio wiki (docs/wiki/), in the style of the Stardew
+"""Builds the Pelican Palette wiki (docs/wiki/), in the style of the Stardew
 Valley wiki: an infobox on each item or character page, tables with item
 icons, and a sidebar. The tables come from docs/media/wikidata.json (written
 by `museart_wikidata` in a debug game), so prices, recipes and levels match
@@ -102,9 +102,9 @@ def item_infobox(name, extra=()):
 
 def home():
     page("Home", f"""
-![Art Studio](images/page/banner.png)
+![Pelican Palette](images/page/title_card.png)
 
-**Art Studio** is a mod for Stardew Valley that adds painting:
+**Pelican Palette** is a mod for Stardew Valley that adds painting:
 - a minigame as hands-on as fishing,
 - a Painting skill,
 - an art supply shop in Cindersap Forest,
@@ -787,7 +787,7 @@ Like most villagers, Sable loves iridium paintings, and as an art lover they lik
 
 def multiplayer():
     page("Multiplayer", f"""
-Art Studio works in co-op. Every player needs the mod installed.
+Pelican Palette works in co-op. Every player needs the mod installed.
 
 **Each player has their own:**
 - Painting skill, professions and known colours
@@ -806,7 +806,7 @@ Art Studio works in co-op. Every player needs the mod installed.
 
 def configuration():
     page("Configuration", """
-Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098), or in `Mods/ArtStudio/ArtStudio/config.json` after the game has run once.
+Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098), or in `Mods/PelicanPalette/PelicanPalette/config.json` after the game has run once.
 
 | Setting | Default | What it does |
 |---|---|---|
@@ -867,8 +867,8 @@ Yes ([Configuration](Configuration)).
 def translating():
     page("Translating", """
 All of the mod's text is in two files:
-- `ArtStudio/i18n/default.json`: the easel, items, skill and shop.
-- `[CP] Art Studio/i18n/default.json`: Sable's dialogue, events, mail and the shop's lines.
+- `PelicanPalette/i18n/default.json`: the easel, items, skill and shop.
+- `[CP] Pelican Palette/i18n/default.json`: Sable's dialogue, events, mail and the shop's lines.
 
 To translate:
 1. Copy each file to `<language>.json`, for example `fr.json`.
@@ -887,7 +887,7 @@ def changelog():
 
 def sidebar():
     page("_Sidebar", f"""
-**[Art Studio](Home)**
+**[Pelican Palette](Home)**
 
 **Getting started**
 - {link("Getting Started")}
@@ -922,7 +922,7 @@ def sidebar():
 - {link("Translating")}
 - {link("Changelog")}
 """)
-    page("_Footer", f"Art Studio {DATA['version']} by blinxxy. Item tables are generated from the mod's own data.")
+    page("_Footer", f"Pelican Palette {DATA['version']} by blinxxy. Item tables are generated from the mod's own data.")
 
 
 # ---------------------------------------------------------------- images
@@ -941,7 +941,7 @@ def images():
         h = p["hex"][1:]
         Image.new("RGBA", (24, 24), tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)).save(os.path.join(out, "swatches", h + ".png"))
     # Sable's neutral portrait, at 2x.
-    sheet = Image.open(os.path.join(ROOT, "[CP] Art Studio", "assets", "sable", "portraits.png")).convert("RGBA")
+    sheet = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "sable", "portraits.png")).convert("RGBA")
     sheet.crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST).save(os.path.join(out, "sable_portrait.png"))
 
 

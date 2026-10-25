@@ -1,4 +1,4 @@
-Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098), or in `Mods/ArtStudio/ArtStudio/config.json` after the game has run once.
+Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098), or in `Mods/PelicanPalette/PelicanPalette/config.json` after the game has run once.
 
 | Setting | Default | What it does |
 |---|---|---|

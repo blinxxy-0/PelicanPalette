@@ -1,4 +1,4 @@
-"""Player-facing text in the content pack lives in [CP] Art Studio/i18n/default.json,
+"""Player-facing text in the content pack lives in [CP] Pelican Palette/i18n/default.json,
 and the data files point at it with {{i18n:key}} tokens. The generator scripts
 use this to lift their text out as they build.
 

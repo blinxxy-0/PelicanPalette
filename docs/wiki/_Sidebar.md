@@ -1,4 +1,4 @@
-**[Art Studio](Home)**
+**[Pelican Palette](Home)**
 
 **Getting started**
 - [Getting Started](Getting-Started)

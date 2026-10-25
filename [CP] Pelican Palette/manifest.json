@@ -1,8 +1,8 @@
 {
-  "Name": "[CP] Art Studio",
+  "Name": "[CP] Pelican Palette",
   "Author": "blinxxy",
   "Version": "1.0.0",
-  "Description": "The art supply shop in Cindersap Forest, for the Art Studio painting mod.",
+  "Description": "The art supply shop in Cindersap Forest, for the Pelican Palette painting mod.",
   "UniqueID": "blinxxy.MuseArt.CP",
   "UpdateKeys": [],
   "ContentPackFor": {
