@@ -153,6 +153,13 @@ internal sealed partial class EaselMenu
 
     internal bool DevSitterOffered(string npc) => _sitterSlots.Any(s => s.Npc == npc);
 
+    // Plein air: look at the view (as clicking its slot does).
+    internal void DevPickView() => ClickView();
+
+    internal Reference? DevPreview => _setupPreview;
+
+    internal string? DevViewSubject => _view?.Subject;
+
     internal void DevSetup(params string[] itemIds)
     {
         _setupItems.Clear();

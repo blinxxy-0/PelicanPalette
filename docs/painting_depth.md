@@ -14,7 +14,24 @@ Also built (2026-10-25), at your request: **portraits of villagers** (`Painting/
 - The sitter loves receiving theirs.
 - Portrait commissions come only from friends at 4+ hearts.
 
-Not built yet: section 2's price check against real playtests, and everything in section 4. Each section gives the options and a recommendation, then lists the decisions for you.
+Also built (2026-10-25), from section 4:
+- **Novelty pricing and the painting record** (4.1, 4.5; `Painting/Catalogue.cs`, `Menus/CollectionMenu.cs`):
+  - A subject's first painting sells for 1.25x. The 2nd and 3rd sell at the normal price, the 4th to 6th for 0.85x, and after that 0.7x. A still life of the same items in another order counts as the same subject.
+  - The record page is at Sable's counter. Milestones for different subjects painted:
+    - 5: three aquamarine tubes
+    - 15: 450-cell wells
+    - 30: paintings worth 10% more
+    - 50: a letter from Sable with an iridium brush
+- **Consignment** (4.1; `Shop/Consignment.cs`, `Shop/ConsignMenu.cs`):
+  - Up to 3 paintings, shown on the shop's easels.
+  - Each sells in 1 to 3 days for 1.5x the shop price. Iridium sells by the next day, gold in 1 to 2 days.
+  - You can take one back any time before it sells.
+- **Plein air** (4.2; `Painting/Views.cs`):
+  - An easel placed outdoors offers the view: 16x16 tiles of the game's own map render, mostly in front of the easel, reduced to the canvas in your colours.
+  - It's timed and valued like a portrait. The subject price depends on the place (farm 200 up to the Summit and Desert at 800), raised for rain, winter and evening.
+  - The same place in another season is a new subject.
+
+Not built yet: section 2's price check against real playtests, and 4.3, 4.4 and 4.6. Each section gives the options and a recommendation, then lists the decisions for you.
 
 ## Where it stands
 

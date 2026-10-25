@@ -38,7 +38,10 @@ internal sealed class PaintingData
     // A portrait of a villager, painted by the player: "sitter:<name>".
     public bool IsSitter => Sitters.IsSitter(Subject);
 
-    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter ? Array.Empty<string>() : Subject.Split('|');
+    // A plein-air view: "view:<location>:<season>".
+    public bool IsView => Views.IsView(Subject);
+
+    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter || IsView ? Array.Empty<string>() : Subject.Split('|');
 
     public void WriteTo(Item item)
     {

@@ -150,7 +150,8 @@
       "Action": "EditData",
       "Target": "Data/mail",
       "Entries": {
-        "blinxxy.MuseArt_GrandOpening": "{{i18n:mail.grand-opening}} %item id (O)blinxxy.MuseArt_Canvas_Small 2 %%[#]{{i18n:mail.grand-opening.title}}"
+        "blinxxy.MuseArt_GrandOpening": "{{i18n:mail.grand-opening}} %item id (O)blinxxy.MuseArt_Canvas_Small 2 %%[#]{{i18n:mail.grand-opening.title}}",
+        "blinxxy.MuseArt_Collection50": "{{i18n:mail.collection50}} %item id (O)blinxxy.MuseArt_Brush_iridium 1 %%[#]{{i18n:mail.collection50.title}}"
       }
     },
     {

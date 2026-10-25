@@ -67,9 +67,7 @@ internal sealed partial class EaselMenu
         int size = PaintingRules.CanvasSize(kind);
         _canvas = new PixelCanvas(size);
         _subjectItems = itemIds.ToArray();
-        _reference = IsSitterSubject(itemIds) ? Sitters.Portrait(Sitters.NpcOf(itemIds[0]), size, _owned)
-            : itemIds.Count > 0 ? ReferenceBuilder.StillLife(itemIds, size, _owned)
-            : null;
+        _reference = BuildReference(itemIds, size);
 
         _timed = !IsOriginal && _rules.LightTimer;
         _lightTotal = _lightLeft = _timed
@@ -634,9 +632,7 @@ internal sealed partial class EaselMenu
 
     private void DrawTopBar(SpriteBatch b)
     {
-        string title = IsOriginal ? I18n.Get("paint.title.free") : _subjectItems.Length == 1
-            ? I18n.Get("paint.title.still-life-of", new { item = ItemRegistry.GetDataOrErrorItem(_subjectItems[0]).DisplayName })
-            : I18n.Get("paint.title.still-life");
+        string title = SubjectTitle(_subjectItems);
         Ui.Text(b, title, new Vector2(_topBar.X, _topBar.Y + 4));
         if (_reference != null)
             Ui.Text(b, I18n.Get("paint.difficulty", new { difficulty = _reference.Difficulty }), new Vector2(_topBar.X, _topBar.Y + 34), Game1.textColor * 0.7f);
@@ -840,7 +836,7 @@ internal sealed partial class EaselMenu
                 // How much paint the Palette has left of it: a gauge up the right edge.
                 if (UsesPaint)
                 {
-                    int h = (int)((r.Height - 8) * Math.Clamp(_paint[i] / (float)PaletteItem.WellCells, 0f, 1f));
+                    int h = (int)((r.Height - 8) * Math.Clamp(_paint[i] / (float)Catalogue.WellCells(_who), 0f, 1f));
                     Ui.Fill(b, new Rectangle(r.Right - 7, r.Y + 4, 4, r.Height - 8), Color.Black * 0.35f);
                     Ui.Fill(b, new Rectangle(r.Right - 7, r.Bottom - 4 - h, 4, h), _paint[i] > 0 ? Color.White * 0.9f : Color.OrangeRed);
                 }

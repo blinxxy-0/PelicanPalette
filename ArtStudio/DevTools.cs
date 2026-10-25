@@ -258,6 +258,23 @@ internal static class DevTools
             return m.DevPainting!;
         }
 
+        yield return ("record", () =>
+        {
+            // A record with a still life, a pairing, a portrait and a view, and a milestone reached.
+            var entries = new Dictionary<string, CatalogueEntry>
+            {
+                ["(O)24"] = new() { Count = 7, BestQuality = 2, FirstDay = 3 },
+                ["(O)24|(O)254"] = new() { Count = 1, BestQuality = 1, FirstDay = 5 },
+                ["sitter:Abigail"] = new() { Count = 2, BestQuality = 4, FirstDay = 9 },
+                ["view:Forest:spring"] = new() { Count = 1, BestQuality = 0, FirstDay = 12 },
+            };
+            foreach (string id in new[] { "(O)276", "(O)190", "(O)192", "(O)66", "(O)128", "(O)72", "(O)395", "(O)424", "(O)60", "(O)62", "(O)64", "(O)68", "(O)70" })
+                entries[id] = new CatalogueEntry { Count = 1, BestQuality = 1, FirstDay = 14 };
+            Game1.player.modData[ModEntry.Id + "/Catalogue"] = System.Text.Json.JsonSerializer.Serialize(entries);
+            Game1.player.modData[ModEntry.Id + "/CollectionPerks"] = "tubes,palette";
+            return new CollectionMenu(Game1.player);
+        });
+        yield return ("consign", () => new Shop.ConsignMenu(Game1.player));
         yield return ("setup_framing", () =>
         {
             var painting = FinishedPainting(CanvasKind.Small, parsnip);

@@ -48,10 +48,18 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     private string? _hoverText;
 
-    public EaselMenu(Farmer who, BrushSpec? brush = null)
+    // Plein air: where the easel stands, when it stands outdoors, and the
+    // view from it once the painter has looked (taken on first pick).
+    private readonly GameLocation? _viewLocation;
+    private readonly Vector2 _easelTile;
+    private Views.Capture? _view;
+
+    public EaselMenu(Farmer who, BrushSpec? brush = null, Vector2? easelTile = null)
         : base(0, 0, 0, 0, showUpperRightCloseButton: true)
     {
         _who = who;
+        if (easelTile.HasValue && who.currentLocation is { IsOutdoors: true } outdoors)
+            (_viewLocation, _easelTile) = (outdoors, easelTile.Value);
         _level = ArtProgress.Level(who);
         _owned = ArtProgress.OwnedPigments(who);
         _brush = brush ?? Brushes.HogBristle;
@@ -242,9 +250,30 @@ internal sealed partial class EaselMenu : IClickableMenu
         return new Rectangle(x0, y0, x1 - x0, y1 - y0);
     }
 
+    private static bool IsViewSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Views.IsView(ids[0]);
+
+    // Portraits and views fill the canvas: they take an hour longer.
+    private static bool IsLongSubject(IReadOnlyList<string> ids) => IsSitterSubject(ids) || IsViewSubject(ids);
+
+    private Reference? BuildReference(IReadOnlyList<string> ids, int size) =>
+        ids.Count == 0 ? null
+        : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned)
+        : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned) : null)
+        : ReferenceBuilder.StillLife(ids, size, _owned);
+
+    // The subject as a title: "Still Life: Parsnip", "Portrait of Leah".
+    internal static string SubjectTitle(IReadOnlyList<string> ids) =>
+        ids.Count == 0 ? I18n.Get("paint.title.free")
+        : IsSitterSubject(ids) ? I18n.Get("painting.title.portrait", new { name = Sitters.DisplayName(Sitters.NpcOf(ids[0])) })
+        : IsViewSubject(ids) ? I18n.Get("painting.title.view", new { place = Views.PlaceName(ids[0]), season = Views.SeasonName(ids[0]) })
+        : ids.Count == 1 ? I18n.Get("paint.title.still-life-of", new { item = ItemRegistry.GetDataOrErrorItem(ids[0]).DisplayName })
+        : I18n.Get("paint.title.still-life");
+
     private static string SubjectPhrase(IReadOnlyList<string> itemIds)
     {
         if (itemIds.Count == 0) return I18n.Get("subject.anything");
+        if (IsSitterSubject(itemIds)) return Sitters.DisplayName(Sitters.NpcOf(itemIds[0]));
+        if (IsViewSubject(itemIds)) return I18n.Get("subject.view");
         if (itemIds.Count > 1) return I18n.Get("subject.still-life");
         string name = ItemRegistry.GetDataOrErrorItem(itemIds[0]).DisplayName.ToLowerInvariant();
         // (English needs "a" or "an"; a translation can leave {{article}} out.)

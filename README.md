@@ -41,10 +41,19 @@ The painting's quality depends on how closely you copied the picture and on your
 
 **Portraits.** Once you have medium canvases (Painting level 4), friends at 4 or more hearts will sit for a portrait: pick their face under the items on the easel. A portrait takes an hour longer than a still life and sells for about 75% more. The sitter always loves being given theirs. Friends at 4+ hearts can also post portrait requests on the commission board.
 
+**Plein air.** An easel placed outdoors offers **the view** as a subject: the scene around it (mostly what's in front of it) becomes the reference, across the whole canvas. A view takes an hour longer than a still life and is worth about as much as a portrait. It's worth more somewhere far from the farm (the Woods, the Summit, the Desert, Ginger Island), and more again in rain, in winter or after 7pm. The same place in another season counts as a new subject.
+
+**Your painting record.** Every subject you paint is kept on a record page (ask at Sable's counter). The first painting of a new subject sells for 25% more. Painting the same thing over and over sells for less: up to 30% less after six. Milestones for painting many different subjects:
+- 5 subjects: aquamarine paint
+- 15: bigger Palette wells (450 cells)
+- 30: paintings worth 10% more
+- 50: a gift from Sable
+
 **The Painting skill** goes from level 1 to 10. Each level gives you more light, and new levels bring new tools (broad brush, ruler, mirror, dropper), bigger canvases, new pigments and higher quality. At levels 5 and 10 you choose a profession, as with the other skills.
 
 **Selling and gifting.**
 - Sell paintings to Pierre, at the art shop (which pays 20% more), or through the shipping bin.
+- Or **consign** up to three with Sable, at the counter. They go on the shop's easels and sell within one to three days (sooner the better they are) for half again what a shop pays. You can take one back before it sells.
 - Everyone loves an iridium painting, and silver and gold ones are liked. Art lovers (Leah, Elliott, Emily, Haley, Abigail, Sebastian, Sam, Robin and Sable) like any painting. A painting of something a villager loves goes up a step. Nobody dislikes a painting.
 - A **Picture Frame** turns a painting into furniture you can hang on a wall.
 

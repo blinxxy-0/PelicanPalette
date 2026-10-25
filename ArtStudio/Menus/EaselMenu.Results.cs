@@ -26,10 +26,13 @@ internal sealed partial class EaselMenu
     private Texture2D? _resultTexture;
     private float _revealTime;
     private Rectangle _keepButton;
+    private float _novelty = 1f;
+    private int _timesBefore;
+    private (int Subjects, string Perk)? _milestone;
 
     private void Finish(bool lightGone)
     {
-        ArtHooks.AddPaintingTime(PaintingRules.Minutes(_canvasKind, IsSitterSubject(_subjectItems)));
+        ArtHooks.AddPaintingTime(PaintingRules.Minutes(_canvasKind, IsLongSubject(_subjectItems)));
         _mix = null;
         _lightGone = lightGone;
         _stage = EaselStage.Results;
@@ -67,7 +70,7 @@ internal sealed partial class EaselMenu
             _score = PaintingRules.Score(_result.Stars, _level, _inspired, _allPure, inspiredBonus);
             _quality = PaintingRules.Quality(_score, _level);
             _xp = (int)Math.Round(PaintingRules.Xp(_result.Stars, _reference.Difficulty, size) * _rules.RewardMultiplier
-                * (IsSitterSubject(_subjectItems) ? PaintingRules.PortraitXp : 1f));
+                * (IsLongSubject(_subjectItems) ? PaintingRules.PortraitXp : 1f));
             if (SableCritiques)
                 (_critique, _critiquePortrait) = SableCritique(_result, painted);
             else
@@ -84,19 +87,32 @@ internal sealed partial class EaselMenu
         }
 
         bool portrait = IsSitterSubject(_subjectItems);
-        int subjectPrice = portrait ? 1000 : _subjectItems.Length == 0 ? 0 : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
+        int subjectPrice = portrait ? 1000
+            : IsViewSubject(_subjectItems) ? Views.SubjectPrice(_subjectItems[0])
+            : _subjectItems.Length == 0 ? 0
+            : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
         int price = _reference != null
-            ? (int)Math.Round(PaintingRules.Value(size, _reference.Difficulty, subjectPrice, _level) * _rules.RewardMultiplier * (portrait ? PaintingRules.PortraitValue : 1f))
+            ? (int)Math.Round(PaintingRules.Value(size, _reference.Difficulty, subjectPrice, _level) * _rules.RewardMultiplier * (IsLongSubject(_subjectItems) ? PaintingRules.PortraitValue : 1f))
             : PaintingRules.OriginalValue(size);
         if (Has(PaintingSkill.Instance.Gallerist))
             price = (int)Math.Round(price * PaintingSkill.GalleristPrice);
+
+        // Something you've never painted is worth more than your tenth of it.
+        string subject = _subjectItems.Length == 0 ? PaintingData.OriginalSubject : string.Join("|", _subjectItems);
+        if (_reference != null)
+        {
+            _timesBefore = Catalogue.TimesPainted(_who, subject);
+            _novelty = Catalogue.Novelty(_timesBefore);
+            price = (int)Math.Round(price * _novelty * (Catalogue.HasPerk(_who, "renown") ? Catalogue.RenownValue : 1f));
+            _milestone = Catalogue.Record(_who, subject, _quality);
+        }
 
         var data = new PaintingData
         {
             Size = size,
             Cells = cells,
             Purity = purity,
-            Subject = _subjectItems.Length == 0 ? PaintingData.OriginalSubject : string.Join("|", _subjectItems),
+            Subject = subject,
             Stars = _result?.Stars ?? 0f,
             Difficulty = _reference?.Difficulty ?? 0,
             Painter = _who.Name,
@@ -189,6 +205,8 @@ internal sealed partial class EaselMenu
             Game1.createItemDebris(_painting, Game1.player.getStandingPosition(), Game1.player.FacingDirection);
         if (_newLevel > 0)
             Game1.addHUDMessage(new HUDMessage(I18n.Get("results.level-up", new { level = _newLevel })) { noIcon = true });
+        if (_milestone is { } m)
+            Game1.addHUDMessage(new HUDMessage(I18n.Get("catalogue.milestone." + m.Perk, new { count = m.Subjects })) { noIcon = true });
         _resultTexture?.Dispose();
     }
 
@@ -245,7 +263,15 @@ internal sealed partial class EaselMenu
             if (_reference != null && PaintingRules.Quality(_score, PaintingRules.MaxLevel) > _quality)
                 Ui.Text(b, I18n.Get("results.capped"), new Vector2(cx, cy + 40), Game1.textColor * 0.6f);
             cy += 76;
-            Ui.Text(b, I18n.Get("results.sells-for", new { price = _painting.sellToStorePrice() }), new Vector2(cx, cy));
+            string sells = I18n.Get("results.sells-for", new { price = _painting.sellToStorePrice() });
+            Ui.Text(b, sells, new Vector2(cx, cy));
+            // Beside the price, why it's more or less than usual: a new subject, or a familiar one.
+            if (_reference != null && _novelty != 1f)
+            {
+                string note = _timesBefore == 0 ? I18n.Get("results.novelty.new")
+                    : I18n.Get("results.novelty.again", new { times = _timesBefore, percent = Math.Round((1f - _novelty) * 100f) });
+                Ui.Text(b, note, new Vector2(cx + Ui.TextWidth(sells) + 12, cy + 4), _novelty > 1f ? new Color(60, 140, 60) : Game1.textColor * 0.6f, 0.8f);
+            }
             cy += 34;
             Ui.Text(b, I18n.Get("results.xp", new { xp = _xp }) + (_newLevel > 0 ? "  " + I18n.Get("results.xp.level", new { level = _newLevel }) : ""), new Vector2(cx, cy), new Color(60, 140, 60));
             cy += 50;

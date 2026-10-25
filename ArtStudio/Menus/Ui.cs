@@ -128,7 +128,16 @@ internal static class Ui
         Text(b, text, new Vector2(centerX - w / 2, y), color, scale);
     }
 
-    public static float TextWidth(string text) => Game1.smallFont.MeasureString(text).X;
+    // A little landscape (sky, hill, sun): the icon for a view.
+    public static void Landscape(SpriteBatch b, Rectangle r)
+    {
+        Fill(b, r, new Color(150, 196, 230));
+        Fill(b, new Rectangle(r.X, r.Y + r.Height * 3 / 5, r.Width, r.Height - r.Height * 3 / 5), new Color(96, 150, 70));
+        Fill(b, new Rectangle(r.X + r.Width / 5, r.Y + r.Height / 2, r.Width * 2 / 5, r.Height / 10), new Color(70, 120, 60));
+        Fill(b, new Rectangle(r.Right - r.Width / 4, r.Y + r.Height / 8, r.Width / 8, r.Width / 8), new Color(250, 220, 110));
+    }
+
+        public static float TextWidth(string text) => Game1.smallFont.MeasureString(text).X;
 
     // A row of five stars filled to `stars` (half steps), each `size` px.
     public static void Stars(SpriteBatch b, float stars, int x, int y, int size, int gap)

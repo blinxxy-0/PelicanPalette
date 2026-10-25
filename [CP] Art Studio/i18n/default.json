@@ -246,5 +246,7 @@
   "letter.your-call": "I made my call. The letter's in the stove.$s#$b#...I'm staying. I'm not sure I'd have decided that if you'd made it for me.",
   "letter.paint-first": "I wrote back and said I needed a season to think.$u#$b#Then I bought myself a canvas. From my own shop. Retail price.$h",
   "evelyn.Wed": "Sable and I painted the river bend this morning. My hands remembered more than I thought they would.$h",
-  "evelyn.Sat": "I found my old brushes in the attic. George says they smell like the summer before we married.$h"
+  "evelyn.Sat": "I found my old brushes in the attic. George says they smell like the summer before we married.$h",
+  "mail.collection50": "Fifty different subjects. I counted, because of course I did.^Most painters find three things they're good at and paint those until they die. You keep looking at new things. That's the whole job, really.^This brush was my teacher's. It's wasted in a drawer.^   -Sable",
+  "mail.collection50.title": "Fifty subjects"
 }

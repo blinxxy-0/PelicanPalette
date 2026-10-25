@@ -46,7 +46,7 @@ internal static class PaintingItems
         // follows the subject's own (translated) name, the way "Blueberry
         // Wine" follows the blueberry's.
         var subjects = data.SubjectItems;
-        if (data.IsPortrait || data.IsSitter)
+        if (data.IsPortrait || data.IsSitter || data.IsView)
             item.displayNameFormat = Title(data);
         else if (subjects.Length == 1)
         {
@@ -69,6 +69,7 @@ internal static class PaintingItems
     {
         if (data.IsPortrait) return I18n.Get("painting.title.portrait", new { name = FarmerPortrait.SitterName(data.Subject) });
         if (data.IsSitter) return I18n.Get("painting.title.portrait", new { name = Sitters.DisplayName(Sitters.NpcOf(data.Subject)) });
+        if (data.IsView) return I18n.Get("painting.title.view", new { place = Views.PlaceName(data.Subject), season = Views.SeasonName(data.Subject) });
         var subjects = data.SubjectItems;
         if (subjects.Length == 0) return I18n.Get("painting.title.original");
         string first = ItemRegistry.GetDataOrErrorItem(subjects[0]).DisplayName;
@@ -82,6 +83,8 @@ internal static class PaintingItems
             ? I18n.Get("painting.provenance.portrait", new { name = FarmerPortrait.SitterName(data.Subject) })
             : data.IsSitter
             ? I18n.Get("painting.provenance.sitter", new { name = Sitters.DisplayName(Sitters.NpcOf(data.Subject)) })
+            : data.IsView
+            ? I18n.Get("painting.provenance.view", new { place = Views.PlaceName(data.Subject) })
             : data.IsOriginal
             ? I18n.Get("painting.provenance.original")
             : I18n.Get("painting.provenance.from-life", new { items = string.Join(", ", data.SubjectItems.Select(id => ItemRegistry.GetDataOrErrorItem(id).DisplayName)) });

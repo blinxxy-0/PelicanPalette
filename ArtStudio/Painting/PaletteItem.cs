@@ -9,7 +9,8 @@ namespace ArtStudio.Painting;
 // Paint is a resource (docs/painting_depth.md, 2026-10-25). Knowing a
 // colour lets you mix it; painting with it spends paint from your Palette,
 // one cell's worth per cell painted. The Palette keeps a well for every
-// colour, up to WellCells each, refilled from tubes (TubeCells each) when
+// colour, up to WellCells each (more from the 15-subject milestone:
+// Catalogue.WellCells), refilled from tubes (TubeCells each) when
 // you sit down at the easel. A new Palette comes filled with the starter
 // colours. Relaxed difficulty paints for free and needs no Palette.
 //
@@ -34,7 +35,7 @@ internal static class PaletteItem
                 string[] parts = entry.Split(':');
                 int i = parts.Length == 2 ? Palette.IndexOf(parts[0]) : -1;
                 if (i >= 0 && int.TryParse(parts[1], out int cells))
-                    paint[i] = Math.Clamp(cells, 0, WellCells);
+                    paint[i] = Math.Clamp(cells, 0, Catalogue.BigWellCells);
             }
         return paint;
     }
@@ -61,7 +62,7 @@ internal static class PaletteItem
         {
             int pigment = ArtItems.TubeFor(tube)!.Value;
             if (!ArtProgress.Owns(who, pigment)) continue;
-            while (tube.Stack > 0 && paint[pigment] + TubeCells <= WellCells)
+            while (tube.Stack > 0 && paint[pigment] + TubeCells <= Catalogue.WellCells(who))
             {
                 paint[pigment] += TubeCells;
                 used[pigment] = used.GetValueOrDefault(pigment) + 1;

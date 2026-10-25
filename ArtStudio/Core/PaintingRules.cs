@@ -32,7 +32,8 @@ public static class PaintingRules
     };
 
     // Portraits of villagers you're close to: more detailed than a still
-    // life, so they take an hour longer, sell for more and teach more.
+    // life, so they take an hour longer, sell for more and teach more. Views
+    // painted outdoors (the whole canvas) count the same.
     public const int PortraitHearts = 4;
     public const int PortraitExtraMinutes = 60;
     public const float PortraitValue = 1.75f, PortraitXp = 1.3f;

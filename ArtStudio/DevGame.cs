@@ -119,6 +119,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_portraittest", "Portraits of villagers: who'll sit, the reference, painting one, its price and time, gifting it, and portrait commissions.", (_, _) => PortraitTest(monitor));
         DevTools.AddCommand(helper, "museart_painttest", "Paint as a resource: the Palette, tubes, spending paint, and the Pigment Mill. Run 'museart_painttest', then 'museart_painttest check' a second later.", (_, args) => PaintTest(monitor, args));
         DevTools.AddCommand(helper, "museart_knowtest", "Pigments as knowledge, and painting taking time. Run 'museart_knowtest', then 'museart_knowtest close', then 'museart_knowtest check' a few seconds later.", (_, args) => KnowTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_gallerytest", "The painting record, consignment and plein air. Usage: museart_gallerytest record|consign|view (view: stand outdoors first, e.g. museart_warp Farm 64 15).", (_, args) => GalleryTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
         DevTools.AddCommand(helper, "museart_portrait", "Makes Sable's portrait of the current farmer and saves it (and the farmer as rendered) to exports/portrait.png.", (_, _) =>
         {
@@ -899,6 +900,134 @@ internal static class DevGame
         ModEntry.Config.Difficulty = Difficulty.Normal;
     }
 
+    // The record, consignment and plein air (2026-10-25).
+    private static void GalleryTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        ModEntry.Config.Difficulty = Difficulty.Relaxed;     // no paint needed for these
+        ArtProgress.SetLevel(who, 6);
+        string parsnip = "(O)24", melon = "(O)254";
+        // Room in the bag: the paintings these make pile up.
+        void ClearPaintings()
+        {
+            foreach (var item in who.Items.Where(PaintingItems.IsPainting).ToList())
+                who.removeItemFromInventory(item);
+        }
+        ClearPaintings();
+        switch (args.FirstOrDefault())
+        {
+            case "record":
+            {
+                who.modData.Remove(ModEntry.Id + "/Catalogue");
+                who.modData.Remove(ModEntry.Id + "/CollectionPerks");
+                int Paint(params string[] ids)
+                {
+                    var m = EaselMenu.StartStillLife(who, CanvasKind.Small, ids);
+                    Game1.activeClickableMenu = m;
+                    m.DevPaintPartly(1f, 3);
+                    m.DevFinish(false);
+                    int price = m.DevPainting?.Price ?? 0;
+                    m.DevKeep();
+                    Game1.exitActiveMenu();
+                    ClearPaintings();
+                    return price;
+                }
+                int first = Paint(parsnip), second = Paint(parsnip), third = Paint(parsnip), fourth = Paint(parsnip);
+                Check(monitor, "a new subject pays 25% more than the second time", Math.Abs(first - second * 1.25f) <= 2, $"{first}g then {second}g");
+                Check(monitor, "the record counts every painting", Catalogue.TimesPainted(who, parsnip) == 4, Catalogue.TimesPainted(who, parsnip).ToString());
+                Check(monitor, "the fourth of the same pays less", fourth < second, $"{fourth}g vs {second}g");
+                Paint(melon, parsnip);
+                Check(monitor, "a still life in another order is the same subject", Catalogue.TimesPainted(who, parsnip + "|" + melon) == 1 && Catalogue.All(who).Count == 2);
+
+                int tubesBefore = who.Items.Where(i => ArtItems.TubeFor(i) == Palette.IndexOf("aquamarine")).Sum(i => i.Stack);
+                foreach (string id in new[] { "(O)188", "(O)190" })
+                    Paint(id);
+                Check(monitor, "no milestone before five subjects", !Catalogue.HasPerk(who, "tubes"));
+                Paint("(O)192");
+                int tubesAfter = who.Items.Where(i => ArtItems.TubeFor(i) == Palette.IndexOf("aquamarine")).Sum(i => i.Stack);
+                Check(monitor, "five subjects bring three tubes of aquamarine", Catalogue.HasPerk(who, "tubes") && tubesAfter - tubesBefore == 3, $"{tubesAfter - tubesBefore} tubes");
+
+                // The later milestones, by filling the record by hand.
+                var all = Catalogue.All(who);
+                for (int i = all.Count; i < 14; i++)
+                    all["(O)" + (300 + i)] = new CatalogueEntry { Count = 1, FirstDay = 1 };
+                who.modData[ModEntry.Id + "/Catalogue"] = System.Text.Json.JsonSerializer.Serialize(all);
+                Paint("(O)400");
+                Check(monitor, "fifteen subjects make the palette's wells bigger", Catalogue.WellCells(who) == Catalogue.BigWellCells);
+                Game1.activeClickableMenu = new Menus.CollectionMenu(who);
+                Check(monitor, "the record page opens", Game1.activeClickableMenu is Menus.CollectionMenu);
+                break;
+            }
+            case "consign":
+            {
+                foreach (var item in Shop.Consignment.All(who).ToList())
+                    Shop.Consignment.Consigned(who).Remove(item);
+                var m = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { melon });
+                m.DevPaintPartly(1f, 3);
+                m.DevFinish(false);
+                var painting = m.DevPainting!;
+                who.addItemToInventory(painting);
+                int shopPrice = painting.sellToStorePrice();
+                Check(monitor, "consigning takes it from the bag", Shop.Consignment.Consign(who, painting) && !who.Items.Contains(painting) && Shop.Consignment.All(who).Contains(painting));
+                Check(monitor, "a buyer pays half again the shop price", Shop.Consignment.Price(painting) == (int)Math.Round(shopPrice * 1.5f), $"{Shop.Consignment.Price(painting)}g vs {shopPrice}g");
+                Check(monitor, "it sells within three days", Shop.Consignment.DaysLeft(painting) is >= 1 and <= 3, Shop.Consignment.DaysLeft(painting).ToString());
+                bool took = Shop.Consignment.TakeBack(who, painting);
+                Check(monitor, "you can take it back", took && who.Items.Contains(painting) && !Shop.Consignment.All(who).Any(),
+                    $"took {took}, in bag {who.Items.Contains(painting)}, still consigned {Shop.Consignment.All(who).Count()}, free slots {who.freeSpotsInInventory()}");
+                for (int i = 0; i < 4; i++)
+                {
+                    var copy = painting.getOne();
+                    who.addItemToInventory(copy);
+                    Shop.Consignment.Consign(who, copy);
+                }
+                Check(monitor, "three easels at most", Shop.Consignment.All(who).Count() == Shop.Consignment.MaxConsigned);
+                foreach (var item in Shop.Consignment.All(who))
+                    item.modData[ModEntry.Id + "/SellsOn"] = Game1.Date.TotalDays.ToString();
+                int money = who.Money, expected = Shop.Consignment.All(who).Sum(Shop.Consignment.Price);
+                Shop.Consignment.SellDue(who);
+                Check(monitor, "when the day comes they sell and pay", who.Money - money == expected && !Shop.Consignment.All(who).Any(), $"+{who.Money - money}g of {expected}g");
+                var last = painting.getOne();
+                who.addItemToInventory(last);
+                Shop.Consignment.Consign(who, last);
+                Game1.activeClickableMenu = new Shop.ConsignMenu(who);
+                Check(monitor, "the consign menu opens", Game1.activeClickableMenu is Shop.ConsignMenu);
+                break;
+            }
+            case "view":
+            {
+                var tile = who.Tile + new Vector2(0, -1);
+                var location = who.currentLocation;
+                Check(monitor, "standing outdoors", location.IsOutdoors, location.NameOrUniqueName);
+                var m = new EaselMenu(who, easelTile: tile);
+                Game1.activeClickableMenu = m;
+                Check(monitor, "an easel outdoors offers the view", m.DevSitterOffered(Views.Prefix));
+                Check(monitor, "an easel indoors doesn't", !new EaselMenu(who).DevSitterOffered(Views.Prefix));
+                m.DevPickView();
+                var preview = m.DevPreview;
+                Check(monitor, "the view is taken and becomes the reference", m.DevViewSubject == Views.SubjectFor(location) && preview != null,
+                    m.DevViewSubject ?? "none");
+                if (preview != null)
+                    Check(monitor, "it's a real picture filling the canvas", preview.PigmentsUsed.Count >= 4 && preview.SubjectCells == preview.Size * preview.Size,
+                        $"{preview.PigmentsUsed.Count} colours, difficulty {preview.Difficulty}");
+                int pending = ArtHooks.PendingMinutes;
+                m.DevSetCanvas(CanvasKind.Small);
+                who.addItemToInventory(ItemRegistry.Create(ArtItems.QualifiedCanvasId(CanvasKind.Small)));
+                m.DevBeginFromSetup(Views.SubjectFor(location));
+                Check(monitor, "the view starts painting", m.DevIsPainting);
+                m.DevPaintPartly(1f, 3);
+                m.DevFinish(false);
+                var painting = m.DevPainting;
+                Check(monitor, "a view takes an hour longer", ArtHooks.PendingMinutes - pending == 120, $"{ArtHooks.PendingMinutes - pending} minutes");
+                Check(monitor, "it's named for the place and season", painting?.DisplayName == I18n.Get("painting.title.view", new { place = location.DisplayName, season = Utility.getSeasonNameFromNumber(Game1.seasonIndex) }), painting?.DisplayName ?? "none");
+                Check(monitor, "and recorded", Catalogue.TimesPainted(who, Views.SubjectFor(location)) >= 1);
+                monitor.Log($"View painting: {painting?.DisplayName}, {painting?.Price}g, quality {painting?.Quality}.", LogLevel.Info);
+                break;
+            }
+        }
+        ModEntry.Config.Difficulty = Difficulty.Normal;
+    }
+
     // Part two of the paint rework (docs/painting_depth.md).
     private static void PaintTest(IMonitor monitor, string[] args)
     {
@@ -1131,6 +1260,18 @@ internal static class DevGame
                 };
                 Shop.Commissions.Save(Game1.player, list);
                 Game1.activeClickableMenu = new Shop.CommissionBoardMenu(Game1.player);
+                break;
+            case "record":
+                Game1.activeClickableMenu = new Menus.CollectionMenu(Game1.player);
+                break;
+            case "consign":
+                Game1.activeClickableMenu = new Shop.ConsignMenu(Game1.player);
+                break;
+            case "view":
+                // The easel outdoors, the view picked.
+                var outdoors = new EaselMenu(Game1.player, easelTile: Game1.player.Tile + new Vector2(0, -1));
+                outdoors.DevPickView();
+                Game1.activeClickableMenu = outdoors;
                 break;
             case "useeasel":
                 // The same call a right-click on the placed easel makes.

@@ -35,6 +35,9 @@ internal sealed partial class EaselMenu
 
     private static bool IsSitterSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Sitters.IsSitter(ids[0]);
     private bool SetupPortrait => IsSitterSubject(_setupItems);
+    private bool SetupView => IsViewSubject(_setupItems);
+    // The view's slot sits first in the sitters' row.
+    private const string ViewSlot = Views.Prefix;
     private Rectangle _originalButton, _brushButton, _frameButton, _beginButton, _previewArea;
 
     // Debug commands paint without supplies; the easel itself needs them.
@@ -72,6 +75,8 @@ internal sealed partial class EaselMenu
         // Below the items, the villagers who'll sit for a portrait: keep a
         // label and one row for them.
         var sitters = _setupFraming || !StardewModdingAPI.Context.IsWorldReady ? new List<string>() : Sitters.Available(_who);
+        if (_viewLocation != null && !_setupFraming)
+            sitters.Insert(0, ViewSlot);
         int itemsBottom = sitters.Count > 0 ? rowY - 12 - 40 - SlotSize - 8 : rowY - 12;
         int n = 0;
         foreach (var item in Game1.player.Items)
@@ -120,8 +125,8 @@ internal sealed partial class EaselMenu
         while (_setupItems.Count > max)
             _setupItems.RemoveAt(_setupItems.Count - 1);
         _setupPreview = _setupOriginal || _setupFraming || _setupItems.Count == 0 ? null
-            : SetupPortrait ? (PaintingRules.PortraitFits(_setupCanvas) ? Sitters.Portrait(Sitters.NpcOf(_setupItems[0]), size, _owned) : null)
-            : ReferenceBuilder.StillLife(_setupItems, size, _owned);
+            : SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas) ? null
+            : BuildReference(_setupItems, size);
     }
 
     private void UpdateSetup()
@@ -156,7 +161,7 @@ internal sealed partial class EaselMenu
                 return;
             }
             _setupOriginal = false;
-            if (SetupPortrait) _setupItems.Clear();
+            if (SetupPortrait || SetupView) _setupItems.Clear();
             string id = item.QualifiedItemId;
             if (_setupItems.Contains(id))
                 _setupItems.Remove(id);
@@ -174,6 +179,11 @@ internal sealed partial class EaselMenu
         foreach (var (rect, npc) in _sitterSlots)
         {
             if (!rect.Contains(x, y)) continue;
+            if (npc == ViewSlot)
+            {
+                ClickView();
+                return;
+            }
             Game1.playSound("smallSelect");
             _setupOriginal = false;
             string subject = Sitters.SubjectFor(npc);
@@ -222,10 +232,27 @@ internal sealed partial class EaselMenu
         }
     }
 
+    // The view from the easel: looked at (rendered) the first time it's picked.
+    private void ClickView()
+    {
+        _view ??= Views.Take(_viewLocation!, _easelTile);
+        if (_view == null)
+        {
+            Game1.playSound("cancel");
+            return;
+        }
+        Game1.playSound("smallSelect");
+        _setupOriginal = false;
+        bool again = SetupView;
+        _setupItems.Clear();
+        if (!again) _setupItems.Add(_view.Subject);
+        RefreshPreview();
+    }
+
     // A painting may not run past 2am (in multiplayer the clock is shared
     // and keeps running anyway, so there's no extra time to add).
     private bool TooLate => !Context.IsMultiplayer && Context.IsWorldReady
-        && ArtHooks.FinishTime(PaintingRules.Minutes(_setupCanvas, SetupPortrait)) > PaintingRules.LatestFinish;
+        && ArtHooks.FinishTime(PaintingRules.Minutes(_setupCanvas, IsLongSubject(_setupItems))) > PaintingRules.LatestFinish;
 
     private bool NeedsPalette => UsesPaint && _palette == null;
 
@@ -387,7 +414,7 @@ internal sealed partial class EaselMenu
         bool ready = (_setupOriginal || _setupItems.Count > 0) && HasCanvas;
         Ui.Button(b, _beginButton, I18n.Get("setup.begin"), ready, false, ready && _beginButton.Contains(mouse));
         // Under Begin: what's missing, or else the mode and how long it takes.
-        int hours = PaintingRules.Minutes(_setupCanvas, SetupPortrait) / 60;
+        int hours = PaintingRules.Minutes(_setupCanvas, IsLongSubject(_setupItems)) / 60;
         var shortOf = ShortColours();
         bool portraitTooSmall = SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas);
         bool warn = portraitTooSmall || !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
@@ -435,10 +462,16 @@ internal sealed partial class EaselMenu
     private void DrawSitters(SpriteBatch b, int left, Point mouse)
     {
         if (_sitterSlots.Count == 0) return;
-        Ui.Text(b, I18n.Get("setup.pick-portrait"), new Vector2(left, _sitterLabelY));
+        bool viewOnly = _sitterSlots.Count == 1 && _viewLocation != null;
+        Ui.Text(b, I18n.Get(viewOnly ? "setup.pick-view" : _viewLocation != null ? "setup.pick-view-or-portrait" : "setup.pick-portrait"), new Vector2(left, _sitterLabelY));
         foreach (var (rect, npc) in _sitterSlots)
         {
             b.Draw(Game1.menuTexture, rect, Game1.getSourceRectForStandardTileSheet(Game1.menuTexture, 10), Color.White);
+            if (npc == ViewSlot)
+            {
+                DrawViewSlot(b, rect, mouse);
+                continue;
+            }
             var texture = Sitters.PortraitTexture(npc);
             if (texture != null)
                 b.Draw(texture, new Rectangle(rect.X + 4, rect.Y + 4, rect.Width - 8, rect.Height - 8), new Rectangle(0, 0, 64, 64), Color.White);
@@ -454,6 +487,21 @@ internal sealed partial class EaselMenu
                 _hoverText = I18n.Get("setup.portrait-hover", new { name = Sitters.DisplayName(npc) })
                     + (wantedBy == null ? "" : "\n" + I18n.Get("setup.commissioned", new { npc = wantedBy.NpcName, quality = Shop.Commissions.QualityText(wantedBy.MinQuality) }));
         }
+    }
+
+    // The view: what the painter saw, once they've looked; a little
+    // landscape (sky, hills, a sun) before then.
+    private void DrawViewSlot(SpriteBatch b, Rectangle rect, Point mouse)
+    {
+        var inner = new Rectangle(rect.X + 8, rect.Y + 8, rect.Width - 16, rect.Height - 16);
+        if (_view?.Thumbnail != null)
+            b.Draw(_view.Thumbnail, inner, Color.White);
+        else
+            Ui.Landscape(b, inner);
+        if (SetupView)
+            Ui.Outline(b, rect, new Color(214, 160, 30), 4);
+        if (rect.Contains(mouse))
+            _hoverText = I18n.Get("setup.view-hover", new { place = _viewLocation!.DisplayName });
     }
 
     private void DrawSlots(SpriteBatch b, Point mouse, Func<Item, int> order, bool numbered)

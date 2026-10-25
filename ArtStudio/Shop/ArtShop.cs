@@ -60,6 +60,8 @@ internal static class ArtShop
         {
             new Response("Shop", I18n.Get("shop.counter.shop")),
             new Response("Board", I18n.Get("shop.counter.board")),
+            new Response("Consign", I18n.Get("shop.counter.consign")),
+            new Response("Record", I18n.Get("shop.counter.record")),
             new Response("Leave", I18n.Get("shop.counter.leave")),
         }, (farmer, answer) =>
         {
@@ -67,8 +69,24 @@ internal static class ArtShop
                 OpenShop(farmer.currentLocation);
             else if (answer == "Board")
                 OpenBoard(farmer);
+            else if (answer == "Consign")
+                OpenConsign(farmer);
+            else if (answer == "Record")
+                Game1.activeClickableMenu = new Menus.CollectionMenu(farmer);
         });
         return true;
+    }
+
+    // Sable takes paintings in person (or, married, you hang them yourself).
+    private static void OpenConsign(Farmer who)
+    {
+        bool trusted = who.spouse == "Sable" && who.isMarriedOrRoommates();
+        if (!trusted && !SableAtCounter(who.currentLocation))
+        {
+            Game1.drawObjectDialogue(I18n.Get("consign.closed"));
+            return;
+        }
+        Game1.activeClickableMenu = new ConsignMenu(who);
     }
 
     // The shop opens while Sable is behind the counter; otherwise the shop

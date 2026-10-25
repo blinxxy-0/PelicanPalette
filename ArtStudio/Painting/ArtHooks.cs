@@ -66,14 +66,14 @@ internal static class ArtHooks
         if (!ArtItems.IsEasel(__instance)) return true;
         __result = true;
         if (!justCheckingForActivity && who.IsLocalPlayer && Game1.activeClickableMenu == null)
-            OpenEasel(who);
+            OpenEasel(who, __instance.TileLocation);
         return false;
     }
 
-    public static void OpenEasel(Farmer who)
+    public static void OpenEasel(Farmer who, Vector2? easelTile = null)
     {
         LearnPigments(who);
-        Game1.activeClickableMenu = new EaselMenu(who);
+        Game1.activeClickableMenu = new EaselMenu(who, easelTile: easelTile);
     }
 
     // A pigment is knowledge, like a recipe: the jar you buy, are given or
