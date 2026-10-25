@@ -2,7 +2,7 @@
 
 For players, see the [README](../README.md).
 
-The mod was called Art Studio until its 1.0.0 release; the code project, its `ArtStudio/` folder and the `blinxxy.MuseArt` IDs keep the old name, so saves made before the rename still load.
+The mod was called Art Studio until its 1.0.0 release; the code project, its `ArtStudio/` folder and the `blinxxy.MuseArt` IDs keep the old name. The IDs changed author prefix before release, so test saves from before then lose the mod's items and progress.
 
 A spin-off of Muse's painting game: paint pixel-art still lifes at an easel against the light, level a Painting skill, and sell or gift what you make. The plan lives in `C:\Users\blinx\.claude\plans\hey-i-m-still-super-quizzical-pine.md`.
 
