@@ -119,7 +119,9 @@ internal static class ArtShop
 
     private static void OnDayStarted(object? sender, DayStartedEventArgs e)
     {
-        ClearFootprint();
+        // The world is the host's to tidy; each player has their own board.
+        if (Context.IsMainPlayer)
+            ClearFootprint();
         Commissions.NewDay(Game1.player, _monitor, Random);
     }
 

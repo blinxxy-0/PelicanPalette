@@ -224,8 +224,8 @@
   "skill.level-up.ruler": "Ruler: drag out perfectly straight lines",
   "skill.level-up.mirror": "Mirror: strokes repeat across the middle",
   "skill.level-up.dropper": "Dropper: click the canvas to pick its color",
-  "skill.level-up.medium": "Medium canvases: still lifes of two items",
-  "skill.level-up.large": "Large canvases: still lifes of three items",
+  "skill.level-up.medium": "Medium canvases: still lifes of two items, portraits, and glazing",
+  "skill.level-up.large": "Large canvases: still lifes of three items, and highlights",
   "skill.level-up.quality": "Your paintings can now reach {{quality}} quality",
   "quality.normal.lower": "normal",
   "quality.silver.lower": "silver",
@@ -411,5 +411,7 @@
   "setup.need-linen": "You need a linen canvas.",
   "results.masterpiece": "Masterpiece!",
   "painting.provenance.masterpiece": "A masterpiece.",
-  "sable.masterpiece-gift": "...Oh.$h#$b#Do you know what this is? Most painters go their whole lives without one of these. I'm hanging it where I can see it from the counter.$l"
+  "sable.masterpiece-gift": "...Oh.$h#$b#Do you know what this is? Most painters go their whole lives without one of these. I'm hanging it where I can see it from the counter.$l",
+  "skill.level-up.varnish": "Varnish: a cabinet that cures paintings to a finer finish",
+  "skill.level-up.linen": "Linen canvases: the only ones a Masterpiece can be painted on"
 }

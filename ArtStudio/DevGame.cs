@@ -36,6 +36,8 @@ internal static class DevGame
                 Game1.options.pauseWhenOutOfFocus = false;
         };
 
+        DevMultiplayer.Register(helper, monitor);
+        DevMedia.Register(helper, monitor);
         DevTools.AddCommand(helper, "museart_devgame", "Starts a throwaway new farm from the title screen. It is never saved (don't sleep in it).", (_, _) => NewGame(monitor));
         DevTools.AddCommand(helper, "museart_devscene", "Sets up the farmhouse with an easel, a framed painting and supplies, at Painting level 6.", (_, _) => Scene(monitor));
         DevTools.AddCommand(helper, "museart_selftest", "Runs a painting through the real easel flow and checks canvases, XP, brush wear and selling. Then run 'museart_selftest sell' and 'museart_selftest sold', a second apart.", (_, args) => SelfTest(monitor, args));
@@ -181,7 +183,7 @@ internal static class DevGame
 
     // The same steps the title screen takes for a new character with the
     // intro skipped, except the new day doesn't save.
-    private static void NewGame(IMonitor monitor)
+    internal static void NewGame(IMonitor monitor)
     {
         if (Context.IsWorldReady)
         {

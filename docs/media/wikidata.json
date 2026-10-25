@@ -1,0 +1,1609 @@
+{
+  "version": "1.0.0",
+  "objects": [
+    {
+      "id": "(O)blinxxy.MuseArt_Painting",
+      "name": "Painting",
+      "description": "A painting, made by hand at an easel.",
+      "sellPrice": 100
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Canvas_Small",
+      "name": "Small Canvas",
+      "description": "A stretched canvas, 20 cells square. Paint on it at an easel.",
+      "sellPrice": 15
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Canvas_Medium",
+      "name": "Medium Canvas",
+      "description": "A stretched canvas, 28 cells square: room for two things side by side.",
+      "sellPrice": 50
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Canvas_Large",
+      "name": "Large Canvas",
+      "description": "A stretched canvas, 36 cells square: room for a whole arrangement.",
+      "sellPrice": 120
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Linen_Medium",
+      "name": "Linen Canvas (Medium)",
+      "description": "Fine linen, stretched and primed. Paints like any canvas, but only on linen can a painting become a Masterpiece.",
+      "sellPrice": 150
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Linen_Large",
+      "name": "Linen Canvas (Large)",
+      "description": "Fine linen, stretched and primed. Paints like any canvas, but only on linen can a painting become a Masterpiece.",
+      "sellPrice": 300
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Brush_sable",
+      "name": "Sable Round Brush",
+      "description": "A soft round brush that makes mixing more forgiving.",
+      "sellPrice": 350
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Brush_flat",
+      "name": "Flat Wash Brush",
+      "description": "A wide, flat brush. Each mix covers far more of the canvas.",
+      "sellPrice": 150
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Brush_rigger",
+      "name": "Rigger Brush",
+      "description": "A long, fine brush. Hues hold steadier, and inspiration lingers.",
+      "sellPrice": 450
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Brush_iridium",
+      "name": "Iridium Brush",
+      "description": "A brush that seems to know where the paint should go.",
+      "sellPrice": 1500
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_PictureFrame",
+      "name": "Picture Frame",
+      "description": "Frame one of your paintings at an easel to hang it on a wall.",
+      "sellPrice": 60
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Palette",
+      "name": "Palette",
+      "description": "Holds your paint, up to 300 cells of each colour. Paint tubes refill it when you sit down at an easel.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Varnish",
+      "name": "Varnish",
+      "description": "A tin of amber varnish. Put a painting in a Varnishing Cabinet with one, and it cures to a finish that\u0027s worth more.",
+      "sellPrice": 30
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_charcoal",
+      "name": "Charcoal Paint",
+      "description": "A tube of charcoal paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_umber",
+      "name": "Umber Paint",
+      "description": "A tube of umber paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_sienna",
+      "name": "Sienna Paint",
+      "description": "A tube of sienna paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 3
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_ochre",
+      "name": "Ochre Paint",
+      "description": "A tube of ochre paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_cream",
+      "name": "Cream Paint",
+      "description": "A tube of cream paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_stone",
+      "name": "Stone Paint",
+      "description": "A tube of stone paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_crimson",
+      "name": "Crimson Paint",
+      "description": "A tube of crimson paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_rose",
+      "name": "Rose Paint",
+      "description": "A tube of rose paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 3
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_marigold",
+      "name": "Marigold Paint",
+      "description": "A tube of marigold paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 3
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_moss",
+      "name": "Moss Paint",
+      "description": "A tube of moss paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_leaf",
+      "name": "Leaf Paint",
+      "description": "A tube of leaf paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 3
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_slate",
+      "name": "Slate Paint",
+      "description": "A tube of slate paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 2
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_cerulean",
+      "name": "Cerulean Paint",
+      "description": "A tube of cerulean paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 5
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_plum",
+      "name": "Plum Paint",
+      "description": "A tube of plum paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 5
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_snow",
+      "name": "Snow Paint",
+      "description": "A tube of snow paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 5
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_violet",
+      "name": "Iridium Violet Paint",
+      "description": "A tube of iridium violet paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 15
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_aquamarine",
+      "name": "Aquamarine Paint",
+      "description": "A tube of aquamarine paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 15
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_ruby",
+      "name": "Ruby Red Paint",
+      "description": "A tube of ruby red paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 15
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Tube_peach",
+      "name": "Peach Paint",
+      "description": "A tube of peach paint: 100 cells\u0027 worth. Refills your palette at the easel, and teaches you the colour if it\u0027s new.",
+      "sellPrice": 3
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_sienna",
+      "name": "Sienna Pigment",
+      "description": "Teaches you to mix sienna. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_rose",
+      "name": "Rose Pigment",
+      "description": "Teaches you to mix rose. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_marigold",
+      "name": "Marigold Pigment",
+      "description": "Teaches you to mix marigold. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_leaf",
+      "name": "Leaf Pigment",
+      "description": "Teaches you to mix leaf. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_cerulean",
+      "name": "Cerulean Pigment",
+      "description": "Teaches you to mix cerulean. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_plum",
+      "name": "Plum Pigment",
+      "description": "Teaches you to mix plum. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_snow",
+      "name": "Snow Pigment",
+      "description": "Teaches you to mix snow. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_violet",
+      "name": "Iridium Violet Pigment",
+      "description": "Teaches you to mix iridium violet. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 250
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_aquamarine",
+      "name": "Aquamarine Pigment",
+      "description": "Teaches you to mix aquamarine. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 250
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_ruby",
+      "name": "Ruby Red Pigment",
+      "description": "Teaches you to mix ruby red. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 250
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Pigment_peach",
+      "name": "Peach Pigment",
+      "description": "Teaches you to mix peach. Once learned, it\u0027s on your palette for good.",
+      "sellPrice": 40
+    }
+  ],
+  "bigCraftables": [
+    {
+      "id": "(BC)blinxxy.MuseArt_Easel",
+      "name": "Easel",
+      "description": "Paint still lifes of anything you carry. Bring a canvas.",
+      "sellPrice": 100
+    },
+    {
+      "id": "(BC)blinxxy.MuseArt_PigmentMill",
+      "name": "Pigment Mill",
+      "description": "Grinds clay, flowers, berries, minerals and gems into tubes of paint overnight.",
+      "sellPrice": 500
+    },
+    {
+      "id": "(BC)blinxxy.MuseArt_VarnishCabinet",
+      "name": "Varnishing Cabinet",
+      "description": "Cures a varnished painting over weeks: satin after 7 days, gloss after 14, a gallery finish after 28. Hit it with a tool to take a painting out early.",
+      "sellPrice": 800
+    }
+  ],
+  "recipes": [
+    {
+      "item": "Easel",
+      "id": "(BC)blinxxy.MuseArt_Easel",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 30
+        },
+        {
+          "id": "(O)771",
+          "name": "Fiber",
+          "count": 10
+        }
+      ],
+      "level": null,
+      "known": true
+    },
+    {
+      "item": "Small Canvas",
+      "id": "(O)blinxxy.MuseArt_Canvas_Small",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)771",
+          "name": "Fiber",
+          "count": 5
+        },
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 2
+        }
+      ],
+      "level": null,
+      "known": true
+    },
+    {
+      "item": "Medium Canvas",
+      "id": "(O)blinxxy.MuseArt_Canvas_Medium",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)428",
+          "name": "Cloth",
+          "count": 1
+        },
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 5
+        }
+      ],
+      "level": 4,
+      "known": false
+    },
+    {
+      "item": "Large Canvas",
+      "id": "(O)blinxxy.MuseArt_Canvas_Large",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)428",
+          "name": "Cloth",
+          "count": 2
+        },
+        {
+          "id": "(O)709",
+          "name": "Hardwood",
+          "count": 3
+        }
+      ],
+      "level": 7,
+      "known": false
+    },
+    {
+      "item": "Linen Canvas (Medium)",
+      "id": "(O)blinxxy.MuseArt_Linen_Medium",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)428",
+          "name": "Cloth",
+          "count": 2
+        },
+        {
+          "id": "(O)709",
+          "name": "Hardwood",
+          "count": 2
+        }
+      ],
+      "level": 8,
+      "known": false
+    },
+    {
+      "item": "Linen Canvas (Large)",
+      "id": "(O)blinxxy.MuseArt_Linen_Large",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)428",
+          "name": "Cloth",
+          "count": 3
+        },
+        {
+          "id": "(O)709",
+          "name": "Hardwood",
+          "count": 4
+        }
+      ],
+      "level": 8,
+      "known": false
+    },
+    {
+      "item": "Picture Frame",
+      "id": "(O)blinxxy.MuseArt_PictureFrame",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 10
+        },
+        {
+          "id": "(O)334",
+          "name": "Copper Bar",
+          "count": 1
+        }
+      ],
+      "level": 2,
+      "known": false
+    },
+    {
+      "item": "Flat Wash Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_flat",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)771",
+          "name": "Fiber",
+          "count": 30
+        },
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 5
+        }
+      ],
+      "level": 2,
+      "known": false
+    },
+    {
+      "item": "Sable Round Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_sable",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)446",
+          "name": "Rabbit\u0027s Foot",
+          "count": 1
+        },
+        {
+          "id": "(O)709",
+          "name": "Hardwood",
+          "count": 1
+        }
+      ],
+      "level": 3,
+      "known": false
+    },
+    {
+      "item": "Rigger Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_rigger",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)444",
+          "name": "Duck Feather",
+          "count": 1
+        },
+        {
+          "id": "(O)709",
+          "name": "Hardwood",
+          "count": 1
+        }
+      ],
+      "level": 6,
+      "known": false
+    },
+    {
+      "item": "Iridium Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_iridium",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)337",
+          "name": "Iridium Bar",
+          "count": 1
+        },
+        {
+          "id": "(O)446",
+          "name": "Rabbit\u0027s Foot",
+          "count": 1
+        }
+      ],
+      "level": 9,
+      "known": false
+    },
+    {
+      "item": "Palette",
+      "id": "(O)blinxxy.MuseArt_Palette",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 10
+        }
+      ],
+      "level": null,
+      "known": true
+    },
+    {
+      "item": "Pigment Mill",
+      "id": "(BC)blinxxy.MuseArt_PigmentMill",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)390",
+          "name": "Stone",
+          "count": 30
+        },
+        {
+          "id": "(O)334",
+          "name": "Copper Bar",
+          "count": 2
+        },
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 10
+        }
+      ],
+      "level": 1,
+      "known": false
+    },
+    {
+      "item": "Varnish",
+      "id": "(O)blinxxy.MuseArt_Varnish",
+      "makes": 2,
+      "ingredients": [
+        {
+          "id": "(O)725",
+          "name": "Oak Resin",
+          "count": 1
+        },
+        {
+          "id": "(O)247",
+          "name": "Oil",
+          "count": 1
+        }
+      ],
+      "level": 7,
+      "known": false
+    },
+    {
+      "item": "Varnishing Cabinet",
+      "id": "(BC)blinxxy.MuseArt_VarnishCabinet",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)709",
+          "name": "Hardwood",
+          "count": 10
+        },
+        {
+          "id": "(O)725",
+          "name": "Oak Resin",
+          "count": 2
+        },
+        {
+          "id": "(O)335",
+          "name": "Iron Bar",
+          "count": 2
+        }
+      ],
+      "level": 7,
+      "known": false
+    }
+  ],
+  "shop": [
+    {
+      "item": "Easel",
+      "id": "(BC)blinxxy.MuseArt_Easel",
+      "price": 300,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Small Canvas",
+      "id": "(O)blinxxy.MuseArt_Canvas_Small",
+      "price": 25,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Medium Canvas",
+      "id": "(O)blinxxy.MuseArt_Canvas_Medium",
+      "price": 80,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 4",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Large Canvas",
+      "id": "(O)blinxxy.MuseArt_Canvas_Large",
+      "price": 200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 7",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Linen Canvas (Medium)",
+      "id": "(O)blinxxy.MuseArt_Linen_Medium",
+      "price": 500,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 8",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Linen Canvas (Large)",
+      "id": "(O)blinxxy.MuseArt_Linen_Large",
+      "price": 1000,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 8",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Picture Frame",
+      "id": "(O)blinxxy.MuseArt_PictureFrame",
+      "price": 150,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Sienna Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_sienna",
+      "price": 120,
+      "condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current sienna",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Rose Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_rose",
+      "price": 120,
+      "condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current rose",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Marigold Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_marigold",
+      "price": 120,
+      "condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current marigold",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Leaf Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_leaf",
+      "price": 120,
+      "condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current leaf",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Peach Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_peach",
+      "price": 120,
+      "condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current peach",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Snow Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_snow",
+      "price": 200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 3, !blinxxy.MuseArt_KNOWS_PIGMENT Current snow",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Plum Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_plum",
+      "price": 200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 3, !blinxxy.MuseArt_KNOWS_PIGMENT Current plum",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Cerulean Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_cerulean",
+      "price": 200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 3, !blinxxy.MuseArt_KNOWS_PIGMENT Current cerulean",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Iridium Violet Pigment",
+      "id": "(O)blinxxy.MuseArt_Pigment_violet",
+      "price": 1500,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 8, !blinxxy.MuseArt_KNOWS_PIGMENT Current violet",
+      "oncePerPlayer": true
+    },
+    {
+      "item": "Palette",
+      "id": "(O)blinxxy.MuseArt_Palette",
+      "price": 150,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Pigment Mill",
+      "id": "(BC)blinxxy.MuseArt_PigmentMill",
+      "price": 1000,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Varnish",
+      "id": "(O)blinxxy.MuseArt_Varnish",
+      "price": 120,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 7",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Varnishing Cabinet",
+      "id": "(BC)blinxxy.MuseArt_VarnishCabinet",
+      "price": 3000,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 7",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Charcoal Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_charcoal",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current charcoal",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Umber Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_umber",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current umber",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Sienna Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_sienna",
+      "price": 12,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current sienna",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Ochre Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_ochre",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current ochre",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Cream Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_cream",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current cream",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Stone Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_stone",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current stone",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Crimson Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_crimson",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current crimson",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Rose Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_rose",
+      "price": 12,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current rose",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Marigold Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_marigold",
+      "price": 12,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current marigold",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Moss Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_moss",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current moss",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Leaf Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_leaf",
+      "price": 12,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current leaf",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Slate Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_slate",
+      "price": 8,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current slate",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Cerulean Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_cerulean",
+      "price": 20,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current cerulean",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Plum Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_plum",
+      "price": 20,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current plum",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Snow Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_snow",
+      "price": 20,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current snow",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Iridium Violet Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_violet",
+      "price": 60,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current violet",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Aquamarine Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_aquamarine",
+      "price": 60,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current aquamarine",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Ruby Red Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_ruby",
+      "price": 60,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current ruby",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Peach Paint",
+      "id": "(O)blinxxy.MuseArt_Tube_peach",
+      "price": 12,
+      "condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current peach",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Flat Wash Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_flat",
+      "price": 400,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 2",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Sable Round Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_sable",
+      "price": 900,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 3",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Rigger Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_rigger",
+      "price": 1200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 6",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Iridium Brush",
+      "id": "(O)blinxxy.MuseArt_Brush_iridium",
+      "price": 7500,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 9",
+      "oncePerPlayer": false
+    }
+  ],
+  "pigments": [
+    {
+      "id": "charcoal",
+      "name": "Charcoal",
+      "hex": "#2E2430",
+      "difficulty": 15,
+      "motion": "Smooth",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Coal",
+          "id": "(O)382",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_charcoal"
+    },
+    {
+      "id": "umber",
+      "name": "Umber",
+      "hex": "#6E4A2F",
+      "difficulty": 15,
+      "motion": "Smooth",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Hardwood",
+          "id": "(O)709",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_umber"
+    },
+    {
+      "id": "sienna",
+      "name": "Sienna",
+      "hex": "#A85D33",
+      "difficulty": 25,
+      "motion": "Smooth",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 12,
+      "mill": [
+        {
+          "input": "Clay",
+          "id": "(O)330",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_sienna"
+    },
+    {
+      "id": "ochre",
+      "name": "Ochre",
+      "hex": "#DCA03E",
+      "difficulty": 20,
+      "motion": "Smooth",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Iron Ore",
+          "id": "(O)380",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_ochre"
+    },
+    {
+      "id": "cream",
+      "name": "Cream",
+      "hex": "#F3E5C2",
+      "difficulty": 20,
+      "motion": "Floater",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Clam",
+          "id": "(O)372",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_cream"
+    },
+    {
+      "id": "stone",
+      "name": "Stone",
+      "hex": "#8F8A86",
+      "difficulty": 20,
+      "motion": "Smooth",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Stone",
+          "id": "(O)390",
+          "count": 5,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_stone"
+    },
+    {
+      "id": "crimson",
+      "name": "Crimson",
+      "hex": "#C23C3C",
+      "difficulty": 35,
+      "motion": "Mixed",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Red Mushroom",
+          "id": "(O)420",
+          "count": 1,
+          "tubes": 2
+        },
+        {
+          "input": "Hot Pepper",
+          "id": "(O)260",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_crimson"
+    },
+    {
+      "id": "rose",
+      "name": "Rose",
+      "hex": "#E8899E",
+      "difficulty": 40,
+      "motion": "Floater",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 12,
+      "mill": [
+        {
+          "input": "Sweet Pea",
+          "id": "(O)402",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_rose"
+    },
+    {
+      "id": "marigold",
+      "name": "Marigold",
+      "hex": "#F4CB3A",
+      "difficulty": 35,
+      "motion": "Mixed",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 12,
+      "mill": [
+        {
+          "input": "Daffodil",
+          "id": "(O)18",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_marigold"
+    },
+    {
+      "id": "moss",
+      "name": "Moss",
+      "hex": "#4E7A31",
+      "difficulty": 25,
+      "motion": "Smooth",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Fiber",
+          "id": "(O)771",
+          "count": 5,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_moss"
+    },
+    {
+      "id": "leaf",
+      "name": "Leaf",
+      "hex": "#8DC044",
+      "difficulty": 35,
+      "motion": "Mixed",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 12,
+      "mill": [
+        {
+          "input": "Leek",
+          "id": "(O)20",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_leaf"
+    },
+    {
+      "id": "slate",
+      "name": "Slate",
+      "hex": "#4A6894",
+      "difficulty": 30,
+      "motion": "Sinker",
+      "starter": true,
+      "rare": false,
+      "tubePrice": 8,
+      "mill": [
+        {
+          "input": "Frozen Tear",
+          "id": "(O)84",
+          "count": 1,
+          "tubes": 3
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_slate"
+    },
+    {
+      "id": "cerulean",
+      "name": "Cerulean",
+      "hex": "#5FB0E3",
+      "difficulty": 45,
+      "motion": "Dart",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 20,
+      "mill": [
+        {
+          "input": "Blueberry",
+          "id": "(O)258",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_cerulean"
+    },
+    {
+      "id": "plum",
+      "name": "Plum",
+      "hex": "#7A3E77",
+      "difficulty": 45,
+      "motion": "Sinker",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 20,
+      "mill": [
+        {
+          "input": "Blackberry",
+          "id": "(O)410",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_plum"
+    },
+    {
+      "id": "snow",
+      "name": "Snow",
+      "hex": "#F8FBFF",
+      "difficulty": 30,
+      "motion": "Floater",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 20,
+      "mill": [
+        {
+          "input": "Quartz",
+          "id": "(O)80",
+          "count": 1,
+          "tubes": 3
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_snow"
+    },
+    {
+      "id": "violet",
+      "name": "Iridium Violet",
+      "hex": "#8E5DDB",
+      "difficulty": 75,
+      "motion": "Dart",
+      "starter": false,
+      "rare": true,
+      "tubePrice": 60,
+      "mill": [
+        {
+          "input": "Amethyst",
+          "id": "(O)66",
+          "count": 1,
+          "tubes": 3
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_violet"
+    },
+    {
+      "id": "aquamarine",
+      "name": "Aquamarine",
+      "hex": "#3CC7B4",
+      "difficulty": 70,
+      "motion": "Mixed",
+      "starter": false,
+      "rare": true,
+      "tubePrice": 60,
+      "mill": [
+        {
+          "input": "Aquamarine",
+          "id": "(O)62",
+          "count": 1,
+          "tubes": 3
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_aquamarine"
+    },
+    {
+      "id": "ruby",
+      "name": "Ruby Red",
+      "hex": "#E3204F",
+      "difficulty": 80,
+      "motion": "Dart",
+      "starter": false,
+      "rare": true,
+      "tubePrice": 60,
+      "mill": [
+        {
+          "input": "Ruby",
+          "id": "(O)64",
+          "count": 1,
+          "tubes": 3
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_ruby"
+    },
+    {
+      "id": "peach",
+      "name": "Peach",
+      "hex": "#F2B48C",
+      "difficulty": 25,
+      "motion": "Smooth",
+      "starter": false,
+      "rare": false,
+      "tubePrice": 12,
+      "mill": [
+        {
+          "input": "Apricot",
+          "id": "(O)634",
+          "count": 1,
+          "tubes": 2
+        }
+      ],
+      "tube": "(O)blinxxy.MuseArt_Tube_peach"
+    }
+  ],
+  "brushes": [
+    {
+      "id": "hog",
+      "name": "Hog Bristle Brush",
+      "description": "(no translation:brush.hog.description)",
+      "load": 12,
+      "band": 0,
+      "steadiness": 0,
+      "sparkTime": 0,
+      "uses": 0,
+      "item": null
+    },
+    {
+      "id": "sable",
+      "name": "Sable Round Brush",
+      "description": "A soft round brush that makes mixing more forgiving.",
+      "load": 12,
+      "band": 32,
+      "steadiness": 0,
+      "sparkTime": 0,
+      "uses": 20,
+      "item": "(O)blinxxy.MuseArt_Brush_sable"
+    },
+    {
+      "id": "flat",
+      "name": "Flat Wash Brush",
+      "description": "A wide, flat brush. Each mix covers far more of the canvas.",
+      "load": 22,
+      "band": 0,
+      "steadiness": 0,
+      "sparkTime": 0,
+      "uses": 20,
+      "item": "(O)blinxxy.MuseArt_Brush_flat"
+    },
+    {
+      "id": "rigger",
+      "name": "Rigger Brush",
+      "description": "A long, fine brush. Hues hold steadier, and inspiration lingers.",
+      "load": 10,
+      "band": 0,
+      "steadiness": 0.25,
+      "sparkTime": 1.5,
+      "uses": 20,
+      "item": "(O)blinxxy.MuseArt_Brush_rigger"
+    },
+    {
+      "id": "iridium",
+      "name": "Iridium Brush",
+      "description": "A brush that seems to know where the paint should go.",
+      "load": 20,
+      "band": 24,
+      "steadiness": 0.2,
+      "sparkTime": 1,
+      "uses": 40,
+      "item": "(O)blinxxy.MuseArt_Brush_iridium"
+    }
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "xp": 100,
+      "unlocks": [
+        "\u002B3% more light per painting"
+      ],
+      "maxQuality": "Silver"
+    },
+    {
+      "level": 2,
+      "xp": 380,
+      "unlocks": [
+        "\u002B3% more light per painting",
+        "Broad brush: paint 2x2 cells at once"
+      ],
+      "maxQuality": "Silver"
+    },
+    {
+      "level": 3,
+      "xp": 770,
+      "unlocks": [
+        "\u002B3% more light per painting",
+        "Ruler: drag out perfectly straight lines",
+        "Your paintings can now reach gold quality"
+      ],
+      "maxQuality": "Gold"
+    },
+    {
+      "level": 4,
+      "xp": 1300,
+      "unlocks": [
+        "\u002B3% more light per painting",
+        "Mirror: strokes repeat across the middle",
+        "Medium canvases: still lifes of two items, portraits, and glazing"
+      ],
+      "maxQuality": "Gold"
+    },
+    {
+      "level": 5,
+      "xp": 2150,
+      "unlocks": [
+        "\u002B3% more light per painting"
+      ],
+      "maxQuality": "Gold"
+    },
+    {
+      "level": 6,
+      "xp": 3300,
+      "unlocks": [
+        "\u002B3% more light per painting",
+        "Dropper: click the canvas to pick its color",
+        "Your paintings can now reach iridium quality"
+      ],
+      "maxQuality": "Iridium"
+    },
+    {
+      "level": 7,
+      "xp": 4800,
+      "unlocks": [
+        "\u002B3% more light per painting",
+        "Large canvases: still lifes of three items, and highlights",
+        "Varnish: a cabinet that cures paintings to a finer finish"
+      ],
+      "maxQuality": "Iridium"
+    },
+    {
+      "level": 8,
+      "xp": 6900,
+      "unlocks": [
+        "\u002B3% more light per painting",
+        "Linen canvases: the only ones a Masterpiece can be painted on"
+      ],
+      "maxQuality": "Iridium"
+    },
+    {
+      "level": 9,
+      "xp": 10000,
+      "unlocks": [
+        "\u002B3% more light per painting"
+      ],
+      "maxQuality": "Iridium"
+    },
+    {
+      "level": 10,
+      "xp": 15000,
+      "unlocks": [
+        "\u002B3% more light per painting"
+      ],
+      "maxQuality": "Iridium"
+    }
+  ],
+  "professions": [
+    {
+      "name": "Plein Air",
+      "description": "The light lasts 20% longer and inspiration sparks come more often."
+    },
+    {
+      "name": "Gallerist",
+      "description": "Your paintings are worth 25% more."
+    },
+    {
+      "name": "Steady Hand",
+      "description": "Your mixes never turn muddy: at worst, they come out a bit off."
+    },
+    {
+      "name": "Visionary",
+      "description": "An Inspired painting counts for twice as much toward its quality."
+    },
+    {
+      "name": "Patron\u0027s Favorite",
+      "description": "Paintings you give as gifts earn 25% more friendship."
+    },
+    {
+      "name": "Prolific",
+      "description": "A 25% chance that starting a painting doesn\u0027t use up the canvas."
+    }
+  ],
+  "canvases": [
+    {
+      "kind": "Small",
+      "size": 20,
+      "minutes": 60,
+      "level": 0,
+      "techniques": "None"
+    },
+    {
+      "kind": "Medium",
+      "size": 28,
+      "minutes": 120,
+      "level": 4,
+      "techniques": "Glaze"
+    },
+    {
+      "kind": "Large",
+      "size": 36,
+      "minutes": 180,
+      "level": 7,
+      "techniques": "Glaze, Highlight"
+    }
+  ],
+  "quality": {
+    "silver": 2.5,
+    "gold": 3.5,
+    "iridium": 4.5,
+    "inspiredBonus": 0.25,
+    "sparksForInspired": 3
+  },
+  "market": {
+    "artShop": 1.2,
+    "consign": 1.35,
+    "gallerist": 1.25,
+    "renown": 1.1,
+    "novelty": [
+      {
+        "timesBefore": 0,
+        "value": 1.25
+      },
+      {
+        "timesBefore": 1,
+        "value": 1
+      },
+      {
+        "timesBefore": 3,
+        "value": 0.85
+      },
+      {
+        "timesBefore": 6,
+        "value": 0.7
+      }
+    ],
+    "finishes": [
+      {
+        "Days": 7,
+        "Key": "satin",
+        "Value": 1.1
+      },
+      {
+        "Days": 14,
+        "Key": "gloss",
+        "Value": 1.2
+      },
+      {
+        "Days": 28,
+        "Key": "gallery",
+        "Value": 1.3
+      }
+    ],
+    "portrait": 1.3,
+    "masterpiece": 1.5
+  },
+  "catalogue": [
+    {
+      "subjects": 5,
+      "perk": "tubes"
+    },
+    {
+      "subjects": 15,
+      "perk": "palette"
+    },
+    {
+      "subjects": 30,
+      "perk": "renown"
+    },
+    {
+      "subjects": 50,
+      "perk": "iridium"
+    }
+  ],
+  "commissions": {
+    "MaxPosted": 3,
+    "MaxAccepted": 2,
+    "DaysToDeliver": 7,
+    "FriendshipReward": 100,
+    "portraitChance": 0.35
+  },
+  "sable": {
+    "birthday": "Fall 9",
+    "gender": "Undefined",
+    "romanceable": true,
+    "loves": [
+      {
+        "id": "(O)395",
+        "name": "Coffee"
+      },
+      {
+        "id": "(O)66",
+        "name": "Amethyst"
+      },
+      {
+        "id": "(O)62",
+        "name": "Aquamarine"
+      },
+      {
+        "id": "(O)64",
+        "name": "Ruby"
+      },
+      {
+        "id": "(O)402",
+        "name": "Sweet Pea"
+      },
+      {
+        "id": "(O)611",
+        "name": "Blackberry Cobbler"
+      },
+      {
+        "id": "(O)595",
+        "name": "Fairy Rose"
+      }
+    ],
+    "likes": [
+      {
+        "id": "(O)330",
+        "name": "Clay"
+      },
+      {
+        "id": "(O)80",
+        "name": "Quartz"
+      },
+      {
+        "id": "(O)205",
+        "name": "Fried Mushroom"
+      }
+    ],
+    "dislikes": [
+      {
+        "id": "(O)178",
+        "name": "Hay"
+      },
+      {
+        "id": "(O)92",
+        "name": "Sap"
+      },
+      {
+        "id": "(O)167",
+        "name": "Joja Cola"
+      }
+    ],
+    "hates": [
+      {
+        "id": "(O)766",
+        "name": "Slime"
+      },
+      {
+        "id": "(O)154",
+        "name": "Sea Cucumber"
+      },
+      {
+        "id": "(O)420",
+        "name": "Red Mushroom"
+      }
+    ],
+    "neutral": []
+  },
+  "artLovers": [
+    "Leah",
+    "Elliott",
+    "Emily",
+    "Haley",
+    "Abigail",
+    "Sebastian",
+    "Sam",
+    "Robin",
+    "Sable"
+  ]
+}

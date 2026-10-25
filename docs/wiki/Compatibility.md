@@ -1,0 +1,9 @@
+- **Stardew Valley** 1.6.15, with **SMAPI** 4.0 or later.
+- **Required:** [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 2.9+ and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
+- **Optional:** [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
+- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps.
+- **Other mods:**
+  - Anything that changes the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
+  - Paintings are ordinary objects (stored with the mod's data), so they're safe in chests, Automate and other inventory mods.
+- **Saves:** safe to add to an existing save. To remove the mod, sell or trash your paintings, easels and art supplies first.
+- **Multiplayer:** supported; see [Multiplayer](Multiplayer).

@@ -192,7 +192,7 @@ internal static class DevTools
         monitor.Log($"Dialogue snapshots written to {dir} ({boxes.Count} boxes).", LogLevel.Info);
     }
 
-    private static IEnumerable<(string Name, Func<IClickableMenu> Make)> Scenarios(int level)
+    internal static IEnumerable<(string Name, Func<IClickableMenu> Make)> Scenarios(int level)
     {
         string parsnip = "(O)24", melon = "(O)254", pumpkin = "(O)276";
         int moss = Palette.IndexOf("moss");

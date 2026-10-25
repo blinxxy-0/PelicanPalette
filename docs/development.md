@@ -34,6 +34,7 @@ Debug build:
 From the title screen:
 - `museart_snap [level]` renders every easel screen to `Mods/ArtStudio/snapshots/` and writes a `layout_report.txt` of overlapping or spilling text.
 - `museart_export_refs` writes `refs.json` for the sim.
+- `museart_mp host` (in one dev copy) and `museart_mp join` (in a second dev copy with its own Mods folder) start a two-player game on this machine: a throwaway farm with a cabin, hosted invite-only, and a farmhand. Then `museart_mptest host-setup` (host), `client` (farmhand), `host-check` (host) and `client-collect` (farmhand) run the co-op checks.
 - `museart_devgame` starts a throwaway farm that is never saved. Then:
   - `museart_devscene` sets up the farmhouse.
   - `museart_selftest`, then `museart_selftest sell`, then `museart_selftest sold` run the end-to-end checks.
@@ -45,3 +46,18 @@ From the title screen:
   - `museart_portrait` saves Sable's portrait of the farmer; `museart_marry [patio]` and `museart_wedding` (throwaway farm only) show the spouse room, patio and wedding.
 - Debug builds also run commands written to `Mods/ArtStudio/dev_commands.txt`.
 - `tools/launch_test.ps1 [-ModsPath dir]`, `tools/stop_test.ps1` and `tools/screenshot_test.ps1` drive a test copy of the game.
+
+## Release, mod page and wiki
+
+- **Release zip:** `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false` writes `ArtStudio/bin/Release/net6.0/ArtStudio <version>.zip`. Without the flag the build also deploys, so leave it on while a test game is running.
+- **Media** (debug build, in a dev game; written to `Mods/ArtStudio/ArtStudio/media/`):
+  - `museart_frame <name>` saves this copy's next frame, with any open menu laid over the world. Use zoom 1.
+  - `museart_zoom`, `museart_time`, `museart_farmer off`, `museart_place` and `museart_seen` stage a shot.
+  - `museart_scenario <name>` opens one of `museart_snap`'s easel states in the game.
+  - `museart_signtext <text>` renders a heading in the game's bold font.
+  - `museart_wikidata` dumps the items, recipes, stock, pigments, brushes and skill, with item icons.
+- **Repository folders:** copy the results into `docs/media/` (`screens/`, `signtext/`, `icons/`, `wikidata.json`).
+- **Page art:** `python tools/art/page_art.py docs/media` draws the wooden headings and the banner into `docs/media/page/`.
+- **Nexus page:** `release/nexus/description.bbcode`, with an upload checklist in `release/nexus/README.md`.
+- **Wiki:** `python tools/build_wiki.py` writes the GitHub wiki to `docs/wiki/`. The tables come from `docs/media/wikidata.json`, so re-dump it after changing items or prices. Publish it by pushing `docs/wiki/` to the repository's `.wiki.git`.
+

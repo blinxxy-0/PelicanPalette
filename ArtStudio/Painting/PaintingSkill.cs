@@ -42,7 +42,7 @@ internal sealed class PaintingSkill : Skills.Skill
         SteadyHand = Add(helper, "SteadyHand", I18n.Get("profession.steady-hand"), I18n.Get("profession.steady-hand.description"), 2);
         Visionary = Add(helper, "Visionary", I18n.Get("profession.visionary"), I18n.Get("profession.visionary.description"), 3);
         PatronsFavorite = Add(helper, "PatronsFavorite", I18n.Get("profession.patrons-favorite"), I18n.Get("profession.patrons-favorite.description", new { percent = Percent(PatronFriendship) }), 4);
-        Prolific = Add(helper, "Prolific", I18n.Get("profession.prolific"), I18n.Get("profession.prolific.description", new { chance = ProlificSaveChance.ToString("P0") }), 5);
+        Prolific = Add(helper, "Prolific", I18n.Get("profession.prolific"), I18n.Get("profession.prolific.description", new { chance = $"{ProlificSaveChance * 100:0}%" }), 5);
 
         ProfessionsForLevels.Add(new ProfessionPair(5, PleinAir, Gallerist));
         ProfessionsForLevels.Add(new ProfessionPair(10, SteadyHand, Visionary, PleinAir));
@@ -81,6 +81,8 @@ internal sealed class PaintingSkill : Skills.Skill
         if (level == PaintingRules.EyedropperLevel) lines.Add(I18n.Get("skill.level-up.dropper"));
         if (level == PaintingRules.CanvasUnlockLevel(CanvasKind.Medium)) lines.Add(I18n.Get("skill.level-up.medium"));
         if (level == PaintingRules.CanvasUnlockLevel(CanvasKind.Large)) lines.Add(I18n.Get("skill.level-up.large"));
+        if (level == Varnish.UnlockLevel) lines.Add(I18n.Get("skill.level-up.varnish"));
+        if (level == PaintingRules.LinenLevel) lines.Add(I18n.Get("skill.level-up.linen"));
         if (PaintingRules.MaxQuality(level) > PaintingRules.MaxQuality(level - 1))
             lines.Add(I18n.Get("skill.level-up.quality", new { quality = QualityName(PaintingRules.MaxQuality(level)) }));
         return lines;

@@ -81,7 +81,7 @@ Change these with Generic Mod Config Menu, or in `ArtStudio/ArtStudio/config.jso
 
 - Works with **Stardew Valley Expanded**: the shop, Sable's schedules, events and festival spots all fit SVE's maps.
 - Other mods that change the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
-- Not yet tested in multiplayer.
+- **Multiplayer:** works in co-op. Each player has their own Painting skill, painting record, commissions and consigned paintings. Sable's easels show your own consigned paintings. Paintings don't move the clock in multiplayer, where time is shared.
 
 ## Translating
 
