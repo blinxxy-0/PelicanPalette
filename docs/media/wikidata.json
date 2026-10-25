@@ -69,9 +69,21 @@
     },
     {
       "id": "(O)blinxxy.MuseArt_Palette",
-      "name": "Palette",
-      "description": "Holds your paint, up to 300 cells of each colour. Paint tubes refill it when you sit down at an easel.",
+      "name": "Wooden Palette",
+      "description": "Holds 3 tubes\u0027 worth of each colour. Tubes you pick up go straight in. Keep it in your bag to paint; set it down and it stores paint like a chest.",
       "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Palette_Enamel",
+      "name": "Enamel Palette",
+      "description": "Holds 6 tubes\u0027 worth of each colour. Tubes you pick up go straight in. Keep it in your bag to paint; set it down and it stores paint like a chest.",
+      "sellPrice": 250
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_Palette_Iridium",
+      "name": "Iridium Palette",
+      "description": "Holds 10 tubes\u0027 worth of each colour. Tubes you pick up go straight in. Keep it in your bag to paint; set it down and it stores paint like a chest.",
+      "sellPrice": 1000
     },
     {
       "id": "(O)blinxxy.MuseArt_Varnish",
@@ -491,7 +503,7 @@
       "known": false
     },
     {
-      "item": "Palette",
+      "item": "Wooden Palette",
       "id": "(O)blinxxy.MuseArt_Palette",
       "makes": 1,
       "ingredients": [
@@ -503,6 +515,49 @@
       ],
       "level": null,
       "known": true
+    },
+    {
+      "item": "Enamel Palette",
+      "id": "(O)blinxxy.MuseArt_Palette_Enamel",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)338",
+          "name": "Refined Quartz",
+          "count": 1
+        },
+        {
+          "id": "(O)330",
+          "name": "Clay",
+          "count": 5
+        },
+        {
+          "id": "(O)334",
+          "name": "Copper Bar",
+          "count": 2
+        }
+      ],
+      "level": 5,
+      "known": false
+    },
+    {
+      "item": "Iridium Palette",
+      "id": "(O)blinxxy.MuseArt_Palette_Iridium",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)337",
+          "name": "Iridium Bar",
+          "count": 2
+        },
+        {
+          "id": "(O)338",
+          "name": "Refined Quartz",
+          "count": 2
+        }
+      ],
+      "level": 9,
+      "known": false
     },
     {
       "item": "Pigment Mill",
@@ -686,10 +741,24 @@
       "oncePerPlayer": true
     },
     {
-      "item": "Palette",
+      "item": "Wooden Palette",
       "id": "(O)blinxxy.MuseArt_Palette",
       "price": 150,
       "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Enamel Palette",
+      "id": "(O)blinxxy.MuseArt_Palette_Enamel",
+      "price": 2500,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 5",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Iridium Palette",
+      "id": "(O)blinxxy.MuseArt_Palette_Iridium",
+      "price": 12000,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 9",
       "oncePerPlayer": false
     },
     {

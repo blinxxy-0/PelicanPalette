@@ -291,6 +291,13 @@ internal static class DevTools
             return new CollectionMenu(Game1.player);
         });
         yield return ("consign", () => new Shop.ConsignMenu(Game1.player));
+        yield return ("palette", () =>
+        {
+            var palette = ItemRegistry.Create("(O)" + PaletteItem.Tiers[1].Id);
+            PaletteItem.Initialize(palette);
+            Game1.player.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.TubeId(Palette.IndexOf("rose")), 4));
+            return new PaletteMenu(Game1.player, palette);
+        });
         yield return ("setup_framing", () =>
         {
             var painting = FinishedPainting(CanvasKind.Small, parsnip);

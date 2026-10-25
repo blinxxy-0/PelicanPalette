@@ -12,7 +12,8 @@
 - Quality from normal to iridium, decided by accuracy and skill. A perfect painting on linen becomes a **Masterpiece**.
 - Paint is a resource:
   - You learn colours like recipes, and spend paint from your Palette.
-  - Tubes refill the Palette, bought from Sable or ground in a Pigment Mill.
+  - Tubes go straight into your Palette, bought from Sable or ground in a Pigment Mill.
+  - Wooden, Enamel and Iridium Palettes hold 3, 6 or 10 tubes of each colour. Set one down to store paint.
 - Five brushes, from hog bristle to iridium, that wear like fishing tackle.
 - Painting takes time from your day: an hour for a small canvas, more for bigger ones.
 

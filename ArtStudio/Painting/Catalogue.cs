@@ -32,7 +32,6 @@ internal static class Catalogue
         (50, "iridium"),       // a letter from Sable, with an iridium brush
     };
     public const float RenownValue = Market.RenownValue;
-    public const int BigWellCells = 450;
 
     public static Dictionary<string, CatalogueEntry> All(Farmer who)
     {
@@ -58,7 +57,6 @@ internal static class Catalogue
     public static bool HasPerk(Farmer who, string perk) =>
         who.modData.TryGetValue(PerksKey, out string raw) && raw.Split(',').Contains(perk);
 
-    public static int WellCells(Farmer who) => HasPerk(who, "palette") ? BigWellCells : PaletteItem.WellCells;
 
     // Records a finished painting; returns the milestone it reached, if any.
     public static (int Subjects, string Perk)? Record(Farmer who, string subject, int quality)

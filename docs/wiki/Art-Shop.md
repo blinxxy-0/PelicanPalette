@@ -39,7 +39,9 @@ Talk to the counter to:
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_plum.png" width="24" height="24"> | Plum Pigment | 200g | Once you know the colour |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_cerulean.png" width="24" height="24"> | Cerulean Pigment | 200g | Once you know the colour |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_violet.png" width="24" height="24"> | Iridium Violet Pigment | 1,500g | Once you know the colour |
-| <img src="images/icons/O-blinxxy.MuseArt_Palette.png" width="24" height="24"> | Palette | 150g | Always |
+| <img src="images/icons/O-blinxxy.MuseArt_Palette.png" width="24" height="24"> | Wooden Palette | 150g | Always |
+| <img src="images/icons/O-blinxxy.MuseArt_Palette_Enamel.png" width="24" height="24"> | Enamel Palette | 2,500g | Painting level 5 |
+| <img src="images/icons/O-blinxxy.MuseArt_Palette_Iridium.png" width="24" height="24"> | Iridium Palette | 12,000g | Painting level 9 |
 | <img src="images/icons/BC-blinxxy.MuseArt_PigmentMill.png" width="24" height="24"> | Pigment Mill | 1,000g | Always |
 | <img src="images/icons/O-blinxxy.MuseArt_Varnish.png" width="24" height="24"> | Varnish | 120g | Painting level 7 |
 | <img src="images/icons/BC-blinxxy.MuseArt_VarnishCabinet.png" width="24" height="24"> | Varnishing Cabinet | 3,000g | Painting level 7 |

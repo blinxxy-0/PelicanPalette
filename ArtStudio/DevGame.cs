@@ -124,6 +124,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_gallerytest", "The painting record, consignment and plein air. Usage: museart_gallerytest record|consign|view (view: stand outdoors first, e.g. museart_warp Farm 64 15).", (_, args) => GalleryTest(monitor, args));
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
+        DevTools.AddCommand(helper, "museart_palettetest", "Palette tiers, tubes going straight in, and a placed Palette as storage. Run 'museart_palettetest' in the farmhouse, then 'museart_palettetest check' a second later.", (_, args) => PaletteTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
         DevTools.AddCommand(helper, "museart_portrait", "Makes Sable's portrait of the current farmer and saves it (and the farmer as rendered) to exports/portrait.png.", (_, _) =>
         {
@@ -776,6 +777,8 @@ internal static class DevGame
     {
         if (!Context.IsWorldReady) return;
         var who = Game1.player;
+        if (args.FirstOrDefault() == null)
+            FreshStart(who);
         int sienna = Palette.IndexOf("sienna");
         if (args.FirstOrDefault() == "close")
         {
@@ -903,6 +906,65 @@ internal static class DevGame
         Check(monitor, "only from friends at 4+ hearts", asked.All(c => Sitters.CanSitFor(who, c.Npc)), string.Join(", ", asked.Select(c => c.Npc).Distinct()));
         Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
         ModEntry.Config.Difficulty = Difficulty.Normal;
+    }
+
+    // Palettes (2026-10-25): tiers, tubes stored on pickup, storage when placed.
+    private static void PaletteTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        int charcoal = Palette.IndexOf("charcoal"), crimson = Palette.IndexOf("crimson");
+        if (args.FirstOrDefault() != "check")
+        {
+            FreshStart(who);
+            ModEntry.Config.Difficulty = Difficulty.Normal;
+            foreach (var old in who.Items.Where(i => ArtItems.IsPalette(i) || ArtItems.TubeFor(i) != null).ToList())
+                who.removeItemFromInventory(old);
+            // A new wooden Palette holds a tube of charcoal; five more arrive.
+            who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.PaletteId));
+            who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.TubeId(charcoal), 5));
+            return;
+        }
+
+        var wooden = who.Items.First(ArtItems.IsPalette);
+        int tubesLeft = who.Items.Where(i => ArtItems.TubeFor(i) == charcoal).Sum(i => i.Stack);
+        Check(monitor, "tubes go straight into the palette, up to its 3 tubes of a colour", PaletteItem.Read(wooden)[charcoal] == 300 && tubesLeft == 3,
+            $"{PaletteItem.Read(wooden)[charcoal]} cells in, {tubesLeft} tubes left in the bag");
+
+        var enamel = ItemRegistry.Create("(O)" + PaletteItem.Tiers[1].Id);
+        var iridium = ItemRegistry.Create("(O)" + PaletteItem.Tiers[2].Id);
+        Check(monitor, "the tiers hold 3, 6 and 10 tubes of a colour",
+            PaletteItem.Capacity(wooden, who) == 300 && PaletteItem.Capacity(enamel, who) == 600 && PaletteItem.Capacity(iridium, who) == 1000);
+        who.addItemToInventory(iridium);
+        Check(monitor, "the easel paints from the biggest palette in the bag", PaletteItem.Find(who) == iridium);
+        who.removeItemFromInventory(iridium);
+
+        // Set down on the floor: storage, paint and all.
+        var house = who.currentLocation;
+        var tile = who.Tile + new Vector2(-2, 0);
+        house.objects.Remove(tile);
+        var toPlace = (SObject)wooden;
+        Check(monitor, "a palette can be set down", toPlace.placementAction(house, (int)tile.X * 64, (int)tile.Y * 64, who));
+        who.removeItemFromInventory(wooden);
+        var placed = house.objects.TryGetValue(tile, out var obj) ? obj : null;
+        Check(monitor, "the placed palette keeps its paint", placed != null && PaletteItem.Read(placed)[charcoal] == 300);
+        if (placed == null) return;
+
+        placed.checkForAction(who);
+        Check(monitor, "right-clicking it opens its storage", Game1.activeClickableMenu is PaletteMenu);
+        Game1.exitActiveMenu();
+        var out1 = PaletteItem.Withdraw(placed, charcoal);
+        Check(monitor, "a whole tube comes out", out1 != null && PaletteItem.Read(placed)[charcoal] == 200);
+        who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.TubeId(crimson), 4));
+        var crimsonTubes = who.Items.First(i => ArtItems.TubeFor(i) == crimson);
+        int went = PaletteItem.Deposit(who, placed, crimsonTubes, int.MaxValue);
+        Check(monitor, "tubes from the bag go in, as many as fit", went == 2 && PaletteItem.Read(placed)[crimson] == 300, $"{went} went in");
+
+        placed.performToolAction(ItemRegistry.Create<Tool>("(T)Pickaxe"));
+        var dropped = house.debris.Select(d => d.item).FirstOrDefault(ArtItems.IsPalette);
+        Check(monitor, "a tool picks it up with its paint", !house.objects.ContainsKey(tile) && dropped != null
+            && PaletteItem.Read(dropped)[charcoal] == 200 && PaletteItem.Read(dropped)[crimson] == 300);
+        house.debris.Clear();
     }
 
     // Glazes, highlights and Masterpieces (2026-10-25).
@@ -1158,7 +1220,8 @@ internal static class DevGame
                     all["(O)" + (300 + i)] = new CatalogueEntry { Count = 1, FirstDay = 1 };
                 who.modData[ModEntry.Id + "/Catalogue"] = System.Text.Json.JsonSerializer.Serialize(all);
                 Paint("(O)400");
-                Check(monitor, "fifteen subjects make the palette's wells bigger", Catalogue.WellCells(who) == Catalogue.BigWellCells);
+                var wooden = ItemRegistry.Create("(O)" + ArtItems.PaletteId);
+                Check(monitor, "fifteen subjects make the palette's wells bigger", PaletteItem.Capacity(wooden, who) == (int)(3 * PaletteItem.TubeCells * PaletteItem.BigWells), PaletteItem.Capacity(wooden, who).ToString());
                 Game1.activeClickableMenu = new Menus.CollectionMenu(who);
                 Check(monitor, "the record page opens", Game1.activeClickableMenu is Menus.CollectionMenu);
                 break;
@@ -1246,21 +1309,24 @@ internal static class DevGame
             ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length).Where(i => Palette.All[i].Starter));
             foreach (var old in who.Items.Where(i => ArtItems.IsPalette(i) || ArtItems.TubeFor(i) != null).ToList())
                 who.removeItemFromInventory(old);
-            who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.PaletteId));
+            // A fresh palette, checked before any tubes arrive.
+            var fresh = ItemRegistry.Create("(O)" + ArtItems.PaletteId);
+            PaletteItem.Initialize(fresh);
+            Check(monitor, "a new palette comes with the starter colours",
+                Enumerable.Range(0, Palette.All.Length).All(i => PaletteItem.Read(fresh)[i] == (Palette.All[i].Starter ? PaletteItem.TubeCells : 0)));
+            who.addItemToInventory(fresh);
             who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.TubeId(charcoal), 3));
             who.addItemToInventory(ItemRegistry.Create("(O)" + ArtItems.TubeId(sienna)));
             return;                         // the pickup check runs on the next ticks
         }
 
         var palette = PaletteItem.Find(who);
-        Check(monitor, "a new palette comes with the starter colours", palette != null
-            && Enumerable.Range(0, Palette.All.Length).All(i => PaletteItem.Read(palette)[i] == (Palette.All[i].Starter ? PaletteItem.TubeCells : 0)));
         Check(monitor, "a tube of a new colour teaches it", ArtProgress.Owns(who, sienna));
         if (palette == null) return;
 
         var menu = new EaselMenu(who);
         var paint = PaletteItem.Read(palette);
-        Check(monitor, "the easel squeezes tubes into the palette, up to a full well", paint[charcoal] == PaletteItem.WellCells
+        Check(monitor, "tubes go into the palette, up to a full well", paint[charcoal] == PaletteItem.Capacity(palette, who)
             && who.Items.FirstOrDefault(i => ArtItems.TubeFor(i) == charcoal)?.Stack == 1, $"charcoal {paint[charcoal]}");
         Check(monitor, "a tube of a colour just learned goes in too", paint[sienna] == PaletteItem.TubeCells, $"sienna {paint[sienna]}");
 
@@ -1469,6 +1535,11 @@ internal static class DevGame
                 break;
             case "record":
                 Game1.activeClickableMenu = new Menus.CollectionMenu(Game1.player);
+                break;
+            case "palette":
+                // A Palette's storage, as if it were set down (museart_menu palette).
+                if (PaletteItem.Find(Game1.player) is Item palette)
+                    Game1.activeClickableMenu = new PaletteMenu(Game1.player, palette);
                 break;
             case "consign":
                 Game1.activeClickableMenu = new Shop.ConsignMenu(Game1.player);

@@ -30,7 +30,7 @@ internal static class ArtItems
     public const string FurnitureTexture = "Mods/" + ModEntry.Id + "/Furniture";
 
     // Sprite indices in the items sheet (16 columns of 16×16).
-    private const int CanvasSprite = 1, BrushSprite = 4, FrameSprite = 8, PaletteSprite = 9, PigmentSprite = 16, TubeSprite = 48;
+    private const int CanvasSprite = 1, BrushSprite = 4, FrameSprite = 8, PigmentSprite = 16, TubeSprite = 48;
 
     // Crafting recipes unlock with the Painting skill (SpaceCore reads the
     // "<skill id> <level>" condition and teaches them at the start of a day).
@@ -46,7 +46,8 @@ internal static class ArtItems
     public static string BrushId(BrushSpec brush) => $"{ModEntry.Id}_Brush_{brush.Id}";
     public static string TubeId(int pigment) => $"{ModEntry.Id}_Tube_{Palette.All[pigment].Id}";
 
-    public static bool IsPalette(Item? item) => item?.QualifiedItemId == "(O)" + PaletteId;
+    // Any tier of Palette (PaletteItem.Tiers).
+    public static bool IsPalette(Item? item) => PaletteItem.TierOf(item) != null;
 
     public static int? TubeFor(Item? item)
     {
@@ -123,7 +124,8 @@ internal static class ArtItems
             AddObject(objects, BrushId(brush), I18n.Get("brush." + brush.Id), I18n.Get("brush." + brush.Id + ".description"), brushPrices[brush.Id], sprite++, "muse_brush");
 
         AddObject(objects, FrameItemId, I18n.Get("item.frame"), I18n.Get("item.frame.description"), 60, FrameSprite);
-        AddObject(objects, PaletteId, I18n.Get("item.palette"), I18n.Get("item.palette.description"), 40, PaletteSprite);
+        foreach (var tier in PaletteItem.Tiers)
+            AddObject(objects, tier.Id, I18n.Get("item.palette." + tier.Key), I18n.Get("item.palette.description", new { tubes = tier.Tubes }), tier.Price, tier.Sprite, "muse_palette");
         AddObject(objects, Varnish.VarnishId, I18n.Get("item.varnish"), I18n.Get("item.varnish.description"), 30, Varnish.VarnishSprite);
         for (int i = 0; i < Palette.All.Length; i++)
             AddObject(objects, TubeId(i), I18n.Get("item.tube", new { pigment = I18n.Pigment(i) }),
@@ -248,7 +250,10 @@ internal static class ArtItems
         // The Palette (known from the start) and the Pigment Mill. Pigments
         // themselves aren't crafted any more: the Mill grinds paint tubes,
         // and a tube of a new colour teaches it.
-        recipes[PaletteId] = $"388 10/Home/{PaletteId}/false/null/{I18n.Get("item.palette")}";
+        recipes[PaletteId] = $"388 10/Home/{PaletteId}/false/null/{I18n.Get("item.palette.wooden")}";
+        // The better Palettes: glazed enamel at Painting level 5, iridium at 9.
+        recipes[PaletteItem.Tiers[1].Id] = $"338 1 330 5 334 2/Home/{PaletteItem.Tiers[1].Id}/false/{AtLevel(5)}/{I18n.Get("item.palette.enamel")}";
+        recipes[PaletteItem.Tiers[2].Id] = $"337 2 338 2/Home/{PaletteItem.Tiers[2].Id}/false/{AtLevel(9)}/{I18n.Get("item.palette.iridium")}";
         recipes[MillId] = $"390 30 334 2 388 10/Home/{MillId}/true/{AtLevel(1)}/{I18n.Get("item.mill")}";
 
         // Varnishing (Painting/Varnish.cs): oak resin and oil make two tins;

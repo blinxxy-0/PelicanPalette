@@ -91,9 +91,12 @@
             { "Id": "Cerulean", "ItemId": "(O)blinxxy.MuseArt_Pigment_cerulean", "Price": 200, "AvailableStock": 1, "AvailableStockLimit": "Player", "Condition": "{{PaintingLevel}} 3, !blinxxy.MuseArt_KNOWS_PIGMENT Current cerulean" },
             { "Id": "Violet", "ItemId": "(O)blinxxy.MuseArt_Pigment_violet", "Price": 1500, "AvailableStock": 1, "AvailableStockLimit": "Player", "Condition": "{{PaintingLevel}} 8, !blinxxy.MuseArt_KNOWS_PIGMENT Current violet" },
 
-            // The Palette, and paint for every colour you know (tubes refill the
-            // Palette at the easel). The Pigment Mill grinds your own.
+            // Palettes (each tier holds more of each colour), and paint for every
+            // colour you know (tubes go straight into your Palette). The Pigment
+            // Mill grinds your own.
             { "Id": "Palette", "ItemId": "(O)blinxxy.MuseArt_Palette", "Price": 150 },
+            { "Id": "PaletteEnamel", "ItemId": "(O)blinxxy.MuseArt_Palette_Enamel", "Price": 2500, "Condition": "{{PaintingLevel}} 5" },
+            { "Id": "PaletteIridium", "ItemId": "(O)blinxxy.MuseArt_Palette_Iridium", "Price": 12000, "Condition": "{{PaintingLevel}} 9" },
             { "Id": "PigmentMill", "ItemId": "(BC)blinxxy.MuseArt_PigmentMill", "Price": 1000 },
             // Varnishing, from Painting level 7: tins of Varnish and the cabinet that cures them.
             { "Id": "Varnish", "ItemId": "(O)blinxxy.MuseArt_Varnish", "Price": 120, "Condition": "{{PaintingLevel}} 7" },

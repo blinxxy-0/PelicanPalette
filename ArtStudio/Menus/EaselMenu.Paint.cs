@@ -902,7 +902,7 @@ internal sealed partial class EaselMenu
                 // How much paint the Palette has left of it: a gauge up the right edge.
                 if (UsesPaint)
                 {
-                    int h = (int)((r.Height - 8) * Math.Clamp(_paint[i] / (float)Catalogue.WellCells(_who), 0f, 1f));
+                    int h = (int)((r.Height - 8) * Math.Clamp(_paint[i] / (float)(_palette != null ? PaletteItem.Capacity(_palette, _who) : 1), 0f, 1f));
                     Ui.Fill(b, new Rectangle(r.Right - 7, r.Y + 4, 4, r.Height - 8), Color.Black * 0.35f);
                     Ui.Fill(b, new Rectangle(r.Right - 7, r.Bottom - 4 - h, 4, h), _paint[i] > 0 ? Color.White * 0.9f : Color.OrangeRed);
                 }

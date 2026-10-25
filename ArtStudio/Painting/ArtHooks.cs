@@ -28,6 +28,10 @@ internal static class ArtHooks
 
         harmony.Patch(AccessTools.Method(typeof(SObject), nameof(SObject.checkForAction)),
             prefix: new HarmonyMethod(typeof(ArtHooks), nameof(EaselActionPrefix)));
+        harmony.Patch(AccessTools.Method(typeof(SObject), nameof(SObject.checkForAction)),
+            prefix: new HarmonyMethod(typeof(ArtHooks), nameof(PlacedPaletteActionPrefix)));
+        harmony.Patch(AccessTools.Method(typeof(SObject), nameof(SObject.performToolAction)),
+            prefix: new HarmonyMethod(typeof(ArtHooks), nameof(PlacedPaletteToolPrefix)));
         harmony.Patch(AccessTools.Method(typeof(NPC), nameof(NPC.getGiftTasteForThisItem)),
             postfix: new HarmonyMethod(typeof(ArtHooks), nameof(GiftTastePostfix)));
         harmony.Patch(AccessTools.Method(typeof(NPC), nameof(NPC.receiveGift)),
@@ -71,6 +75,30 @@ internal static class ArtHooks
         return false;
     }
 
+    // ---- A Palette on the floor: storage for paint ----
+
+    private static bool PlacedPaletteActionPrefix(SObject __instance, Farmer who, bool justCheckingForActivity, ref bool __result)
+    {
+        if (!ArtItems.IsPalette(__instance)) return true;
+        __result = true;
+        if (!justCheckingForActivity && who.IsLocalPlayer && Game1.activeClickableMenu == null)
+            Game1.activeClickableMenu = new PaletteMenu(who, __instance);
+        return false;
+    }
+
+    // Picked up with any tool, paint and all (the game's own pickup would
+    // make a fresh, empty Palette).
+    private static bool PlacedPaletteToolPrefix(SObject __instance, Tool t, ref bool __result)
+    {
+        if (!ArtItems.IsPalette(__instance) || __instance.Location is not GameLocation location) return true;
+        __result = false;
+        var tile = __instance.TileLocation;
+        location.objects.Remove(tile);
+        Game1.createItemDebris(__instance.getOne(), tile * 64f + new Vector2(32f), -1, location);
+        location.playSound("hammer");
+        return false;
+    }
+
     public static void OpenEasel(Farmer who, Vector2? easelTile = null)
     {
         LearnPigments(who);
@@ -102,6 +130,22 @@ internal static class ArtHooks
         // A new Palette comes with the starter colours.
         foreach (var palette in who.Items.Where(ArtItems.IsPalette))
             PaletteItem.Initialize(palette);
+        StoreTubes(who);
+    }
+
+    // Tubes go straight into your Palette (the biggest one in your bag), as
+    // long as there's room for the whole tube. Not while the easel is open:
+    // it holds the Palette's paint itself until you step away.
+    private static void StoreTubes(Farmer who)
+    {
+        if (!PaletteItem.Required || Game1.activeClickableMenu is EaselMenu || PaletteItem.Find(who) is not Item palette) return;
+        var used = PaletteItem.Refill(who, palette);
+        int tubes = used.Values.Sum();
+        if (tubes == 0) return;
+        Game1.playSound("coin");
+        Game1.addHUDMessage(new HUDMessage(used.Count == 1
+            ? I18n.Get("palette.stored", new { tubes, pigment = I18n.Pigment(used.Keys.First()), palette = palette.DisplayName })
+            : I18n.Get("palette.stored.many", new { tubes, palette = palette.DisplayName })) { noIcon = true });
     }
 
     private static void Learn(Farmer who, int pigment)

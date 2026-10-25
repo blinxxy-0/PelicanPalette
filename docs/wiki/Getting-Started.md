@@ -6,7 +6,7 @@ You already know three recipes:
 |---|---|---|
 | <img src="images/icons/BC-blinxxy.MuseArt_Easel.png" width="32" height="32"> | **Easel** | <img src="images/icons/O-388.png" width="24" height="24"> Wood (30)<br><img src="images/icons/O-771.png" width="24" height="24"> Fiber (10) |
 | <img src="images/icons/O-blinxxy.MuseArt_Canvas_Small.png" width="32" height="32"> | **Small Canvas** | <img src="images/icons/O-771.png" width="24" height="24"> Fiber (5)<br><img src="images/icons/O-388.png" width="24" height="24"> Wood (2) |
-| <img src="images/icons/O-blinxxy.MuseArt_Palette.png" width="32" height="32"> | **Palette** | <img src="images/icons/O-388.png" width="24" height="24"> Wood (10) |
+| <img src="images/icons/O-blinxxy.MuseArt_Palette.png" width="32" height="32"> | **Wooden Palette** | <img src="images/icons/O-388.png" width="24" height="24"> Wood (10) |
 
 ## Your first painting
 1. Craft an **Easel** and place it anywhere, indoors or out.

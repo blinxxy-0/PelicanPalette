@@ -20,7 +20,7 @@ You can add it to an existing save. To remove it, sell or trash your paintings, 
 
 ## Playing
 
-**Getting started.** On your second day a letter arrives from the new art shop, with two canvases. You already know how to craft an **Easel** (30 wood, 10 fiber), **Small Canvases** (5 fiber, 2 wood) and a **Palette** (10 wood). Sable also gives you a Palette on your first visit to the shop. Place the easel anywhere and use it, with a Palette in your bag.
+**Getting started.** On your second day a letter arrives from the new art shop, with two canvases. You already know how to craft an **Easel** (30 wood, 10 fiber), **Small Canvases** (5 fiber, 2 wood) and a **Wooden Palette** (10 wood). Sable also gives you a Palette on your first visit to the shop. Place the easel anywhere and use it, with a Palette in your bag.
 
 **Painting.** Pick a canvas and something from your inventory to paint, and its picture appears beside the canvas. Copy it cell by cell:
 - **Mixing** works like fishing. Click a pigment and hold to keep your mix on the moving true color until the meter fills. A clean mix paints pure color; a bad one comes out muddy.
@@ -32,8 +32,14 @@ A painting takes part of your day: about 1 hour for a small canvas, 2 for medium
 
 **Colours and paint.**
 - **Colours are knowledge.** You start knowing eight. Learn more by buying their pigment from Sable, or from the first tube of a new colour you get. You never lose a colour you know.
-- **Paint is what you spend.** Your **Palette** holds paint for each colour, up to 300 cells' worth, and every cell you paint uses one. A new Palette comes with the eight starter colours.
-- **Refilling:** **paint tubes** (100 cells each) top the Palette up automatically when you sit down at an easel. The setup screen warns you if you're low on a colour the subject needs.
+- **Paint is what you spend.** Your **Palette** holds paint for each colour, and every cell you paint uses one cell's worth. A new Palette comes with the eight starter colours.
+- **Palettes come in three sizes**, by how many **paint tubes** (100 cells each) of each colour they hold:
+  - **Wooden Palette:** 3 tubes of each colour.
+  - **Enamel Palette:** 6 tubes. Painting level 5.
+  - **Iridium Palette:** 10 tubes. Painting level 9.
+  The easel paints from the biggest Palette in your bag.
+- **Tubes go straight into your Palette** when you buy or pick them up, for colours you know, as long as there's room for the whole tube. The rest stay in your bag. The setup screen warns you if you're low on a colour the subject needs.
+- **Set a Palette down** and it becomes storage for paint, like a chest that only takes tubes. Right-click it to take tubes out or put them in, and hit it with any tool to pick it up, paint and all. You need it in your bag to paint.
 - **Where tubes come from:** Sable sells tubes of every colour you know. A **Pigment Mill** (unlocked at Painting level 1, or bought from Sable) grinds tubes overnight from clay, coal, stone, flowers, berries, minerals and gems. Milling something new can teach you a colour.
 - **Relaxed difficulty** paints for free and doesn't need a Palette.
 
@@ -51,7 +57,7 @@ The painting's quality depends on how closely you copied the picture and on your
 
 **Your painting record.** Every subject you paint is kept on a record page (ask at Sable's counter). The first painting of a new subject sells for 25% more. Painting the same thing over and over sells for less: up to 30% less after six. Milestones for painting many different subjects:
 - 5 subjects: aquamarine paint
-- 15: bigger Palette wells (450 cells)
+- 15: every Palette holds half as much again
 - 30: paintings worth 10% more
 - 50: a gift from Sable
 

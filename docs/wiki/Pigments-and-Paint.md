@@ -10,10 +10,28 @@ You know a colour the way you know a recipe, and you never lose one. You start w
 The more colours you know, the closer your references get to the real thing. That makes them harder, and worth more.
 
 ## Paint is what you spend
-- **The Palette.** It holds paint for each colour: 300 cells' worth, or 450 once your [Painting Record](Painting-Record) reaches 15 subjects. A new Palette comes with the starter colours.
+- **The Palette.** It holds paint for each colour, in tubes' worth (a tube is 100 cells). A new Palette comes with the starter colours.
 - **Spending.** Every cell you paint uses one cell of paint. The setup screen warns you if you're short of a colour.
-- **Refilling.** Tubes (100 cells each) top up the Palette when you sit down at an easel, for every colour that has room for a whole tube.
+- **Tubes go straight in.** When a tube reaches your bag, bought, milled or picked up, it goes into your Palette at once, if you know the colour and there's room for the whole tube. Anything that doesn't fit stays in your bag.
 - **Relaxed** difficulty paints for free and needs no Palette.
+
+## Palettes
+| | Palette | Each colour holds | Recipe | Unlocks | Art shop |
+|---|---|---|---|---|---|
+| <img src="images/icons/O-blinxxy.MuseArt_Palette.png" width="32" height="32"> | **Wooden Palette** | 3 tubes (300 cells) | <img src="images/icons/O-388.png" width="24" height="24"> Wood (10) | Known from the start | 150g |
+| <img src="images/icons/O-blinxxy.MuseArt_Palette_Enamel.png" width="32" height="32"> | **Enamel Palette** | 6 tubes (600 cells) | <img src="images/icons/O-338.png" width="24" height="24"> Refined Quartz (1)<br><img src="images/icons/O-330.png" width="24" height="24"> Clay (5)<br><img src="images/icons/O-334.png" width="24" height="24"> Copper Bar (2) | Painting level 5 | 2,500g |
+| <img src="images/icons/O-blinxxy.MuseArt_Palette_Iridium.png" width="32" height="32"> | **Iridium Palette** | 10 tubes (1000 cells) | <img src="images/icons/O-337.png" width="24" height="24"> Iridium Bar (2)<br><img src="images/icons/O-338.png" width="24" height="24"> Refined Quartz (2) | Painting level 9 | 12,000g |
+
+- **Which Palette you paint from:** the easel uses the biggest Palette in your bag, and tubes go into that one too.
+- **Bigger wells:** once your [Painting Record](Painting-Record) reaches 15 subjects, every Palette holds half as much again.
+
+### A Palette on the floor
+Set a Palette down and it becomes storage for paint, like a chest that only takes tubes:
+- **Right-click** it to open it. Each colour shows how many tubes' worth it holds.
+  - Click a colour to take a whole tube out.
+  - Click a tube in your bag to put it in. Shift-click puts in the whole stack, as much as fits.
+- **Hit it with any tool** to pick it up again, paint and all.
+- **To paint, it has to be in your bag**, so keep a spare Palette at home as a paint store, and carry your best one.
 
 ## Every colour
 Difficulty and motion describe the colour's mixing bar: how hard it is, and how the true colour moves.
