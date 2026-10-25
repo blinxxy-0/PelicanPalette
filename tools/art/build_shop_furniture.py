@@ -15,6 +15,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from vanillafy import recolour_black
+import wall_bins
 
 SHEET_TILES = 16            # sheet width in tiles
 
@@ -109,21 +110,6 @@ def on_grid(im, hang=False):
     return tile
 
 
-# Bins of supplies stacked down the left-hand wall, like Pierre's seed bins:
-# paint tubes, brushes, coloured pencils, pastels, yarn, rolled paper, clay.
-BINS = [1, 17, 25, 33, 42, 49, 54]
-BIN_PITCH = 13          # each bin sits this far below the last, overlapping its back
-
-
-def column(bins):
-    """The bins stacked down the wall, each drawn over the back of the one
-    above it (it's nearer the camera)."""
-    width = max(b.width for b in bins)
-    height = BIN_PITCH * (len(bins) - 1) + bins[-1].height
-    col = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    for i, b in enumerate(bins):
-        col.alpha_composite(b, ((width - b.width) // 2, i * BIN_PITCH))
-    return on_grid(col)
 
 
 def pack(pieces):
@@ -167,7 +153,9 @@ def main():
     gen_dir, out, index = sys.argv[1], sys.argv[2], sys.argv[3]
     raw = {name: load(gen_dir, job, n) for name, (job, n) in PICKS.items()}
     pieces = {name: on_grid(im, hang=name.startswith("painting_")) for name, im in raw.items()}
-    pieces["bins_column"] = column([load(gen_dir, "wall_bins", n) for n in BINS])
+    # Drawn at the game's scale rather than generated (tools/art/wall_bins.py).
+    pieces["bins_column"] = on_grid(wall_bins.column())
+    pieces["crate_supplies"] = on_grid(wall_bins.double_crate("paper", "pencils"))
     for name, painting in EASELS.items():
         pieces[name] = easel_with(raw[painting])
     sheet, places = pack(pieces)

@@ -168,7 +168,9 @@ class Room:
     def place(self, name, x, y, solid=1):
         """Puts a packed piece with its top-left tile at (x, y). Its bottom
         `solid` rows block (Buildings); the rows above draw over the farmer
-        (Front, or Front2 where Front is taken)."""
+        (Front, or Front2 where Front is taken). Wall art takes solid=0: it
+        hangs over the wall, whose wainscot rail is on Buildings and must
+        stay (a painting's lower tiles there replaced the rail)."""
         p = self.pieces[name]
         for j in range(p["h"]):
             for i in range(p["w"]):
@@ -210,10 +212,10 @@ def furnish(room, leah, pierre, gallery):
     # Paintings over the counter; the cubbies, and another painting before
     # the fireplace.
     walls = ("painting_blocks", "painting_mosaic") if gallery else ("painting_fruit_jug", "painting_cabin")
-    room.place(walls[0], 2, 1)
-    room.place(walls[1], 4, 1)
+    room.place(walls[0], 2, 1, solid=0)
+    room.place(walls[1], 4, 1, solid=0)
     room.place("rack_cubbies", 9, 2)
-    room.place("painting_stripes" if gallery else "painting_river", 12, 1)
+    room.place("painting_stripes" if gallery else "painting_river", 12, 1, solid=0)
     if not gallery:
         room.place("stack_canvases", 12, 3)         # blank canvases leaning on the wall
     # Leah's fireplace (her tiles x 10-13: log piles either side of the
@@ -241,10 +243,12 @@ def furnish(room, leah, pierre, gallery):
         room.place(name, ex, 10)
 
     # --- Along the side walls ----------------------------------------------
-    # Open bins of supplies down the left-hand wall, like Pierre's seed
-    # bins; a barrel of brushes below them, a palm in the far corner.
-    room.place("bins_column", 1, 6)
-    room.place("barrel_brushes", 3, 11)
+    # Open bins of supplies down the left-hand wall, one tile wide like
+    # Pierre's seed bins, with his kind of barrel below them; a palm in the
+    # far corner.
+    room.place("bins_column", 1, 5, solid=6)          # against the wall: all of it blocks
+    room.copy(pierre, "Front", 1, 23, 1, 11)
+    room.copy(pierre, "Buildings", 1, 24, 1, 12)
     room.copy(pierre, "Front", 1, 17, 18, 11)
     room.copy(pierre, "Buildings", 1, 18, 18, 12)
 
@@ -252,7 +256,7 @@ def furnish(room, leah, pierre, gallery):
         # --- The shop floor: two rows of low shelves either side of the
         # aisle (the row in front of the counter stays clear for customers),
         # the canvas rack and stock by the right-hand wall.
-        room.place("crate_frames", 3, 8)            # stock beside the bins, as Pierre's crates sit by his
+        room.place("crate_supplies", 2, 8)          # stock beside the bins, as Pierre's crates sit by his
         room.place("low_paints", 5, 7)
         room.place("low_tubes", 5, 10)
         room.place("low_craft", 11, 7)
