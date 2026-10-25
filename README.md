@@ -55,7 +55,7 @@ The painting's quality depends on how closely you copied the picture and on your
 
 **Plein air.** An easel placed outdoors offers **the view** as a subject: the scene around it (mostly what's in front of it) becomes the reference, across the whole canvas. A view takes an hour longer than a still life and is worth about as much as a portrait. It's worth more somewhere far from the farm (the Woods, the Summit, the Desert, Ginger Island), and more again in rain, in winter or after 7pm. The same place in another season counts as a new subject.
 
-**Your painting record.** Every subject you paint is kept on a record page (ask at Sable's counter). The first painting of a new subject sells for 25% more. Painting the same thing over and over sells for less: up to 30% less after six. Milestones for painting many different subjects:
+**Your painting record.** Every subject you paint is kept on a record page (ask at Sable's counter). The first painting of a new subject sells for 25% more. Painting the same thing again and again in one week sells for less: 15% less for the third and fourth, 30% less after that. It resets every Monday. Milestones for painting many different subjects:
 - 5 subjects: aquamarine paint
 - 15: every Palette holds half as much again
 - 30: paintings worth 10% more

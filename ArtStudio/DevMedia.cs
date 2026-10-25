@@ -69,6 +69,17 @@ internal static class DevMedia
             npc.controller = null;
             npc.Halt();
         });
+        DevTools.AddCommand(helper, "museart_give", "Gives the farmer an item, for staging shots. Usage: museart_give <qualified id> [count], or museart_give tube <pigment index> [count]", (_, args) =>
+        {
+            string id = args[0] == "tube" ? "(O)" + ArtItems.TubeId(int.Parse(args[1])) : args[0];
+            int count = int.Parse(args.Skip(args[0] == "tube" ? 2 : 1).FirstOrDefault() ?? "1");
+            // A full bag gives up its last slot.
+            var item = ItemRegistry.Create(id, count);
+            if (!Game1.player.addItemToInventoryBool(item))
+                Game1.player.Items[Game1.player.Items.Count - 1] = item;
+        });
+        DevTools.AddCommand(helper, "museart_stand", "Puts the farmer (and so the camera) on a tile, wherever it is, without the game nudging them aside. Usage: museart_stand 82 32", (_, args) =>
+            Game1.player.Position = new Vector2(int.Parse(args[0]), int.Parse(args[1])) * 64f);
         DevTools.AddCommand(helper, "museart_seen", "Marks events as already seen. Usage: museart_seen blinxxy.MuseArt_SableIntro", (_, args) =>
         {
             foreach (string id in args)
@@ -283,7 +294,7 @@ internal static class DevMedia
             market = new
             {
                 artShop = Market.ArtShopPremium, consign = Market.ConsignPremium, gallerist = Market.GalleristPrice, renown = Market.RenownValue,
-                novelty = new[] { 0, 1, 3, 6 }.Select(n => new { timesBefore = n, value = Market.Novelty(n) }),
+                novelty = new[] { -1, 0, 1, 2, 3, 4 }.Select(n => new { thisWeek = n, value = n < 0 ? Market.Novelty(false, 0) : Market.Novelty(true, n) }),
                 finishes = Market.Finishes.Select(f => new { f.Days, f.Key, f.Value }),
                 portrait = PaintingRules.PortraitValue, masterpiece = PaintingRules.MasterpieceValue,
             },

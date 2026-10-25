@@ -344,16 +344,22 @@ internal static class ArtHooks
         return true;
     }
 
-    private static void BrushWearPostfix(SObject __instance, SpriteBatch spriteBatch, Vector2 location, float scaleSize)
+    // The uses left as a bar under the brush, the way the watering can shows
+    // its water: the game's own bar frame, filled green instead of blue.
+    private static void BrushWearPostfix(SObject __instance, SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber)
     {
         var brush = ArtItems.BrushFor(__instance);
-        if (brush == null || brush.Durability <= 0) return;
-        int left = UsesLeft(__instance, brush);
-        if (left >= brush.Durability) return;
-        float frac = left / (float)brush.Durability;
-        spriteBatch.Draw(Game1.staminaRect, new Rectangle((int)location.X, (int)(location.Y + 56f * scaleSize), (int)(64f * scaleSize * frac), (int)(8f * scaleSize)),
-            Utility.getRedToGreenLerpColor(frac));
+        if (brush == null || brush.Durability <= 0 || drawStackNumber == StackDrawType.Hide) return;
+        float frac = Math.Clamp(UsesLeft(__instance, brush) / (float)brush.Durability, 0f, 1f);
+        float s = scaleSize;
+        var origin = location + new Vector2(32f, 32f) * (1f - s);       // the slot's centre stays put as it scales
+        spriteBatch.Draw(Game1.mouseCursors, origin + new Vector2(4f, 44f) * s, new Rectangle(297, 420, 14, 5), Color.White * transparency,
+            0f, Vector2.Zero, 4f * s, SpriteEffects.None, layerDepth + 0.0001f);
+        spriteBatch.Draw(Game1.staminaRect, new Rectangle((int)(origin.X + 8f * s), (int)(origin.Y + 48f * s), (int)(48f * s * frac), (int)(8f * s)), null,
+            WearGreen * transparency, 0f, Vector2.Zero, SpriteEffects.None, layerDepth + 0.0002f);
     }
+
+    private static readonly Color WearGreen = new Color(60, 200, 60) * 0.8f;
 
     private static void BrushStackPostfix(SObject __instance, ref int __result)
     {

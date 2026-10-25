@@ -178,7 +178,9 @@ between 6 and 8pm on a sunny day.
   color"; Elliott narrates the evening; Haley asks Sable to teach her
   painting; Evelyn stands by her landscape with George's hand in hers.
 - Sable finds you in the corner. `$l` "Ten years of nothing. Then one
-  farmer walks in with a lot of brown on them."
+  farmer walks in with half a field on their boots." (Changed
+  2026-10-25 from "a lot of brown on them", which could read as being
+  about the farmer's skin.)
 - "Thank you for ruining my quiet, empty life." `$h`
 
 **I'm suggesting the shop, not the farmhouse** as the brief said: every

@@ -35,7 +35,8 @@
 - **Speech:** short sentences and painter's metaphors. They answer feelings with technique until they trust you.
 
 Sample lines:
-- First meeting: "Careful, that's wet. ...Hello. You're the new farmer. You have a lot of brown on you. Good brown, though."
+- First meeting: "Careful, that's wet. ...Hello. You're the new farmer. You've brought half your field in on your boots. Good soil, though."
+  - (Changed 2026-10-25 from "a lot of brown on you": the farmer's colouring is the player's choice, and the line could read as being about skin.)
 - Rainy day: "Rain's the best light there is. Flat and honest. Nothing to hide behind."
 - Critique (results screen): "Your greens went muddy. Mud is just green that got distracted."
 - Critique, high praise: "...I'd hang that. I don't say that."

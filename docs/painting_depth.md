@@ -16,10 +16,10 @@ Also built (2026-10-25), at your request: **portraits of villagers** (`Painting/
 
 Also built (2026-10-25), from section 4:
 - **Novelty pricing and the painting record** (4.1, 4.5; `Painting/Catalogue.cs`, `Menus/CollectionMenu.cs`):
-  - A subject's first painting sells for 1.25x. The 2nd and 3rd sell at the normal price, the 4th to 6th for 0.85x, and after that 0.7x. A still life of the same items in another order counts as the same subject.
+  - A subject's first painting ever sells for 1.25x. After that only the same week counts: the 1st and 2nd painting of it in a week sell at the normal price, the 3rd and 4th for 0.85x, and later ones 0.7x, resetting every Monday (changed 2026-10-25 from a lifetime count, so subjects never run out). A still life of the same items in another order counts as the same subject.
   - The record page is at Sable's counter. Milestones for different subjects painted:
     - 5: three aquamarine tubes
-    - 15: 450-cell wells
+    - 15: every Palette holds half as much again
     - 30: paintings worth 10% more
     - 50: a letter from Sable with an iridium brush
 - **Consignment** (4.1; `Shop/Consignment.cs`, `Shop/ConsignMenu.cs`):

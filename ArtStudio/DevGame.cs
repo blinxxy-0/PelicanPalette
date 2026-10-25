@@ -937,6 +937,14 @@ internal static class DevGame
             PaletteItem.Capacity(wooden, who) == 300 && PaletteItem.Capacity(enamel, who) == 600 && PaletteItem.Capacity(iridium, who) == 1000);
         who.addItemToInventory(iridium);
         Check(monitor, "the easel paints from the biggest palette in the bag", PaletteItem.Find(who) == iridium);
+
+        // Not a gift: handing it to a villager does nothing, and it stays in the bag.
+        Check(monitor, "palettes can't be given as gifts", !((SObject)wooden).canBeGivenAsGift() && !((SObject)iridium).canBeGivenAsGift());
+        var leah = Game1.getCharacterFromName("Leah");
+        who.CurrentToolIndex = who.Items.IndexOf(iridium);
+        int points = who.getFriendshipLevelForNPC("Leah");
+        bool taken = leah.tryToReceiveActiveObject(who, probe: true);
+        Check(monitor, "a villager won't take one", !taken && who.Items.Contains(iridium) && who.getFriendshipLevelForNPC("Leah") == points);
         who.removeItemFromInventory(iridium);
 
         // Set down on the floor: storage, paint and all.
@@ -1202,7 +1210,13 @@ internal static class DevGame
                 int first = Paint(parsnip), second = Paint(parsnip), third = Paint(parsnip), fourth = Paint(parsnip);
                 Check(monitor, "a new subject pays 25% more than the second time", Math.Abs(first - second * 1.25f) <= 2, $"{first}g then {second}g");
                 Check(monitor, "the record counts every painting", Catalogue.TimesPainted(who, parsnip) == 4, Catalogue.TimesPainted(who, parsnip).ToString());
-                Check(monitor, "the fourth of the same pays less", fourth < second, $"{fourth}g vs {second}g");
+                Check(monitor, "the fourth of the same in a week pays less", fourth < second, $"{fourth}g vs {second}g");
+                // Next week, it's full price again.
+                var record = Catalogue.All(who);
+                record[parsnip].Week -= 1;
+                who.modData[ModEntry.Id + "/Catalogue"] = System.Text.Json.JsonSerializer.Serialize(record);
+                int nextWeek = Paint(parsnip);
+                Check(monitor, "a new week resets it to full price", nextWeek == second, $"{nextWeek}g vs {second}g");
                 Paint(melon, parsnip);
                 Check(monitor, "a still life in another order is the same subject", Catalogue.TimesPainted(who, parsnip + "|" + melon) == 1 && Catalogue.All(who).Count == 2);
 

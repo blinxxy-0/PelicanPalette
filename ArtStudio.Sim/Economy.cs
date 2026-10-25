@@ -47,7 +47,7 @@ internal static class Economy
             float price = PaintingRules.Value(size, c.Difficulty, c.SubjectPrice, c.Level);
             if (c.Long) price *= PaintingRules.PortraitValue;
             if (c.Gallerist) price *= Market.GalleristPrice;
-            price *= Market.Novelty(c.TimesBefore);
+            price *= Market.Novelty(c.TimesBefore > 0, 0);
             if (c.Renown) price *= Market.RenownValue;
             if (c.Masterpiece) price *= PaintingRules.MasterpieceValue;
             if (c.Finish != null) price *= Market.Finishes.First(f => f.Key == c.Finish).Value;

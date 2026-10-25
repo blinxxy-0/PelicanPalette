@@ -35,15 +35,16 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 3. `shop_interior.png`: *Inside: canvases, pigments, paint and the commission board*
 4. `mixing.png`: *Mixing a colour on the fishing-style bar*
 5. `paint_glaze.png`: *Glazing on a medium canvas*
-6. `paint_highlight.png`: *Highlights on a large canvas*
-7. `results_masterpiece.png`: *A Masterpiece*
-8. `setup_portrait.png`: *Painting a friend's portrait*
-9. `setup_view.png`: *Plein air: painting the view*
-10. `record_page.png`: *Your painting record and its milestones*
-11. `consign_menu.png`: *Consigning paintings at Sable's gallery*
-12. `board.png`: *The commission board*
-13. `farmhouse_varnish.png`: *A Varnishing Cabinet, curing a painting*
-14. `event_gallery_1.png`: *A gallery evening at the shop*
+6. `palette_menu.png`: *A palette's wells: tubes go straight in*
+7. `paint_highlight.png`: *Highlights on a large canvas*
+8. `results_masterpiece.png`: *A Masterpiece*
+9. `setup_portrait.png`: *Painting a friend's portrait*
+10. `setup_view.png`: *Plein air: painting the view*
+11. `record_page.png`: *Your painting record and its milestones*
+12. `consign_menu.png`: *Consigning paintings at Sable's gallery*
+13. `board.png`: *The commission board*
+14. `farmhouse_varnish.png`: *A Varnishing Cabinet, curing a painting*
+15. `event_gallery_1.png`: *A gallery evening at the shop*
 
 ## After the first upload
 

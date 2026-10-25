@@ -155,13 +155,13 @@ def events():
     # ---- 14 hearts: the exhibition (married; the shop, a sunny evening) ----
     shop["blinxxy.MuseArt_Sable14h/Spouse Sable/Friendship Sable 3500/Time 1800 2000/Weather sunny/SawEvent blinxxy.MuseArt_Sable10h"] = script(
         "continue", "9 8",
-        "farmer 9 13 0 Sable 16 12 0 Evelyn 6 10 0 George 7 10 0 Leah 13 10 0 Elliott 10 7 1 Emily 3 6 0 Haley 11 8 3 Robin 12 5 0 Lewis 10 11 0",
+        "farmer 9 13 0 Sable 16 12 0 Evelyn 5 10 0 George 6 10 0 Leah 3 11 0 Elliott 10 7 3 Emily 3 6 0 Haley 11 8 3 Robin 12 5 0 Lewis 10 11 0",
         "skippable",
         # The same room dressed as a gallery (Maps/blinxxy.MuseArt_ArtShopGallery):
         # panels, wine, a bust; the shelves cleared from the floor.
         "changeToTemporaryMap blinxxy.MuseArt_ArtShopGallery false",
         "pause 800", "move farmer 0 -1 0", "pause 500",
-        "message " + q("Sable's paintings hang on every wall. Evelyn's landscape is in the middle, and your portrait is beside it."),
+        "message " + q("Sable's paintings fill the walls and the panels across the floor, Evelyn's landscape and your portrait among them. In the middle stands a Junimo made of paint tubes."),
         "pause 300", "faceDirection Lewis 0",
         speak("Lewis", "A real gallery, in our little valley! This is going in the newsletter."),
         "faceDirection Leah 2",
@@ -174,7 +174,7 @@ def events():
         speak("Evelyn", "Forty years, and it's back on a wall in the forest. Isn't that something, George?"),
         speak("George", "Hmph. Best painting in the room.#$b#...After the farmer's."),
         "pause 500", "move Sable -6 0 3", "faceDirection farmer 1", "pause 300",
-        speak("Sable", "Ten years of nothing. Then one farmer walks in with a lot of brown on them.$l"),
+        speak("Sable", "Ten years of nothing. Then one farmer walks in with half a field on their boots.$l"),
         "pause 300",
         speak("Sable", "Thank you for ruining my quiet, empty life.$h"),
         "emote Sable 20", "friendship Sable 50", "pause 800", "end",

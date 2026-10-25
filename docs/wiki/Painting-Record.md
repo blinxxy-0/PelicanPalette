@@ -10,7 +10,7 @@ Every subject you paint goes in your **painting record**: how many times you've 
 Free canvases don't count.
 
 ## Novelty
-A subject's first painting sells for more, and the same subject over and over sells for less; see [Selling and Prices](Selling-and-Prices).
+A subject's first painting ever sells for more. Painting the same subject again and again in one week sells for less, and the count starts over every Monday; see [Selling and Prices](Selling-and-Prices).
 
 ## Milestones
 | Different subjects | Reward |

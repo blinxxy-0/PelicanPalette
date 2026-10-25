@@ -25,7 +25,11 @@ The more colours you know, the closer your references get to the real thing. Tha
 - **Which Palette you paint from:** the easel uses the biggest Palette in your bag, and tubes go into that one too.
 - **Bigger wells:** once your [Painting Record](Painting-Record) reaches 15 subjects, every Palette holds half as much again.
 
+- **Not a gift:** like a tool, a Palette can't be given to a villager by accident.
+
 ### A Palette on the floor
+![A Palette's wells](images/screens/palette_menu.png)
+
 Set a Palette down and it becomes storage for paint, like a chest that only takes tubes:
 - **Right-click** it to open it. Each colour shows how many tubes' worth it holds.
   - Click a colour to take a whole tube out.

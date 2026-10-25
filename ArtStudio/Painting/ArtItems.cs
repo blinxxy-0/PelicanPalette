@@ -124,8 +124,12 @@ internal static class ArtItems
             AddObject(objects, BrushId(brush), I18n.Get("brush." + brush.Id), I18n.Get("brush." + brush.Id + ".description"), brushPrices[brush.Id], sprite++, "muse_brush");
 
         AddObject(objects, FrameItemId, I18n.Get("item.frame"), I18n.Get("item.frame.description"), 60, FrameSprite);
+        // Palettes are tools: like a hoe or a rod, they can't be given away by accident.
         foreach (var tier in PaletteItem.Tiers)
+        {
             AddObject(objects, tier.Id, I18n.Get("item.palette." + tier.Key), I18n.Get("item.palette.description", new { tubes = tier.Tubes }), tier.Price, tier.Sprite, "muse_palette");
+            objects[tier.Id].CanBeGivenAsGift = false;
+        }
         AddObject(objects, Varnish.VarnishId, I18n.Get("item.varnish"), I18n.Get("item.varnish.description"), 30, Varnish.VarnishSprite);
         for (int i = 0; i < Palette.All.Length; i++)
             AddObject(objects, TubeId(i), I18n.Get("item.tube", new { pigment = I18n.Pigment(i) }),

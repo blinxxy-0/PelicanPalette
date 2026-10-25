@@ -28,7 +28,7 @@ internal sealed partial class EaselMenu
     private Rectangle _keepButton;
     private float _novelty = 1f;
     private bool _linen, _masterpiece;
-    private int _timesBefore;
+    private int _timesBefore, _timesThisWeek;
     private (int Subjects, string Perk)? _milestone;
 
     private void Finish(bool lightGone)
@@ -108,7 +108,8 @@ internal sealed partial class EaselMenu
         if (_reference != null)
         {
             _timesBefore = Catalogue.TimesPainted(_who, subject);
-            _novelty = Catalogue.Novelty(_timesBefore);
+            _timesThisWeek = Catalogue.TimesThisWeek(_who, subject);
+            _novelty = Catalogue.Novelty(_who, subject);
             price = (int)Math.Round(price * _novelty * (Catalogue.HasPerk(_who, "renown") ? Catalogue.RenownValue : 1f));
             _milestone = Catalogue.Record(_who, subject, _quality);
         }
@@ -285,7 +286,7 @@ internal sealed partial class EaselMenu
             if (_reference != null && _novelty != 1f)
             {
                 string note = _timesBefore == 0 ? I18n.Get("results.novelty.new")
-                    : I18n.Get("results.novelty.again", new { times = _timesBefore, percent = Math.Round((1f - _novelty) * 100f) });
+                    : I18n.Get("results.novelty.again", new { times = _timesThisWeek, percent = Math.Round((1f - _novelty) * 100f) });
                 Ui.Text(b, note, new Vector2(cx + Ui.TextWidth(sells) + 12, cy + 4), _novelty > 1f ? new Color(60, 140, 60) : Game1.textColor * 0.6f, 0.8f);
             }
             cy += 34;

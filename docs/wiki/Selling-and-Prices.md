@@ -23,13 +23,13 @@ And these multiply it:
 | The **Gallerist** profession | 1.25x |
 | A Masterpiece | 1.5x |
 | Renown (the 30-subject milestone) | 1.1x |
-| A new subject | 1.25x |
-| Painted 1 or 2 times before | 1x |
-| Painted 3 to 5 times before | 0.85x |
-| Painted 6 or more times before | 0.7x |
+| A subject you've never painted | 1.25x |
+| The 1st or 2nd painting of it this week | 1x |
+| The 3rd or 4th this week | 0.85x |
+| The 5th or later this week | 0.7x |
 | Varnish | up to 1.3x ([Varnishing](Varnishing)) |
 
-The **novelty** price stops one easy subject being farmed forever: the results screen tells you when a painting is worth more for being new, or less for being familiar. See [Painting Record](Painting-Record).
+The **novelty** price stops one easy subject being farmed all week. The weekly count resets every Monday, so no subject is ever used up for good. The results screen tells you when a painting is worth more for being new, or less for being familiar. See [Painting Record](Painting-Record).
 
 ## What it earns, roughly
 Net gold per in-game hour of painting (sale price minus canvas and paint, divided by the hours a painting takes), from the mod's own economy check:

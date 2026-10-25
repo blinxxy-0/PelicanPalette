@@ -424,7 +424,11 @@ The more colours you know, the closer your references get to the real thing. Tha
 - **Which Palette you paint from:** the easel uses the biggest Palette in your bag, and tubes go into that one too.
 - **Bigger wells:** once your {link("Painting Record")} reaches 15 subjects, every Palette holds half as much again.
 
+- **Not a gift:** like a tool, a Palette can't be given to a villager by accident.
+
 ### A Palette on the floor
+![A Palette's wells](images/screens/palette_menu.png)
+
 Set a Palette down and it becomes storage for paint, like a chest that only takes tubes:
 - **Right-click** it to open it. Each colour shows how many tubes' worth it holds.
   - Click a colour to take a whole tube out.
@@ -473,7 +477,7 @@ Brushes are the painter's tackle. Pick one on the setup screen; the hog bristle 
 """ + "\n".join(rows) + """
 
 - **Load** is how many cells a full brush covers before you mix again, before level bonuses.
-- **Uses** is how many paintings a brush lasts. A brush wears by one each time you finish a painting with it, like fishing tackle, and its uses show on the item.
+- **Uses** is how many paintings a brush lasts. A brush wears by one each time you finish a painting with it, like fishing tackle. A green bar on the item shows what's left, like the watering can's water.
 """)
 
 
@@ -532,13 +536,13 @@ And these multiply it:
 | The **Gallerist** profession | {m["gallerist"]}x |
 | A Masterpiece | {m["masterpiece"]}x |
 | Renown (the 30-subject milestone) | {m["renown"]}x |
-| A new subject | {nov[0]["value"]}x |
-| Painted 1 or 2 times before | {nov[1]["value"]}x |
-| Painted 3 to 5 times before | {nov[2]["value"]}x |
-| Painted 6 or more times before | {nov[3]["value"]}x |
+| A subject you've never painted | {nov[0]["value"]}x |
+| The 1st or 2nd painting of it this week | {nov[1]["value"]}x |
+| The 3rd or 4th this week | {nov[3]["value"]}x |
+| The 5th or later this week | {nov[5]["value"]}x |
 | Varnish | up to {m["finishes"][-1]["Value"]}x ({link("Varnishing")}) |
 
-The **novelty** price stops one easy subject being farmed forever: the results screen tells you when a painting is worth more for being new, or less for being familiar. See {link("Painting Record")}.
+The **novelty** price stops one easy subject being farmed all week. The weekly count resets every Monday, so no subject is ever used up for good. The results screen tells you when a painting is worth more for being new, or less for being familiar. See {link("Painting Record")}.
 
 ## What it earns, roughly
 Net gold per in-game hour of painting (sale price minus canvas and paint, divided by the hours a painting takes), from the mod's own economy check:
@@ -572,7 +576,7 @@ Every subject you paint goes in your **painting record**: how many times you've 
 Free canvases don't count.
 
 ## Novelty
-A subject's first painting sells for more, and the same subject over and over sells for less; see {link("Selling and Prices")}.
+A subject's first painting ever sells for more. Painting the same subject again and again in one week sells for less, and the count starts over every Monday; see {link("Selling and Prices")}.
 
 ## Milestones
 | Different subjects | Reward |

@@ -9,13 +9,17 @@ namespace ArtStudio.Painting;
 
 // The painter's record (2026-10-25): every subject they've painted, how
 // often, and at their best quality. It prices novelty (a subject you've
-// never painted pays more; the tenth parsnip pays less), fills the
-// collection page, and pays out milestones for the variety of subjects.
+// never painted pays more; the fifth parsnip this week pays less), fills
+// the collection page, and pays out milestones for the variety of subjects.
 internal sealed class CatalogueEntry
 {
     public int Count { get; set; }
     public int BestQuality { get; set; }
     public int FirstDay { get; set; }
+
+    // Paintings of it this week (Week: the game's week number, from Monday).
+    public int Week { get; set; }
+    public int WeekCount { get; set; }
 }
 
 internal static class Catalogue
@@ -51,8 +55,15 @@ internal static class Catalogue
     public static int TimesPainted(Farmer who, string subject) =>
         All(who).TryGetValue(SubjectKey(subject), out var entry) ? entry.Count : 0;
 
-    // How much a painting's price moves for how often you've painted it before.
-    public static float Novelty(int timesBefore) => Market.Novelty(timesBefore);
+    public static int CurrentWeek => Game1.Date.TotalDays / 7;
+
+    // Paintings of this subject so far this week.
+    public static int TimesThisWeek(Farmer who, string subject) =>
+        All(who).TryGetValue(SubjectKey(subject), out var entry) && entry.Week == CurrentWeek ? entry.WeekCount : 0;
+
+    // How much a painting's price moves for being new, or familiar this week.
+    public static float Novelty(Farmer who, string subject) =>
+        Market.Novelty(TimesPainted(who, subject) > 0, TimesThisWeek(who, subject));
 
     public static bool HasPerk(Farmer who, string perk) =>
         who.modData.TryGetValue(PerksKey, out string raw) && raw.Split(',').Contains(perk);
@@ -67,6 +78,9 @@ internal static class Catalogue
         bool isNew = !all.TryGetValue(key, out var entry);
         entry ??= new CatalogueEntry { FirstDay = Game1.Date.TotalDays };
         entry.Count++;
+        if (entry.Week != CurrentWeek)
+            (entry.Week, entry.WeekCount) = (CurrentWeek, 0);
+        entry.WeekCount++;
         entry.BestQuality = Math.Max(entry.BestQuality, quality);
         all[key] = entry;
         Save(who, all);

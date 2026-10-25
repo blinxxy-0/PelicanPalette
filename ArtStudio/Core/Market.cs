@@ -25,14 +25,18 @@ public static class Market
     // The 30-subject milestone.
     public const float RenownValue = 1.1f;
 
-    // A subject's first painting pays more; the same one over and over, less.
-    public static float Novelty(int timesBefore) => timesBefore switch
-    {
-        0 => 1.25f,
-        <= 2 => 1f,
-        <= 5 => 0.85f,
-        _ => 0.7f,
-    };
+    // A subject's first painting ever pays more. After that, only the same
+    // week counts: the first two of it this week sell at full price, then
+    // less, and every Monday it's full price again (so a favourite subject
+    // can't be farmed all week, but never runs out for good).
+    public static float Novelty(bool paintedBefore, int timesThisWeek) =>
+        !paintedBefore ? 1.25f
+        : timesThisWeek switch
+        {
+            <= 1 => 1f,
+            <= 3 => 0.85f,
+            _ => 0.7f,
+        };
 
     // Varnishing, like a cask: days in the cabinet, finish, value.
     public static readonly (int Days, string Key, float Value)[] Finishes =

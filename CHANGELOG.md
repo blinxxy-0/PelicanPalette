@@ -13,8 +13,8 @@
 - Paint is a resource:
   - You learn colours like recipes, and spend paint from your Palette.
   - Tubes go straight into your Palette, bought from Sable or ground in a Pigment Mill.
-  - Wooden, Enamel and Iridium Palettes hold 3, 6 or 10 tubes of each colour. Set one down to store paint.
-- Five brushes, from hog bristle to iridium, that wear like fishing tackle.
+  - Wooden, Enamel and Iridium Palettes hold 3, 6 or 10 tubes of each colour. Set one down to store paint. Like tools, palettes can't be given away by accident.
+- Five brushes, from hog bristle to iridium, that wear like fishing tackle, with a green wear bar like the watering can's.
 - Painting takes time from your day: an hour for a small canvas, more for bigger ones.
 
 **The Painting skill**
@@ -23,12 +23,12 @@
 
 **Selling, gifting and keeping**
 - Sell to Pierre, at the art shop (20% more) or through the shipping bin. Or consign up to three paintings at Sable's gallery, which sell over a few days for more again.
-- A new subject sells for more; the same one over and over, for less. Your painting record keeps every subject, with milestone rewards at 5, 15, 30 and 50.
+- A new subject sells for more. The same one painted over and over in a week sells for less, until Monday. Your painting record keeps every subject, with milestone rewards at 5, 15, 30 and 50.
 - Everyone loves an iridium painting. Art lovers like any painting, nobody dislikes one, and a portrait's sitter always loves it.
 - Frame paintings to hang them as furniture. Varnish them in a Varnishing Cabinet, which cures them like a cask: satin, gloss, gallery finish.
 
 **The art shop and Sable**
-- An art supply shop in Cindersap Forest, with a stocked interior and a commission board where villagers ask for paintings (portraits too).
+- An art supply shop in Cindersap Forest, with a stocked, lamp-lit interior and a commission board where villagers ask for paintings (portraits too).
 - Sable (they/them), a former museum restorer who runs it:
   - a full schedule, seasonal and island outfits, and every festival
   - hundreds of lines of dialogue

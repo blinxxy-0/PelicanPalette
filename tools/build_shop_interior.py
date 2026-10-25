@@ -47,6 +47,16 @@ FIRE_X = 14                 # the fireplace's left column (4 wide, against the r
 ARRIVAL = (DOOR_X, H - 2)   # where you appear coming in
 FURNITURE_COLS = 16
 
+# Light (2026-10-25: the user found the shop unlit). Windows either side of
+# the fireplace, from the game's own window tiles: their sunlight falls
+# into the room by day and they turn to night glass after dark, as Leah's
+# and Pierre's do. Lamps glow at night over the counter, at the hearth, and
+# over the shop floor (the game's sconce light).
+WINDOWS = (FIRE_X, FIRE_X + 3)             # columns, on wall rows 1-2
+WINDOW_DAY, WINDOW_NIGHT = (256, 288), (1253, 1285)    # townInterior: top, bottom
+LAMPS = [(3, 4), (FIRE_X + 1, 4), (FIRE_X + 2, 4), (9, 7), (5, 11), (13, 11)]
+LIGHT_TEXTURE = 4
+
 # Our map uses Leah's tileset order, so her gids copy over unchanged.
 INTERIOR, INTERIOR2, BOARD, FURNITURE = 65, 2241, 3553, 3559
 
@@ -233,6 +243,10 @@ def furnish(room, leah, pierre, gallery):
             room.put("Front", dx, 0, lfront[sx])
             room.put("Back", dx, 0, lback[sx])
 
+    for x in WINDOWS:
+        for j, tile in enumerate(WINDOW_DAY):
+            room.put("Front", x, 1 + j, INTERIOR + tile)
+
     # --- Sable's corner: easels on a rug, bottom right ---------------------
     rug = [[lback2[y * l2w + x] for x in range(10, 14)] for y in range(5, 8)]
     for j, row in enumerate(rug):
@@ -273,6 +287,14 @@ def furnish(room, leah, pierre, gallery):
     # wall.
     room.place("gallery_panel_landscape", 5, 7)
     room.place("gallery_panel_portraits", 12, 7)
+    # Two more (2026-10-25, once the stock was drawn smaller and the floor
+    # had room): the snowy cabin in the middle of the room, which Elliott
+    # takes in, and the night sky on the left, Leah's (gallery_panels.py).
+    room.place("gallery_panel_cabin", 8, 5)
+    room.place("gallery_panel_night", 2, 8)
+    # And the centrepiece in the middle of the floor: a Junimo made of
+    # squeezed paint tubes, which Haley and Lewis stand looking at.
+    room.place("gallery_junimo", 8, 8)
     room.place("gallery_wine", 15, 6)
     room.place("gallery_bust", 17, 6)
 
@@ -290,8 +312,15 @@ def main():
 
     # Not Leah's DayTiles/NightTiles: they swap her window and the patch of
     # sunlight on her floor, and our wall has paintings where her window was
-    # (at night the swap drew wallpaper over one of them).
-    props = {"Warp": f"{DOOR_X} {H - 1} Forest {door_x} {door_y}"}
+    # (at night the swap drew wallpaper over one of them). Our own windows'
+    # are below.
+    props = {
+        "Warp": f"{DOOR_X} {H - 1} Forest {door_x} {door_y}",
+        "DayTiles": " ".join(f"Front {x} {1 + j} {t}" for x in WINDOWS for j, t in enumerate(WINDOW_DAY)),
+        "NightTiles": " ".join(f"Front {x} {1 + j} {t}" for x in WINDOWS for j, t in enumerate(WINDOW_NIGHT)),
+        "WindowLight": " ".join(f"{x} {1 + j} {LIGHT_TEXTURE}" for x in WINDOWS for j in range(2)),
+        "Light": " ".join(f"{x} {y} {LIGHT_TEXTURE}" for x, y in LAMPS),
+    }
     for gallery, name in ((False, "ArtShop.tmx"), (True, "ArtShopGallery.tmx")):
         room = Room(stretch(shell(leah[1])), pieces)
         room.empty = empty

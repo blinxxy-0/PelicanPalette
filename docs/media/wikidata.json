@@ -1525,19 +1525,27 @@
     "renown": 1.1,
     "novelty": [
       {
-        "timesBefore": 0,
+        "thisWeek": -1,
         "value": 1.25
       },
       {
-        "timesBefore": 1,
+        "thisWeek": 0,
         "value": 1
       },
       {
-        "timesBefore": 3,
+        "thisWeek": 1,
+        "value": 1
+      },
+      {
+        "thisWeek": 2,
         "value": 0.85
       },
       {
-        "timesBefore": 6,
+        "thisWeek": 3,
+        "value": 0.85
+      },
+      {
+        "thisWeek": 4,
         "value": 0.7
       }
     ],

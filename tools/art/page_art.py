@@ -201,8 +201,8 @@ def main():
             continue
         sign(os.path.join(media, "signtext", f), os.path.join(out, f.replace("sign_", "header_")))
     banner(media, os.path.join(out, "banner.png"), [
-        ("shop_exterior.png", 610, 300),
-        ("event_gallery_1.png", 600, 380),
+        ("shop_exterior.png", 615, 220),
+        ("event_gallery_1.png", 620, 360),
         ("setup_portrait.png", 1030, 300),
     ])
     title_card(media, os.path.join(out, "title_card.png"),
