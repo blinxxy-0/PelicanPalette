@@ -50,7 +50,7 @@ internal static class Sitters
             .ThenBy(npc => npc)
             .ToList();
 
-    public static Reference Portrait(string npc, int canvasSize, IReadOnlyList<int> owned)
+    public static Reference Portrait(string npc, int canvasSize, IReadOnlyList<int> owned, Techniques allowed = Techniques.None)
     {
         var texture = PortraitTexture(npc) ?? throw new InvalidOperationException($"No portrait for {npc}.");
         var pixels = new Color[PortraitSize * PortraitSize];
@@ -62,7 +62,8 @@ internal static class Sitters
         // average would blur.
         int half = PortraitSize / Scale;
         var small = new byte[half, half];
-        var counts = new Dictionary<byte, int>();
+        var smallMarks = new Mark[half, half];
+        var counts = new Dictionary<(byte, Mark), int>();
         for (int x = 0; x < half; x++)
         for (int y = 0; y < half; y++)
         {
@@ -74,23 +75,31 @@ internal static class Sitters
                 var p = pixels[(y * Scale + dy) * PortraitSize + x * Scale + dx];
                 if (p.A < 128) continue;
                 opaque++;
-                byte c = (byte)Palette.Nearest(p.R, p.G, p.B, owned);
+                var c = Technique.Nearest(p.R, p.G, p.B, owned, allowed);
                 counts[c] = counts.GetValueOrDefault(c) + 1;
             }
-            small[x, y] = opaque < 2 ? PixelCanvas.Blank : counts.OrderByDescending(kv => kv.Value).First().Key;
+            if (opaque < 2)
+                small[x, y] = PixelCanvas.Blank;
+            else
+                (small[x, y], smallMarks[x, y]) = counts.OrderByDescending(kv => kv.Value).First().Key;
         }
+        Technique.Limit(small, smallMarks);
 
         // Centred across; resting on the bottom edge on a large canvas, or
         // cropped at the shoulders on a medium one (the head stays whole).
         var cells = PixelCanvas.NewBlank(canvasSize);
+        var marks = new Mark[canvasSize, canvasSize];
         int ox = (canvasSize - half) / 2, oy = Math.Max(0, canvasSize - half);
         for (int x = 0; x < half; x++)
         for (int y = 0; y < half; y++)
         {
             int cx = ox + x, cy = oy + y;
             if (small[x, y] != PixelCanvas.Blank && cx >= 0 && cy >= 0 && cx < canvasSize && cy < canvasSize)
+            {
                 cells[cx, cy] = small[x, y];
+                marks[cx, cy] = smallMarks[x, y];
+            }
         }
-        return new Reference(cells);
+        return new Reference(cells, marks);
     }
 }

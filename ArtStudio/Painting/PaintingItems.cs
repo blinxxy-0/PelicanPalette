@@ -91,6 +91,9 @@ internal static class PaintingItems
         var signature = new[] { string.IsNullOrEmpty(data.Painter) ? null : I18n.Get("painting.provenance.by", new { painter = data.Painter }), data.Date }
             .Where(s => !string.IsNullOrEmpty(s))
             .ToList();
-        return signature.Count == 0 ? subject : $"{subject}\n{string.Join(", ", signature)}.";
+        string text = signature.Count == 0 ? subject : $"{subject}\n{string.Join(", ", signature)}.";
+        if (data.Masterpiece)
+            text = I18n.Get("painting.provenance.masterpiece") + "\n" + text;
+        return data.Finish == null ? text : text + "\n" + I18n.Get("painting.provenance.varnished", new { finish = I18n.Get("varnish.finish." + data.Finish) });
     }
 }

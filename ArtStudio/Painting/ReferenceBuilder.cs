@@ -25,7 +25,12 @@ internal static class ReferenceBuilder
         return rect.Width == SpriteSize && rect.Height == SpriteSize;
     }
 
-    public static byte[,] Subject(string qualifiedItemId, IReadOnlyList<int> owned)
+    public static byte[,] Subject(string qualifiedItemId, IReadOnlyList<int> owned) =>
+        Subject(qualifiedItemId, owned, Techniques.None, out _);
+
+    // With techniques allowed, a shaded pixel may become a glazed colour and
+    // a shine a highlight (Core/Technique.cs).
+    public static byte[,] Subject(string qualifiedItemId, IReadOnlyList<int> owned, Techniques allowed, out Mark[,] marks)
     {
         ParsedItemData data = ItemRegistry.GetDataOrErrorItem(qualifiedItemId);
         var texture = data.GetTexture();
@@ -34,24 +39,32 @@ internal static class ReferenceBuilder
         texture.GetData(0, rect, pixels, 0, pixels.Length);
 
         var cells = new byte[rect.Width, rect.Height];
+        marks = new Mark[rect.Width, rect.Height];
         for (int x = 0; x < rect.Width; x++)
         for (int y = 0; y < rect.Height; y++)
         {
             var p = pixels[y * rect.Width + x];
-            cells[x, y] = p.A < 128 ? PixelCanvas.Blank : (byte)Palette.Nearest(p.R, p.G, p.B, owned);
+            if (p.A < 128)
+            {
+                cells[x, y] = PixelCanvas.Blank;
+                continue;
+            }
+            (cells[x, y], marks[x, y]) = Technique.Nearest(p.R, p.G, p.B, owned, allowed);
         }
+        Technique.Limit(cells, marks);
         return cells;
     }
 
     // One to three items arranged on the canvas. Later items sit in front.
     // Arrangements on bigger canvases rest on a little table edge so they
     // read as a still life rather than floating stickers.
-    public static Reference StillLife(IReadOnlyList<string> itemIds, int canvasSize, IReadOnlyList<int> owned)
+    public static Reference StillLife(IReadOnlyList<string> itemIds, int canvasSize, IReadOnlyList<int> owned, Techniques allowed = Techniques.None)
     {
         if (itemIds.Count == 1)
-            return Reference.Centered(Subject(itemIds[0], owned), canvasSize);
+            return Reference.Centered(Subject(itemIds[0], owned, allowed, out var subjectMarks), canvasSize, subjectMarks);
 
         var cells = PixelCanvas.NewBlank(canvasSize);
+        var marks = new Mark[canvasSize, canvasSize];
         int tableTop = canvasSize - 5;
         byte tableTopColor = (byte)Palette.Nearest(0xA8, 0x5D, 0x33, owned);
         byte tableColor = (byte)Palette.Nearest(0x6E, 0x4A, 0x2F, owned);
@@ -65,7 +78,7 @@ internal static class ReferenceBuilder
         var slots = Arrangement(itemIds.Count, canvasSize, tableTop);
         for (int i = 0; i < itemIds.Count; i++)
         {
-            var subject = Subject(itemIds[i], owned);
+            var subject = Subject(itemIds[i], owned, allowed, out var subjectMarks);
             var (ox, oy) = slots[i];
             for (int x = 0; x < SpriteSize; x++)
             for (int y = 0; y < SpriteSize; y++)
@@ -73,10 +86,13 @@ internal static class ReferenceBuilder
                 byte c = subject[x, y];
                 int cx = ox + x, cy = oy + y;
                 if (c != PixelCanvas.Blank && cx >= 0 && cy >= 0 && cx < canvasSize && cy < canvasSize)
+                {
                     cells[cx, cy] = c;
+                    marks[cx, cy] = subjectMarks[x, y];
+                }
             }
         }
-        return new Reference(cells);
+        return new Reference(cells, marks);
     }
 
     // Top-left corners for each item, back to front, resting on the table.

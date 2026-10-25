@@ -20,16 +20,23 @@ public class PixelCanvas
     public int Size { get; }
     private byte[,] _cells;
     private Purity[,] _purity;
-    private readonly Stack<(byte[,], Purity[,])> _undo = new();
+    private Mark[,] _marks;
+    private readonly Stack<(byte[,], Purity[,], Mark[,])> _undo = new();
+
+    // Highlights smeared by painting beside them (the easel tells the painter).
+    public int Smeared { get; private set; }
 
     public PixelCanvas(int size)
     {
         Size = size;
         _cells = NewBlank(size);
         _purity = new Purity[size, size];
+        _marks = new Mark[size, size];
     }
 
     public byte this[int x, int y] => _cells[x, y];
+    public Mark MarkAt(int x, int y) => _marks[x, y];
+    public Mark[,] MarksSnapshot() => (Mark[,])_marks.Clone();
     public Purity PurityAt(int x, int y) => _purity[x, y];
     public byte[,] Snapshot() => (byte[,])_cells.Clone();
     public Purity[,] PuritySnapshot() => (Purity[,])_purity.Clone();
@@ -49,7 +56,7 @@ public class PixelCanvas
     // single undo reverts the whole action, not one cell of it.
     public void PushUndo()
     {
-        _undo.Push((Snapshot(), PuritySnapshot()));
+        _undo.Push((Snapshot(), PuritySnapshot(), MarksSnapshot()));
         if (_undo.Count > MaxUndo)
         {
             var keep = _undo.ToArray();
@@ -64,13 +71,14 @@ public class PixelCanvas
     public void Undo()
     {
         if (_undo.Count > 0)
-            (_cells, _purity) = _undo.Pop();
+            (_cells, _purity, _marks) = _undo.Pop();
     }
 
-    public void Load(byte[,] cells, Purity[,] purity)
+    public void Load(byte[,] cells, Purity[,] purity, Mark[,]? marks = null)
     {
         _cells = (byte[,])cells.Clone();
         _purity = (Purity[,])purity.Clone();
+        _marks = marks != null ? (Mark[,])marks.Clone() : new Mark[Size, Size];
         _undo.Clear();
     }
 
@@ -78,6 +86,7 @@ public class PixelCanvas
     {
         _cells = NewBlank(Size);
         _purity = new Purity[Size, Size];
+        _marks = new Mark[Size, Size];
     }
 
     // Paints one cell if the budget allows. Repainting a cell with exactly
@@ -93,7 +102,37 @@ public class PixelCanvas
         }
         _cells[x, y] = value;
         _purity[x, y] = value == Blank ? Purity.Pure : purity;
+        _marks[x, y] = Mark.None;           // new paint covers any glaze or highlight
+        if (value != Blank)
+            SmearAround(x, y);
         return true;
+    }
+
+    // Wet paint beside a highlight drags it into the colour around it.
+    private void SmearAround(int x, int y)
+    {
+        foreach (var (nx, ny) in new[] { (x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1) })
+            if (nx >= 0 && ny >= 0 && nx < Size && ny < Size && _marks[nx, ny] == Mark.Highlight)
+            {
+                _marks[nx, ny] = Mark.None;
+                Smeared++;
+            }
+    }
+
+    // Glazes or highlights a painted cell (a bare one can't take either).
+    public bool SetMark(int x, int y, Mark mark)
+    {
+        if (x < 0 || y < 0 || x >= Size || y >= Size || _cells[x, y] == Blank || _marks[x, y] == mark) return false;
+        _marks[x, y] = mark;
+        return true;
+    }
+
+    public int MarkLine(int x0, int y0, int x1, int y1, Mark mark)
+    {
+        int changed = 0;
+        foreach (var (x, y) in LinePoints(x0, y0, x1, y1))
+            if (SetMark(x, y, mark)) changed++;
+        return changed;
     }
 
     // brushSize 1 = single cell, 2 = 2×2 block anchored at the cell.

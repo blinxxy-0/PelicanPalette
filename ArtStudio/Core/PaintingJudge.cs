@@ -2,7 +2,9 @@ using System;
 
 namespace ArtStudio.Core;
 
-public record PaintingResult(float Shape, float Color, float Neatness, float Overall, float Stars);
+// Technique is how well the glazes and highlights match (-1 when the
+// reference has none).
+public record PaintingResult(float Shape, float Color, float Neatness, float Overall, float Stars, float Technique = -1f);
 
 // Grades a finished painting against its reference. Ported from Muse, where
 // it was calibrated by simulation; the only rule added here is that paint
@@ -19,6 +21,9 @@ public record PaintingResult(float Shape, float Color, float Neatness, float Ove
 //   Neatness — stray paint well away from the subject
 //
 // Overall = (0.4 Shape + 0.6 Color) × a neatness penalty of up to 25%.
+// On a reference with glazes or highlights (medium and large canvases),
+// Technique — an F-score of marks in the right places, a cell's slip
+// allowed — takes up to 15% more off: ignoring them costs about a star.
 // Stars are Overall × 5 rounded to the nearest half.
 //
 // Where on the canvas the painting sits doesn't matter: every alignment is
@@ -35,7 +40,9 @@ public static class PaintingJudge
         _ => 0.2f,
     };
 
-    public static PaintingResult Judge(byte[,] painting, Purity[,] purity, Reference reference)
+    public const float TechniqueWeight = 0.15f;
+
+    public static PaintingResult Judge(byte[,] painting, Purity[,] purity, Reference reference, Mark[,]? marks = null)
     {
         var refCells = reference.Cells;
         int n = reference.Size;
@@ -43,6 +50,7 @@ public static class PaintingJudge
         var nearSubject = Dilate(refCells, n);
 
         float bestOverall = -1f, bestShape = 0f, bestColor = 0f, bestNeat = 0f;
+        int bestDx = 0, bestDy = 0;
 
         var shifted = new byte[n, n];
         var shiftedPurity = new Purity[n, n];
@@ -110,12 +118,68 @@ public static class PaintingJudge
                 bestShape = shape;
                 bestColor = color;
                 bestNeat = neat;
+                bestDx = dx;
+                bestDy = dy;
             }
+        }
+
+        float technique = -1f;
+        if (reference.UsesTechniques)
+        {
+            technique = TechniqueScore(marks ?? new Mark[n, n], painting, reference, bestDx, bestDy);
+            bestOverall *= 1f - TechniqueWeight * (1f - technique);
         }
 
         float stars = MathF.Round(bestOverall * 10f) / 2f;
         stars = Math.Clamp(stars, 0.5f, 5f);
-        return new PaintingResult(bestShape, bestColor, bestNeat, bestOverall, stars);
+        return new PaintingResult(bestShape, bestColor, bestNeat, bestOverall, stars, technique);
+    }
+
+    // Glazes and highlights where the reference has them (a cell out
+    // allowed, as with color), both ways: missing ones and stray ones count.
+    private static float TechniqueScore(Mark[,] marks, byte[,] painting, Reference reference, int dx, int dy)
+    {
+        int n = reference.Size;
+        var shifted = new Mark[n, n];
+        for (int x = 0; x < n; x++)
+        for (int y = 0; y < n; y++)
+        {
+            int rx = x + dx, ry = y + dy;
+            if (painting[x, y] != PixelCanvas.Blank && marks[x, y] != Mark.None && rx >= 0 && ry >= 0 && rx < n && ry < n)
+                shifted[rx, ry] = marks[x, y];
+        }
+        int wanted = 0, found = 0, placed = 0, right = 0;
+        for (int x = 0; x < n; x++)
+        for (int y = 0; y < n; y++)
+        {
+            var want = reference.Marks[x, y];
+            if (want != Mark.None)
+            {
+                wanted++;
+                if (MarkNear(shifted, x, y, want, n)) found++;
+            }
+            var have = shifted[x, y];
+            if (have != Mark.None)
+            {
+                placed++;
+                if (MarkNear(reference.Marks, x, y, have, n)) right++;
+            }
+        }
+        float recall = wanted > 0 ? found / (float)wanted : 1f;
+        float precision = placed > 0 ? right / (float)placed : 0f;
+        return precision + recall > 0f ? 2f * precision * recall / (precision + recall) : 0f;
+    }
+
+    private static bool MarkNear(Mark[,] grid, int x, int y, Mark mark, int n)
+    {
+        for (int ox = -1; ox <= 1; ox++)
+        for (int oy = -1; oy <= 1; oy++)
+        {
+            int cx = x + ox, cy = y + oy;
+            if (cx >= 0 && cy >= 0 && cx < n && cy < n && grid[cx, cy] == mark)
+                return true;
+        }
+        return false;
     }
 
     public static string Rating(float value) => value switch

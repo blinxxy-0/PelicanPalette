@@ -24,7 +24,7 @@ namespace ArtStudio.Shop;
 internal static class Consignment
 {
     public const int MaxConsigned = 3;
-    public const float Premium = 1.5f;
+    public const float Premium = Market.ConsignPremium;
     private const string SellsOnKey = ModEntry.Id + "/SellsOn";
 
     // The easels in Sable's corner (tile x, all on row 10) and the picture

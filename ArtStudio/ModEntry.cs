@@ -30,6 +30,7 @@ public class ModEntry : Mod
         ArtHooks.Apply(harmony, helper, Monitor);
         Shop.ArtShop.Apply(harmony, helper, Monitor);
         Shop.Consignment.Apply(harmony, helper, Monitor);
+        Varnish.Apply(harmony, helper, Monitor);
         SableEvents.Register();
         NeutralLabels.Apply(harmony, Monitor);
         SableMarriage.Apply(harmony, Monitor);

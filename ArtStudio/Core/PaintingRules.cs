@@ -36,7 +36,11 @@ public static class PaintingRules
     // painted outdoors (the whole canvas) count the same.
     public const int PortraitHearts = 4;
     public const int PortraitExtraMinutes = 60;
-    public const float PortraitValue = 1.75f, PortraitXp = 1.3f;
+    // (Tuned by the economy check, ArtStudio.Sim economy: a portrait is
+    // already as hard as a picture gets, so the bonus on top stays modest,
+    // and its subject is valued like a loved gift, not a rare one.)
+    public const float PortraitValue = 1.3f, PortraitXp = 1.3f;
+    public const int PortraitSubjectPrice = 400;
     public static bool PortraitFits(CanvasKind kind) => kind != CanvasKind.Small;
     public static int Minutes(CanvasKind kind, bool portrait) => Minutes(kind) + (portrait ? PortraitExtraMinutes : 0);
 
@@ -49,6 +53,14 @@ public static class PaintingRules
         CanvasKind.Medium => 4,
         _ => 7,
     };
+
+    // Techniques grow with the canvas (Core/Technique.cs): a medium canvas
+    // adds glazing, a large one highlights too. Relaxed paints flat.
+    public static Techniques TechniquesFor(int canvasSize, bool relaxed) =>
+        relaxed ? Techniques.None
+        : canvasSize >= CanvasSize(CanvasKind.Large) ? Techniques.Glaze | Techniques.Highlight
+        : canvasSize >= CanvasSize(CanvasKind.Medium) ? Techniques.Glaze
+        : Techniques.None;
 
     // Tools widen with level, in Muse's order.
     public const int BroadBrushLevel = 2, RulerLevel = 3, MirrorLevel = 4, EyedropperLevel = 6;
@@ -124,6 +136,16 @@ public static class PaintingRules
         };
         return Math.Min(tier, MaxQuality(level));
     }
+
+    // A Masterpiece (2026-10-25): above iridium, on a linen canvas only. It
+    // takes an iridium painting with five stars, Inspired, and (where the
+    // canvas asks for them) glazes and highlights nearly all in place. The
+    // game still counts it as iridium; it's worth half as much again.
+    public const int LinenLevel = 8;
+    public const float MasterpieceTechnique = 0.9f, MasterpieceValue = 1.5f;
+
+    public static bool IsMasterpiece(bool linen, int quality, float stars, bool inspired, float technique) =>
+        linen && quality == Iridium && stars >= 5f && inspired && (technique < 0f || technique >= MasterpieceTechnique);
 
     // ---- Value and XP ----
 

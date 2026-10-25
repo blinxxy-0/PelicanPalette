@@ -38,7 +38,8 @@ internal sealed partial class EaselMenu
     private bool SetupView => IsViewSubject(_setupItems);
     // The view's slot sits first in the sitters' row.
     private const string ViewSlot = Views.Prefix;
-    private Rectangle _originalButton, _brushButton, _frameButton, _beginButton, _previewArea;
+    private Rectangle _originalButton, _brushButton, _frameButton, _beginButton, _previewArea, _linenButton;
+    private bool _setupLinen;
 
     // Debug commands paint without supplies; the easel itself needs them.
     private bool _needsSupplies;
@@ -57,6 +58,7 @@ internal sealed partial class EaselMenu
         _canvasButtons = new Rectangle[3];
         for (int i = 0; i < 3; i++)
             _canvasButtons[i] = new Rectangle(x + i * 182, y, 170, 56);
+        _linenButton = new Rectangle(x + 3 * 182, y, 170, 56);
 
         int previewSize = Math.Min(320, height - 340);
         _previewArea = new Rectangle(xPositionOnScreen + width - Pad - 40 - previewSize, y + 40, previewSize, previewSize);
@@ -106,7 +108,13 @@ internal sealed partial class EaselMenu
 
     private int FrameCount => CountInBag("(O)" + ArtItems.FrameItemId);
 
-    private bool HasCanvas => !_needsSupplies || CanvasCount(_setupCanvas) > 0;
+    private bool HasCanvas => !_needsSupplies || (_setupLinen ? LinenCount(_setupCanvas) : CanvasCount(_setupCanvas)) > 0;
+
+    private int LinenCount(CanvasKind kind) => kind == CanvasKind.Small ? 0 : CountInBag(ArtItems.QualifiedLinenId(kind));
+
+    // Linen is offered for medium and large canvases, once you can make it or have some.
+    private bool LinenOffered => !_setupFraming && _setupCanvas != CanvasKind.Small
+        && (_level >= PaintingRules.LinenLevel || LinenCount(_setupCanvas) > 0);
 
     // The default hog bristle brush, then every other brush in the bag.
     private List<(BrushSpec Spec, Item? Item)> BrushOptions()
@@ -146,6 +154,7 @@ internal sealed partial class EaselMenu
                     return;
                 }
                 _setupCanvas = kind;
+                if (!LinenOffered) _setupLinen = false;
                 Game1.playSound("smallSelect");
                 RefreshPreview();
                 return;
@@ -196,6 +205,13 @@ internal sealed partial class EaselMenu
                     _setupCanvas = CanvasKind.Medium;
             }
             RefreshPreview();
+            return;
+        }
+
+        if (_linenButton.Contains(x, y) && LinenOffered)
+        {
+            _setupLinen = !_setupLinen;
+            Game1.playSound("smallSelect");
             return;
         }
 
@@ -297,6 +313,7 @@ internal sealed partial class EaselMenu
         Game1.playSound("bigSelect");
         if (_needsSupplies)
             UseCanvas(_setupCanvas);
+        _linen = _setupLinen;
         BeginPainting(_setupCanvas, _setupOriginal ? Array.Empty<string>() : _setupItems.ToArray());
     }
 
@@ -307,7 +324,8 @@ internal sealed partial class EaselMenu
             Toast(I18n.Get("setup.prolific"), new Color(60, 140, 60), 2f);
             return;
         }
-        var canvas = _who.Items.First(i => i?.QualifiedItemId == ArtItems.QualifiedCanvasId(kind));
+        string id = _setupLinen ? ArtItems.QualifiedLinenId(kind) : ArtItems.QualifiedCanvasId(kind);
+        var canvas = _who.Items.First(i => i?.QualifiedItemId == id);
         if (canvas.Stack > 1) canvas.Stack--;
         else _who.removeItemFromInventory(canvas);
     }
@@ -384,6 +402,14 @@ internal sealed partial class EaselMenu
                     : I18n.Get("setup.canvas-locked." + CanvasKeys[i], new { level = PaintingRules.CanvasUnlockLevel(kind) });
         }
 
+        if (LinenOffered)
+        {
+            string linen = _needsSupplies ? I18n.Get("setup.linen-count", new { count = LinenCount(_setupCanvas) }) : I18n.Get("setup.linen");
+            Ui.Button(b, _linenButton, linen, true, _setupLinen, _linenButton.Contains(mouse));
+            if (_linenButton.Contains(mouse))
+                _hoverText = I18n.Get("setup.linen-hover");
+        }
+
         int max = ReferenceBuilder.MaxItems(PaintingRules.CanvasSize(_setupCanvas));
         Ui.Text(b, max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
             new Vector2(left, _canvasButtons[0].Bottom + 18));
@@ -398,7 +424,7 @@ internal sealed partial class EaselMenu
         var info = new Vector2(_previewArea.X - 20, _previewArea.Bottom + 28);
         if (_setupPreview != null)
         {
-            DrawCells(b, _setupPreview.Cells, null, _previewArea, new Color(243, 236, 220), false);
+            DrawCells(b, _setupPreview.Cells, null, _previewArea, new Color(243, 236, 220), false, _setupPreview.Marks);
             float light = PaintingRules.LightSeconds(canvasSize, _setupPreview.Difficulty, _level, LightMultiplier);
             Ui.Text(b, I18n.Get("setup.preview", new { difficulty = _setupPreview.Difficulty, pigments = _setupPreview.PigmentsUsed.Count }), info);
             Ui.Text(b, _rules.LightTimer ? I18n.Get("setup.light", new { seconds = light.ToString("0") }) : I18n.Get("setup.no-time-limit"), info + new Vector2(0, 28), Game1.textColor * 0.75f);
@@ -419,7 +445,7 @@ internal sealed partial class EaselMenu
         bool portraitTooSmall = SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas);
         bool warn = portraitTooSmall || !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
         string footer = portraitTooSmall ? I18n.Get("setup.portrait-canvas-short")
-            : !HasCanvas ? I18n.Get("setup.need-canvas." + CanvasKeys[(int)_setupCanvas])
+            : !HasCanvas ? I18n.Get(_setupLinen ? "setup.need-linen" : "setup.need-canvas." + CanvasKeys[(int)_setupCanvas])
             : TooLate ? I18n.Get("setup.too-late-short")
             : NeedsPalette ? I18n.Get("setup.need-palette-short")
             : shortOf.Count > 0 ? I18n.Get("setup.low-paint", new { pigments = string.Join(", ", shortOf.Take(3).Select(I18n.Pigment)) })

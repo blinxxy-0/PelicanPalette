@@ -43,6 +43,8 @@ internal static class PaintingPatches
                 __instance.DrawShadow(spriteBatch, location, color, layerDepth);
             PaintingRenderer.DrawFramed(spriteBatch, __instance, location + new Vector2(32f, 32f), 4f * scaleSize, color * transparency, layerDepth);
             __instance.DrawMenuIcons(spriteBatch, location, scaleSize, transparency, layerDepth, drawStackNumber, color);
+            if (PaintingData.IsMasterpiece(__instance))
+                DrawMasterpieceBadge(spriteBatch, location + new Vector2(50f, 6f) * scaleSize, 3f * scaleSize, transparency, layerDepth + 0.0002f);
             return false;
         }
         catch (Exception ex)
@@ -50,6 +52,19 @@ internal static class PaintingPatches
             _monitor.LogOnce($"Couldn't draw a painting in a menu: {ex}", LogLevel.Error);
             return true;
         }
+    }
+
+    private static readonly Color Gold = new(232, 180, 40), GoldDark = new(150, 96, 10);
+
+    public static void DrawMasterpieceBadge(SpriteBatch b, Vector2 center, float px, float alpha, float layerDepth)
+    {
+        void Px(int x, int y, Color c) =>
+            b.Draw(Game1.staminaRect, new Rectangle((int)(center.X + x * px), (int)(center.Y + y * px), (int)Math.Ceiling(px), (int)Math.Ceiling(px)), null, c * alpha, 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+        foreach (var (x, y) in new[] { (0, -3), (0, 3), (-3, 0), (3, 0) })
+            Px(x, y, GoldDark);
+        foreach (var (x, y) in new[] { (0, -2), (0, -1), (0, 1), (0, 2), (-2, 0), (-1, 0), (1, 0), (2, 0), (-1, -1), (1, -1), (-1, 1), (1, 1) })
+            Px(x, y, Gold);
+        Px(0, 0, Color.White);
     }
 
     private static bool DrawWhenHeldPrefix(SObject __instance, SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f)

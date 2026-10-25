@@ -31,7 +31,8 @@ internal static class ArtHooks
         harmony.Patch(AccessTools.Method(typeof(NPC), nameof(NPC.getGiftTasteForThisItem)),
             postfix: new HarmonyMethod(typeof(ArtHooks), nameof(GiftTastePostfix)));
         harmony.Patch(AccessTools.Method(typeof(NPC), nameof(NPC.receiveGift)),
-            prefix: new HarmonyMethod(typeof(ArtHooks), nameof(ReceiveGiftPrefix)));
+            prefix: new HarmonyMethod(typeof(ArtHooks), nameof(ReceiveGiftPrefix)),
+            postfix: new HarmonyMethod(typeof(ArtHooks), nameof(ReceiveGiftPostfix)));
         harmony.Patch(AccessTools.Method(typeof(Furniture), nameof(Furniture.draw), new[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
             postfix: new HarmonyMethod(typeof(ArtHooks), nameof(FurnitureDrawPostfix)));
         harmony.Patch(AccessTools.Method(typeof(Furniture), nameof(Furniture.drawInMenu),
@@ -118,6 +119,13 @@ internal static class ArtHooks
     private static int _pendingMinutes;
 
     public static int PendingMinutes => _pendingMinutes;
+
+    // Tests start from a fresh morning, whatever ran before them.
+    internal static void DevFreshMorning()
+    {
+        _pendingMinutes = 0;
+        Game1.timeOfDay = 900;
+    }
 
     public static void AddPaintingTime(int minutes) => _pendingMinutes += minutes;
 
@@ -206,6 +214,19 @@ internal static class ArtHooks
     {
         if (PaintingItems.IsPainting(o) && PaintingSkill.Has(giver, PaintingSkill.Instance.PatronsFavorite))
             friendshipChangeMultiplier *= PaintingSkill.PatronFriendship;
+        if (PaintingItems.IsPainting(o) && PaintingData.IsMasterpiece(o))
+            friendshipChangeMultiplier *= MasterpieceFriendship;
+    }
+
+    public const float MasterpieceFriendship = 1.5f;
+
+    // Sable knows what they're looking at.
+    private static void ReceiveGiftPostfix(NPC __instance, SObject o)
+    {
+        if (__instance.Name != "Sable" || !PaintingItems.IsPainting(o) || !PaintingData.IsMasterpiece(o)) return;
+        __instance.CurrentDialogue.Clear();
+        __instance.CurrentDialogue.Push(new Dialogue(__instance, null, I18n.Get("sable.masterpiece-gift")));
+        Game1.drawDialogue(__instance);
     }
 
     // ---- Framed paintings ----

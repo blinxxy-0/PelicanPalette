@@ -9,7 +9,14 @@ using ArtStudio.Core;
 //   3. Sessions: hand + level → quality tier distribution.
 //
 // Usage: dotnet run -- [refs.json from museart_export_refs] (Muse's sketches
-// in muse_refs.json are always used).
+// in muse_refs.json are always used), or dotnet run -- economy for what
+// paintings earn per hour (Economy.cs).
+
+if (args.FirstOrDefault() == "economy")
+{
+    Economy.Run();
+    return;
+}
 
 var refs = LoadReferences(args);
 Console.WriteLine($"{refs.Count} references\n");

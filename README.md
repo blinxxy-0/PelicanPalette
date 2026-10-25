@@ -39,7 +39,13 @@ A painting takes part of your day: about 1 hour for a small canvas, 2 for medium
 
 The painting's quality depends on how closely you copied the picture and on your Painting level.
 
-**Portraits.** Once you have medium canvases (Painting level 4), friends at 4 or more hearts will sit for a portrait: pick their face under the items on the easel. A portrait takes an hour longer than a still life and sells for about 75% more. The sitter always loves being given theirs. Friends at 4+ hearts can also post portrait requests on the commission board.
+**Portraits.** Once you have medium canvases (Painting level 4), friends at 4 or more hearts will sit for a portrait: pick their face under the items on the easel. A portrait takes an hour longer than a still life and sells for more. The sitter always loves being given theirs. Friends at 4+ hearts can also post portrait requests on the commission board.
+
+**Techniques grow with the canvas.** A small canvas is flat colour. From medium canvases, some cells of the reference are **glazed**, a darker wash over a colour (the shaded side of a pumpkin): paint the colour, then go over it with the **Glaze** tool. Large canvases add **highlights**, a few bright spots of thick paint (the shine on a gem) put on with the **Highlight** tool. Do these last: painting next to a highlight smears it. With either tool in hand, dots show which cells want one. The results add a **Technique** rating, and leaving the techniques out costs about a star. Relaxed difficulty paints flat colour throughout.
+
+**Masterpieces.** From Painting level 8 you can make (or buy) **linen canvases**, in medium and large. A painting on linen that's iridium quality with five stars, Inspired, and with its glazes and highlights in place becomes a **Masterpiece**. It's marked with a gold star, sells for half as much again as iridium, and makes a gift that brings more friendship. The game still counts it as iridium quality.
+
+**Varnish.** From Painting level 7 you can make a **Varnishing Cabinet** and **Varnish** (oak resin and oil make two tins), or buy them from Sable. Use the cabinet while holding a painting, with a tin in your bag, and it cures like wine in a cask: a satin finish after 7 days (+10% value), gloss after 14 (+20%) and a gallery finish after 28 (+30%). Right-click it to see how it's coming along; it gives the painting up by itself only when fully cured. To take one out sooner, hit the cabinet with a tool and you get the finish it has reached (before 7 days, none, and the varnish is wasted). A painting can be varnished once.
 
 **Plein air.** An easel placed outdoors offers **the view** as a subject: the scene around it (mostly what's in front of it) becomes the reference, across the whole canvas. A view takes an hour longer than a still life and is worth about as much as a portrait. It's worth more somewhere far from the farm (the Woods, the Summit, the Desert, Ginger Island), and more again in rain, in winter or after 7pm. The same place in another season counts as a new subject.
 
@@ -53,7 +59,7 @@ The painting's quality depends on how closely you copied the picture and on your
 
 **Selling and gifting.**
 - Sell paintings to Pierre, at the art shop (which pays 20% more), or through the shipping bin.
-- Or **consign** up to three with Sable, at the counter. They go on the shop's easels and sell within one to three days (sooner the better they are) for half again what a shop pays. You can take one back before it sells.
+- Or **consign** up to three with Sable, at the counter. They go on the shop's easels and sell within one to three days (sooner the better they are) for more than either shop pays (35% over a painting's usual price, where Sable's counter pays 20% over). You can take one back before it sells.
 - Everyone loves an iridium painting, and silver and gold ones are liked. Art lovers (Leah, Elliott, Emily, Haley, Abigail, Sebastian, Sam, Robin and Sable) like any painting. A painting of something a villager loves goes up a step. Nobody dislikes a painting.
 - A **Picture Frame** turns a painting into furniture you can hang on a wall.
 

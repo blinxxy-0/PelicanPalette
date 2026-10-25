@@ -77,6 +77,8 @@
             { "Id": "CanvasSmall", "ItemId": "(O)blinxxy.MuseArt_Canvas_Small", "Price": 25 },
             { "Id": "CanvasMedium", "ItemId": "(O)blinxxy.MuseArt_Canvas_Medium", "Price": 80, "Condition": "{{PaintingLevel}} 4" },
             { "Id": "CanvasLarge", "ItemId": "(O)blinxxy.MuseArt_Canvas_Large", "Price": 200, "Condition": "{{PaintingLevel}} 7" },
+            { "Id": "LinenMedium", "ItemId": "(O)blinxxy.MuseArt_Linen_Medium", "Price": 500, "Condition": "{{PaintingLevel}} 8" },
+            { "Id": "LinenLarge", "ItemId": "(O)blinxxy.MuseArt_Linen_Large", "Price": 1000, "Condition": "{{PaintingLevel}} 8" },
             { "Id": "Frame", "ItemId": "(O)blinxxy.MuseArt_PictureFrame", "Price": 150 },
 
             { "Id": "Sienna", "ItemId": "(O)blinxxy.MuseArt_Pigment_sienna", "Price": 120, "AvailableStock": 1, "AvailableStockLimit": "Player", "Condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current sienna" },
@@ -93,6 +95,9 @@
             // Palette at the easel). The Pigment Mill grinds your own.
             { "Id": "Palette", "ItemId": "(O)blinxxy.MuseArt_Palette", "Price": 150 },
             { "Id": "PigmentMill", "ItemId": "(BC)blinxxy.MuseArt_PigmentMill", "Price": 1000 },
+            // Varnishing, from Painting level 7: tins of Varnish and the cabinet that cures them.
+            { "Id": "Varnish", "ItemId": "(O)blinxxy.MuseArt_Varnish", "Price": 120, "Condition": "{{PaintingLevel}} 7" },
+            { "Id": "VarnishCabinet", "ItemId": "(BC)blinxxy.MuseArt_VarnishCabinet", "Price": 3000, "Condition": "{{PaintingLevel}} 7" },
             { "Id": "TubeCharcoal", "ItemId": "(O)blinxxy.MuseArt_Tube_charcoal", "Price": 8, "Condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current charcoal" },
             { "Id": "TubeUmber", "ItemId": "(O)blinxxy.MuseArt_Tube_umber", "Price": 8, "Condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current umber" },
             { "Id": "TubeSienna", "ItemId": "(O)blinxxy.MuseArt_Tube_sienna", "Price": 12, "Condition": "blinxxy.MuseArt_KNOWS_PIGMENT Current sienna" },

@@ -31,7 +31,7 @@ internal static class Catalogue
         (30, "renown"),        // paintings are worth 10% more
         (50, "iridium"),       // a letter from Sable, with an iridium brush
     };
-    public const float RenownValue = 1.1f;
+    public const float RenownValue = Market.RenownValue;
     public const int BigWellCells = 450;
 
     public static Dictionary<string, CatalogueEntry> All(Farmer who)
@@ -53,13 +53,7 @@ internal static class Catalogue
         All(who).TryGetValue(SubjectKey(subject), out var entry) ? entry.Count : 0;
 
     // How much a painting's price moves for how often you've painted it before.
-    public static float Novelty(int timesBefore) => timesBefore switch
-    {
-        0 => 1.25f,
-        <= 2 => 1f,
-        <= 5 => 0.85f,
-        _ => 0.7f,
-    };
+    public static float Novelty(int timesBefore) => Market.Novelty(timesBefore);
 
     public static bool HasPerk(Farmer who, string perk) =>
         who.modData.TryGetValue(PerksKey, out string raw) && raw.Split(',').Contains(perk);

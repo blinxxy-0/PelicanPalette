@@ -17,10 +17,11 @@ internal static class PaintingRenderer
     private static readonly Color MudColor = new(96, 84, 70);
     private static readonly Dictionary<string, Texture2D> Cache = new();
 
-    public static Color CellColor(byte pigment, Purity purity)
+    public static Color CellColor(byte pigment, Purity purity, Mark mark = Mark.None)
     {
         var p = Palette.All[pigment];
-        var c = new Color(p.R, p.G, p.B);
+        var (r, g, b) = Technique.Apply(p.R, p.G, p.B, mark);
+        var c = new Color(r, g, b);
         return purity switch
         {
             Purity.Pure => c,
@@ -35,19 +36,19 @@ internal static class PaintingRenderer
         if (raw == null) return null;
         if (Cache.TryGetValue(raw, out var cached) && !cached.IsDisposed)
             return cached;
-        if (!PaintingData.TryDecodeCells(raw, out int size, out var cells, out var purity))
+        if (!PaintingData.TryDecodeCells(raw, out int size, out var cells, out var purity, out var marks))
             return null;
-        var texture = Build(size, cells, purity, new Color(243, 236, 220));
+        var texture = Build(size, cells, purity, new Color(243, 236, 220), marks);
         Cache[raw] = texture;
         return texture;
     }
 
-    public static Texture2D Build(int size, byte[,] cells, Purity[,] purity, Color blank)
+    public static Texture2D Build(int size, byte[,] cells, Purity[,] purity, Color blank, Mark[,]? marks = null)
     {
         var data = new Color[size * size];
         for (int x = 0; x < size; x++)
         for (int y = 0; y < size; y++)
-            data[y * size + x] = cells[x, y] == PixelCanvas.Blank ? blank : CellColor(cells[x, y], purity[x, y]);
+            data[y * size + x] = cells[x, y] == PixelCanvas.Blank ? blank : CellColor(cells[x, y], purity[x, y], marks?[x, y] ?? Mark.None);
         var texture = new Texture2D(Game1.graphics.GraphicsDevice, size, size);
         texture.SetData(data);
         return texture;
@@ -79,6 +80,22 @@ internal static class PaintingRenderer
             side = System.Math.Min(area.Width, area.Height);
         var dest = new Rectangle(area.Center.X - side / 2, area.Center.Y - side / 2, side, side);
         b.Draw(art, dest, null, tint, 0f, Vector2.Zero, SpriteEffects.None, layerDepth + 0.000001f);
+        if (Varnish.FinishOf(item) is string finish)
+            DrawSheen(b, dest, finish, tint, layerDepth + 0.000002f);
+    }
+
+    // Varnish catches the light: a soft diagonal glint across the top left,
+    // brighter the glossier the finish.
+    private static void DrawSheen(SpriteBatch b, Rectangle art, string finish, Color tint, float layerDepth)
+    {
+        float strength = finish switch { "satin" => 0.12f, "gloss" => 0.2f, _ => 0.28f } * (tint.A / 255f);
+        int step = System.Math.Max(1, art.Width / 16);
+        for (int i = 0; i < art.Width / 2; i += step)
+        {
+            var glint = new Rectangle(art.X + i, art.Y + art.Width / 2 - i - step, step, step * 2);
+            if (glint.Y < art.Y) break;
+            b.Draw(Game1.staminaRect, glint, null, Color.White * strength, 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+        }
     }
 
     public static void ClearCache()

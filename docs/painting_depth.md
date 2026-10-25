@@ -10,7 +10,7 @@ Planning notes, 2026-10-25.
 
 Also built (2026-10-25), at your request: **portraits of villagers** (`Painting/Sitters.cs`).
 - From 4 hearts, on medium or large canvases.
-- They take an hour longer, sell for 1.75x and give 1.3x XP.
+- They take an hour longer, sell for 1.3x (valued like a loved gift, `PaintingRules.PortraitSubjectPrice`) and give 1.3x XP. Tuned down from 1.75x by the economy check below.
 - The sitter loves receiving theirs.
 - Portrait commissions come only from friends at 4+ hearts.
 
@@ -24,14 +24,36 @@ Also built (2026-10-25), from section 4:
     - 50: a letter from Sable with an iridium brush
 - **Consignment** (4.1; `Shop/Consignment.cs`, `Shop/ConsignMenu.cs`):
   - Up to 3 paintings, shown on the shop's easels.
-  - Each sells in 1 to 3 days for 1.5x the shop price. Iridium sells by the next day, gold in 1 to 2 days.
+  - Each sells in 1 to 3 days for 1.35x the base price (Sable's counter pays 1.2x). Iridium sells by the next day, gold in 1 to 2 days.
   - You can take one back any time before it sells.
 - **Plein air** (4.2; `Painting/Views.cs`):
   - An easel placed outdoors offers the view: 16x16 tiles of the game's own map render, mostly in front of the easel, reduced to the canvas in your colours.
   - It's timed and valued like a portrait. The subject price depends on the place (farm 200 up to the Summit and Desert at 800), raised for rain, winter and evening.
   - The same place in another season is a new subject.
 
-Not built yet: section 2's price check against real playtests, and 4.3, 4.4 and 4.6. Each section gives the options and a recommendation, then lists the decisions for you.
+Also built (2026-10-25), from 4.3, 4.4 and 4.6 as you chose them:
+- **Varnish** (`Painting/Varnish.cs`): a Varnishing Cabinet at level 7 works like a cask. Satin after 7 days (x1.1), gloss after 14 (x1.2), a gallery finish after 28 (x1.3). Hit it with a tool to take a painting out early.
+- **Techniques by canvas** (`Core/Technique.cs`): glazing on medium canvases, highlights on large ones. The reference marks the cells: a glaze where a darker wash over an owned colour matches the picture clearly better than any plain colour, and a highlight on the brightest spots (a few per picture). The judge's Technique score, an F-score of marks in place, takes up to 15% off the overall, which costs about a star.
+- **Linen and Masterpieces**: linen canvases at level 8. A Masterpiece needs linen, iridium, five stars, Inspired and Technique of at least 0.9. It's worth x1.5, still counts as iridium to the game, gives x1.5 friendship as a gift, and Sable has a line for one.
+
+**The economy check** (`dotnet run -- economy` in ArtStudio.Sim, `Economy.cs`; all multipliers now live in `Core/Market.cs`). Net gold per in-game hour of painting:
+
+| Painting | per hour |
+|---|---|
+| First parsnip (level 1, to Pierre) | 136 |
+| Early still life (level 3, silver, at Sable's) | 196 |
+| Mid still life (level 5, medium, gold, Gallerist) | 367 |
+| Mid portrait (level 6, medium, gold) | 527 |
+| Late still life (level 9, large, iridium) | 820 |
+| Late view or portrait (large, iridium) | ~1,225 |
+| ...a new sitter's Masterpiece, varnished, consigned | 3,301 |
+
+For scale: early fishing is about 150g an hour, mid-game fishing or the Mines about 500, and late Skull Cavern runs about 2,000. Before tuning, a late portrait made 2,125g an hour, and the top case made 7,467g an hour (31,000g for one painting). Changes:
+- Portraits' bonus went from 1.75x to 1.3x, and their subject value from 1000g to 400g.
+- Consignment went from 1.5x to 1.35x.
+- Varnish went from 1.2/1.35/1.5 to 1.1/1.2/1.3.
+
+Not built yet: checking these prices against a real playthrough. Each section gives the options and a recommendation, then lists the decisions for you.
 
 ## Where it stands
 

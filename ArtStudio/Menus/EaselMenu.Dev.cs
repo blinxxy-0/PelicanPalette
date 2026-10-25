@@ -26,6 +26,11 @@ internal sealed partial class EaselMenu
             _canvas.Set(x, y, want, purity, ref budget);
             painted++;
         }
+        // A good painter puts the glazes and highlights in too, last.
+        for (int y = 0; y < n; y++)
+        for (int x = 0; x < n; x++)
+            if (_reference.Marks[x, y] != Mark.None)
+                _canvas.SetMark(x, y, _reference.Marks[x, y]);
         _selected = _reference.PigmentsUsed[0];
         _loadPurity = Purity.Pure;
         _loadMax = PaintingRules.LoadSize(_level, _brush.Load, Purity.Pure);
@@ -92,6 +97,36 @@ internal sealed partial class EaselMenu
             if (c != PixelCanvas.Blank) painted++;
         return painted;
     }
+
+    // Every cell pure and right, every technique in place, Inspired, with
+    // light to spare: the best this canvas can be.
+    internal void DevPaintPerfect(bool techniques = true)
+    {
+        if (_reference == null) return;
+        int n = _canvas.Size, budget = int.MaxValue;
+        _canvas.Clear();
+        for (int x = 0; x < n; x++)
+        for (int y = 0; y < n; y++)
+            if (_reference.Cells[x, y] != PixelCanvas.Blank)
+                _canvas.Set(x, y, _reference.Cells[x, y], Purity.Pure, ref budget);
+        if (techniques)
+            for (int x = 0; x < n; x++)
+            for (int y = 0; y < n; y++)
+                if (_reference.Marks[x, y] != Mark.None)
+                    _canvas.SetMark(x, y, _reference.Marks[x, y]);
+        _sparksCaught = PaintingRules.SparksForInspired;
+        _lightLeft = _lightTotal * 0.5f;
+    }
+
+    internal void DevSelectTool(PaintTool tool) => _tool = tool;
+
+    internal bool DevToolAvailable(PaintTool tool) => ToolAvailable(tool);
+
+    internal void DevSetLinen(bool linen) => _setupLinen = linen;
+
+    internal Reference? DevReference => _reference;
+
+    internal PaintingResult? DevResult => _result;
 
     internal int DevPaintLeft(int pigment) => PaintLeft(pigment);
 

@@ -20,7 +20,7 @@ internal static class ArtShop
     public const string LocationName = ModEntry.Id + "_ArtShop";
 
     // The art shop pays more for paintings than Pierre does.
-    public const float PaintingPremium = 1.2f;
+    public const float PaintingPremium = Core.Market.ArtShopPremium;
 
     // Where Sable stands to serve, behind the counter (the row above it).
     public static readonly Rectangle KeeperArea = new(2, 4, 4, 1);

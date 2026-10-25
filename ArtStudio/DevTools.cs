@@ -228,6 +228,22 @@ internal static class DevTools
         yield return ("paint_large", () => Paint(CanvasKind.Large, melon, pumpkin, parsnip));
         yield return ("paint_lv10", () => { ArtProgress.SetLevel(Game1.player, 10); return Paint(CanvasKind.Medium, melon, parsnip); });
         yield return ("paint_free", () => EaselMenu.StartOriginal(Game1.player, CanvasKind.Small));
+        yield return ("tech_glaze", () => { var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.7f, 5); m.DevSelectTool(PaintTool.Glaze); return m; });
+        yield return ("tech_highlight", () => { var m = Paint(CanvasKind.Large, "(O)72"); m.DevPaintPartly(0.9f, 5); m.DevSelectTool(PaintTool.Highlight); return m; });
+        yield return ("tech_results", () => { ArtProgress.SetLevel(Game1.player, 10); var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(1f, 5); m.DevFinish(false); return m; });
+        yield return ("tech_masterpiece", () =>
+        {
+            ArtProgress.SetLevel(Game1.player, 10);
+            Game1.player.addItemToInventory(ItemRegistry.Create(ArtItems.QualifiedLinenId(CanvasKind.Medium)));
+            var m = new EaselMenu(Game1.player);
+            m.DevSetCanvas(CanvasKind.Medium);
+            m.DevSetLinen(true);
+            m.DevBeginFromSetup(pumpkin);
+            m.DevPaintPerfect();
+            m.DevFinish(false);
+            return m;
+        });
+        yield return ("tech_linen", () => { ArtProgress.SetLevel(Game1.player, 8); var m = new EaselMenu(Game1.player); m.DevSetCanvas(CanvasKind.Medium); m.DevSetLinen(true); m.DevSetup(pumpkin); return m; });
         yield return ("toast_long", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevToast("Spark! You found Iridium Violet pigment!"); return m; });
         yield return ("toast_tool", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevToast("Dropper unlocks at Painting level 6."); return m; });
         yield return ("mix_start", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevOpenMix(moss, 0, armed: false); return m; });

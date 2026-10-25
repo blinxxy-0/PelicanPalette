@@ -38,6 +38,11 @@ internal static class ArtItems
 
     public static string CanvasId(CanvasKind kind) => $"{ModEntry.Id}_Canvas_{kind}";
     public static string QualifiedCanvasId(CanvasKind kind) => "(O)" + CanvasId(kind);
+
+    // Linen canvases (medium and large): the only ones a Masterpiece can be painted on.
+    private const int LinenSprite = 11;
+    public static string LinenId(CanvasKind kind) => $"{ModEntry.Id}_Linen_{kind}";
+    public static string QualifiedLinenId(CanvasKind kind) => "(O)" + LinenId(kind);
     public static string BrushId(BrushSpec brush) => $"{ModEntry.Id}_Brush_{brush.Id}";
     public static string TubeId(int pigment) => $"{ModEntry.Id}_Tube_{Palette.All[pigment].Id}";
 
@@ -109,6 +114,8 @@ internal static class ArtItems
         AddObject(objects, CanvasId(CanvasKind.Small), I18n.Get("item.canvas.small"), I18n.Get("item.canvas.small.description"), 15, CanvasSprite);
         AddObject(objects, CanvasId(CanvasKind.Medium), I18n.Get("item.canvas.medium"), I18n.Get("item.canvas.medium.description"), 50, CanvasSprite + 1);
         AddObject(objects, CanvasId(CanvasKind.Large), I18n.Get("item.canvas.large"), I18n.Get("item.canvas.large.description"), 120, CanvasSprite + 2);
+        AddObject(objects, LinenId(CanvasKind.Medium), I18n.Get("item.linen.medium"), I18n.Get("item.linen.description"), 150, LinenSprite);
+        AddObject(objects, LinenId(CanvasKind.Large), I18n.Get("item.linen.large"), I18n.Get("item.linen.description"), 300, LinenSprite + 1);
 
         var brushPrices = new Dictionary<string, int> { ["flat"] = 150, ["sable"] = 350, ["rigger"] = 450, ["iridium"] = 1500 };
         int sprite = BrushSprite;
@@ -117,6 +124,7 @@ internal static class ArtItems
 
         AddObject(objects, FrameItemId, I18n.Get("item.frame"), I18n.Get("item.frame.description"), 60, FrameSprite);
         AddObject(objects, PaletteId, I18n.Get("item.palette"), I18n.Get("item.palette.description"), 40, PaletteSprite);
+        AddObject(objects, Varnish.VarnishId, I18n.Get("item.varnish"), I18n.Get("item.varnish.description"), 30, Varnish.VarnishSprite);
         for (int i = 0; i < Palette.All.Length; i++)
             AddObject(objects, TubeId(i), I18n.Get("item.tube", new { pigment = I18n.Pigment(i) }),
                 I18n.Get("item.tube.description", new { pigment = I18n.Pigment(i).ToLowerInvariant(), cells = PaletteItem.TubeCells }),
@@ -173,6 +181,17 @@ internal static class ArtItems
             CanBePlacedIndoors = true,
             CanBePlacedOutdoors = true,
         };
+        bigCraftables[Varnish.CabinetId] = new BigCraftableData
+        {
+            Name = Varnish.CabinetId,
+            DisplayName = I18n.Get("item.cabinet"),
+            Description = I18n.Get("item.cabinet.description"),
+            Price = 800,
+            Texture = BigCraftablesTexture,
+            SpriteIndex = Varnish.CabinetSprite,
+            CanBePlacedIndoors = true,
+            CanBePlacedOutdoors = true,
+        };
     }
 
     // The Pigment Mill, an artisan machine like the Preserves Jar: put in a
@@ -217,6 +236,8 @@ internal static class ArtItems
         recipes[CanvasId(CanvasKind.Small)] = $"771 5 388 2/Home/{CanvasId(CanvasKind.Small)}/false/null/{I18n.Get("item.canvas.small")}";
         recipes[CanvasId(CanvasKind.Medium)] = $"428 1 388 5/Home/{CanvasId(CanvasKind.Medium)}/false/{AtLevel(PaintingRules.CanvasUnlockLevel(CanvasKind.Medium))}/{I18n.Get("item.canvas.medium")}";
         recipes[CanvasId(CanvasKind.Large)] = $"428 2 709 3/Home/{CanvasId(CanvasKind.Large)}/false/{AtLevel(PaintingRules.CanvasUnlockLevel(CanvasKind.Large))}/{I18n.Get("item.canvas.large")}";
+        recipes[LinenId(CanvasKind.Medium)] = $"428 2 709 2/Home/{LinenId(CanvasKind.Medium)}/false/{AtLevel(PaintingRules.LinenLevel)}/{I18n.Get("item.linen.medium")}";
+        recipes[LinenId(CanvasKind.Large)] = $"428 3 709 4/Home/{LinenId(CanvasKind.Large)}/false/{AtLevel(PaintingRules.LinenLevel)}/{I18n.Get("item.linen.large")}";
         recipes[FrameItemId] = $"388 10 334 1/Home/{FrameItemId}/false/{AtLevel(2)}/{I18n.Get("item.frame")}";
 
         recipes[BrushId(Brushes.All[2])] = $"771 30 388 5/Home/{BrushId(Brushes.All[2])}/false/{AtLevel(2)}/{I18n.Get("brush.flat")}";
@@ -229,6 +250,11 @@ internal static class ArtItems
         // and a tube of a new colour teaches it.
         recipes[PaletteId] = $"388 10/Home/{PaletteId}/false/null/{I18n.Get("item.palette")}";
         recipes[MillId] = $"390 30 334 2 388 10/Home/{MillId}/true/{AtLevel(1)}/{I18n.Get("item.mill")}";
+
+        // Varnishing (Painting/Varnish.cs): oak resin and oil make two tins;
+        // the cabinet is hardwood, resin and iron.
+        recipes[Varnish.VarnishId] = $"725 1 247 1/Home/{Varnish.VarnishId} 2/false/{AtLevel(Varnish.UnlockLevel)}/{I18n.Get("item.varnish")}";
+        recipes[Varnish.CabinetId] = $"709 10 725 2 335 2/Home/{Varnish.CabinetId}/true/{AtLevel(Varnish.UnlockLevel)}/{I18n.Get("item.cabinet")}";
     }
 
     // Recipes every painter knows from the start.

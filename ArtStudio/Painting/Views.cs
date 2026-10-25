@@ -88,11 +88,12 @@ internal static class Views
 
     // The capture reduced to a canvas: each cell the most common colour of
     // its block once matched to the owned pigments, so edges stay crisp.
-    public static Reference Reference(Capture capture, int canvasSize, IReadOnlyList<int> owned)
+    public static Reference Reference(Capture capture, int canvasSize, IReadOnlyList<int> owned, Techniques allowed = Techniques.None)
     {
         if (capture.BySize.TryGetValue(canvasSize, out var cached)) return cached;
         var cells = new byte[canvasSize, canvasSize];
-        var counts = new Dictionary<byte, int>();
+        var marks = new Mark[canvasSize, canvasSize];
+        var counts = new Dictionary<(byte, Mark), int>();
         float block = capture.Size / (float)canvasSize;
         for (int cx = 0; cx < canvasSize; cx++)
         for (int cy = 0; cy < canvasSize; cy++)
@@ -104,12 +105,13 @@ internal static class Views
             for (int y = y0; y < y1; y++)
             {
                 var p = capture.Pixels[y * capture.Size + x];
-                byte c = (byte)Palette.Nearest(p.R, p.G, p.B, owned);
+                var c = Technique.Nearest(p.R, p.G, p.B, owned, allowed);
                 counts[c] = counts.GetValueOrDefault(c) + 1;
             }
-            cells[cx, cy] = counts.OrderByDescending(kv => kv.Value).First().Key;
+            (cells[cx, cy], marks[cx, cy]) = counts.OrderByDescending(kv => kv.Value).First().Key;
         }
-        return capture.BySize[canvasSize] = new Reference(cells);
+        Technique.Limit(cells, marks);
+        return capture.BySize[canvasSize] = new Reference(cells, marks);
     }
 
     // What a view's subject is worth, like an item's price for a still life:

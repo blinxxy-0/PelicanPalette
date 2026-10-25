@@ -120,6 +120,8 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_painttest", "Paint as a resource: the Palette, tubes, spending paint, and the Pigment Mill. Run 'museart_painttest', then 'museart_painttest check' a second later.", (_, args) => PaintTest(monitor, args));
         DevTools.AddCommand(helper, "museart_knowtest", "Pigments as knowledge, and painting taking time. Run 'museart_knowtest', then 'museart_knowtest close', then 'museart_knowtest check' a few seconds later.", (_, args) => KnowTest(monitor, args));
         DevTools.AddCommand(helper, "museart_gallerytest", "The painting record, consignment and plein air. Usage: museart_gallerytest record|consign|view (view: stand outdoors first, e.g. museart_warp Farm 64 15).", (_, args) => GalleryTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
+        DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
         DevTools.AddCommand(helper, "museart_portrait", "Makes Sable's portrait of the current farmer and saves it (and the farmer as rendered) to exports/portrait.png.", (_, _) =>
         {
@@ -299,7 +301,7 @@ internal static class DevGame
         foreach (var (key, raw) in DataLoader.CraftingRecipes(Game1.content).Where(r => r.Key.StartsWith(ModEntry.Id)))
         {
             var made = new CraftingRecipe(key).createItem();
-            Check(monitor, $"recipe {key} crafts its item", made != null && made.ItemId == raw.Split('/')[2], made?.QualifiedItemId ?? "null");
+            Check(monitor, $"recipe {key} crafts its item", made != null && made.ItemId == raw.Split('/')[2].Split(' ')[0], made?.QualifiedItemId ?? "null");
         }
         Check(monitor, "the easel and small canvas recipes are known", ArtItems.StarterRecipes.All(r => who.craftingRecipes.ContainsKey(r)));
         int rose = Palette.IndexOf("rose");
@@ -837,6 +839,7 @@ internal static class DevGame
     {
         if (!Context.IsWorldReady) return;
         var who = Game1.player;
+        FreshStart(who);
         ModEntry.Config.Difficulty = Difficulty.Relaxed;     // portraits, not paint, are under test here
         ArtProgress.SetLevel(who, 6);
         foreach (var (npc, hearts) in new[] { ("Abigail", 5), ("Leah", 2), ("Haley", 0) })
@@ -873,7 +876,7 @@ internal static class DevGame
         Check(monitor, "it's a portrait of Abigail", portrait?.DisplayName == I18n.Get("painting.title.portrait", new { name = Sitters.DisplayName("Abigail") }), portrait?.DisplayName ?? "none");
         Check(monitor, "a medium portrait takes 3 hours", ArtHooks.PendingMinutes - pendingBefore == 180, $"{ArtHooks.PendingMinutes - pendingBefore} minutes");
         var data = portrait == null ? null : PaintingData.Read(portrait);
-        int stillLife = data == null ? 0 : (int)(PaintingRules.Value(PaintingRules.CanvasSize(CanvasKind.Medium), data.Difficulty, 1000, 6));
+        int stillLife = data == null ? 0 : (int)(PaintingRules.Value(PaintingRules.CanvasSize(CanvasKind.Medium), data.Difficulty, PaintingRules.PortraitSubjectPrice, 6));
         Check(monitor, "a portrait sells for more than a still life would", portrait != null && portrait.Price > stillLife, $"{portrait?.Price}g vs {stillLife}g");
         if (portrait != null)
         {
@@ -900,11 +903,210 @@ internal static class DevGame
         ModEntry.Config.Difficulty = Difficulty.Normal;
     }
 
+    // Glazes, highlights and Masterpieces (2026-10-25).
+    private static void TechTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        FreshStart(who);
+        ModEntry.Config.Difficulty = Difficulty.Normal;
+        ArtProgress.SetLevel(who, 10);
+        ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length));
+        foreach (var item in who.Items.Where(PaintingItems.IsPainting).ToList())
+            who.removeItemFromInventory(item);
+        var all = ArtProgress.OwnedPigments(who);
+        int Size(CanvasKind k) => PaintingRules.CanvasSize(k);
+
+        // References: flat on a small canvas, glazed on a medium one, highlights on a large one.
+        string[] subjects = { "(O)254", "(O)276", "(O)72", "(O)66", "(O)613", "(O)400", "(O)252", "(O)268" };
+        Reference Ref(string id, CanvasKind k, Difficulty d = Difficulty.Normal) =>
+            ReferenceBuilder.StillLife(new[] { id }, Size(k), all, PaintingRules.TechniquesFor(Size(k), d == Difficulty.Relaxed));
+        int glazedMedium = subjects.Count(id => Technique.Count(Ref(id, CanvasKind.Medium).Marks, Mark.Glaze) > 0);
+        int highlightedLarge = subjects.Count(id => Technique.Count(Ref(id, CanvasKind.Large).Marks, Mark.Highlight) > 0);
+        Check(monitor, "a small canvas is flat colour", subjects.All(id => !Ref(id, CanvasKind.Small).UsesTechniques));
+        Check(monitor, "medium references have glazes", glazedMedium >= subjects.Length / 2, $"{glazedMedium} of {subjects.Length}");
+        Check(monitor, "only large ones have highlights", highlightedLarge > 0 && subjects.All(id => Technique.Count(Ref(id, CanvasKind.Medium).Marks, Mark.Highlight) == 0),
+            $"{highlightedLarge} of {subjects.Length} large");
+        Check(monitor, "relaxed paints flat", subjects.All(id => !Ref(id, CanvasKind.Large, Difficulty.Relaxed).UsesTechniques));
+        foreach (string id in subjects.Take(4))
+        {
+            var r = Ref(id, CanvasKind.Large);
+            monitor.Log($"  {ItemRegistry.GetDataOrErrorItem(id).DisplayName}: {r.SubjectCells} cells, {Technique.Count(r.Marks, Mark.Glaze)} glazed, {Technique.Count(r.Marks, Mark.Highlight)} highlights, difficulty {r.Difficulty} (small {Ref(id, CanvasKind.Small).Difficulty})", LogLevel.Info);
+        }
+
+        // The canvas: a glaze needs paint under it, paint covers it, wet paint smears a highlight.
+        var canvas = new PixelCanvas(10);
+        int budget = 100;
+        Check(monitor, "no glaze on bare canvas", !canvas.SetMark(2, 2, Mark.Glaze));
+        canvas.Set(2, 2, 3, Purity.Pure, ref budget);
+        Check(monitor, "a glaze goes over paint", canvas.SetMark(2, 2, Mark.Glaze) && canvas.MarkAt(2, 2) == Mark.Glaze);
+        canvas.Set(2, 2, 4, Purity.Pure, ref budget);
+        Check(monitor, "painting over a glaze covers it", canvas.MarkAt(2, 2) == Mark.None);
+        canvas.SetMark(2, 2, Mark.Highlight);
+        canvas.Set(3, 2, 5, Purity.Pure, ref budget);
+        Check(monitor, "painting beside a highlight smears it", canvas.MarkAt(2, 2) == Mark.None && canvas.Smeared == 1);
+
+        // The judge: the techniques count for about a star.
+        var medium = Ref("(O)254", CanvasKind.Medium);
+        var cells = medium.Cells;
+        var purity = new Purity[Size(CanvasKind.Medium), Size(CanvasKind.Medium)];
+        var with = PaintingJudge.Judge(cells, purity, medium, medium.Marks);
+        var without = PaintingJudge.Judge(cells, purity, medium, null);
+        Check(monitor, "a perfect copy with its glazes gets five stars", with.Stars == 5f && with.Technique == 1f, $"{with.Stars} stars, technique {with.Technique}");
+        Check(monitor, "without them, it loses about a star", without.Technique == 0f && with.Stars - without.Stars is >= 0.5f and <= 1.5f, $"{without.Stars} stars");
+
+        // Through the easel: the tools come with the canvas.
+        var smallMenu = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" });
+        var largeMenu = EaselMenu.StartStillLife(who, CanvasKind.Large, new[] { "(O)254" });
+        Check(monitor, "the glaze and highlight tools come with the canvas",
+            !smallMenu.DevToolAvailable(PaintTool.Glaze) && largeMenu.DevToolAvailable(PaintTool.Glaze) && largeMenu.DevToolAvailable(PaintTool.Highlight)
+            && !EaselMenu.StartStillLife(who, CanvasKind.Medium, new[] { "(O)254" }).DevToolAvailable(PaintTool.Highlight));
+
+        // Saved with the painting.
+        largeMenu.DevPaintPartly(1f, 3);
+        largeMenu.DevFinish(false);
+        var painted = largeMenu.DevPainting;
+        var reread = painted == null ? null : PaintingData.Read(painted);
+        Check(monitor, "the glazes and highlights are saved with the painting", reread?.Marks != null
+            && Technique.Count(reread.Marks, Mark.Glaze) == Technique.Count(largeMenu.DevReference!.Marks, Mark.Glaze),
+            reread?.Marks == null ? "none" : $"{Technique.Count(reread.Marks, Mark.Glaze)} glazes, {Technique.Count(reread.Marks, Mark.Highlight)} highlights");
+        Check(monitor, "results score the technique", largeMenu.DevResult?.Technique is >= 0.9f, largeMenu.DevResult?.Technique.ToString() ?? "none");
+
+        // Masterpieces: only on linen, only when everything's right.
+        SObject? Paint(bool linen, bool techniques)
+        {
+            FreshStart(who);
+            who.addItemToInventory(ItemRegistry.Create(linen ? ArtItems.QualifiedLinenId(CanvasKind.Medium) : ArtItems.QualifiedCanvasId(CanvasKind.Medium)));
+            var m = new EaselMenu(who);
+            Game1.activeClickableMenu = m;
+            m.DevSetCanvas(CanvasKind.Medium);
+            m.DevSetLinen(linen);
+            m.DevBeginFromSetup("(O)254");
+            if (!m.DevIsPainting) return null;
+            m.DevPaintPerfect(techniques);
+            m.DevFinish(false);
+            var p = m.DevPainting;
+            m.DevKeep();
+            Game1.exitActiveMenu();
+            return p;
+        }
+        var master = Paint(linen: true, techniques: true);
+        var plain = Paint(linen: false, techniques: true);
+        var sloppy = Paint(linen: true, techniques: false);
+        Check(monitor, "a perfect painting on linen is a Masterpiece", master != null && PaintingData.IsMasterpiece(master), master == null ? "didn't start" : $"quality {master.Quality}");
+        Check(monitor, "the same on plain canvas isn't", plain != null && !PaintingData.IsMasterpiece(plain) && plain.Quality == PaintingRules.Iridium);
+        Check(monitor, "nor on linen with the glazes left out", sloppy != null && !PaintingData.IsMasterpiece(sloppy));
+        if (master != null && plain != null)
+        {
+            Check(monitor, "a Masterpiece is worth half as much again", Math.Abs(master.Price - plain.Price * PaintingRules.MasterpieceValue) <= 2f, $"{master.Price}g vs {plain.Price}g");
+            Check(monitor, "it says so", master.getDescription().Contains(I18n.Get("painting.provenance.masterpiece")));
+            Check(monitor, "a Masterpiece stays iridium to the game", master.Quality == PaintingRules.Iridium);
+        }
+        Check(monitor, "using linen takes a linen canvas", !who.Items.Any(i => i?.QualifiedItemId == ArtItems.QualifiedLinenId(CanvasKind.Medium)));
+    }
+
+    // Varnishing (2026-10-25): the cabinet works like a cask.
+    // Tests begin in the morning, with an empty painting record, so what ran
+    // before (time spent painting, novelty, milestone rewards) can't sway them.
+    private static void FreshStart(Farmer who)
+    {
+        ArtHooks.DevFreshMorning();
+        who.modData.Remove(ModEntry.Id + "/Catalogue");
+        who.modData.Remove(ModEntry.Id + "/CollectionPerks");
+    }
+
+    private static void VarnishTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        FreshStart(who);
+        var house = who.currentLocation;
+        foreach (var item in who.Items.Where(PaintingItems.IsPainting).ToList())
+            who.removeItemFromInventory(item);
+
+        // The cabinet beside the farmer.
+        var tile = who.Tile + new Vector2(2, 0);
+        house.objects.Remove(tile);
+        var cabinet = ItemRegistry.Create<SObject>(Varnish.QualifiedCabinetId);
+        Check(monitor, "the cabinet can be placed", cabinet.placementAction(house, (int)tile.X * 64, (int)tile.Y * 64, who));
+        cabinet = house.objects[tile];
+
+        SObject Painting()
+        {
+            var m = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" });
+            m.DevPaintPartly(1f, 3);
+            m.DevFinish(false);
+            return m.DevPainting!;
+        }
+        int Debris(Func<Item, bool> match) => house.debris.Count(d => d.item != null && match(d.item));
+
+        // Without a tin it won't take the painting.
+        foreach (var tin in who.Items.Where(Varnish.IsVarnish).ToList())
+            who.removeItemFromInventory(tin);
+        var first = Painting();
+        who.addItemToInventory(first);
+        who.CurrentToolIndex = who.Items.IndexOf(first);
+        house.checkAction(new xTile.Dimensions.Location((int)tile.X, (int)tile.Y), Game1.viewport, who);
+        Game1.exitActiveMenu();
+        Check(monitor, "no varnish, no varnishing", cabinet.heldObject.Value == null && who.Items.Contains(first));
+
+        // With one, a right-click while holding the painting puts it in.
+        who.addItemToInventory(ItemRegistry.Create("(O)" + Varnish.VarnishId, 2));
+        who.CurrentToolIndex = who.Items.IndexOf(first);
+        int basePrice = first.Price;
+        house.checkAction(new xTile.Dimensions.Location((int)tile.X, (int)tile.Y), Game1.viewport, who);
+        Check(monitor, "holding a painting, the cabinet takes it and a tin", cabinet.heldObject.Value != null && !who.Items.Contains(first)
+            && who.Items.Where(Varnish.IsVarnish).Sum(i => i.Stack) == 1, $"{who.Items.Where(Varnish.IsVarnish).Sum(i => i.Stack)} tins left");
+
+        // Ten days on: satin; a right-click only tells you so; a pickaxe takes it out.
+        cabinet.modData[ModEntry.Id + "/VarnishStart"] = (Game1.Date.TotalDays - 10).ToString();
+        cabinet.checkForAction(who);
+        Game1.exitActiveMenu();
+        Check(monitor, "before it's cured a right-click leaves it in", cabinet.heldObject.Value != null);
+        cabinet.performToolAction(ItemRegistry.Create<Tool>("(T)Pickaxe"));
+        Check(monitor, "a tool takes it out early and leaves the cabinet", cabinet.heldObject.Value == null && house.objects.ContainsKey(tile));
+        var satin = house.debris.Select(d => d.item).OfType<SObject>().LastOrDefault(PaintingItems.IsPainting);
+        Check(monitor, "after 10 days it has a satin finish, worth more", satin != null && Varnish.FinishOf(satin) == "satin" && satin.Price == (int)Math.Round(basePrice * Varnish.ValueOf("satin")),
+            satin == null ? "nothing dropped" : $"{Varnish.FinishOf(satin)}, {basePrice}g -> {satin.Price}g");
+        house.debris.Clear();
+        if (satin != null)
+            Check(monitor, "a varnished painting can't be varnished again", !cabinet.performObjectDropInAction(satin, true, who));
+
+        // Taken out on day 3: no finish, the tin is wasted.
+        var early = Painting();
+        Varnish.Load(cabinet, early, who);
+        cabinet.modData[ModEntry.Id + "/VarnishStart"] = (Game1.Date.TotalDays - 3).ToString();
+        var unvarnished = Varnish.TakeOut(cabinet);
+        Check(monitor, "out before 7 days, it's unvarnished", unvarnished != null && Varnish.FinishOf(unvarnished) == null && unvarnished.Price == early.Price);
+
+        // Four weeks: ready, and a right-click hands it over.
+        who.addItemToInventory(ItemRegistry.Create("(O)" + Varnish.VarnishId, 1));
+        var last = Painting();
+        Varnish.Load(cabinet, last, who);
+        cabinet.modData[ModEntry.Id + "/VarnishStart"] = (Game1.Date.TotalDays - 28).ToString();
+        Varnish.MarkCured();
+        Check(monitor, "after 28 days it shows as ready", cabinet.readyForHarvest.Value);
+        cabinet.checkForAction(who);
+        var gallery = who.Items.OfType<SObject>().FirstOrDefault(i => PaintingItems.IsPainting(i) && Varnish.FinishOf(i) == "gallery");
+        Check(monitor, "the cured painting comes out with a gallery finish, worth more again", gallery != null && gallery.Price == (int)Math.Round(last.Price * Varnish.ValueOf("gallery")) && cabinet.heldObject.Value == null,
+            gallery == null ? "none in the bag" : $"{last.Price}g -> {gallery.Price}g");
+        if (gallery != null)
+        {
+            Check(monitor, "its description says so", string.Join(" ", gallery.getDescription().Split(new[] { '\n', '\r', ' ' }, StringSplitOptions.RemoveEmptyEntries)).Contains(I18n.Get("varnish.finish.gallery")));
+            Check(monitor, "framing keeps the finish", Varnish.FinishOf(ArtHooks.Frame(gallery)) == "gallery");
+        }
+
+        // Leave one curing for the screenshot.
+        who.addItemToInventory(ItemRegistry.Create("(O)" + Varnish.VarnishId, 1));
+        Varnish.Load(cabinet, Painting(), who);
+    }
+
     // The record, consignment and plein air (2026-10-25).
     private static void GalleryTest(IMonitor monitor, string[] args)
     {
         if (!Context.IsWorldReady) return;
         var who = Game1.player;
+        FreshStart(who);
         ModEntry.Config.Difficulty = Difficulty.Relaxed;     // no paint needed for these
         ArtProgress.SetLevel(who, 6);
         string parsnip = "(O)24", melon = "(O)254";
@@ -970,7 +1172,7 @@ internal static class DevGame
                 who.addItemToInventory(painting);
                 int shopPrice = painting.sellToStorePrice();
                 Check(monitor, "consigning takes it from the bag", Shop.Consignment.Consign(who, painting) && !who.Items.Contains(painting) && Shop.Consignment.All(who).Contains(painting));
-                Check(monitor, "a buyer pays half again the shop price", Shop.Consignment.Price(painting) == (int)Math.Round(shopPrice * 1.5f), $"{Shop.Consignment.Price(painting)}g vs {shopPrice}g");
+                Check(monitor, "a buyer pays more than the shop price", Shop.Consignment.Price(painting) == (int)Math.Round(shopPrice * Market.ConsignPremium), $"{Shop.Consignment.Price(painting)}g vs {shopPrice}g");
                 Check(monitor, "it sells within three days", Shop.Consignment.DaysLeft(painting) is >= 1 and <= 3, Shop.Consignment.DaysLeft(painting).ToString());
                 bool took = Shop.Consignment.TakeBack(who, painting);
                 Check(monitor, "you can take it back", took && who.Items.Contains(painting) && !Shop.Consignment.All(who).Any(),
@@ -1032,6 +1234,8 @@ internal static class DevGame
     private static void PaintTest(IMonitor monitor, string[] args)
     {
         if (!Context.IsWorldReady) return;
+        if (args.FirstOrDefault() != "check")
+            FreshStart(Game1.player);
         var who = Game1.player;
         int charcoal = Palette.IndexOf("charcoal"), sienna = Palette.IndexOf("sienna");
         if (args.FirstOrDefault() != "check")

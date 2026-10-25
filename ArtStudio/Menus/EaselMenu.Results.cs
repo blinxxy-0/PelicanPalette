@@ -27,6 +27,7 @@ internal sealed partial class EaselMenu
     private float _revealTime;
     private Rectangle _keepButton;
     private float _novelty = 1f;
+    private bool _linen, _masterpiece;
     private int _timesBefore;
     private (int Subjects, string Perk)? _milestone;
 
@@ -40,6 +41,7 @@ internal sealed partial class EaselMenu
 
         var cells = _canvas.Snapshot();
         var purity = _canvas.PuritySnapshot();
+        var marks = _canvas.MarksSnapshot();
         int painted = 0;
         float purityCredit = 0f;
         foreach (var (c, p) in cells.Cast<byte>().Zip(purity.Cast<Purity>()))
@@ -65,7 +67,7 @@ internal sealed partial class EaselMenu
 
         if (_reference != null)
         {
-            _result = PaintingJudge.Judge(cells, purity, _reference);
+            _result = PaintingJudge.Judge(cells, purity, _reference, marks);
             float inspiredBonus = Has(PaintingSkill.Instance.Visionary) ? PaintingSkill.VisionaryInspiredBonus : PaintingRules.InspiredBonus;
             _score = PaintingRules.Score(_result.Stars, _level, _inspired, _allPure, inspiredBonus);
             _quality = PaintingRules.Quality(_score, _level);
@@ -87,7 +89,7 @@ internal sealed partial class EaselMenu
         }
 
         bool portrait = IsSitterSubject(_subjectItems);
-        int subjectPrice = portrait ? 1000
+        int subjectPrice = portrait ? PaintingRules.PortraitSubjectPrice
             : IsViewSubject(_subjectItems) ? Views.SubjectPrice(_subjectItems[0])
             : _subjectItems.Length == 0 ? 0
             : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
@@ -96,6 +98,10 @@ internal sealed partial class EaselMenu
             : PaintingRules.OriginalValue(size);
         if (Has(PaintingSkill.Instance.Gallerist))
             price = (int)Math.Round(price * PaintingSkill.GalleristPrice);
+
+        _masterpiece = _result != null && PaintingRules.IsMasterpiece(_linen, _quality, _result.Stars, _inspired, _result.Technique);
+        if (_masterpiece)
+            price = (int)Math.Round(price * PaintingRules.MasterpieceValue);
 
         // Something you've never painted is worth more than your tenth of it.
         string subject = _subjectItems.Length == 0 ? PaintingData.OriginalSubject : string.Join("|", _subjectItems);
@@ -112,6 +118,8 @@ internal sealed partial class EaselMenu
             Size = size,
             Cells = cells,
             Purity = purity,
+            Marks = marks,
+            Masterpiece = _masterpiece,
             Subject = subject,
             Stars = _result?.Stars ?? 0f,
             Difficulty = _reference?.Difficulty ?? 0,
@@ -119,12 +127,12 @@ internal sealed partial class EaselMenu
             Date = I18n.Get("painting.date", new { season = Utility.getSeasonNameFromNumber(Game1.seasonIndex), day = Game1.dayOfMonth, year = Game1.year }),
         };
         _painting = PaintingItems.Create(data, _quality, price);
-        _resultTexture = PaintingRenderer.Build(size, cells, purity, CanvasColor);
+        _resultTexture = PaintingRenderer.Build(size, cells, purity, CanvasColor, marks);
 
         _newLevel = ArtProgress.AddXp(_who, _xp);
         if (_brushItem != null)
             ArtHooks.WearBrush(_who, _brushItem, _brush);
-        Game1.playSound(lightGone ? "dwop" : "achievement");
+        Game1.playSound(_masterpiece ? "reward" : lightGone ? "dwop" : "achievement");
         LayoutResults();
     }
 
@@ -235,7 +243,7 @@ internal sealed partial class EaselMenu
             int refSide = 96;
             var refArea = new Rectangle(xPositionOnScreen + width - Pad - 40 - refSide, cy - 8, refSide, refSide);
             Ui.Paper(b, new Rectangle(refArea.X - 12, refArea.Y - 12, refArea.Width + 24, refArea.Height + 24));
-            DrawCells(b, _reference.Cells, null, refArea, CanvasColor, false);
+            DrawCells(b, _reference.Cells, null, refArea, CanvasColor, false, _reference.Marks);
         }
         float reveal = Math.Clamp(_revealTime / 0.8f, 0f, 1f);
 
@@ -243,13 +251,17 @@ internal sealed partial class EaselMenu
         {
             Ui.Stars(b, _result.Stars * reveal, cx, cy, 40, 8);
             cy += 64;
-            Criterion(b, I18n.Get("results.shape"), I18n.Rating(_result.Shape), cx, ref cy);
-            Criterion(b, I18n.Get("results.color"), I18n.Rating(_result.Color), cx, ref cy);
-            Criterion(b, I18n.Get("results.neatness"), I18n.Rating(_result.Neatness), cx, ref cy);
-            Criterion(b, I18n.Get("results.mixing"), I18n.Get(_allPure ? "results.mixing.flawless" : "results.mixing.value", new { percent = (_purityPct * 100f).ToString("0") }), cx, ref cy);
-            Criterion(b, I18n.Get("results.sparks"), _inspired ? I18n.Get("results.sparks.inspired", new { caught = _sparksCaught }) : _sparksCaught.ToString(), cx, ref cy);
+            // A seventh row (technique) only fits with the rows a little closer.
+            int row = _result.Technique >= 0f ? 30 : 34;
+            Criterion(b, I18n.Get("results.shape"), I18n.Rating(_result.Shape), cx, ref cy, row);
+            Criterion(b, I18n.Get("results.color"), I18n.Rating(_result.Color), cx, ref cy, row);
+            Criterion(b, I18n.Get("results.neatness"), I18n.Rating(_result.Neatness), cx, ref cy, row);
+            if (_result.Technique >= 0f)
+                Criterion(b, I18n.Get("results.technique"), I18n.Rating(_result.Technique), cx, ref cy, row);
+            Criterion(b, I18n.Get("results.mixing"), I18n.Get(_allPure ? "results.mixing.flawless" : "results.mixing.value", new { percent = (_purityPct * 100f).ToString("0") }), cx, ref cy, row);
+            Criterion(b, I18n.Get("results.sparks"), _inspired ? I18n.Get("results.sparks.inspired", new { caught = _sparksCaught }) : _sparksCaught.ToString(), cx, ref cy, row);
             if (_timed)
-                Criterion(b, I18n.Get("results.light"), _lightGone ? I18n.Get("results.light.ran-out") : I18n.Get("results.light.spare", new { seconds = _lightLeft.ToString("0") }), cx, ref cy);
+                Criterion(b, I18n.Get("results.light"), _lightGone ? I18n.Get("results.light.ran-out") : I18n.Get("results.light.spare", new { seconds = _lightLeft.ToString("0") }), cx, ref cy, row);
             cy += 8;
         }
 
@@ -258,8 +270,12 @@ internal sealed partial class EaselMenu
             var star = Ui.QualityStar(_quality);
             if (star.HasValue)
                 b.Draw(Game1.mouseCursors, new Rectangle(cx, cy, 40, 40), star.Value, Color.White);
-            string qualityText = _reference == null ? I18n.Get("results.original") : I18n.Get("results.quality", new { quality = Ui.QualityName(_quality) });
-            Ui.Text(b, qualityText, new Vector2(cx + (star.HasValue ? 52 : 0), cy + 6), Ui.QualityColor(_quality));
+            string qualityText = _reference == null ? I18n.Get("results.original")
+                : _masterpiece ? I18n.Get("results.masterpiece")
+                : I18n.Get("results.quality", new { quality = Ui.QualityName(_quality) });
+            Ui.Text(b, qualityText, new Vector2(cx + (star.HasValue ? 52 : 0) + (_masterpiece ? 14 : 0), cy + 6), _masterpiece ? new Color(170, 110, 0) : Ui.QualityColor(_quality));
+            if (_masterpiece)
+                PaintingPatches.DrawMasterpieceBadge(b, new Vector2(cx + 44, cy + 2), 3f, 1f, 1f);
             if (_reference != null && PaintingRules.Quality(_score, PaintingRules.MaxLevel) > _quality)
                 Ui.Text(b, I18n.Get("results.capped"), new Vector2(cx, cy + 40), Game1.textColor * 0.6f);
             cy += 76;
@@ -294,10 +310,10 @@ internal sealed partial class EaselMenu
         Ui.Button(b, _keepButton, _painting != null ? I18n.Get("results.keep") : I18n.Get("results.close"), true, false, _keepButton.Contains(MousePos));
     }
 
-    private static void Criterion(SpriteBatch b, string label, string value, int x, ref int y)
+    private static void Criterion(SpriteBatch b, string label, string value, int x, ref int y, int row = 34)
     {
         Ui.Text(b, label, new Vector2(x, y), Game1.textColor * 0.7f);
         Ui.Text(b, value, new Vector2(x + 140, y));
-        y += 34;
+        y += row;
     }
 }

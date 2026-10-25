@@ -10,7 +10,7 @@ using StardewValley;
 
 namespace ArtStudio.Menus;
 
-internal enum PaintTool { Brush, Broad, Fill, Ruler, Knife, Dropper }
+internal enum PaintTool { Brush, Broad, Fill, Ruler, Knife, Dropper, Glaze, Highlight }
 
 // Painting: the canvas against the light. Paint only goes on as far as the
 // brush's load; reloading means mixing (EaselMenu.Mix). Inspiration sparks
@@ -53,6 +53,8 @@ internal sealed partial class EaselMenu
     private int _mixesTotal, _mixesPure;
     private float _finishArmed;
     private bool _confirmLeave;
+    private int _smearsSeen;
+    private bool _bareWarned;
 
     // Layout.
     private Rectangle _topBar, _leftCol, _rightCol, _canvasArea, _noteArea, _refArea, _finishButton, _undoButton;
@@ -76,6 +78,7 @@ internal sealed partial class EaselMenu
         _nextSpark = 5f + (float)_random.NextDouble() * 4f;
         _stage = EaselStage.Painting;
         LayoutPainting();
+        ExplainTechniques();
     }
 
     private void LayoutPainting()
@@ -103,7 +106,8 @@ internal sealed partial class EaselMenu
         // Palette: three columns of dabs, every pigment in the game (unowned
         // ones shown as faint stains, so the shop's wares are no surprise).
         // Then the tools, two to a row, with mirror and undo at the end.
-        const int dabCols = 3, toolRows = 4;
+        var tools = ((PaintTool[])Enum.GetValues(typeof(PaintTool))).Where(ToolAvailable).ToArray();
+        int dabCols = 3, toolRows = (tools.Length + 3) / 2;
         int dabRows = (Palette.All.Length + dabCols - 1) / dabCols;
         int toolH = 40;
         int dabH = Math.Clamp((bodyH - 30 - toolRows * (toolH + 6)) / dabRows - 6, 24, 40);
@@ -116,7 +120,6 @@ internal sealed partial class EaselMenu
         int toolW = (SideWidth - 22) / 2;
         Rectangle ToolSlot(int i) => new(_rightCol.X + 8 + i % 2 * (toolW + 6), toolsY + i / 2 * (toolH + 6), toolW, toolH);
         _toolButtons.Clear();
-        var tools = (PaintTool[])Enum.GetValues(typeof(PaintTool));
         for (int i = 0; i < tools.Length; i++)
             _toolButtons[tools[i]] = ToolSlot(i);
         _mirrorButton = ToolSlot(tools.Length);
@@ -128,6 +131,35 @@ internal sealed partial class EaselMenu
         _leaveNo = new Rectangle(_leaveBox.Right - 260, _leaveBox.Bottom - 92, 200, 56);
 
         LayoutMix();
+    }
+
+    // The technique tools come with the canvases that use them.
+    private bool ToolAvailable(PaintTool tool) => tool switch
+    {
+        PaintTool.Glaze => TechniquesFor(_canvas.Size).HasFlag(Techniques.Glaze),
+        PaintTool.Highlight => TechniquesFor(_canvas.Size).HasFlag(Techniques.Highlight),
+        _ => true,
+    };
+
+    private static Mark MarkOf(PaintTool tool) => tool switch
+    {
+        PaintTool.Glaze => Mark.Glaze,
+        PaintTool.Highlight => Mark.Highlight,
+        _ => Mark.None,
+    };
+
+    // The first time a canvas asks for a technique, a word on how it works.
+    private void ExplainTechniques()
+    {
+        if (_reference == null || !_reference.UsesTechniques || !StardewModdingAPI.Context.IsWorldReady) return;
+        foreach (var mark in new[] { Mark.Highlight, Mark.Glaze })
+        {
+            string key = ModEntry.Id + "/Explained" + mark;
+            if (Technique.Count(_reference.Marks, mark) == 0 || _who.modData.ContainsKey(key)) continue;
+            _who.modData[key] = "1";
+            Toast(I18n.Get("technique.explain." + mark.ToString().ToLowerInvariant()), new Color(214, 160, 30), 7f);
+            return;
+        }
     }
 
     private bool ToolUnlocked(PaintTool tool) => tool switch
@@ -147,6 +179,8 @@ internal sealed partial class EaselMenu
         PaintTool.Fill => I18n.Get("tool.fill"),
         PaintTool.Ruler => I18n.Get("tool.ruler"),
         PaintTool.Knife => I18n.Get("tool.knife"),
+        PaintTool.Glaze => I18n.Get("tool.glaze"),
+        PaintTool.Highlight => I18n.Get("tool.highlight"),
         _ => I18n.Get("tool.dropper"),
     };
 
@@ -157,6 +191,8 @@ internal sealed partial class EaselMenu
         PaintTool.Fill => I18n.Get("tool.fill.help"),
         PaintTool.Ruler => I18n.Get("tool.ruler.help"),
         PaintTool.Knife => I18n.Get("tool.knife.help"),
+        PaintTool.Glaze => I18n.Get("tool.glaze.help"),
+        PaintTool.Highlight => I18n.Get("tool.highlight.help"),
         _ => I18n.Get("tool.dropper.help"),
     };
 
@@ -247,6 +283,8 @@ internal sealed partial class EaselMenu
                 case PaintTool.Brush:
                 case PaintTool.Broad:
                 case PaintTool.Knife:
+                case PaintTool.Glaze:
+                case PaintTool.Highlight:
                     _canvas.PushUndo();
                     _stroking = true;
                     _lastCell = cell.Value;
@@ -300,12 +338,29 @@ internal sealed partial class EaselMenu
             Scrape(from, to);
             return;
         }
+        if (MarkOf(_tool) is var mark and not Mark.None)
+        {
+            MarkStroke(from, to, mark);
+            return;
+        }
         if (!HasPaint()) return;
         int budget = Math.Min(_load, PaintLeft(_selected)), before = budget;
         foreach (var (a, b) in Mirrored(from, to))
             _canvas.Line(a.X, a.Y, b.X, b.Y, (byte)_selected, _loadPurity, BrushSize, ref budget);
         Spend(before - budget);
         AfterPaint();
+    }
+
+    // Glazes and highlights go over paint already down; they cost no paint.
+    private void MarkStroke(Point from, Point to, Mark mark)
+    {
+        foreach (var (a, b) in Mirrored(from, to))
+            _canvas.MarkLine(a.X, a.Y, b.X, b.Y, mark);
+        if (!_bareWarned && _canvas[to.X, to.Y] == PixelCanvas.Blank)
+        {
+            _bareWarned = true;
+            Toast(I18n.Get("technique.needs-paint", new { tool = ToolName(_tool) }), Color.OrangeRed, 2f);
+        }
     }
 
     private void FillAt(Point cell)
@@ -368,6 +423,12 @@ internal sealed partial class EaselMenu
 
     private void AfterPaint()
     {
+        if (_canvas.Smeared > _smearsSeen)
+        {
+            _smearsSeen = _canvas.Smeared;
+            Game1.playSound("slimeHit");
+            Toast(I18n.Get("technique.smeared"), Color.OrangeRed, 2.5f);
+        }
         if (_load <= 0 && !_dryWarned)
         {
             _dryWarned = true;
@@ -532,6 +593,8 @@ internal sealed partial class EaselMenu
             case Keys.L: SelectTool(PaintTool.Ruler); return;
             case Keys.K: SelectTool(PaintTool.Knife); return;
             case Keys.D: SelectTool(PaintTool.Dropper); return;
+            case Keys.T: SelectTool(PaintTool.Glaze); return;
+            case Keys.H: SelectTool(PaintTool.Highlight); return;
             case Keys.M: ToggleMirror(); return;
             case Keys.Z: Undo(); return;
         }
@@ -549,6 +612,7 @@ internal sealed partial class EaselMenu
 
     private void SelectTool(PaintTool tool)
     {
+        if (!ToolAvailable(tool)) return;
         if (!ToolUnlocked(tool))
         {
             Game1.playSound("cancel");
@@ -681,7 +745,8 @@ internal sealed partial class EaselMenu
         if (_reference != null)
         {
             Ui.TextCentered(b, I18n.Get("paint.reference"), _noteArea.Center.X, _noteArea.Y + 12);
-            DrawCells(b, _reference.Cells, null, _refArea, CanvasColor, false);
+            DrawCells(b, _reference.Cells, null, _refArea, CanvasColor, false, _reference.Marks);
+            DrawMarkHints(b, _refArea);
             Ui.Fill(b, _refArea, DuskTint());
             if (_sparkCell.HasValue)
                 DrawSpark(b, CellRect(_refArea, _canvas.Size, _sparkCell.Value.X, _sparkCell.Value.Y));
@@ -762,7 +827,8 @@ internal sealed partial class EaselMenu
         var border = new Rectangle(_canvasArea.X - 12, _canvasArea.Y - 12, _canvasArea.Width + 24, _canvasArea.Height + 24);
         Ui.Fill(b, border, new Color(110, 70, 40));
         Ui.Outline(b, border, new Color(60, 35, 20), 4);
-        DrawCells(b, _canvas.Snapshot(), _canvas.PuritySnapshot(), _canvasArea, CanvasColor, true);
+        DrawCells(b, _canvas.Snapshot(), _canvas.PuritySnapshot(), _canvasArea, CanvasColor, true, _canvas.MarksSnapshot());
+        DrawMarkHints(b, _canvasArea);
 
         // Faint grid so cells can be counted against the reference.
         int n = _canvas.Size;
@@ -869,6 +935,24 @@ internal sealed partial class EaselMenu
         foreach (var (tool, rect) in _toolButtons)
             if (rect.Contains(mouse))
                 _hoverText = ToolUnlocked(tool) ? ToolHelp(tool) : I18n.Get("tool.locked", new { tool = ToolName(tool), level = ToolLevel(tool) });
+    }
+
+    // With the glaze or highlight tool in hand, a dot on every cell of the
+    // reference (and the matching canvas cell) that wants one.
+    private void DrawMarkHints(SpriteBatch b, Rectangle area)
+    {
+        var mark = MarkOf(_tool);
+        if (mark == Mark.None || _reference == null) return;
+        int n = _reference.Size;
+        var dot = mark == Mark.Glaze ? new Color(60, 30, 90) : Color.White;
+        for (int x = 0; x < n; x++)
+        for (int y = 0; y < n; y++)
+        {
+            if (_reference.Marks[x, y] != mark) continue;
+            var r = CellRect(area, n, x, y);
+            int d = Math.Max(2, r.Width / 3);
+            Ui.Fill(b, new Rectangle(r.Center.X - d / 2, r.Center.Y - d / 2, d, d), dot * 0.8f);
+        }
     }
 
     private static float Luma(Color c) => 0.299f * c.R + 0.587f * c.G + 0.114f * c.B;

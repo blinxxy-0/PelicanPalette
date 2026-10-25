@@ -219,7 +219,7 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     // Draws a pigment grid into `area` (cells may be non-square-pixel-exact;
     // each cell gets floor-sized rects so there are no seams).
-    private static void DrawCells(SpriteBatch b, byte[,] cells, Purity[,]? purity, Rectangle area, Color? blank, bool grime)
+    private static void DrawCells(SpriteBatch b, byte[,] cells, Purity[,]? purity, Rectangle area, Color? blank, bool grime, Mark[,]? marks = null)
     {
         int n = cells.GetLength(0);
         for (int x = 0; x < n; x++)
@@ -233,7 +233,7 @@ internal sealed partial class EaselMenu : IClickableMenu
                 continue;
             }
             var p = purity?[x, y] ?? Purity.Pure;
-            Ui.Fill(b, r, PaintingRenderer.CellColor(c, p));
+            Ui.Fill(b, r, PaintingRenderer.CellColor(c, p, marks?[x, y] ?? Mark.None));
             if (grime && p == Purity.Muddy && r.Width >= 6)
             {
                 int d = Math.Max(2, r.Width / 4);
@@ -257,9 +257,13 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     private Reference? BuildReference(IReadOnlyList<string> ids, int size) =>
         ids.Count == 0 ? null
-        : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned)
-        : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned) : null)
-        : ReferenceBuilder.StillLife(ids, size, _owned);
+        : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned, TechniquesFor(size))
+        : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned, TechniquesFor(size)) : null)
+        : ReferenceBuilder.StillLife(ids, size, _owned, TechniquesFor(size));
+
+    // Glazing from a medium canvas, highlights on a large one (not in Relaxed).
+    private static Techniques TechniquesFor(int size) =>
+        PaintingRules.TechniquesFor(size, ModEntry.Config.Difficulty == Difficulty.Relaxed);
 
     // The subject as a title: "Still Life: Parsnip", "Portrait of Leah".
     internal static string SubjectTitle(IReadOnlyList<string> ids) =>

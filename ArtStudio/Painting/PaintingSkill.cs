@@ -23,7 +23,7 @@ internal sealed class PaintingSkill : Skills.Skill
     // How much each profession changes, kept here so the descriptions and
     // the effects can't drift apart.
     public const float PleinAirLight = 1.2f, PleinAirSparkInterval = 0.7f;
-    public const float GalleristPrice = 1.25f;
+    public const float GalleristPrice = Core.Market.GalleristPrice;
     public const float VisionaryInspiredBonus = 0.5f;
     public const float PatronFriendship = 1.25f;
     public const double ProlificSaveChance = 0.25;
