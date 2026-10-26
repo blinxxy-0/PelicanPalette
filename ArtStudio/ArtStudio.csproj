@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>ArtStudio</AssemblyName>
     <RootNamespace>ArtStudio</RootNamespace>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
@@ -23,15 +23,18 @@
     <ContentPacks Include="..\[CP] Pelican Palette" Version="$(Version)" />
   </ItemGroup>
 
+  <!-- The Automate support DLL (ArtStudio.Automate): built first, then copied
+       beside ArtStudio.dll, which must not reference it (SMAPI would then
+       need Automate to load the mod). -->
+  <ItemGroup>
+    <ProjectReference Include="..\ArtStudio.Automate\ArtStudio.Automate.csproj" ReferenceOutputAssembly="false" />
+    <None Include="..\ArtStudio.Automate\bin\$(Configuration)\net6.0\ArtStudio.Automate.dll" Link="ArtStudio.Automate.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+
   <!-- SpaceCore provides the custom skill framework; it's installed alongside, never bundled. -->
   <ItemGroup>
     <Reference Include="SpaceCore">
       <HintPath>$(GamePath)\Mods\SpaceCore\SpaceCore.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <!-- Automate, for the optional machine integration (lib/README.md); never bundled. -->
-    <Reference Include="Automate">
-      <HintPath>..\lib\Automate.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <!-- SMAPI's TMX library, used by the debug map exporter. -->

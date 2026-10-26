@@ -1,10 +1,9 @@
+using System;
+using System.IO;
+using System.Reflection;
 using ArtStudio.Painting;
-using Microsoft.Xna.Framework;
-using Pathoschild.Stardew.Automate;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Buildings;
-using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
 namespace ArtStudio.Integrations;
@@ -15,74 +14,40 @@ namespace ArtStudio.Integrations;
 // cask. The Pigment Mill is a plain Data/Machines machine, which Automate
 // already handles.
 //
-// Only touched when Automate is installed: this class is the one place that
-// uses Automate's types.
+// The code that uses Automate's types is in ArtStudio.Automate.dll, beside
+// this mod's DLL (1.1.2): SMAPI couldn't load ArtStudio.dll at all without
+// Automate while it referred to Automate. That DLL is loaded only when
+// Automate is installed, and given the cabinet's behaviour as functions.
 internal static class AutomateIntegration
 {
     public const string ModId = "Pathoschild.Automate";
+    private const string BridgeFile = "ArtStudio.Automate.dll";
 
     public static void Register(IModHelper helper, IMonitor monitor)
     {
-        var api = helper.ModRegistry.GetApi<IAutomateAPI>(ModId);
-        if (api == null)
+        try
         {
-            monitor.Log("Automate is installed but its API isn't available; Varnishing Cabinets won't be automated.", LogLevel.Warn);
-            return;
+            var assembly = Assembly.LoadFrom(Path.Combine(helper.DirectoryPath, BridgeFile));
+            var bridge = assembly.GetType("ArtStudio.Automate.AutomateBridge", throwOnError: true)!;
+            var machineType = bridge.GetNestedType("Machine")!;
+            var machine = Activator.CreateInstance(machineType)!;
+            void Set(string name, object value) => machineType.GetProperty(name)!.SetValue(machine, value);
+            Set("TypeId", Varnish.QualifiedCabinetId);
+            Set("Is", (Func<SObject, bool>)Varnish.IsCabinet);
+            Set("IsEmpty", (Func<SObject, bool>)(cabinet => cabinet.heldObject.Value == null));
+            Set("IsDone", (Func<SObject, bool>)Varnish.IsCured);
+            Set("Output", (Func<SObject, Item?>)Varnish.Peek);
+            Set("Clear", (Action<SObject>)Varnish.Clear);
+            Set("IsInput", (Func<Item, bool>)(item => Varnish.CanVarnish(item)));
+            Set("IsFuel", (Func<Item, bool>)(item => Varnish.IsVarnish(item)));
+            Set("Start", (Action<SObject, Item>)Varnish.Start);
+            bool added = (bool)bridge.GetMethod("Register")!.Invoke(null, new[] { helper, monitor, machine })!;
+            if (added)
+                monitor.Log("Varnishing Cabinets work with Automate.", LogLevel.Trace);
         }
-        api.AddFactory(new Factory());
-        monitor.Log("Varnishing Cabinets work with Automate.", LogLevel.Trace);
-    }
-
-    private sealed class Factory : IAutomationFactory
-    {
-        public IAutomatable? GetFor(SObject obj, GameLocation location, in Vector2 tile) =>
-            Varnish.IsCabinet(obj) ? new CabinetMachine(obj, location, tile) : null;
-
-        public IAutomatable? GetFor(TerrainFeature feature, GameLocation location, in Vector2 tile) => null;
-
-        public IAutomatable? GetFor(Building building, GameLocation location, in Vector2 tile) => null;
-
-        public IAutomatable? GetForTile(GameLocation location, in Vector2 tile) => null;
-    }
-
-    private sealed class CabinetMachine : IMachine
-    {
-        private readonly SObject _cabinet;
-
-        public CabinetMachine(SObject cabinet, GameLocation location, Vector2 tile)
+        catch (Exception ex)
         {
-            _cabinet = cabinet;
-            Location = location;
-            TileArea = new Rectangle((int)tile.X, (int)tile.Y, 1, 1);
-        }
-
-        public string MachineTypeID => Varnish.QualifiedCabinetId;
-
-        public GameLocation Location { get; }
-
-        public Rectangle TileArea { get; }
-
-        public MachineState GetState() =>
-            _cabinet.heldObject.Value == null ? MachineState.Empty
-            : Varnish.IsCured(_cabinet) ? MachineState.Done
-            : MachineState.Processing;
-
-        public ITrackedStack? GetOutput() =>
-            Varnish.IsCured(_cabinet) && Varnish.Peek(_cabinet) is SObject cured
-                ? new TrackedItem(cured).OnEmpty((_, _) => Varnish.Clear(_cabinet))
-                : null;
-
-        public bool SetInput(IStorage input)
-        {
-            if (_cabinet.heldObject.Value != null
-                || !input.TryGetIngredient(stack => Varnish.CanVarnish(stack.Sample), 1, out var painting)
-                || !input.TryGetIngredient(stack => Varnish.IsVarnish(stack.Sample), 1, out var tin))
-                return false;
-            var item = painting.Take();
-            if (item == null) return false;
-            tin.Reduce();
-            Varnish.Start(_cabinet, item);
-            return true;
+            monitor.Log($"Couldn't set up Varnishing Cabinets for Automate (everything else works): {ex}", LogLevel.Warn);
         }
     }
 }

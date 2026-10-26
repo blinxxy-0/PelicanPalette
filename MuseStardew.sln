@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtStudio", "ArtStudio\ArtS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtStudio.Sim", "ArtStudio.Sim\ArtStudio.Sim.csproj", "{AA072FC2-784F-404C-846E-BE2B9CC4D921}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtStudio.Automate", "ArtStudio.Automate\ArtStudio.Automate.csproj", "{974E8372-4338-40DF-A3FC-5D3CA3D28A28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{AA072FC2-784F-404C-846E-BE2B9CC4D921}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA072FC2-784F-404C-846E-BE2B9CC4D921}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA072FC2-784F-404C-846E-BE2B9CC4D921}.Release|Any CPU.Build.0 = Release|Any CPU
+		{974E8372-4338-40DF-A3FC-5D3CA3D28A28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{974E8372-4338-40DF-A3FC-5D3CA3D28A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{974E8372-4338-40DF-A3FC-5D3CA3D28A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{974E8372-4338-40DF-A3FC-5D3CA3D28A28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

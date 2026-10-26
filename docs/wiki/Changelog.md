@@ -1,3 +1,7 @@
+## 1.1.2
+
+- **Fixed: the mod didn't load without Automate installed** (1.1.0 and 1.1.1). Automate support now lives in its own small file, loaded only when Automate is there.
+
 ## 1.1.1
 
 Fixes from player feedback (thank you, Hiname):

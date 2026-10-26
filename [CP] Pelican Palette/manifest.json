@@ -1,7 +1,7 @@
 {
   "Name": "[CP] Pelican Palette",
   "Author": "blinxxy",
-  "Version": "1.1.1",
+  "Version": "1.1.2",
   "Description": "The art supply shop in Cindersap Forest, for the Pelican Palette painting mod.",
   "UniqueID": "blinxxy.MuseArt.CP",
   "UpdateKeys": [ "Nexus:54599" ],

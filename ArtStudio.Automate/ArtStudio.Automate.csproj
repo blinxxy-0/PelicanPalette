@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pelican Palette's Automate support, kept out of ArtStudio.dll (see
+       AutomateBridge.cs). ArtStudio.csproj builds this first and copies the
+       DLL into the mod's folder; it isn't a mod of its own. -->
+  <PropertyGroup>
+    <AssemblyName>ArtStudio.Automate</AssemblyName>
+    <RootNamespace>ArtStudio.Automate</RootNamespace>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnableModDeploy>false</EnableModDeploy>
+    <EnableModZip>false</EnableModZip>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Automate">
+      <HintPath>..\lib\Automate.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
