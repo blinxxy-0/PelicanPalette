@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3
+
+- **Fixed: Sable's beach, winter and wedding portraits.** Their eyes and blush now match the everyday portraits exactly (the shocked face had lost part of its eye whites, and the bashful face its blush).
+
 ## 1.1.2
 
 - **Fixed: the mod didn't load without Automate installed** (1.1.0 and 1.1.1). Automate support now lives in its own small file, loaded only when Automate is there.

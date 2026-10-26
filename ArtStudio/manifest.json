@@ -1,7 +1,7 @@
 {
   "Name": "Pelican Palette",
   "Author": "blinxxy",
-  "Version": "1.1.2",
+  "Version": "1.1.3",
   "Description": "Paint your own pixel-art paintings at an easel, level up a Painting skill, and sell or gift your work.",
   "UniqueID": "blinxxy.MuseArt",
   "EntryDll": "ArtStudio.dll",

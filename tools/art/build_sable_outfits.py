@@ -54,6 +54,7 @@ COLLAR_LINE = 45
 # The everyday portrait's turtleneck and apron colours, and Sable's neck skin.
 OLD_CLOTHES = {(0xB1, 0x39, 0x20), (0xA7, 0x37, 0x22), (0x7C, 0x18, 0x1F), (0xF2, 0xDE, 0xAA), (0xDF, 0xD6, 0xB5), (0xAD, 0x98, 0x7D)}
 JAW_LINE = 40           # expressions keep their own pixels above this row
+COLLAR_SLIVER_TOP = 36  # the old collar can show beside the jaw from this row down
 NECK = (0xA0, 0x57, 0x38)
 COLOURS = 26            # per sheet, as the everyday one
 
@@ -150,6 +151,7 @@ def build_portraits(everyday, edited_neutral, strands=False):
     neutral = everyday.crop((0, 0, 64, 64))
     mask = outfit_mask(neutral, edited_neutral, COLLAR_LINE)
     out = everyday.copy()
+    unchanged = []      # (x, y) on the sheet that the outfit left as they were
     for f in range(everyday.width // 64 * (everyday.height // 64)):
         x0, y0 = (f % 2) * 64, (f // 2) * 64
         frame = everyday.crop((x0, y0, x0 + 64, y0 + 64))
@@ -163,11 +165,23 @@ def build_portraits(everyday, edited_neutral, strands=False):
         # A tilted head shows a sliver of the old turtleneck or apron beside
         # the jaw that the neutral doesn't: that's neck now.
         pd = dressed.load()
+        # (Only beside the jaw: higher up, the same creams are the eye whites
+        # and the blush, which had been painted over as skin.)
         for x, y in own:
-            if pd[x, y][:3] in OLD_CLOTHES:
+            if y >= COLLAR_SLIVER_TOP and pd[x, y][:3] in OLD_CLOTHES:
                 pd[x, y] = NECK + (255,)
-        out.paste(without_strands(dressed) if strands else dressed, (x0, y0))
-    return quantize(recolour_black(out), 34)
+        dressed = without_strands(dressed) if strands else dressed
+        pd, pf = dressed.load(), frame.load()
+        unchanged += [(x0 + x, y0 + y) for y in range(64) for x in range(64) if pd[x, y] == pf[x, y]]
+        out.paste(dressed, (x0, y0))
+    # The palette is cut down for the new clothes, but what the outfit didn't
+    # touch (the face, eyes, hair) keeps its exact colours: cutting the whole
+    # sheet's palette had swapped the irises for the nearest leftover colour.
+    reduced = quantize(recolour_black(out), 34)
+    pr, po = reduced.load(), everyday.load()
+    for x, y in unchanged:
+        pr[x, y] = po[x, y]
+    return reduced
 
 
 def main():
