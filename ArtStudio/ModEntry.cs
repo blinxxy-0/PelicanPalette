@@ -20,9 +20,14 @@ public class ModEntry : Mod
     public const string Id = "blinxxy.MuseArt";
 
     internal static ModConfig Config { get; private set; } = new();
+    private static IModHelper _helper = null!;
+
+    // Saves a setting changed in game (the easel's mode button).
+    internal static void SaveConfig() => _helper.WriteConfig(Config);
 
     public override void Entry(IModHelper helper)
     {
+        _helper = helper;
         I18n.Init(helper.Translation);
         Config = helper.ReadConfig<ModConfig>();
         var harmony = new Harmony(ModManifest.UniqueID);

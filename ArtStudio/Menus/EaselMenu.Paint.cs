@@ -749,7 +749,9 @@ internal sealed partial class EaselMenu
             DrawMarkHints(b, _refArea);
             Ui.Fill(b, _refArea, DuskTint());
             if (_sparkCell.HasValue)
-                DrawSpark(b, CellRect(_refArea, _canvas.Size, _sparkCell.Value.X, _sparkCell.Value.Y));
+                DrawReferenceSpark(b, CellRect(_refArea, _canvas.Size, _sparkCell.Value.X, _sparkCell.Value.Y));
+            if (_mix == null && LinkedCell(MousePos) is Point linked)
+                DrawLinkedCell(b, CellRect(_refArea, _canvas.Size, linked.X, linked.Y));
         }
         else
         {
@@ -847,11 +849,15 @@ internal sealed partial class EaselMenu
             Ui.Fill(b, new Rectangle(_canvasArea.Center.X - 1, _canvasArea.Y, 2, _canvasArea.Height), new Color(80, 120, 200) * 0.5f);
 
         if (_sparkCell.HasValue)
-            DrawSpark(b, CellRect(_canvasArea, n, _sparkCell.Value.X, _sparkCell.Value.Y));
+            DrawCanvasSpark(b, CellRect(_canvasArea, n, _sparkCell.Value.X, _sparkCell.Value.Y), _sparkCell.Value);
 
         Ui.Fill(b, _canvasArea, DuskTint());
 
         if (_mix != null) return;
+
+        // Pointing at the reference shows where that cell is on the canvas.
+        if (RefCellAt(mouse) is Point fromReference)
+            DrawLinkedCell(b, CellRect(_canvasArea, n, fromReference.X, fromReference.Y));
 
         // Ruler preview and cursor footprint.
         if (_rulerStart.HasValue && _selected >= 0)
@@ -870,14 +876,59 @@ internal sealed partial class EaselMenu
         }
     }
 
-    private void DrawSpark(SpriteBatch b, Rectangle cell)
+    // A spark never covers the colour it asks for (1.1.1, from player
+    // feedback: the star hid the reference cell). On the canvas the cell
+    // glows in that colour; on the reference only a ring round the cell
+    // pulses, leaving the colour itself in plain sight.
+    private float SparkFade => float.IsPositiveInfinity(_sparkLife) ? 1f : _sparkLife > 0f ? Math.Clamp(_sparkLeft / _sparkLife * 2f, 0.3f, 1f) : 0.3f;
+
+    private static float SparkPulse => 0.5f + 0.5f * MathF.Sin((float)Game1.currentGameTime.TotalGameTime.TotalSeconds * 10f);
+
+    private static readonly Color SparkGold = new(255, 222, 90);
+
+    private void DrawCanvasSpark(SpriteBatch b, Rectangle cell, Point at)
     {
-        float t = float.IsPositiveInfinity(_sparkLife) ? 1f : _sparkLife > 0f ? _sparkLeft / _sparkLife : 0f;
-        float pulse = 1f + 0.25f * MathF.Sin((float)Game1.currentGameTime.TotalGameTime.TotalSeconds * 10f);
-        int size = (int)(Math.Max(cell.Width, 12) * 1.6f * pulse);
-        var dest = new Rectangle(cell.Center.X - size / 2, cell.Center.Y - size / 2, size, size);
-        b.Draw(Game1.mouseCursors, dest, new Rectangle(346, 400, 8, 8), Color.White * Math.Clamp(t * 2f, 0.3f, 1f));
-        Ui.Outline(b, cell, new Color(255, 230, 120), 2);
+        if (_reference != null)
+        {
+            var wanted = PaintingRenderer.CellColor(_reference.Cells[at.X, at.Y], Purity.Pure, _reference.Marks[at.X, at.Y]);
+            Ui.Fill(b, cell, wanted * ((0.6f + 0.4f * SparkPulse) * SparkFade));
+        }
+        DrawSparkRing(b, cell);
+    }
+
+    private void DrawReferenceSpark(SpriteBatch b, Rectangle cell) => DrawSparkRing(b, cell);
+
+    // A pulsing gold ring just outside the cell, dark-edged so it shows on
+    // light and dark colours alike, with a glint at each corner.
+    private void DrawSparkRing(SpriteBatch b, Rectangle cell)
+    {
+        int gap = 1 + (int)Math.Round(2 * SparkPulse);
+        var ring = new Rectangle(cell.X - gap - 3, cell.Y - gap - 3, cell.Width + 2 * (gap + 3), cell.Height + 2 * (gap + 3));
+        Ui.Outline(b, new Rectangle(ring.X - 1, ring.Y - 1, ring.Width + 2, ring.Height + 2), new Color(90, 55, 10) * SparkFade, 1);
+        Ui.Outline(b, ring, SparkGold * SparkFade, 3);
+        int g = Math.Max(3, cell.Width / 3);
+        foreach (var (x, y) in new[] { (ring.Left - g, ring.Top - g), (ring.Right, ring.Top - g), (ring.Left - g, ring.Bottom), (ring.Right, ring.Bottom) })
+            Ui.Fill(b, new Rectangle(x, y, g, g), SparkGold * SparkFade);
+    }
+
+    // ---- The canvas and the reference, linked (1.1.1) ----
+
+    private Point? RefCellAt(Point p)
+    {
+        if (_reference == null || !_refArea.Contains(p)) return null;
+        int n = _canvas.Size;
+        return new Point((p.X - _refArea.X) * n / _refArea.Width, (p.Y - _refArea.Y) * n / _refArea.Height);
+    }
+
+    // The cell the mouse is on, on whichever grid it's over.
+    private Point? LinkedCell(Point p) => CellAt(p) ?? RefCellAt(p);
+
+    // A frame just outside the cell (so its colour stays in view, however
+    // small the cell), white inside and dark outside to show on any colour.
+    private static void DrawLinkedCell(SpriteBatch b, Rectangle cell)
+    {
+        Ui.Outline(b, new Rectangle(cell.X - 4, cell.Y - 4, cell.Width + 8, cell.Height + 8), Color.Black * 0.8f, 2);
+        Ui.Outline(b, new Rectangle(cell.X - 2, cell.Y - 2, cell.Width + 4, cell.Height + 4), Color.White, 2);
     }
 
     private void DrawPalette(SpriteBatch b, Point mouse)

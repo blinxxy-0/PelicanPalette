@@ -138,6 +138,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_gallerytest", "The painting record, consignment and plein air. Usage: museart_gallerytest record|consign|view (view: stand outdoors first, e.g. museart_warp Farm 64 15).", (_, args) => GalleryTest(monitor, args));
         DevTools.AddCommand(helper, "museart_marriedlifetest", "Throwaway farm only: Sable paints the farm and gives it to you; Sable comments on your paintings on the wall. Run it, warp onto the farm, then 'museart_marriedlifetest farm'.", (_, args) => MarriedLifeTest(monitor, args));
         DevTools.AddCommand(helper, "museart_watchtest", "Sable at the yard easel on a Friday: the line, and watching. Run it, then 'museart_watchtest check' a few seconds later.", (_, args) => WatchTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_modetest", "The easel's mode button: cycling, saving, and the rules it sets. Then 'museart_modetest restore'.", (_, args) => ModeTest(monitor, args));
         DevTools.AddCommand(helper, "museart_blanktest", "A painting with no picture (as CJB Item Spawner makes): names, gift tastes, price, drawing, consigning, varnishing.", (_, _) => BlankTest(monitor));
         DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
@@ -1262,6 +1263,48 @@ internal static class DevGame
         string path = System.IO.Path.Combine(_helper.DirectoryPath, "..", "[CP] Pelican Palette", "i18n", "default.json");
         using var doc = System.Text.Json.JsonDocument.Parse(System.IO.File.ReadAllText(path));
         return doc.RootElement.TryGetProperty(key, out var value) ? value.GetString() ?? key : key;
+    }
+
+    // The mode button on the easel's setup screen (1.1.1). Run it, take a
+    // screenshot if wanted, then 'museart_modetest restore'.
+    private static Difficulty? _modeBefore;
+    private static void ModeTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        if (args.FirstOrDefault() == "restore")
+        {
+            if (_modeBefore is Difficulty before) { ModEntry.Config.Difficulty = before; ModEntry.SaveConfig(); }
+            Game1.exitActiveMenu();
+            return;
+        }
+        _modeBefore = ModEntry.Config.Difficulty;
+        ModEntry.Config.Difficulty = Difficulty.Relaxed;
+        var menu = new EaselMenu(Game1.player);
+        menu.DevSetup("(O)24");
+        Game1.activeClickableMenu = menu;
+        void Draw()
+        {
+            Game1.spriteBatch.Begin();
+            menu.draw(Game1.spriteBatch);
+            Game1.spriteBatch.End();
+        }
+        Draw();
+        var button = menu.DevModeButton;
+        Check(monitor, "with nothing to warn about, the mode is a button", button != Rectangle.Empty);
+        Check(monitor, "Relaxed has no light meter", !menu.DevTimed);
+        menu.receiveLeftClick(button.Center.X, button.Center.Y);
+        Check(monitor, "clicking it moves on to Normal", ModEntry.Config.Difficulty == Difficulty.Normal);
+        Check(monitor, "...which the painting about to begin uses", menu.DevTimed);
+        string saved = System.IO.File.ReadAllText(System.IO.Path.Combine(_helper.DirectoryPath, "config.json"));
+        Check(monitor, "...and it's saved", saved.Contains("\"Difficulty\": \"Normal\""));
+        // Back to Relaxed for the screenshot, hovering the button.
+        ModEntry.Config.Difficulty = Difficulty.Relaxed;
+        menu = new EaselMenu(Game1.player);
+        menu.DevSetup("(O)24");
+        Game1.activeClickableMenu = menu;
+        Draw();
+        menu.DevHoverAt(menu.DevModeButton.Center);
+        monitor.Log($"Staged: {ModEntry.Config.Difficulty}, button at {menu.DevModeButton}.", LogLevel.Info);
     }
 
     // A painting with no picture, as an item spawner (CJB Item Spawner)

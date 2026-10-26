@@ -229,6 +229,8 @@ internal static class DevTools
         yield return ("paint_lv10", () => { ArtProgress.SetLevel(Game1.player, 10); return Paint(CanvasKind.Medium, melon, parsnip); });
         yield return ("paint_free", () => EaselMenu.StartOriginal(Game1.player, CanvasKind.Small));
         yield return ("tech_glaze", () => { var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.7f, 5); m.DevSelectTool(PaintTool.Glaze); return m; });
+        yield return ("spark_canvas", () => { var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.5f, 5); m.DevHover(9, 12, false); return m; });
+        yield return ("spark_reference", () => { var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.5f, 5); m.DevHover(9, 12, true); return m; });
         yield return ("tech_highlight", () => { var m = Paint(CanvasKind.Large, "(O)72"); m.DevPaintPartly(0.9f, 5); m.DevSelectTool(PaintTool.Highlight); return m; });
         yield return ("tech_results", () => { ArtProgress.SetLevel(Game1.player, 10); var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(1f, 5); m.DevFinish(false); return m; });
         yield return ("tech_masterpiece", () =>

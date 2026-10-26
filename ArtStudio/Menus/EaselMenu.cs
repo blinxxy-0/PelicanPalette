@@ -27,12 +27,12 @@ internal sealed partial class EaselMenu : IClickableMenu
     private readonly IReadOnlyList<int> _owned;
     private BrushSpec _brush;
     private Item? _brushItem;
-    private readonly DifficultySettings _rules;
+    private DifficultySettings _rules;
 
     // Paint (docs/painting_depth.md): the Palette in the bag, and how many
     // cells of each colour it holds. Relaxed paints for free.
-    private readonly Item? _palette;
-    private readonly int[] _paint = new int[Palette.All.Length];
+    private Item? _palette;
+    private int[] _paint = new int[Palette.All.Length];
     // (Only in a loaded game: the title-screen snapshots have no Palette.)
     private static bool UsesPaint => PaletteItem.Required && StardewModdingAPI.Context.IsWorldReady;
     private EaselStage _stage = EaselStage.Setup;
@@ -64,15 +64,23 @@ internal sealed partial class EaselMenu : IClickableMenu
         _owned = ArtProgress.OwnedPigments(who);
         _brush = brush ?? Brushes.HogBristle;
         _rules = DifficultySettings.For(ModEntry.Config.Difficulty);
-        if (UsesPaint && (_palette = PaletteItem.Find(who)) != null)
+        LoadPalette();
+        Reposition();
+        EnterSetup();
+    }
+
+    // The Palette to paint from, when the mode spends paint (not Relaxed).
+    private void LoadPalette()
+    {
+        _palette = null;
+        _paint = new int[Palette.All.Length];
+        if (UsesPaint && (_palette = PaletteItem.Find(_who)) != null)
         {
-            int tubes = PaletteItem.Refill(who, _palette).Values.Sum();
+            int tubes = PaletteItem.Refill(_who, _palette).Values.Sum();
             _paint = PaletteItem.Read(_palette);
             if (tubes > 0)
                 Toast(I18n.Get("palette.refilled", new { tubes }), new Color(60, 140, 60), 2.5f);
         }
-        Reposition();
-        EnterSetup();
     }
 
     // Skips Setup and starts painting straight away (debug command).
@@ -97,7 +105,10 @@ internal sealed partial class EaselMenu : IClickableMenu
         _rules.LightMultiplier * ModEntry.Config.LightTimeMultiplier
         * (Has(PaintingSkill.Instance.PleinAir) ? PaintingSkill.PleinAirLight : 1f);
 
-    private Point MousePos => new(Game1.getMouseX(true), Game1.getMouseY(true));
+    private Point MousePos => _devMouse ?? new(Game1.getMouseX(true), Game1.getMouseY(true));
+
+    // Where tests and screenshots say the mouse is (EaselMenu.Dev).
+    private Point? _devMouse;
     private bool LeftDown => _mouse.LeftButton == ButtonState.Pressed;
     private bool LeftPressed => LeftDown && _prevMouse.LeftButton == ButtonState.Released;
     private bool LeftReleased => !LeftDown && _prevMouse.LeftButton == ButtonState.Pressed;

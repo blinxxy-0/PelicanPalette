@@ -216,13 +216,17 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 - Finish early and the light that's left becomes bonus experience.
 - The light pauses while you mix, except on Hard.
 
-**Inspiration sparks.** Every so often a spark appears on a cell of the canvas.
+**Inspiration sparks.** Every so often a spark appears on a cell of the canvas: a gold ring round it, the cell glowing in the colour it wants. The same cell is ringed on the reference, its colour left in view.
 - Paint that cell its right colour, mixed pure, before the spark fades.
 - Each spark you catch adds light.
 - Catch three and the painting is **Inspired**, which raises its quality.
 - Very rarely, a spark teaches you a rare pigment.
 
 **Paint.** Every cell you paint uses one cell of paint from your Palette (except on Relaxed). See {link("Pigments and Paint")}.
+
+**Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on.
+
+**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all. The choice is saved, and is the same setting as in the config.
 
 ### Tools
 | Tool | Key | Unlocks | What it does |

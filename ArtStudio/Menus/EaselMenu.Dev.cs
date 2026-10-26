@@ -42,6 +42,22 @@ internal sealed partial class EaselMenu
         _sparkLeft = 3f;
     }
 
+    // The setup screen's mode button (empty while a warning shows instead).
+    public Microsoft.Xna.Framework.Rectangle DevModeButton => _modeButton;
+    public bool DevTimed => _rules.LightTimer;
+
+    // Points the mouse at a cell of the canvas, or of the reference.
+    public void DevHover(int x, int y, bool reference)
+    {
+        var cell = CellRect(reference ? _refArea : _canvasArea, _canvas.Size, x, y);
+        _devMouse = cell.Center;
+    }
+
+    public void DevHoverAt(Microsoft.Xna.Framework.Point at)
+    {
+        _devMouse = at;
+    }
+
     private Microsoft.Xna.Framework.Point? FirstUnpainted()
     {
         int n = _canvas.Size;

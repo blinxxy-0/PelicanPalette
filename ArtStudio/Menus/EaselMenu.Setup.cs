@@ -239,6 +239,8 @@ internal sealed partial class EaselMenu
             LayoutSetup();
             RefreshPreview();
         }
+        else if (_modeButton.Contains(x, y))
+            CycleMode();
         else if (_beginButton.Contains(x, y))
         {
             if (_setupFraming)
@@ -271,6 +273,20 @@ internal sealed partial class EaselMenu
         && ArtHooks.FinishTime(PaintingRules.Minutes(_setupCanvas, IsLongSubject(_setupItems))) > PaintingRules.LatestFinish;
 
     private bool NeedsPalette => UsesPaint && _palette == null;
+
+    private Rectangle _modeButton;
+
+    // Relaxed, Normal, Hard, and round again; saved, and used from this painting on.
+    private void CycleMode()
+    {
+        ModEntry.Config.Difficulty = (Difficulty)(((int)ModEntry.Config.Difficulty + 1) % 3);
+        ModEntry.SaveConfig();
+        _rules = DifficultySettings.For(ModEntry.Config.Difficulty);
+        LoadPalette();
+        Game1.playSound("smallSelect");
+        LayoutSetup();
+        RefreshPreview();
+    }
 
     // Colours the subject needs more of than the Palette holds (cells of each
     // in the reference, against what's left).
@@ -450,7 +466,22 @@ internal sealed partial class EaselMenu
             : NeedsPalette ? I18n.Get("setup.need-palette-short")
             : shortOf.Count > 0 ? I18n.Get("setup.low-paint", new { pigments = string.Join(", ", shortOf.Take(3).Select(I18n.Pigment)) })
             : I18n.Get("setup.mode-takes", new { mode = I18n.Get("setup.mode." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()), hours });
-        Ui.Text(b, footer, new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10), warn ? new Color(150, 70, 50) : Game1.textColor * 0.8f);
+        var footerAt = new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10);
+        // With nothing to warn about, the footer is the mode, and clicking it
+        // changes it (1.1.1: players didn't know Relaxed, with no time limit,
+        // was there, and it was only in the config).
+        _modeButton = warn || _setupFraming ? Rectangle.Empty
+            : new Rectangle((int)footerAt.X - 4, (int)footerAt.Y - 2, (int)Ui.TextWidth(footer) + 8, 32);
+        bool modeHover = _modeButton.Contains(mouse);
+        if (_modeButton != Rectangle.Empty)
+        {
+            if (modeHover)
+                Ui.Fill(b, _modeButton, Color.White * 0.35f);
+            Ui.Fill(b, new Rectangle((int)footerAt.X, _modeButton.Bottom - 4, (int)Ui.TextWidth(footer), 2), Game1.textColor * (modeHover ? 0.8f : 0.35f));
+        }
+        Ui.Text(b, footer, footerAt, warn ? new Color(150, 70, 50) : Game1.textColor * (modeHover ? 1f : 0.8f));
+        if (modeHover)
+            _hoverText = Game1.parseText(I18n.Get("setup.mode-hover." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()), Game1.smallFont, 520);
         if (!HasCanvas && _beginButton.Contains(mouse))
             _hoverText = _setupCanvas == CanvasKind.Small ? I18n.Get("setup.craft-small") : I18n.Get("setup.craft-big");
     }

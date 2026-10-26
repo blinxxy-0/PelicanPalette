@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1
+
+Fixes from player feedback (thank you, Hiname):
+- **Sparks no longer hide the colour.** On the reference a spark is now a gold ring round the cell, its colour left in plain sight; on the canvas the cell glows in the colour it wants.
+- **Find your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round.
+- **Change mode on the easel.** Click the mode under Begin on the setup screen to switch between Relaxed (no time limit at all), Normal and Hard; hover it for what each changes.
+- The painting record's note no longer runs off the page.
+
 ## 1.1.0
 
 - **The art shop is on the world map.** It's drawn over Cindersap Forest, west of the path down from Marnie's, with a snowy roof in winter, and the map shows where you are while you're inside. It sits in the same place on Stardew Valley Expanded's map.
