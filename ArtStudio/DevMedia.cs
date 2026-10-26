@@ -78,6 +78,32 @@ internal static class DevMedia
             if (!Game1.player.addItemToInventoryBool(item))
                 Game1.player.Items[Game1.player.Items.Count - 1] = item;
         });
+        DevTools.AddCommand(helper, "museart_viewrefs", "Saves the view from the farmer's tile as references at each canvas size, to media/viewref_<size>.png (all pigments).", (_, _) =>
+        {
+            var capture = Views.Take(Game1.currentLocation, Game1.player.Tile);
+            if (capture == null) { monitor.Log("No view here (stand outdoors).", LogLevel.Error); return; }
+            var owned = Enumerable.Range(0, Palette.All.Length).ToList();
+            foreach (var kind in new[] { CanvasKind.Small, CanvasKind.Medium, CanvasKind.Large })
+            {
+                int size = PaintingRules.CanvasSize(kind);
+                var reference = Views.Reference(capture, size, owned);
+                var purity = new Purity[size, size];
+                var texture = PaintingRenderer.Build(size, reference.Cells, purity, Color.White, reference.Marks);
+                string dir = Path.Combine(helper.DirectoryPath, "media");
+                Directory.CreateDirectory(dir);
+                using var stream = File.Create(Path.Combine(dir, $"viewref_{size}.png"));
+                texture.SaveAsPng(stream, size, size);
+                monitor.Log($"Saved the {size}x{size} view.", LogLevel.Info);
+            }
+            using var raw = File.Create(Path.Combine(helper.DirectoryPath, "media", "viewref_raw.png"));
+            capture.Thumbnail?.SaveAsPng(raw, capture.Size, capture.Size);
+        });
+        DevTools.AddCommand(helper, "museart_act", "Uses a map tile as if the farmer clicked it (tile actions, doors). Usage: museart_act 80 35", (_, args) =>
+        {
+            var tile = new xTile.Dimensions.Location(int.Parse(args[0]), int.Parse(args[1]));
+            bool done = Game1.currentLocation.checkAction(tile, Game1.viewport, Game1.player);
+            monitor.Log($"Action at {tile}: {(done ? "handled" : "nothing")}; menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}.", LogLevel.Info);
+        });
         DevTools.AddCommand(helper, "museart_stand", "Puts the farmer (and so the camera) on a tile, wherever it is, without the game nudging them aside. Usage: museart_stand 82 32", (_, args) =>
             Game1.player.Position = new Vector2(int.Parse(args[0]), int.Parse(args[1])) * 64f);
         DevTools.AddCommand(helper, "museart_seen", "Marks events as already seen. Usage: museart_seen blinxxy.MuseArt_SableIntro", (_, args) =>

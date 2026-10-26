@@ -13,7 +13,7 @@ Once you have medium canvases (Painting level 4), friends at **4 hearts or more*
 ![Painting the view](images/screens/setup_view.png)
 
 An easel placed **outdoors** offers **the view** as a subject. The scene around the easel, mostly what's in front of it, becomes the reference. The game draws the place as it is: trees, buildings, the weather, the season.
-- **Canvas:** the view fills the whole canvas, on any size.
+- **Canvas:** the view fills the whole canvas. A small canvas paints a closer view (about 10 tiles across, two cells to a tile), a medium one 13 tiles and a large one 16, so a house still reads as a house on a small canvas.
 - **Time and value:** like a portrait, it takes an hour longer and is worth 1.3x.
 - **Place:** it's worth more somewhere far from the farm. The farm and town are everyday; the Woods and the Railroad less so; the Summit, the Desert and Ginger Island are rare.
 - **Conditions:** rain, winter and evening (after 7pm) each raise it.

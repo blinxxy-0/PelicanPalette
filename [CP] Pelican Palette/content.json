@@ -30,6 +30,58 @@
       }
     },
 
+    // The shop on the world map (M): a few pixels over the Forest, west of
+    // the path down from Marnie's, with a winter version (the game picks
+    // WorldMapShop_winter itself). Drawn by tools/art/world_map_shop.py.
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt/WorldMapShop, Mods/blinxxy.MuseArt/WorldMapShop_winter",
+      "FromFile": "assets/{{TargetWithoutPath}}.png"
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/WorldMap",
+      "TargetField": [ "Valley", "MapAreas", "Forest", "Textures" ],
+      "Entries": {
+        "blinxxy.MuseArt_ArtShop": {
+          "Id": "blinxxy.MuseArt_ArtShop",
+          "Texture": "Mods/blinxxy.MuseArt/WorldMapShop",
+          "SourceRect": { "X": 0, "Y": 0, "Width": 9, "Height": 7 },
+          "MapPixelArea": { "X": 92, "Y": 109, "Width": 9, "Height": 7 }
+        }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/WorldMap",
+      "TargetField": [ "Valley", "MapAreas", "Forest", "Tooltips" ],
+      "Entries": {
+        "blinxxy.MuseArt_ArtShop": {
+          "Id": "blinxxy.MuseArt_ArtShop",
+          "PixelArea": { "X": 92, "Y": 109, "Width": 9, "Height": 7 },
+          "Text": "{{i18n:worldmap.art-shop}}",
+          "LeftNeighbor": "Forest/WizardTower",
+          "RightNeighbor": "Forest/LeahCottage",
+          "UpNeighbor": "Forest/MarnieRanch",
+          "DownNeighbor": "Forest/SewerPipe"
+        }
+      }
+    },
+    // Inside the shop (and the gallery evening), you're shown at its door.
+    {
+      "Action": "EditData",
+      "Target": "Data/WorldMap",
+      "TargetField": [ "Valley", "MapAreas", "Forest", "WorldPositions" ],
+      "Entries": {
+        "blinxxy.MuseArt_ArtShop": {
+          "Id": "blinxxy.MuseArt_ArtShop",
+          "LocationNames": [ "blinxxy.MuseArt_ArtShop", "blinxxy.MuseArt_ArtShopGallery" ],
+          "MapPixelArea": { "X": 96, "Y": 113, "Width": 1, "Height": 1 }
+        }
+      },
+      "MoveEntries": [ { "ID": "blinxxy.MuseArt_ArtShop", "ToPosition": "Top" } ]
+    },
+
     // The building and its yard, in the quiet grass west of the path down
     // from Marnie's (Leah's cottage is further east). The door leads inside
     // between 9am and 8pm; a gate opens onto the riverside path.

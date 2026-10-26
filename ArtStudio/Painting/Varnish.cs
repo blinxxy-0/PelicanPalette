@@ -75,26 +75,53 @@ internal static class Varnish
         var tin = who.Items.FirstOrDefault(IsVarnish);
         if (tin == null || cabinet.heldObject.Value != null) return false;
         who.Items.ReduceId(tin.QualifiedItemId, 1);
+        Start(cabinet, painting);
+        return true;
+    }
+
+    // A varnished painting starts curing (the tin's already been spent).
+    public static void Start(SObject cabinet, Item painting)
+    {
         cabinet.heldObject.Value = (SObject)painting.getOne();
         cabinet.modData[StartKey] = Game1.Date.TotalDays.ToString();
         cabinet.MinutesUntilReady = Waiting;
         cabinet.readyForHarvest.Value = false;
-        return true;
     }
 
-    // Takes the painting out at the finish it has reached.
-    public static SObject? TakeOut(SObject cabinet)
+    // Whether a painting can go in: not yet varnished.
+    public static bool CanVarnish(Item? item) => PaintingItems.IsPainting(item) && FinishOf(item!) == null;
+
+    public static bool IsCured(SObject cabinet) => cabinet.heldObject.Value != null && DaysIn(cabinet) >= Finishes[^1].Days;
+
+    // The painting as it would come out now, at the finish it has reached
+    // (a copy: the cabinet still holds it).
+    public static SObject? Peek(SObject cabinet)
     {
-        if (cabinet.heldObject.Value is not SObject painting) return null;
+        if (cabinet.heldObject.Value is not SObject held) return null;
+        var painting = (SObject)held.getOne();
         if (Reached(DaysIn(cabinet)) is { } finish)
         {
             painting.modData[FinishKey] = finish.Key;
             painting.Price = (int)Math.Round(painting.Price * finish.Value);
         }
+        return painting;
+    }
+
+    // Empties the cabinet.
+    public static void Clear(SObject cabinet)
+    {
         cabinet.heldObject.Value = null;
         cabinet.modData.Remove(StartKey);
         cabinet.MinutesUntilReady = 0;
         cabinet.readyForHarvest.Value = false;
+    }
+
+    // Takes the painting out at the finish it has reached.
+    public static SObject? TakeOut(SObject cabinet)
+    {
+        var painting = Peek(cabinet);
+        if (painting != null)
+            Clear(cabinet);
         return painting;
     }
 
@@ -140,7 +167,7 @@ internal static class Varnish
             return false;
         }
         int days = DaysIn(__instance);
-        if (days >= Finishes[^1].Days)
+        if (IsCured(__instance))
         {
             var cured = TakeOut(__instance)!;
             if (!who.addItemToInventoryBool(cured))

@@ -125,7 +125,7 @@ internal sealed class CommissionBoardMenu : IClickableMenu
             Ui.Text(b, commission.ItemName, new Vector2(x + 48, card.Y + 52));
         }
         string days = commission.DaysLeft <= 0 ? I18n.Get("board.take.last-day") : I18n.Get("board.take.days", new { days = commission.DaysLeft + 1 });
-        Ui.Text(b, I18n.Get("board.quality", new { quality = Commissions.QualityText(commission.MinQuality), days }), new Vector2(x, card.Y + 88), Game1.textColor * 0.7f);
+        Ui.Text(b, I18n.Get("board.quality", new { quality = Commissions.WantsText(commission), days }), new Vector2(x, card.Y + 88), Game1.textColor * 0.7f);
         Ui.Text(b, $"{commission.Reward}g", new Vector2(accept.X - 16 - Ui.TextWidth($"{commission.Reward}g"), card.Y + 52), new Color(120, 75, 0));
 
         bool can = CanAcceptMore;
@@ -153,7 +153,7 @@ internal sealed class CommissionBoardMenu : IClickableMenu
         foreach (var c in accepted)
         {
             string days = c.DaysLeft <= 0 ? I18n.Get("board.due.today") : I18n.Get("board.due.days", new { days = c.DaysLeft + 1 });
-            Ui.Text(b, I18n.Get("board.yours.line", new { npc = c.NpcName, item = c.ItemName, quality = Commissions.QualityText(c.MinQuality), reward = c.Reward, days }),
+            Ui.Text(b, I18n.Get("board.yours.line", new { npc = c.NpcName, item = c.ItemName, quality = Commissions.WantsText(c), reward = c.Reward, days }),
                 new Vector2(_activeArea.X + 24, y), Game1.textColor * 0.85f);
             y += 30;
         }

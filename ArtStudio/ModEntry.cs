@@ -33,7 +33,7 @@ public class ModEntry : Mod
         Varnish.Apply(harmony, helper, Monitor);
         SableEvents.Register();
         NeutralLabels.Apply(harmony, Monitor);
-        SableMarriage.Apply(harmony, Monitor);
+        SableMarriage.Apply(harmony, helper, Monitor);
 
         helper.Events.Content.AssetRequested += OnAssetRequested;
         helper.Events.GameLoop.ReturnedToTitle += (_, _) => PaintingRenderer.ClearCache();
@@ -41,6 +41,9 @@ public class ModEntry : Mod
         {
             PaintingSkill.Register(helper);
             RegisterConfigMenu();
+            // Optional integrations, each only when that mod is installed.
+            if (helper.ModRegistry.IsLoaded(Integrations.AutomateIntegration.ModId))
+                Integrations.AutomateIntegration.Register(helper, Monitor);
         };
 
         DevTools.AddCommand(helper, "museart_paint", "Opens the easel. Usage: museart_paint [small|medium|large] [item IDs...]\nWith no items, opens the setup screen; 'held' paints the held item.", PaintCommand);

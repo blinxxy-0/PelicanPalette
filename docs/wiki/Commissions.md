@@ -12,4 +12,11 @@ They pay the reward, and you gain 100 friendship points and Painting XP. If the 
 ## Portrait commissions
 From medium canvases (Painting level 4), friends at 4 hearts or more sometimes ask for a **portrait of themselves**. Only friends who would sit for you ask. See [Portraits and Plein Air](Portraits-and-Plein-Air).
 
+## Asking for more
+Later on, some requests want more than the subject:
+- **Varnished:** from Painting level 7, about one in four asks for a varnished painting (any finish, satin or better). They pay 30% more, and you have 14 days to deliver, time for the varnish to cure. See [Varnishing](Varnishing).
+- **Glazed:** once medium canvases are open to you, about one in five asks for a painting with glazing. They pay 25% more. See [Canvases and Techniques](Canvases-and-Techniques).
+
+The board shows what's wanted beside the quality, and if you hand over a painting without it, the villager tells you what's missing.
+
 The **Patron's Favorite** profession makes commissions pay more.

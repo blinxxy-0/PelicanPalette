@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.1.0
+
+- **The art shop is on the world map.** It's drawn over Cindersap Forest, west of the path down from Marnie's, with a snowy roof in winter, and the map shows where you are while you're inside. It sits in the same place on Stardew Valley Expanded's map.
+- **The yard easel paints.** The display easel in the shop's yard works like one you set down yourself: still lifes, or the view of the yard. On Friday mornings Sable paints there.
+- **Works with more mods:**
+  - **Automate:** Varnishing Cabinets now automate like casks. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish, and returns the painting with the gallery finish. Pigment Mills already worked.
+  - **NPC Map Locations:** Sable's map marker shows their face.
+  - **Polyamory Sweet:** as one of several spouses, Sable still leaves the till open on trust, and the 14-heart exhibition still happens.
+  - **Remapping and map recolours:** the shop's map icon blends with recoloured and SVE maps.
+- **Commissions ask for more:** later on, some villagers want their painting varnished (more pay, and two weeks to deliver) or glazed (more pay). The board shows it, and they tell you if it's missing.
+- **Closer views on small canvases:** plein air on a small canvas paints a closer scene, two cells to a tile, and stray single cells are cleaned up, so views read clearly.
+- **Watching Sable paint:** on Friday mornings Sable tells you what's on the yard easel, and you can stay and watch for half an hour and a little Painting XP.
+- **Married life:** Sable sometimes paints the farm from the patio easel and gives you the painting the next morning, and comments on your paintings hung in the house.
+- **More compatibility:** Custom Spouse Rooms and Custom Spouse Patio Redux (tested), Lookup Anything gift tastes, and paintings spawned by CJB Item Spawner (a bare canvas, safely).
+- **Sable's wedding suit.** Sable is married in a cream suit with a teal waistcoat, a flower on the lapel and a paint-splashed pocket square, with portraits to match.
+
 ## 1.0.0 (first release)
 
 **Painting**

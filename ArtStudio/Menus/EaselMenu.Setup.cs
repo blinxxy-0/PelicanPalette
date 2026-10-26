@@ -85,7 +85,7 @@ internal sealed partial class EaselMenu
         {
             if (item == null) continue;
             bool wanted = _setupFraming
-                ? PaintingItems.IsPainting(item)
+                ? PaintingItems.IsPainting(item) && PaintingData.Read(item) != null
                 : ReferenceBuilder.CanPaint(item) && !_itemSlots.Any(s => s.Item.QualifiedItemId == item.QualifiedItemId);
             if (!wanted) continue;
             var rect = new Rectangle(gridX + n % cols * (SlotSize + SlotGap), gridY + n / cols * (SlotSize + SlotGap), SlotSize, SlotSize);

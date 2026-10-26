@@ -192,6 +192,30 @@ def title_card(media, out_png, title_png, subtitle_png):
     return card
 
 
+def portrait_header(sign_png, portrait_png, frame_index, out_png):
+    """A heading with a face beside it: the portrait (one 64x64 frame of the
+    sheet) on planks in a log frame, left of the name's sign, both at the
+    sign's pixel scale so the pixels match."""
+    sheet = Image.open(portrait_png).convert("RGBA")
+    cols = sheet.width // 64
+    face = sheet.crop(((frame_index % cols) * 64, (frame_index // cols) * 64,
+                       (frame_index % cols + 1) * 64, (frame_index // cols + 1) * 64))
+    planks, _ = board(64 + 8, planks=6, plank_h=12)
+    planks = planks.crop((4, 3, 4 + 64, 3 + 64))
+    frame, border = log_frame(64, 64, border=5)
+    box = Image.new("RGBA", frame.size, (0, 0, 0, 0))
+    box.alpha_composite(planks, (border, border))
+    box.alpha_composite(face, (border, border))
+    box.alpha_composite(frame)
+    box = box.resize((box.width * SIGN_SCALE, box.height * SIGN_SCALE), Image.NEAREST)
+    sign_im = Image.open(sign_png).convert("RGBA")
+    gap = 4 * SIGN_SCALE
+    out = Image.new("RGBA", (box.width + gap + sign_im.width, max(box.height, sign_im.height)), (0, 0, 0, 0))
+    out.alpha_composite(box, (0, (out.height - box.height) // 2))
+    out.alpha_composite(sign_im, (box.width + gap, (out.height - sign_im.height) // 2))
+    out.save(out_png)
+
+
 def main():
     media = sys.argv[1]
     out = os.path.join(media, "page")
@@ -205,6 +229,11 @@ def main():
         ("event_gallery_1.png", 620, 360),
         ("setup_portrait.png", 1030, 300),
     ])
+    # Sable's heading, with their smiling portrait beside the name.
+    here = os.path.dirname(os.path.abspath(__file__))
+    portrait_header(os.path.join(out, "header_sable.png"),
+                    os.path.join(here, "..", "..", "[CP] Pelican Palette", "assets", "sable", "portraits.png"), 1,
+                    os.path.join(out, "header_sable_portrait.png"))
     title_card(media, os.path.join(out, "title_card.png"),
                os.path.join(media, "signtext", "sign_pelican_palette.png"),
                os.path.join(media, "signtext", "sign_a_painting_mod_for_stardew_valley.png"))

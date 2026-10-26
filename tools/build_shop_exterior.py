@@ -32,6 +32,7 @@ DOOR_COLS = (5,)                              # columns of its door (bottom row)
 DOOR_ACTION = "LockedDoorWarp 9 13 blinxxy.MuseArt_ArtShop 900 2000"
 YARD_Y = 1                                    # the yard's rows, below the patch's top row (the roof's)
 SIGN_ACTION = "blinxxy.MuseArt_Sign"
+EASEL_ACTION = "blinxxy.MuseArt_YardEasel"     # the yard easel paints, like a placed one (1.1)
 
 # Vanilla Forest tiles (spring_outdoorsTileSheet, which the game swaps per season).
 # Fence rail pieces: top half on Front, bottom half (+25) on Buildings.
@@ -111,6 +112,7 @@ def main():
         put("Buildings", x, 7 + YARD_Y, BARREL_BASE)
     put("Front", 4, 6 + YARD_Y, YARD_FIRST)
     put("Buildings", 4, 7 + YARD_Y, YARD_FIRST + 1)
+    actions.append(("Buildings", 4, 7 + YARD_Y, EASEL_ACTION))
     put("Front", 11, 4 + YARD_Y, SIGN_FRONT)
     put("Buildings", 11, 5 + YARD_Y, SIGN_BASE)
     actions.append(("Buildings", 11, 5 + YARD_Y, SIGN_ACTION))

@@ -1,5 +1,6 @@
-"""Builds Sable's winter and beach outfits (Characters/Sable_Winter,
-Portraits/Sable_Winter, Characters/Sable_Beach, Portraits/Sable_Beach) from
+"""Builds Sable's winter, beach and wedding outfits (Characters/Sable_Winter,
+Portraits/Sable_Winter, Characters/Sable_Beach, Portraits/Sable_Beach,
+Characters/Sable_Wedding, Portraits/Sable_Wedding) from
 their everyday sheets and PixelLab Pixen edits of them (2026-10-25,
 art/sable/outfits/outfit_batch.json).
 
@@ -10,6 +11,10 @@ Island. Like theirs, Sable's outfits change only the clothes:
   Winter  a plum wool coat and a chunky mustard knit scarf
   Beach   a pale sky-blue linen shirt open at the collar, sand shorts,
           bare arms and legs
+  Wedding (1.1) a cream suit over a teal waistcoat and white collar, a pink
+          flower on the lapel and a paint-splashed pocket square, goggles
+          off. Worn only for the ceremony: the wedding script switches to it
+          with changeSprite/changePortrait.
 
 Pixen redrew each whole image, nudging every colour a little. So the
 outfit is taken pixel by pixel: where the edit changed a colour a lot (or
@@ -32,7 +37,15 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from vanillafy import quantize, recolour_black
 import build_sable_sprites as sprites
 
-PICKS = {"winter": ("winter_walk_1", "winter_portrait_1"), "beach": ("beach_walk_1", "beach_portrait_1")}
+PICKS = {"winter": ("winter_walk_1", "winter_portrait_1"), "beach": ("beach_walk_1", "beach_portrait_1"),
+         "wedding": ("wedding_walk_1", "wedding_portrait_1")}
+# The wedding walk edit turned Sable's teal hair black, so its frames keep
+# the everyday head (frame rows above HEAD_END) and take only the suit; the
+# goggles on that head are painted over with the hair beside them.
+HEAD_END = 17
+GOGGLES = {(0x5D, 0x3F, 0x39), (0xBF, 0x95, 0x74), (0x7A, 0x59, 0x47)}
+GOGGLE_ROWS = range(6, 10)
+HAIR = (0x20, 0x23, 0x2A)
 CHANGED = 70            # colour distance above which the edit counts as new clothing
 # In the portraits, everything below the collar line (under the chin) is
 # clothing outright: the beach shirt's bare chest is close enough in colour
@@ -82,7 +95,58 @@ def build_sprites(everyday, edited_walk):
     return sheet
 
 
-def build_portraits(everyday, edited_neutral):
+def without_goggles(walk):
+    """The walk frames with the goggles on top of the head painted out with
+    the hair next to them."""
+    out = walk.copy()
+    px = out.load()
+    for fy in range(0, walk.height, 32):
+        for fx in range(0, walk.width, 16):
+            for y in GOGGLE_ROWS:
+                row = [px[fx + x, fy + y] for x in range(16)]
+                for x in range(16):
+                    if row[x][3] and row[x][:3] in GOGGLES:
+                        near = [row[x + d] for d in (-1, 1, -2, 2, -3, 3) if 0 <= x + d < 16
+                                and row[x + d][3] and row[x + d][:3] not in GOGGLES]
+                        px[fx + x, fy + y] = near[0] if near else HAIR + (255,)
+    return out
+
+
+def build_wedding_sprites(everyday, edited_walk):
+    walk = without_goggles(everyday.crop((0, 0, 64, 128)))
+    # Below the head it's all suit (the threshold test kept bits of the old
+    # apron and turtleneck where the edit's colours were close).
+    pw, pe = walk.load(), edited_walk.load()
+    mask = {(x, y) for y in range(walk.height) for x in range(walk.width)
+            if y % 32 >= HEAD_END and (pw[x, y][3] >= 128 or pe[x, y][3] >= 128)}
+    dressed = quantize(recolour_black(merge(walk, edited_walk, mask)), COLOURS)
+    sheet = everyday.copy()
+    sheet.paste(Image.new("RGBA", (64, 128), (0, 0, 0, 0)), (0, 0))
+    sheet.alpha_composite(dressed, (0, 0))
+    sheet = sprites.add_special_frames(sheet)
+    # The ceremony frames in the suit itself: 36 facing front, 37 turned to
+    # the farmer on their left, 38 the kiss.
+    front, left = sprites.frame_at(sheet, 0), sprites.frame_at(sheet, 12)
+    sprites.put_frame(sheet, 36, front)
+    sprites.put_frame(sheet, 37, left)
+    sprites.put_frame(sheet, 38, sprites.close_eye(left, lean=-1))
+    return sheet
+
+
+def without_strands(portrait):
+    """Clears one-pixel-wide strands hanging in empty space: on a tilted
+    head the old turtleneck's outline is left beside the suit's collar."""
+    out = portrait.copy()
+    px = out.load()
+    for _ in range(3):
+        strays = [(x, y) for y in range(out.height) for x in range(1, out.width - 1)
+                  if px[x, y][3] and not px[x - 1, y][3] and not px[x + 1, y][3]]
+        for x, y in strays:
+            px[x, y] = (0, 0, 0, 0)
+    return out
+
+
+def build_portraits(everyday, edited_neutral, strands=False):
     neutral = everyday.crop((0, 0, 64, 64))
     mask = outfit_mask(neutral, edited_neutral, COLLAR_LINE)
     out = everyday.copy()
@@ -102,7 +166,7 @@ def build_portraits(everyday, edited_neutral):
         for x, y in own:
             if pd[x, y][:3] in OLD_CLOTHES:
                 pd[x, y] = NECK + (255,)
-        out.paste(dressed, (x0, y0))
+        out.paste(without_strands(dressed) if strands else dressed, (x0, y0))
     return quantize(recolour_black(out), 34)
 
 
@@ -113,8 +177,9 @@ def main():
     for outfit, (walk_name, portrait_name) in PICKS.items():
         walk = Image.open(os.path.join(gen_dir, walk_name + ".png")).convert("RGBA")
         portrait = Image.open(os.path.join(gen_dir, portrait_name + ".png")).convert("RGBA")
-        build_sprites(everyday_sprites, walk).save(os.path.join(sable_dir, f"sprites_{outfit}.png"))
-        build_portraits(everyday_portraits, portrait).save(os.path.join(sable_dir, f"portraits_{outfit}.png"))
+        build = build_wedding_sprites if outfit == "wedding" else build_sprites
+        build(everyday_sprites, walk).save(os.path.join(sable_dir, f"sprites_{outfit}.png"))
+        build_portraits(everyday_portraits, portrait, strands=outfit == "wedding").save(os.path.join(sable_dir, f"portraits_{outfit}.png"))
         print("built", outfit)
 
 

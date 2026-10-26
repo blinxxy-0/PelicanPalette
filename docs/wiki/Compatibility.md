@@ -1,9 +1,16 @@
 - **Stardew Valley** 1.6.15, with **SMAPI** 4.0 or later.
 - **Required:** [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 2.9+ and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
 - **Optional:** [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
-- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps.
+- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too.
+- **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills and Varnishing Cabinets work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days.
+- **[NPC Map Locations](https://www.nexusmods.com/stardewvalley/mods/239):** Sable shows on the map, their marker cropped to their face.
+- **[Remapping](https://www.nexusmods.com/stardewvalley/mods/29049) and map recolours:** the shop draws itself on the world map, in the same spot on vanilla and SVE maps, and its shadow takes on the colour of whatever ground is under it.
+- **[Polyamory Sweet](https://www.nexusmods.com/stardewvalley/mods/20599):** Sable can be one of several spouses. The shop's trust and the 14-heart exhibition go by Sable's own relationship, not which spouse is "first".
 - **Other mods:**
   - Anything that changes the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
   - Paintings are ordinary objects (stored with the mod's data), so they're safe in chests, Automate and other inventory mods.
+  - **[Custom Spouse Rooms](https://www.nexusmods.com/stardewvalley/mods/10029) and [Custom Spouse Patio Redux](https://www.nexusmods.com/stardewvalley/mods/10889):** Sable's studio corner and patio easel work with them.
+  - **[Lookup Anything](https://www.nexusmods.com/stardewvalley/mods/541):** a painting's gift tastes show correctly, by its quality and subject.
+  - **[CJB Item Spawner](https://www.nexusmods.com/stardewvalley/mods/93):** a spawned "Painting" has no picture: it shows as a bare canvas, sells for its base price, and can't be framed.
 - **Saves:** safe to add to an existing save. To remove the mod, sell or trash your paintings, easels and art supplies first.
 - **Multiplayer:** supported; see [Multiplayer](Multiplayer).

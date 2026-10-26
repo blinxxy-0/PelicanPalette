@@ -7,7 +7,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 - `description.bbcode` is the page's Description. Paste it into the description editor's BBCode mode.
   - `{{name.png}}` marks an image. Upload each image (below) to the mod's Images tab first. Then replace each placeholder with that image's direct link: right-click the image, then "Copy image address".
   - The wiki link points at https://github.com/blinxxy-0/PelicanPalette/wiki. Run `tools/build_wiki.py` and push `docs/wiki` to the wiki repo (`PelicanPalette.wiki.git`) when it changes.
-- The release zip is `ArtStudio/bin/Release/net6.0/PelicanPalette 1.0.0.zip`. Build it with `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false`.
+- The release zip is `ArtStudio/bin/Release/net6.0/PelicanPalette 1.1.0.zip`. Build it with `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false`.
 - Images, all in `docs/media/`:
   - `page/`: `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description.
   - `screens/`: in-game screenshots for the description and the Images tab.
@@ -18,7 +18,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 - **Summary** (the short "About this mod" line):
   > Paint pixel art at an easel in a fishing-style minigame, level a Painting skill, and sell, gift, frame and varnish your work. With an art shop in Cindersap Forest and Sable, its romanceable owner.
 - **Category:** Gameplay Mechanics
-- **Version:** 1.0.0
+- **Version:** 1.1.0
 - **Tags:** Gameplay, Crafting, New Characters, Romance, Skills, Content Patcher, SMAPI
 - **Requirements:**
   - SMAPI (2400)
@@ -30,7 +30,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
   - Modify and re-upload: no, for the art and writing; the code is MIT on GitHub
   - Use assets: no, without asking
   - Translations: yes, with credit (`README.md` explains how)
-- **Changelog:** paste `CHANGELOG.md`'s 1.0.0 section into the Changelogs tab.
+- **Changelog:** paste `CHANGELOG.md`'s newest section into the Changelogs tab.
 
 ## Images tab: suggested order and captions
 

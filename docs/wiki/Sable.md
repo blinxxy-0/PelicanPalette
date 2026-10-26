@@ -42,5 +42,10 @@ Like most villagers, Sable loves iridium paintings, and as an art lover they lik
 
 ## Romance and marriage
 - **Who:** Sable can be dated and married by any farmer, with a bouquet and a Mermaid's Pendant as usual.
-- **The wedding:** it uses gender-neutral vows.
+- **The wedding:** it uses gender-neutral vows, and Sable wears a cream suit with a teal waistcoat, a flower on the lapel and a paint-splashed pocket square.
 - **Married life:** Sable moves in with their own spouse room (a studio corner) and patio (an easel), and still keeps the shop. They're at the counter from 9am to 5pm, the Saloon on Fridays, and the beach on Sunday mornings.
+  - Every so often Sable paints the farm from their patio easel, and the next morning gives you the painting.
+  - Some mornings they have something to say about a painting of yours you've hung in the house.
+
+## The yard easel on Fridays
+Before marriage, Sable paints at the easel in the shop's yard from 8 to 10 on Friday mornings. Talk to them there to hear what's on it; talk again and you can **stay and watch** for half an hour, for a little Painting XP (once a day).

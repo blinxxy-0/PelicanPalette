@@ -20,8 +20,11 @@ namespace ArtStudio;
 // easel and a framed painting set up in the farmhouse.
 internal static class DevGame
 {
+    private static IModHelper _helper = null!;
+
     public static void Register(IModHelper helper, IMonitor monitor)
     {
+        _helper = helper;
         // SpaceCore loads skill XP from the save folder, which a never-saved
         // farm doesn't have; give it an empty XP table instead, right after
         // its own save-loaded handler gives up (and before the day starts).
@@ -55,6 +58,17 @@ internal static class DevGame
                 texture.SaveAsPng(stream, texture.Width, texture.Height);
                 monitor.Log($"Exported {asset} ({texture.Width}x{texture.Height}).", LogLevel.Info);
             }
+        });
+        DevTools.AddCommand(helper, "museart_export_worldmap", "Writes Data/WorldMap (as the game sees it, with every mod's edits) to exports/worldmap.json.", (_, _) =>
+        {
+            helper.Data.WriteJsonFile("exports/worldmap.json", Game1.content.Load<System.Collections.Generic.Dictionary<string, StardewValley.GameData.WorldMaps.WorldMapRegionData>>("Data/WorldMap"));
+            monitor.Log("Exported Data/WorldMap.", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_season", "Sets the season, for checking seasonal art. Usage: museart_season spring|summer|fall|winter", (_, args) =>
+        {
+            Game1.season = Enum.Parse<Season>(args[0], ignoreCase: true);
+            Game1.setGraphicsForSeason();
+            monitor.Log($"Season is now {Game1.season}.", LogLevel.Info);
         });
         DevTools.AddCommand(helper, "museart_export_data", "Writes string-dictionary game data (schedules, dialogue) to the mod's exports folder as JSON. Usage: museart_export_data Characters/schedules/Leah ...", (_, args) =>
         {
@@ -122,6 +136,11 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_painttest", "Paint as a resource: the Palette, tubes, spending paint, and the Pigment Mill. Run 'museart_painttest', then 'museart_painttest check' a second later.", (_, args) => PaintTest(monitor, args));
         DevTools.AddCommand(helper, "museart_knowtest", "Pigments as knowledge, and painting taking time. Run 'museart_knowtest', then 'museart_knowtest close', then 'museart_knowtest check' a few seconds later.", (_, args) => KnowTest(monitor, args));
         DevTools.AddCommand(helper, "museart_gallerytest", "The painting record, consignment and plein air. Usage: museart_gallerytest record|consign|view (view: stand outdoors first, e.g. museart_warp Farm 64 15).", (_, args) => GalleryTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_marriedlifetest", "Throwaway farm only: Sable paints the farm and gives it to you; Sable comments on your paintings on the wall. Run it, warp onto the farm, then 'museart_marriedlifetest farm'.", (_, args) => MarriedLifeTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_watchtest", "Sable at the yard easel on a Friday: the line, and watching. Run it, then 'museart_watchtest check' a few seconds later.", (_, args) => WatchTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_blanktest", "A painting with no picture (as CJB Item Spawner makes): names, gift tastes, price, drawing, consigning, varnishing.", (_, _) => BlankTest(monitor));
+        DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
+        DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
         DevTools.AddCommand(helper, "museart_palettetest", "Palette tiers, tubes going straight in, and a placed Palette as storage. Run 'museart_palettetest' in the farmhouse, then 'museart_palettetest check' a second later.", (_, args) => PaletteTest(monitor, args));
@@ -457,6 +476,53 @@ internal static class DevGame
             Check(monitor, "delivering raises friendship", who.getFriendshipLevelForNPC("Pierre") > points);
             Check(monitor, "the painting is handed over and the commission closed", !who.Items.Contains(good) && !Shop.Commissions.Accepted(who).Any());
             CloseDialogue();
+        }
+
+        // Commissions asking for more (1.1): a varnish, or glazing.
+        if (pierre != null)
+        {
+            var cells = ReferenceBuilder.StillLife(new[] { "(O)24" }, 28, ArtProgress.OwnedPigments(who)).Cells;
+            SObject Painting(Mark[,]? marks = null) => PaintingItems.Create(new PaintingData { Size = 28, Cells = cells, Purity = new Purity[28, 28], Marks = marks, Subject = "(O)24" }, PaintingRules.Gold, 200);
+            bool Delivered(string requirement, SObject painting)
+            {
+                var c = new Shop.Commission { Npc = "Pierre", ItemId = "(O)24", MinQuality = PaintingRules.Silver, Reward = 100, ExpiresOn = Game1.Date.TotalDays + 5, Accepted = true, Requirement = requirement };
+                Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission> { c });
+                who.addItemToInventory(painting);
+                who.CurrentToolIndex = who.Items.IndexOf(painting);
+                pierre.tryToReceiveActiveObject(who);
+                CloseDialogue();
+                bool gone = !who.Items.Contains(painting);
+                who.removeItemFromInventory(painting);
+                return gone;
+            }
+            Check(monitor, "a varnished request turns down an unvarnished painting", !Delivered(Shop.Commissions.Varnished, Painting()));
+            var satin = Painting();
+            satin.modData[Varnish.FinishKey] = "satin";
+            Check(monitor, "...and takes a varnished one", Delivered(Shop.Commissions.Varnished, satin));
+            Check(monitor, "a glazed request turns down a painting without glazes", !Delivered(Shop.Commissions.Glazed, Painting()));
+            var marks = new Mark[28, 28];
+            marks[10, 10] = Mark.Glaze;
+            Check(monitor, "...and takes a glazed one", Delivered(Shop.Commissions.Glazed, Painting(marks)));
+
+            // Late in the skill, some postings ask for them, for more, with time to cure.
+            int oldLevel = ArtProgress.Level(who);
+            ArtProgress.SetLevel(who, 9);
+            var posted = new System.Collections.Generic.List<Shop.Commission>();
+            for (int seed = 0; seed < 40; seed++)
+            {
+                Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+                Shop.Commissions.NewDay(who, monitor, new Random(seed));
+                posted.AddRange(Shop.Commissions.Posted(who));
+            }
+            Check(monitor, "some postings ask for a varnish, some for glazing",
+                posted.Any(c => c.Requirement == Shop.Commissions.Varnished) && posted.Any(c => c.Requirement == Shop.Commissions.Glazed),
+                $"{posted.Count(c => c.Requirement == Shop.Commissions.Varnished)} varnished, {posted.Count(c => c.Requirement == Shop.Commissions.Glazed)} glazed of {posted.Count}");
+            var asksVarnish = posted.First(c => c.Requirement == Shop.Commissions.Varnished);
+            Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission> { asksVarnish });
+            Shop.Commissions.Accept(who, asksVarnish);
+            Check(monitor, "a varnished request gives time to cure", Shop.Commissions.Accepted(who).First().DaysLeft >= Shop.Commissions.DaysToDeliverVarnished);
+            Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+            ArtProgress.SetLevel(who, oldLevel);
         }
 
         // Fill the board as a morning would, then open the shop for the premium check.
@@ -798,7 +864,8 @@ internal static class DevGame
         Check(monitor, "a pigment jar is learned on pickup", ArtProgress.Owns(who, sienna));
         Check(monitor, "the learned jar leaves the bag", !who.Items.Any(i => ArtItems.PigmentFor(i) != null));
         Check(monitor, "the shop condition sees a known pigment", GameStateQuery.CheckConditions(ModEntry.Id + "_KNOWS_PIGMENT Current sienna"));
-        Check(monitor, "closing the easel after painting moves the clock on", Game1.timeOfDay == 1200, $"10:00 -> {Game1.timeOfDay}");
+        // (The clock may have ticked on once by itself while the test waited.)
+        Check(monitor, "closing the easel after painting moves the clock on", Game1.timeOfDay is 1200 or 1210, $"10:00 -> {Game1.timeOfDay}");
         Game1.timeOfDay = 2400;
         Check(monitor, "a large painting started at midnight would run too late", ArtHooks.FinishTime(PaintingRules.Minutes(CanvasKind.Large)) > PaintingRules.LatestFinish);
         Check(monitor, "a small one at midnight still fits", ArtHooks.FinishTime(PaintingRules.Minutes(CanvasKind.Small)) <= PaintingRules.LatestFinish);
@@ -1085,6 +1152,266 @@ internal static class DevGame
         ArtHooks.DevFreshMorning();
         who.modData.Remove(ModEntry.Id + "/Catalogue");
         who.modData.Remove(ModEntry.Id + "/CollectionPerks");
+    }
+
+    // Married life with Sable (1.1): run it (it marries you and sets a
+    // painting day), warp onto the farm, then run 'museart_marriedlifetest farm'.
+    private static void MarriedLifeTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;      // never on a real save
+        var who = Game1.player;
+        var sable = Game1.getCharacterFromName("Sable");
+        if (args.FirstOrDefault() != "farm")
+        {
+            FreshStart(who);
+            Marry(monitor, new[] { "patio" });
+            SableMarriage.Gifts(who).Clear();
+            who.modData[SableMarriage.PaintsTodayKey] = Game1.Date.TotalDays.ToString();
+            monitor.Log("Married, and today Sable paints the farm. Warp onto the farm, then run 'museart_marriedlifetest farm'.", LogLevel.Info);
+            return;
+        }
+        var gift = SableMarriage.Gifts(who).FirstOrDefault(i => i != null);
+        var data = gift == null ? null : PaintingData.Read(gift);
+        Check(monitor, "out on the farm on a painting day, Sable paints it", data != null && Views.IsView(data.Subject) && Views.PlaceOf(data.Subject) == "Farm",
+            data == null ? "nothing" : $"{gift!.DisplayName} by {data.Painter}");
+        Check(monitor, "...signed by Sable", data?.Painter == sable.displayName);
+
+        sable.CurrentDialogue.Clear();
+        SableMarriage.MorningOf(who, new Random(1));
+        Check(monitor, "next morning Sable offers it", sable.CurrentDialogue.Count > 0
+            && sable.CurrentDialogue.Peek().dialogues.Any(l => l.Text.Contains("farm")));
+        Game1.drawDialogue(sable);
+        // (Left up for four seconds, for a screenshot.)
+        int ticks = 0;
+        _helper.Events.GameLoop.UpdateTicked += Shot;
+        void Shot(object? s, StardewModdingAPI.Events.UpdateTickedEventArgs e)
+        {
+            if (++ticks < 240) return;
+            _helper.Events.GameLoop.UpdateTicked -= Shot;
+            CloseDialogue();
+            sable.CurrentDialogue.Clear();
+            int before = who.Items.Count(PaintingItems.IsPainting);
+            StardewValley.Triggers.TriggerActionManager.TryRunAction(SableMarriage.GiveGiftAction, out _, out _);
+            Check(monitor, "...and hands it over", who.Items.Count(PaintingItems.IsPainting) == before + 1 && !SableMarriage.Gifts(who).Any(i => i != null));
+
+            // A painting of yours on the wall gets a word.
+            var home = Utility.getHomeOfFarmer(who);
+            var m = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" });
+            m.DevPaintPartly(1f, 3);
+            m.DevFinish(false);
+            var framed = ArtHooks.Frame(m.DevPainting!);
+            who.removeItemFromInventory(m.DevPainting!);
+            framed.TileLocation = new Vector2(4, 1);
+            home.furniture.Add(framed);
+            Check(monitor, "Sable comments on a painting of yours on the wall", SableMarriage.CommentOnWall(who, sable, new Random(2))
+                && sable.CurrentDialogue.Peek().dialogues.Any(l => l.Text.Contains(PaintingItems.Title(PaintingData.Read(framed)!)) && !l.Text.Contains("(")),
+                string.Join(" ", sable.CurrentDialogue.Peek().dialogues.Select(l => l.Text)));
+            home.furniture.Remove(framed);
+            sable.CurrentDialogue.Clear();
+        }
+    }
+
+    // Watching Sable at the yard easel (1.1): run it, then 'museart_watchtest
+    // check' a few seconds later (watching fades out and back).
+    private static int _watchStartTime, _watchStartXp;
+    private static void WatchTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var sable = Game1.getCharacterFromName("Sable");
+        if (args.FirstOrDefault() == "check")
+        {
+            Check(monitor, "watching passes half an hour", Game1.timeOfDay == Utility.ModifyTime(_watchStartTime, Shop.ArtShop.WatchMinutes), $"{_watchStartTime} -> {Game1.timeOfDay}");
+            Check(monitor, "...and teaches a little", ArtProgress.Xp(who) == _watchStartXp + Shop.ArtShop.WatchXp, $"{_watchStartXp} -> {ArtProgress.Xp(who)}");
+            CloseDialogue();
+            sable.CurrentDialogue.Clear();
+            sable.checkAction(who, sable.currentLocation);
+            Check(monitor, "only once a day", Game1.activeClickableMenu is DialogueBox box && !box.isQuestion);
+            CloseDialogue();
+            return;
+        }
+        FreshStart(who);
+        string line = Game1.content.LoadString("Strings\\schedules\\Sable:yardEasel");
+        var lines = Enumerable.Range(0, 6).Select(i => I18nCp("yard.painting." + i)).ToList();
+        Check(monitor, "the yard easel line is one of Sable's", lines.Contains(line), line);
+        sable.TryLoadSchedule("Fri");
+        Check(monitor, "Friday at the yard easel carries it", sable.Schedule?.TryGetValue(800, out var stop) == true
+            && stop.endOfRouteMessage == "Strings\\schedules\\Sable:yardEasel" && stop.targetTile == Shop.ArtShop.YardEaselSpot);
+        sable.ClearSchedule();
+
+        // Sable at the easel, having said their piece; talking again offers to watch.
+        Game1.timeOfDay = 800;
+        var forest = Game1.getLocationFromName("Forest");
+        Game1.warpCharacter(sable, forest, Shop.ArtShop.YardEaselSpot.ToVector2());
+        if (!who.friendshipData.ContainsKey("Sable")) who.friendshipData.Add("Sable", new Friendship(500));
+        who.friendshipData["Sable"].TalkedToToday = true;
+        sable.CurrentDialogue.Clear();
+        who.modData.Remove(ModEntry.Id + "/WatchedSable");
+        who.CurrentToolIndex = 0;   // empty-handed (holding something, talking is offering it)
+        sable.checkAction(who, forest);
+        Check(monitor, "talking again at the easel offers to watch", Game1.activeClickableMenu is DialogueBox q && q.isQuestion);
+        CloseDialogue();
+        _watchStartTime = Game1.timeOfDay;
+        _watchStartXp = ArtProgress.Xp(who);
+        Shop.ArtShop.Watch(who, sable);
+    }
+
+    // A line from the content pack's translations, as the game would show it.
+    private static string I18nCp(string key)
+    {
+        string path = System.IO.Path.Combine(_helper.DirectoryPath, "..", "[CP] Pelican Palette", "i18n", "default.json");
+        using var doc = System.Text.Json.JsonDocument.Parse(System.IO.File.ReadAllText(path));
+        return doc.RootElement.TryGetProperty(key, out var value) ? value.GetString() ?? key : key;
+    }
+
+    // A painting with no picture, as an item spawner (CJB Item Spawner)
+    // makes one: everything that handles paintings must cope with it.
+    private static void BlankTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        FreshStart(who);
+        bool Safe(string what, Action act)
+        {
+            try { act(); return true; }
+            catch (Exception ex) { monitor.Log($"{what}: {ex}", LogLevel.Error); return false; }
+        }
+        SObject Blank() => ItemRegistry.Create<SObject>(PaintingItems.QualifiedPaintingId);
+        var blank = Blank();
+        Check(monitor, "a blank painting has a name and description", Safe("text", () => { _ = blank.DisplayName; _ = blank.getDescription(); }));
+        Check(monitor, "...gift tastes don't break on it", Safe("taste", () =>
+        {
+            foreach (string name in new[] { "Leah", "Pierre", "Sable" })
+                Game1.getCharacterFromName(name)?.getGiftTasteForThisItem(blank);
+        }));
+        Check(monitor, "...it has a sale price", Safe("price", () => _ = blank.sellToStorePrice()) && blank.sellToStorePrice() > 0, $"{blank.sellToStorePrice()}g");
+        Check(monitor, "...it draws as a bare canvas", Safe("draw", () =>
+        {
+            Game1.spriteBatch.Begin();
+            blank.drawInMenu(Game1.spriteBatch, Vector2.Zero, 1f);
+            blank.drawWhenHeld(Game1.spriteBatch, Vector2.Zero, who);
+            Game1.spriteBatch.End();
+        }));
+        Check(monitor, "...it can't be framed (nothing to frame)", PaintingData.Read(blank) == null);
+        Check(monitor, "...it can be consigned and sold", Safe("consign", () =>
+        {
+            var c = Blank();
+            who.addItemToInventory(c);
+            Shop.Consignment.Consign(who, c);
+            c.modData[ModEntry.Id + "/SellsOn"] = Game1.Date.TotalDays.ToString();
+            Shop.Consignment.SellDue(who);
+        }));
+        Check(monitor, "...a varnishing cabinet takes and returns it", Safe("varnish", () =>
+        {
+            var cab = ItemRegistry.Create<SObject>(Varnish.QualifiedCabinetId);
+            Varnish.Start(cab, Blank());
+            cab.modData[ModEntry.Id + "/VarnishStart"] = (Game1.Date.TotalDays - 28).ToString();
+            _ = Varnish.TakeOut(cab);
+        }));
+        foreach (var item in who.Items.Where(PaintingItems.IsPainting).ToList())
+            who.removeItemFromInventory(item);
+        who.addItemToInventory(Blank());
+    }
+
+    // Sable as one of several spouses (as Polyamory Sweet allows): married to
+    // Sable while the farmer's one spouse field names someone else.
+    private static void PolyTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var location = who.currentLocation;
+        string oldSpouse = who.spouse;
+        who.friendshipData.TryGetValue("Sable", out var oldSable);
+        who.friendshipData.TryGetValue("Abigail", out var oldAbigail);
+        try
+        {
+            who.spouse = "Abigail";
+            who.friendshipData["Abigail"] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
+            who.friendshipData["Sable"] = new Friendship(3500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
+            Check(monitor, "a second spouse: the 14-heart event's married condition holds",
+                location.checkEventPrecondition("test/G PLAYER_NPC_RELATIONSHIP Current Sable Married", check_seen: false) != "-1");
+            Game1.exitActiveMenu();
+            Shop.ArtShop.OpenShop(location);
+            Check(monitor, "a second spouse: the shop opens on trust", Game1.activeClickableMenu is ShopMenu);
+            Game1.exitActiveMenu();
+
+            who.friendshipData["Sable"] = new Friendship(3500) { Status = FriendshipStatus.Dating };
+            Check(monitor, "only dating: the married condition doesn't hold",
+                location.checkEventPrecondition("test/G PLAYER_NPC_RELATIONSHIP Current Sable Married", check_seen: false) == "-1");
+            Shop.ArtShop.OpenShop(location);
+            Check(monitor, "only dating: no shop on trust away from the counter", Game1.activeClickableMenu is not ShopMenu);
+            Game1.exitActiveMenu();
+        }
+        finally
+        {
+            who.spouse = oldSpouse;
+            if (oldSable != null) who.friendshipData["Sable"] = oldSable; else who.friendshipData.Remove("Sable");
+            // (Left as a plain entry rather than removed: Polyamory Sweet keeps
+            // a list of spouses and looks each one up.)
+            who.friendshipData["Abigail"] = oldAbigail ?? new Friendship(0);
+        }
+    }
+
+    // Automate and the Varnishing Cabinet (needs Automate installed): run
+    // 'museart_automatetest', then 'check' a few seconds later, then 'cured'
+    // a few seconds after that.
+    private static Vector2 _autoCabinet, _autoChest;
+    private static void AutomateTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var house = who.currentLocation;
+        string stage = args.FirstOrDefault() ?? "";
+        if (stage == "")
+        {
+            Check(monitor, "Automate is installed", _helper.ModRegistry.IsLoaded(Integrations.AutomateIntegration.ModId));
+            FreshStart(who);
+            _autoCabinet = who.Tile + new Vector2(2, 0);
+            _autoChest = _autoCabinet + new Vector2(1, 0);
+            house.objects.Remove(_autoCabinet);
+            house.objects.Remove(_autoChest);
+            var cabinet = ItemRegistry.Create<SObject>(Varnish.QualifiedCabinetId);
+            cabinet.placementAction(house, (int)_autoCabinet.X * 64, (int)_autoCabinet.Y * 64, who);
+            var chest = new Chest(true) { TileLocation = _autoChest };
+            house.objects.Add(_autoChest, chest);
+            var m = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" });
+            m.DevPaintPartly(1f, 3);
+            m.DevFinish(false);
+            var painting = m.DevPainting!;
+            who.removeItemFromInventory(painting);
+            chest.addItem(painting);
+            chest.addItem(ItemRegistry.Create("(O)" + Varnish.VarnishId, 1));
+            // And a Pigment Mill on the chest's other side, with clay to grind.
+            var millTile = _autoChest + new Vector2(1, 0);
+            house.objects.Remove(millTile);
+            ItemRegistry.Create<SObject>(ArtItems.QualifiedMillId).placementAction(house, (int)millTile.X * 64, (int)millTile.Y * 64, who);
+            chest.addItem(ItemRegistry.Create("(O)330", 1));
+            monitor.Log($"Cabinet at {_autoCabinet}, chest at {_autoChest} with a painting, a tin and clay, mill at {millTile}.", LogLevel.Info);
+            return;
+        }
+        var cab = house.objects.TryGetValue(_autoCabinet, out var c) ? c : null;
+        var box = house.objects.TryGetValue(_autoChest, out var b) ? b as Chest : null;
+        if (cab == null || box == null)
+        {
+            monitor.Log("Run museart_automatetest first.", LogLevel.Error);
+            return;
+        }
+        if (stage == "check")
+        {
+            Check(monitor, "Automate loads the cabinet from the chest", cab.heldObject.Value != null && PaintingItems.IsPainting(cab.heldObject.Value));
+            Check(monitor, "...spending the chest's painting and tin", !box.Items.Any(i => i != null && (PaintingItems.IsPainting(i) || Varnish.IsVarnish(i))),
+                string.Join(", ", box.Items.Where(i => i != null).Select(i => i.DisplayName)));
+            var mill = house.objects.TryGetValue(_autoChest + new Vector2(1, 0), out var mo) ? mo : null;
+            Check(monitor, "Automate runs the Pigment Mill too", mill?.heldObject.Value != null, mill?.heldObject.Value?.DisplayName ?? "empty");
+            // Four weeks on.
+            cab.modData[ModEntry.Id + "/VarnishStart"] = (Game1.Date.TotalDays - 28).ToString();
+        }
+        else if (stage == "cured")
+        {
+            var back = box.Items.FirstOrDefault(PaintingItems.IsPainting);
+            Check(monitor, "a cured painting goes back to the chest", back != null && cab.heldObject.Value == null);
+            Check(monitor, "...with the gallery finish", back != null && Varnish.FinishOf(back) == "gallery", back == null ? "none" : Varnish.FinishOf(back) ?? "no finish");
+        }
     }
 
     private static void VarnishTest(IMonitor monitor)
@@ -1382,6 +1709,14 @@ internal static class DevGame
         AddAll("Data/EngagementDialogue", "Sable", k => k.StartsWith("Sable"));
         foreach (string festival in new[] { "spring13", "spring24", "summer11", "summer28", "fall16", "fall27", "winter8", "winter25" })
             AddAll("Data/Festivals/" + festival, "Sable", k => k == "Sable");
+        // What's on the yard easel (each of the six, not just today's), and
+        // Sable's lines from the mod itself (watching them, married life).
+        for (int i = 0; i < 6; i++)
+            texts.Add(($"Strings/schedules/Sable:yardEasel[{i}]", "Sable", I18nCp("yard.painting." + i)));
+        texts.Add(("yard.watch.done", "Sable", I18n.Get("yard.watch.done")));
+        texts.Add(("married.farm-painting", "Sable", I18n.Get("married.farm-painting")));
+        for (int i = 0; i < 4; i++)
+            texts.Add(($"married.wall.{i}", "Sable", I18n.Get("married.wall." + i, new { painting = "Still Life: Pomegranate and Fairy Rose" })));
         string[] tastes = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/NPCGiftTastes")["Sable"].Split('/');
         for (int i = 0; i < tastes.Length; i += 2)
             texts.Add(($"Data/NPCGiftTastes:Sable[{i}]", "Sable", tastes[i]));
@@ -1459,14 +1794,17 @@ internal static class DevGame
     {
         if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;      // never on a real save
         var who = Game1.player;
-        var sable = Game1.getCharacterFromName("Sable");
-        who.friendshipData["Sable"] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
-        who.spouse = "Sable";
+        // 'museart_marry npc:Abigail' marries a vanilla villager instead, to
+        // compare how other mods treat Sable's room with a vanilla one.
+        string name = args.FirstOrDefault(a => a.StartsWith("npc:"))?.Substring(4) ?? "Sable";
+        var sable = Game1.getCharacterFromName(name);
+        who.friendshipData[name] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
+        who.spouse = name;
         who.HouseUpgradeLevel = 1;
         var house = Utility.getHomeOfFarmer(who);
         house.setMapForUpgradeLevel(1);
         house.showSpouseRoom();
-        Game1.getFarm().addSpouseOutdoorArea("Sable");
+        Game1.getFarm().addSpouseOutdoorArea(name);
         if (args.FirstOrDefault() == "patio")
         {
             sable.setUpForOutdoorPatioActivity();
@@ -1547,6 +1885,18 @@ internal static class DevGame
                 Shop.Commissions.Save(Game1.player, list);
                 Game1.activeClickableMenu = new Shop.CommissionBoardMenu(Game1.player);
                 break;
+            case "askboard":
+                // The board with requests asking for a varnish and glazing,
+                // the longest texts they make (posted and taken).
+                Shop.Commissions.Save(Game1.player, new System.Collections.Generic.List<Shop.Commission>
+                {
+                    new() { Npc = "Demetrius", ItemId = "(O)637", MinQuality = PaintingRules.Silver, Reward = 1890, ExpiresOn = Game1.Date.TotalDays + 2, Requirement = Shop.Commissions.Varnished },
+                    new() { Npc = "Elliott", ItemId = "(O)595", MinQuality = PaintingRules.Iridium, Reward = 2440, ExpiresOn = Game1.Date.TotalDays + 2, Requirement = Shop.Commissions.Glazed },
+                    new() { Npc = "Caroline", ItemId = "(O)637", MinQuality = PaintingRules.Silver, Reward = 1890, ExpiresOn = Game1.Date.TotalDays + 13, Accepted = true, Requirement = Shop.Commissions.Varnished },
+                    new() { Npc = "Maru", ItemId = "(O)595", MinQuality = PaintingRules.Silver, Reward = 2440, ExpiresOn = Game1.Date.TotalDays + 6, Accepted = true, Requirement = Shop.Commissions.Glazed },
+                });
+                Game1.activeClickableMenu = new Shop.CommissionBoardMenu(Game1.player);
+                break;
             case "record":
                 Game1.activeClickableMenu = new Menus.CollectionMenu(Game1.player);
                 break;
@@ -1557,6 +1907,10 @@ internal static class DevGame
                 break;
             case "consign":
                 Game1.activeClickableMenu = new Shop.ConsignMenu(Game1.player);
+                break;
+            case "map":
+                // The world map page (museart_menu map).
+                Game1.activeClickableMenu = new GameMenu(GameMenu.mapTab);
                 break;
             case "view":
                 // The easel outdoors, the view picked.

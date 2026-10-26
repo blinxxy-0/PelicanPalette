@@ -602,6 +602,13 @@ They pay the reward, and you gain {c["FriendshipReward"]} friendship points and 
 ## Portrait commissions
 From medium canvases (Painting level 4), friends at 4 hearts or more sometimes ask for a **portrait of themselves**. Only friends who would sit for you ask. See {link("Portraits and Plein Air")}.
 
+## Asking for more
+Later on, some requests want more than the subject:
+- **Varnished:** from Painting level 7, about one in four asks for a varnished painting (any finish, satin or better). They pay 30% more, and you have 14 days to deliver, time for the varnish to cure. See {link("Varnishing")}.
+- **Glazed:** once medium canvases are open to you, about one in five asks for a painting with glazing. They pay 25% more. See {link("Canvases and Techniques")}.
+
+The board shows what's wanted beside the quality, and if you hand over a painting without it, the villager tells you what's missing.
+
 The **Patron's Favorite** profession makes commissions pay more.
 """)
 
@@ -671,7 +678,7 @@ Once you have medium canvases (Painting level 4), friends at **4 hearts or more*
 ![Painting the view](images/screens/setup_view.png)
 
 An easel placed **outdoors** offers **the view** as a subject. The scene around the easel, mostly what's in front of it, becomes the reference. The game draws the place as it is: trees, buildings, the weather, the season.
-- **Canvas:** the view fills the whole canvas, on any size.
+- **Canvas:** the view fills the whole canvas. A small canvas paints a closer view (about 10 tiles across, two cells to a tile), a medium one 13 tiles and a large one 16, so a house still reads as a house on a small canvas.
 - **Time and value:** like a portrait, it takes an hour longer and is worth {DATA["market"]["portrait"]}x.
 - **Place:** it's worth more somewhere far from the farm. The farm and town are everyday; the Woods and the Railroad less so; the Summit, the Desert and Ginger Island are rare.
 - **Conditions:** rain, winter and evening (after 7pm) each raise it.
@@ -725,6 +732,10 @@ The **art supply shop** is in Cindersap Forest, west of the path down from Marni
 | **Closed** | Wednesdays |
 
 Married to Sable, you're never turned away: when they're out, the till runs on trust.
+
+The shop is on the world map (M), west of the path down from Marnie's, and so are you while you're inside.
+
+**The yard easel** by the barrels is yours to paint at, like an easel you set down yourself: still lifes, or the view of the yard. On Friday mornings Sable paints there, and it's theirs.
 
 ![Inside the shop](images/screens/shop_interior.png)
 
@@ -809,8 +820,13 @@ Like most villagers, Sable loves iridium paintings, and as an art lover they lik
 
 ## Romance and marriage
 - **Who:** Sable can be dated and married by any farmer, with a bouquet and a Mermaid's Pendant as usual.
-- **The wedding:** it uses gender-neutral vows.
+- **The wedding:** it uses gender-neutral vows, and Sable wears a cream suit with a teal waistcoat, a flower on the lapel and a paint-splashed pocket square.
 - **Married life:** Sable moves in with their own spouse room (a studio corner) and patio (an easel), and still keeps the shop. They're at the counter from 9am to 5pm, the Saloon on Fridays, and the beach on Sunday mornings.
+  - Every so often Sable paints the farm from their patio easel, and the next morning gives you the painting.
+  - Some mornings they have something to say about a painting of yours you've hung in the house.
+
+## The yard easel on Fridays
+Before marriage, Sable paints at the easel in the shop's yard from 8 to 10 on Friday mornings. Talk to them there to hear what's on it; talk again and you can **stay and watch** for half an hour, for a little Painting XP (once a day).
 """)
 
 
@@ -850,10 +866,17 @@ def compatibility():
 - **Stardew Valley** 1.6.15, with **SMAPI** 4.0 or later.
 - **Required:** [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 2.9+ and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
 - **Optional:** [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
-- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps.
+- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too.
+- **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills and Varnishing Cabinets work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days.
+- **[NPC Map Locations](https://www.nexusmods.com/stardewvalley/mods/239):** Sable shows on the map, their marker cropped to their face.
+- **[Remapping](https://www.nexusmods.com/stardewvalley/mods/29049) and map recolours:** the shop draws itself on the world map, in the same spot on vanilla and SVE maps, and its shadow takes on the colour of whatever ground is under it.
+- **[Polyamory Sweet](https://www.nexusmods.com/stardewvalley/mods/20599):** Sable can be one of several spouses. The shop's trust and the 14-heart exhibition go by Sable's own relationship, not which spouse is "first".
 - **Other mods:**
   - Anything that changes the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
   - Paintings are ordinary objects (stored with the mod's data), so they're safe in chests, Automate and other inventory mods.
+  - **[Custom Spouse Rooms](https://www.nexusmods.com/stardewvalley/mods/10029) and [Custom Spouse Patio Redux](https://www.nexusmods.com/stardewvalley/mods/10889):** Sable's studio corner and patio easel work with them.
+  - **[Lookup Anything](https://www.nexusmods.com/stardewvalley/mods/541):** a painting's gift tastes show correctly, by its quality and subject.
+  - **[CJB Item Spawner](https://www.nexusmods.com/stardewvalley/mods/93):** a spawned "Painting" has no picture: it shows as a bare canvas, sells for its base price, and can't be framed.
 - **Saves:** safe to add to an existing save. To remove the mod, sell or trash your paintings, easels and art supplies first.
 - **Multiplayer:** supported; see [Multiplayer](Multiplayer).
 """)
@@ -886,7 +909,7 @@ With the Glaze or Highlight tool in hand, dots show where the reference wants a 
 Any friend at 4 hearts or more, from medium canvases.
 
 **How do I paint the view?**
-Place an easel outdoors and use it ([Portraits and Plein Air](Portraits-and-Plein-Air)).
+Place an easel outdoors and use it, or use the one in the art shop's yard ([Portraits and Plein Air](Portraits-and-Plein-Air)).
 
 **Can I change the difficulty?**
 Yes ([Configuration](Configuration)).

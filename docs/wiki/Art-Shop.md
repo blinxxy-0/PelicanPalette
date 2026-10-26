@@ -11,6 +11,10 @@ The **art supply shop** is in Cindersap Forest, west of the path down from Marni
 
 Married to Sable, you're never turned away: when they're out, the till runs on trust.
 
+The shop is on the world map (M), west of the path down from Marnie's, and so are you while you're inside.
+
+**The yard easel** by the barrels is yours to paint at, like an easel you set down yourself: still lifes, or the view of the yard. On Friday mornings Sable paints there, and it's theirs.
+
 ![Inside the shop](images/screens/shop_interior.png)
 
 ## The counter

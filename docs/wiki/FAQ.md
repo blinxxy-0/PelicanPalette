@@ -23,7 +23,7 @@ With the Glaze or Highlight tool in hand, dots show where the reference wants a 
 Any friend at 4 hearts or more, from medium canvases.
 
 **How do I paint the view?**
-Place an easel outdoors and use it ([Portraits and Plein Air](Portraits-and-Plein-Air)).
+Place an easel outdoors and use it, or use the one in the art shop's yard ([Portraits and Plein Air](Portraits-and-Plein-Air)).
 
 **Can I change the difficulty?**
 Yes ([Configuration](Configuration)).

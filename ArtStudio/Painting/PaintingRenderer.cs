@@ -72,8 +72,10 @@ internal static class PaintingRenderer
     public static void DrawArt(SpriteBatch b, Item item, Rectangle area, Color tint, float layerDepth)
     {
         var art = TextureFor(item);
-        if (art == null) return;
         b.Draw(Game1.staminaRect, area, null, MatColor * (tint.A / 255f), 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+        // A painting with no picture (spawned by an item spawner, say) shows
+        // as the bare canvas.
+        if (art == null) return;
         int cell = System.Math.Max(1, System.Math.Min(area.Width, area.Height) / art.Width);
         int side = cell * art.Width;
         if (side > System.Math.Min(area.Width, area.Height))

@@ -22,6 +22,10 @@ internal sealed class Commission
     public int ExpiresOn { get; set; }
     public bool Accepted { get; set; }
 
+    // Something more than the subject (1.1): "varnished" (any finish) or
+    // "glazed" (painted with glazes, on a medium canvas or bigger), or "".
+    public string Requirement { get; set; } = "";
+
     // A villager can ask for their own portrait ("sitter:<name>") instead of an item.
     public bool IsPortrait => Sitters.IsSitter(ItemId);
 
@@ -34,6 +38,14 @@ internal sealed class Commission
     public bool Matches(Item item) =>
         PaintingItems.IsPainting(item)
         && PaintingData.Read(item)?.Subject.Split('|').Contains(ItemId) == true;
+
+    // Whether the painting meets the requirement (the subject aside).
+    public bool MeetsRequirement(Item item) => Requirement switch
+    {
+        Commissions.Varnished => Varnish.FinishOf(item) != null,
+        Commissions.Glazed => PaintingData.Read(item)?.Marks is { } marks && Technique.Count(marks, Mark.Glaze) > 0,
+        _ => true,
+    };
 }
 
 internal static class Commissions
@@ -46,6 +58,13 @@ internal static class Commissions
     public const float PatronRewardMultiplier = 1.5f;
     // How often a friend who'd sit for a portrait asks for one instead of an item.
     public const double PortraitChance = 0.35;
+
+    // Asking for more (1.1): a varnished painting once the Varnishing Cabinet
+    // is in reach, with time for it to cure; a glazed one once glazes are.
+    public const string Varnished = "varnished", Glazed = "glazed";
+    public const double VarnishedChance = 0.25, GlazedChance = 0.2;
+    public const float VarnishedReward = 1.3f, GlazedReward = 1.25f;
+    public const int DaysToDeliverVarnished = 14;
 
     public static List<Commission> All(Farmer who)
     {
@@ -89,6 +108,22 @@ internal static class Commissions
     // A request from a villager the player has met, for one of the things
     // they love or like that can be painted.
     private static Commission? Generate(Farmer who, int level, HashSet<string> taken, Random random)
+    {
+        var commission = GenerateRequest(who, level, taken, random);
+        if (commission == null) return null;
+        string requirement =
+            level >= Varnish.UnlockLevel && random.NextDouble() < VarnishedChance ? Varnished
+            : level >= PaintingRules.CanvasUnlockLevel(CanvasKind.Medium) && random.NextDouble() < GlazedChance ? Glazed
+            : "";
+        if (requirement != "")
+        {
+            commission.Requirement = requirement;
+            commission.Reward = (int)Math.Round(commission.Reward * (requirement == Varnished ? VarnishedReward : GlazedReward) / 10f) * 10;
+        }
+        return commission;
+    }
+
+    private static Commission? GenerateRequest(Farmer who, int level, HashSet<string> taken, Random random)
     {
         var clients = Utility.getAllVillagers()
             .Where(n => n.CanSocialize && !taken.Contains(n.Name) && who.friendshipData.ContainsKey(n.Name)
@@ -149,7 +184,7 @@ internal static class Commissions
         var match = list.FirstOrDefault(c => !c.Accepted && c.Npc == commission.Npc && c.ItemId == commission.ItemId);
         if (match == null || list.Count(c => c.Accepted) >= MaxAccepted) return false;
         match.Accepted = true;
-        match.ExpiresOn = Game1.Date.TotalDays + DaysToDeliver;
+        match.ExpiresOn = Game1.Date.TotalDays + (match.Requirement == Varnished ? DaysToDeliverVarnished : DaysToDeliver);
         Save(who, list);
         return true;
     }
@@ -178,6 +213,11 @@ internal static class Commissions
         if (newLevel > 0)
             Game1.addHUDMessage(new HUDMessage(I18n.Get("results.level-up", new { level = newLevel })) { noIcon = true });
     }
+
+    // What's wanted besides the subject: the quality, and any requirement.
+    public static string WantsText(Commission commission) =>
+        commission.Requirement == "" ? QualityText(commission.MinQuality)
+        : I18n.Get("commission.wants", new { quality = QualityText(commission.MinQuality), requirement = I18n.Get("commission.requirement." + commission.Requirement) });
 
     public static string QualityText(int quality) => quality switch
     {

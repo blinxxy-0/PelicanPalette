@@ -153,7 +153,10 @@ def events():
     )
 
     # ---- 14 hearts: the exhibition (married; the shop, a sunny evening) ----
-    shop["blinxxy.MuseArt_Sable14h/Spouse Sable/Friendship Sable 3500/Time 1800 2000/Weather sunny/SawEvent blinxxy.MuseArt_Sable10h"] = script(
+    # Married is read from Sable's own friendship, not "Spouse Sable" (the
+    # farmer's one spouse field), so it also fires when Sable is one of
+    # several spouses with Polyamory Sweet.
+    shop["blinxxy.MuseArt_Sable14h/G PLAYER_NPC_RELATIONSHIP Current Sable Married/Friendship Sable 3500/Time 1800 2000/Weather sunny/SawEvent blinxxy.MuseArt_Sable10h"] = script(
         "continue", "9 8",
         "farmer 9 13 0 Sable 16 12 0 Evelyn 5 10 0 George 6 10 0 Leah 3 11 0 Elliott 10 7 3 Emily 3 6 0 Haley 11 8 3 Robin 12 5 0 Lewis 10 11 0",
         "skippable",

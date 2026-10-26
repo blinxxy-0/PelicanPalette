@@ -1,5 +1,6 @@
 {
   "location.art-shop": "Art Supply Shop",
+  "worldmap.art-shop": "Art Supply Shop\nOpen 10:00AM to 6:00PM most days",
   "shop.owner.canvas": "Canvases are by the window. Don't buy the big ones until you've ruined a few small ones.",
   "shop.owner.pigment": "The pigments are ground fresh. Mostly. Don't sniff the cerulean.",
   "shop.owner.brush": "A good brush forgives you. A cheap one remembers everything.",
@@ -181,9 +182,9 @@
   "festival.fall27": "The maze is a composition problem, if you think about it. Mostly negative space.$u#$e#...I got lost twice.",
   "festival.winter8": "Ice sculpture. All the work of marble, and it's gone by spring.$s#$e#I respect that more than I can say.",
   "festival.winter25": "Happy Winter Star. Everything's red and gold and candlelit. It's like standing inside an old master.$h",
-  "wedding.vows": "@... %spouse...#$b#As the mayor of Pelican Town, and regional bearer of the matrimonial seal, I now pronounce you... married!$h",
   "mail.collection50": "Fifty different subjects. I counted, because of course I did.^Most painters find three things they're good at and paint those until they die. You keep looking at new things. That's the whole job, really.^This brush was my teacher's. It's wasted in a drawer.^   -Sable",
   "mail.collection50.title": "Fifty subjects",
+  "wedding.vows": "@... %spouse...#$b#As the mayor of Pelican Town, and regional bearer of the matrimonial seal, I now pronounce you... married!$h",
   "event.sable2h.01": "Oh. It's after hours.$6#$b#...You can stay. Don't touch anything.",
   "event.sable2h.02": "It's a landscape. Cindersap Forest, about forty years ago. The museum sent it to me to restore. I was meant to send it back.",
   "event.sable2h.03": "Look at the light on the water. Whoever painted this stood right where my shop is now. Same river, same bend.$s",
@@ -248,5 +249,11 @@
   "letter.your-call": "I made my call. The letter's in the stove.$s#$b#...I'm staying. I'm not sure I'd have decided that if you'd made it for me.",
   "letter.paint-first": "I wrote back and said I needed a season to think.$u#$b#Then I bought myself a canvas. From my own shop. Retail price.$h",
   "evelyn.Wed": "Sable and I painted the river bend this morning. My hands remembered more than I thought they would.$h",
-  "evelyn.Sat": "I found my old brushes in the attic. George says they smell like the summer before we married.$h"
+  "evelyn.Sat": "I found my old brushes in the attic. George says they smell like the summer before we married.$h",
+  "yard.painting.0": "The river bend, before the light flattens it.#$b#Don't stand in my sun.",
+  "yard.painting.1": "Marnie's fence. It's crooked in a way I can't stop looking at.",
+  "yard.painting.2": "Just the grass.$u#$b#Green is the hardest colour there is. Everyone thinks they know it.",
+  "yard.painting.3": "The shop, from out here.#$b#Strange, painting your own front door.",
+  "yard.painting.4": "The path down from Marnie's, with nobody on it yet. That never lasts.",
+  "yard.painting.5": "Clouds. They won't hold still, which is rude of them.$h"
 }

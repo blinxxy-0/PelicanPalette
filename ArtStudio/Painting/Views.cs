@@ -86,15 +86,29 @@ internal static class Views
         }
     }
 
+    // How many tiles across a canvas frames (1.1): a small canvas paints a
+    // closer view, two cells a tile, rather than shrinking the whole square
+    // until a house is a few cells; medium and large take in more.
+    public static int TilesFor(int canvasSize) => canvasSize switch
+    {
+        <= 20 => 10,
+        <= 28 => 13,
+        _ => Tiles,
+    };
+
     // The capture reduced to a canvas: each cell the most common colour of
     // its block once matched to the owned pigments, so edges stay crisp.
+    // Smaller canvases crop in on the capture (centred across, keeping its
+    // bottom edge in front of the easel).
     public static Reference Reference(Capture capture, int canvasSize, IReadOnlyList<int> owned, Techniques allowed = Techniques.None)
     {
         if (capture.BySize.TryGetValue(canvasSize, out var cached)) return cached;
         var cells = new byte[canvasSize, canvasSize];
         var marks = new Mark[canvasSize, canvasSize];
         var counts = new Dictionary<(byte, Mark), int>();
-        float block = capture.Size / (float)canvasSize;
+        int frame = Math.Min(capture.Size, TilesFor(canvasSize) * TilePixels);
+        int left = (capture.Size - frame) / 2, top = capture.Size - frame;
+        float block = frame / (float)canvasSize;
         for (int cx = 0; cx < canvasSize; cx++)
         for (int cy = 0; cy < canvasSize; cy++)
         {
@@ -104,14 +118,36 @@ internal static class Views
             for (int x = x0; x < x1; x++)
             for (int y = y0; y < y1; y++)
             {
-                var p = capture.Pixels[y * capture.Size + x];
+                var p = capture.Pixels[(top + y) * capture.Size + left + x];
                 var c = Technique.Nearest(p.R, p.G, p.B, owned, allowed);
                 counts[c] = counts.GetValueOrDefault(c) + 1;
             }
             (cells[cx, cy], marks[cx, cy]) = counts.OrderByDescending(kv => kv.Value).First().Key;
         }
+        RemoveSpecks(cells, marks);
         Technique.Limit(cells, marks);
         return capture.BySize[canvasSize] = new Reference(cells, marks);
+    }
+
+    // A lone cell whose four neighbours all share one other colour is noise
+    // from the reduction (a flower, a pebble), not something to paint: it
+    // takes its neighbours' colour.
+    private static void RemoveSpecks(byte[,] cells, Mark[,] marks)
+    {
+        int size = cells.GetLength(0);
+        var specks = new List<(int X, int Y, byte Cell, Mark Mark)>();
+        for (int x = 1; x < size - 1; x++)
+        for (int y = 1; y < size - 1; y++)
+        {
+            var around = new[] { (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1) };
+            var (nx, ny) = around[0];
+            byte cell = cells[nx, ny];
+            Mark mark = marks[nx, ny];
+            if ((cells[x, y], marks[x, y]) != (cell, mark) && around.All(n => cells[n.Item1, n.Item2] == cell && marks[n.Item1, n.Item2] == mark))
+                specks.Add((x, y, cell, mark));
+        }
+        foreach (var (x, y, cell, mark) in specks)
+            (cells[x, y], marks[x, y]) = (cell, mark);
     }
 
     // What a view's subject is worth, like an item's price for a still life:

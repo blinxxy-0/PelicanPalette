@@ -23,3 +23,7 @@ art/sable/blush_check.png
 
 # Before/after sheets made for review in chat.
 docs/media/review/
+
+# Upload bundles made from docs/media.
+release/nexus/*.zip
+release/nexus/nexus_*_images/

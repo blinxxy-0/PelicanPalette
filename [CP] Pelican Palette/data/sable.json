@@ -61,6 +61,18 @@
     { "Action": "Load", "Target": "Portraits/Sable_Winter", "FromFile": "assets/sable/portraits_winter.png" },
     { "Action": "Load", "Target": "Characters/Sable_Beach", "FromFile": "assets/sable/sprites_beach.png" },
     { "Action": "Load", "Target": "Portraits/Sable_Beach", "FromFile": "assets/sable/portraits_beach.png" },
+    // NPC Map Locations: Sable's map marker is their head, cut from a 16x15
+    // window this many pixels down their sprite (it matches Leah's sheet,
+    // and Leah's offset). Ignored when that mod isn't installed.
+    {
+      "Action": "EditData",
+      "Target": "Mods/Bouhm.NPCMapLocations/NPCs",
+      "Entries": { "Sable": { "MarkerCropOffset": 2 } },
+      "When": { "HasMod": "Bouhm.NPCMapLocations" }
+    },
+    // Their wedding suit, worn only for the ceremony (the wedding script switches to it).
+    { "Action": "Load", "Target": "Characters/Sable_Wedding", "FromFile": "assets/sable/sprites_wedding.png" },
+    { "Action": "Load", "Target": "Portraits/Sable_Wedding", "FromFile": "assets/sable/portraits_wedding.png" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_SableSpouseRoom", "FromFile": "assets/SableSpouseRoom.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_SableSpousePatio", "FromFile": "assets/SableSpousePatio.tmx" },
     // Painting at an easel (from behind, brush up and down), and asleep.
@@ -92,6 +104,17 @@
       "Action": "Load",
       "Target": "Characters/schedules/Sable",
       "FromFile": "data/sable_schedule.json"
+    },
+
+    // What's on the yard easel on a Friday morning (a different one each
+    // day), said the first time you talk to them there.
+    { "Action": "Load", "Target": "Strings/schedules/Sable", "FromFile": "data/blank.json" },
+    {
+      "Action": "EditData",
+      "Target": "Strings/schedules/Sable",
+      "Entries": {
+        "yardEasel": "{{Random: {{i18n:yard.painting.0}} ~~ {{i18n:yard.painting.1}} ~~ {{i18n:yard.painting.2}} ~~ {{i18n:yard.painting.3}} ~~ {{i18n:yard.painting.4}} ~~ {{i18n:yard.painting.5}} |inputSeparator=~~}}"
+      }
     },
 
     // ---- What they say ----
