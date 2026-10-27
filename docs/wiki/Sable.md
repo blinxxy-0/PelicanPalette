@@ -1,4 +1,4 @@
-<table align="right"><tr><th colspan="2">Sable</th></tr><tr><td colspan="2" align="center"><img src="images/sable_portrait.png" width="128"></td></tr><tr><td><b>Pronouns</b></td><td>they/them</td></tr><tr><td><b>Birthday</b></td><td>Fall 9</td></tr><tr><td><b>Lives in</b></td><td>The art shop, Cindersap Forest</td></tr><tr><td><b>Marriage</b></td><td>Yes, by anyone</td></tr><tr><td><b>Best gifts</b></td><td><img src="images/icons/O-395.png" width="24" height="24"> Coffee<br><img src="images/icons/O-66.png" width="24" height="24"> Amethyst<br><img src="images/icons/O-62.png" width="24" height="24"> Aquamarine<br><img src="images/icons/O-64.png" width="24" height="24"> Ruby<br><img src="images/icons/O-402.png" width="24" height="24"> Sweet Pea<br><img src="images/icons/O-611.png" width="24" height="24"> Blackberry Cobbler<br><img src="images/icons/O-595.png" width="24" height="24"> Fairy Rose</td></tr></table>
+<table align="right"><tr><th colspan="2">Sable</th></tr><tr><td colspan="2" align="center"><img src="images/sable_portrait.png" width="128"><br><sub>Outfits (click to enlarge):</sub><table><tr><td align="center"><a href="images/sable_portrait_winter.png"><img src="images/sable_portrait_winter.png" width="64" alt="Winter"></a><br><sub>Winter</sub></td><td align="center"><a href="images/sable_portrait_beach.png"><img src="images/sable_portrait_beach.png" width="64" alt="Ginger Island"></a><br><sub>Ginger Island</sub></td><td align="center"><a href="images/sable_portrait_wedding.png"><img src="images/sable_portrait_wedding.png" width="64" alt="Wedding"></a><br><sub>Wedding</sub></td></tr></table></td></tr><tr><td><b>Pronouns</b></td><td>they/them</td></tr><tr><td><b>Birthday</b></td><td>Fall 9</td></tr><tr><td><b>Lives in</b></td><td>The art shop, Cindersap Forest</td></tr><tr><td><b>Marriage</b></td><td>Yes, by anyone</td></tr></table>
 
 **Sable** runs the art supply shop in Cindersap Forest.
 - **Before the valley:** a restorer at the Zuzu City Museum of Art, fixing other people's masterpieces.
@@ -7,6 +7,8 @@
 - **The critique:** from 2 hearts, it's Sable who writes the critique on your results screen.
 
 > "Rain's the best light there is. Flat and honest. Nothing to hide behind."
+
+<br clear="right">
 
 ## Schedule
 | Day | Where |

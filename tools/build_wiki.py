@@ -770,16 +770,28 @@ Recipes unlock with the Painting skill: you learn each one the morning after you
 """)
 
 
+# Sable's other outfits, as the content pack names their portrait sheets.
+SABLE_OUTFITS = {"winter": "Winter", "beach": "Ginger Island", "wedding": "Wedding"}
+
+
+def outfit_row():
+    """Small portraits of Sable's other outfits, each opening full size when
+    clicked (GitHub wikis allow no scripts, so links rather than a swap)."""
+    cells = "".join(
+        f'<td align="center"><a href="images/sable_portrait_{key}.png"><img src="images/sable_portrait_{key}.png" width="64" alt="{label}"></a><br><sub>{label}</sub></td>'
+        for key, label in SABLE_OUTFITS.items())
+    return f'<br><sub>Outfits (click to enlarge):</sub><table><tr>{cells}</tr></table>'
+
+
 def sable():
     s = DATA["sable"]
     def gifts(key):
         return "<br>".join(f'{icon(g["id"], 24)} {g["name"]}' for g in s[key]) or "-"
-    box = infobox("Sable", '<img src="images/sable_portrait.png" width="128">', [
+    box = infobox("Sable", '<img src="images/sable_portrait.png" width="128">' + outfit_row(), [
         ("Pronouns", "they/them"),
         ("Birthday", s["birthday"]),
         ("Lives in", "The art shop, Cindersap Forest"),
         ("Marriage", "Yes, by anyone"),
-        ("Best gifts", gifts("loves")),
     ])
     page("Sable", box + f"""
 **Sable** runs the art supply shop in Cindersap Forest.
@@ -789,6 +801,8 @@ def sable():
 - **The critique:** from 2 hearts, it's Sable who writes the critique on your results screen.
 
 > "Rain's the best light there is. Flat and honest. Nothing to hide behind."
+
+<br clear="right">
 
 ## Schedule
 | Day | Where |
@@ -999,6 +1013,11 @@ def images():
     # Sable's neutral portrait, at 2x.
     sheet = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "sable", "portraits.png")).convert("RGBA")
     sheet.crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST).save(os.path.join(out, "sable_portrait.png"))
+    # And in each outfit, at 4x, for the infobox's outfit row (shown small,
+    # opened full size on a click).
+    for outfit in SABLE_OUTFITS:
+        sheet = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "sable", f"portraits_{outfit}.png")).convert("RGBA")
+        sheet.crop((0, 0, 64, 64)).resize((256, 256), Image.NEAREST).save(os.path.join(out, f"sable_portrait_{outfit}.png"))
 
 
 def main():
