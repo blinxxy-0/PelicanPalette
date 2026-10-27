@@ -1,11 +1,11 @@
 ## Canvases
 | | Canvas | Cells | Unlocks | Techniques | Recipe | Art shop |
 |---|---|---|---|---|---|---|
-| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Small.png" width="32" height="32"> | **Small Canvas** | 20x20 | Start | Flat colour | <img src="images/icons/O-771.png" width="24" height="24"> Fiber (5)<br><img src="images/icons/O-388.png" width="24" height="24"> Wood (2) | 25g |
-| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Medium.png" width="32" height="32"> | **Medium Canvas** | 28x28 | Level 4 | Glazing | <img src="images/icons/O-428.png" width="24" height="24"> Cloth (1)<br><img src="images/icons/O-388.png" width="24" height="24"> Wood (5) | 80g |
-| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Large.png" width="32" height="32"> | **Large Canvas** | 36x36 | Level 7 | Glazing and highlights | <img src="images/icons/O-428.png" width="24" height="24"> Cloth (2)<br><img src="images/icons/O-709.png" width="24" height="24"> Hardwood (3) | 200g |
-| <img src="images/icons/O-blinxxy.MuseArt_Linen_Medium.png" width="32" height="32"> | **Linen Canvas (Medium)** | 28x28 | Level 8 | As medium, and Masterpieces | <img src="images/icons/O-428.png" width="24" height="24"> Cloth (2)<br><img src="images/icons/O-709.png" width="24" height="24"> Hardwood (2) | 500g |
-| <img src="images/icons/O-blinxxy.MuseArt_Linen_Large.png" width="32" height="32"> | **Linen Canvas (Large)** | 36x36 | Level 8 | As large, and Masterpieces | <img src="images/icons/O-428.png" width="24" height="24"> Cloth (3)<br><img src="images/icons/O-709.png" width="24" height="24"> Hardwood (4) | 1,000g |
+| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Small.png" width="32"> | **Small Canvas** | 20x20 | Start | Flat colour | <img src="images/icons/O-771.png" width="24"> Fiber (5)<br><img src="images/icons/O-388.png" width="24"> Wood (2) | 25g |
+| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Medium.png" width="32"> | **Medium Canvas** | 28x28 | Level 4 | Glazing | <img src="images/icons/O-428.png" width="24"> Cloth (1)<br><img src="images/icons/O-388.png" width="24"> Wood (5) | 80g |
+| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Large.png" width="32"> | **Large Canvas** | 36x36 | Level 7 | Glazing and highlights | <img src="images/icons/O-428.png" width="24"> Cloth (2)<br><img src="images/icons/O-709.png" width="24"> Hardwood (3) | 200g |
+| <img src="images/icons/O-blinxxy.MuseArt_Linen_Medium.png" width="32"> | **Linen Canvas (Medium)** | 28x28 | Level 8 | As medium, and Masterpieces | <img src="images/icons/O-428.png" width="24"> Cloth (2)<br><img src="images/icons/O-709.png" width="24"> Hardwood (2) | 500g |
+| <img src="images/icons/O-blinxxy.MuseArt_Linen_Large.png" width="32"> | **Linen Canvas (Large)** | 36x36 | Level 8 | As large, and Masterpieces | <img src="images/icons/O-428.png" width="24"> Cloth (3)<br><img src="images/icons/O-709.png" width="24"> Hardwood (4) | 1,000g |
 
 What goes on each size:
 - **Small:** one item.

@@ -41,12 +41,14 @@ def icon_file(qualified_id):
     return s + ".png"
 
 
+# Width only: GitHub caps an image's width to its table column but keeps a
+# set height, which squashed icons in narrow columns into slivers.
 def icon(qualified_id, size=32):
-    return f'<img src="images/icons/{icon_file(qualified_id)}" width="{size}" height="{size}">'
+    return f'<img src="images/icons/{icon_file(qualified_id)}" width="{size}">'
 
 
 def swatch(hex_colour):
-    return f'<img src="images/swatches/{hex_colour[1:]}.png" width="24" height="24">'
+    return f'<img src="images/swatches/{hex_colour[1:]}.png" width="24">'
 
 
 def item_by_name(name):
@@ -471,13 +473,14 @@ def brushes():
         if b["steadiness"]: effects.append(f'steadier colours ({int(b["steadiness"] * 100)}%)')
         if b["sparkTime"]: effects.append(f'sparks last +{b["sparkTime"]:g}s')
         desc = "The brush you always have." if b["id"] == "hog" else b["description"]
-        rows.append(f'| {img} | **{b["name"]}** | {b["load"]} | {", ".join(effects) or "-"} | {b["uses"] or "Never wears out"} | '
+        # The icon sits with the name: a column of its own was squeezed thin.
+        rows.append(f'| {img + "<br>" if img else ""}**{b["name"]}** | {b["load"]} | {", ".join(effects) or "-"} | {b["uses"] or "Never wears out"} | '
                     f'{ingredients(r) + "<br>(Level " + str(r["level"]) + ")" if r else "-"} | {gold(s["price"]) + " (" + level_text(s["condition"]) + ")" if s else "-"} | {desc} |')
     page("Brushes", f"""
 Brushes are the painter's tackle. Pick one on the setup screen; the hog bristle brush is always there.
 
-| | Brush | Load | Effects | Uses | Recipe | Art shop | |
-|---|---|---|---|---|---|---|---|
+| Brush | Load | Effects | Uses | Recipe | Art shop | |
+|---|---|---|---|---|---|---|
 """ + "\n".join(rows) + """
 
 - **Load** is how many cells a full brush covers before you mix again, before level bonuses.
