@@ -6,6 +6,7 @@
 - **Creatures.** Paint a study of any monster you've slain, from memory: the easel's setup screen has a creatures slot that shows them in place of your bag. Junimos join once the Community Center (or Joja's) is done. The record has a Creatures tab.
 - **Krobus and the Wizard sit for portraits** once their stories are done (meeting Krobus in the sewers; bringing the Wizard the magic ink), hearts or not.
 - **Two more portfolio pages:** Far Places (the desert, the Skull Cavern, Ginger Island's beach and north, the Secret Woods) and Legends (the five legendary fish). You can now set up an easel just inside the Skull Cavern.
+- **Julian Vane, the critic.** A city art critic with a history with Sable visits the valley the 22nd to the 24th of every season, off the morning bus and back on the evening one: your portfolio in the back room, the museum, the beach, the Saloon. Not marriageable; his friendship doesn't fade between visits. (His heart events are still to come.)
 - **Sable's trapdoor moved to the back room**, so the shop floor is clear.
 - **The painting record shows your own painting** of a subject, where one's kept in the portfolio or the plan chest.
 - **Softer outlines on the shop's furniture**, a darker shade of each piece's own colour instead of near-black.

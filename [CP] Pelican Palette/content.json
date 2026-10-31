@@ -121,6 +121,8 @@
 
     // Sable, who runs the shop.
     { "Action": "Include", "FromFile": "data/sable.json" },
+    // Julian Vane, the critic (1.2): his visits, data and dialogue.
+    { "Action": "Include", "FromFile": "data/julian.json" },
 
     // What the shop sells. Stock widens with the Painting skill. It also
     // buys paintings (at a premium; see the C# mod).

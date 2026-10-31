@@ -148,6 +148,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
         DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
+        DevTools.AddCommand(helper, "museart_juliantest", "Julian Vane (1.2): his data, art, visits, and comings and goings.", (_, _) => JulianTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
         DevTools.AddCommand(helper, "museart_palettetest", "Palette tiers, tubes going straight in, and a placed Palette as storage. Run 'museart_palettetest' in the farmhouse, then 'museart_palettetest check' a second later.", (_, args) => PaletteTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
@@ -1437,6 +1438,78 @@ internal static class DevGame
             foreach (var (name, count) in kills)
                 who.stats.specificMonstersKilled[name] = count;
         }
+    }
+
+    // Julian Vane (1.2, step 4): data, art, visits, and his comings and goings.
+    private static void JulianTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var julian = Social.Julian.Npc;
+        Check(monitor, "Julian exists", julian != null);
+        if (julian == null) return;
+        Check(monitor, "he's called Julian, he/him, and not marriageable", julian.displayName == "Julian" && julian.Gender == StardewValley.Gender.Male && !julian.datable.Value);
+        Check(monitor, "his sprites are 64x128 and his portraits 128x256", julian.Sprite.Texture.Width == 64 && julian.Sprite.Texture.Height == 128 && julian.Portrait?.Width == 128 && julian.Portrait?.Height == 256);
+        Check(monitor, "his home between visits exists", Game1.getLocationFromName("blinxxy.MuseArt_JulianHome") != null);
+        Check(monitor, "he loves wine and hates Joja Cola", julian.getGiftTasteForThisItem(ItemRegistry.Create("(O)348")) == NPC.gift_taste_love && julian.getGiftTasteForThisItem(ItemRegistry.Create("(O)167")) == NPC.gift_taste_hate);
+        var lines = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Characters/Dialogue/JulianVane");
+        var sableLines = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Characters/Dialogue/Sable");
+        Check(monitor, "he has an introduction and a line for every visit day", lines.ContainsKey("Introduction")
+            && new[] { "spring", "summer", "fall", "winter" }.All(s => Enumerable.Range(22, 3).All(d => lines.ContainsKey($"{s}_{d}"))), $"{lines.Count} lines");
+        Check(monitor, "Sable has a word for his visit days", sableLines.ContainsKey("fall_23"));
+
+        // Every visit day, leg by leg: from the bus, to each stop, and back.
+        var raw = julian.getMasterScheduleRawData();
+        foreach (string day in new[] { "22", "23", "24" })
+        {
+            bool ok = raw.TryGetValue(day, out string? schedule);
+            string from = "BusStop", problems = "";
+            foreach (string leg in (schedule ?? "").Split('/'))
+            {
+                string[] f = leg.Split(' ');
+                if (f.Length < 4) continue;
+                string to = f[1];
+                var location = Game1.getLocationFromName(to);
+                if (location == null) { problems += $" no {to};"; continue; }
+                if (!location.isTilePassable(new Vector2(int.Parse(f[2]), int.Parse(f[3])))) problems += $" {to} {f[2]},{f[3]} blocked;";
+                if (to != from && StardewValley.Pathfinding.WarpPathfindingCache.GetLocationRoute(from, to, julian.Gender) == null) problems += $" no way {from}>{to};";
+                from = to;
+            }
+            Check(monitor, $"day {day}: every stop is reachable and open, ending at the bus", ok && from == "BusStop" && problems == "", problems);
+        }
+
+        // Out of sight before the morning bus, after the evening one, and between visits.
+        int day0 = Game1.dayOfMonth;
+        try
+        {
+            Game1.dayOfMonth = 22;
+            Social.Julian.UpdateVisibility(900);
+            bool beforeBus = julian.IsInvisible;
+            Social.Julian.UpdateVisibility(1300);
+            bool midday = julian.IsInvisible;
+            Social.Julian.UpdateVisibility(2100);
+            bool night = julian.IsInvisible;
+            Game1.dayOfMonth = 10;
+            Social.Julian.UpdateVisibility(1300);
+            bool away = julian.IsInvisible;
+            Check(monitor, "he's seen only while he's visiting", beforeBus && !midday && night && away, $"9am {beforeBus}, 1pm {midday}, 9pm {night}, the 10th {away}");
+        }
+        finally
+        {
+            Game1.dayOfMonth = day0;
+            Social.Julian.UpdateVisibility(Game1.timeOfDay);
+        }
+
+        // Friendship holds between visits, not while he's in town.
+        who.friendshipData[Social.Julian.Name] = new Friendship(500);
+        Social.Julian.RememberFriendship(who);
+        who.friendshipData[Social.Julian.Name].Points = 480;
+        Social.Julian.KeepFriendship(who, 11);
+        bool held = who.friendshipData[Social.Julian.Name].Points == 500;
+        who.friendshipData[Social.Julian.Name].Points = 480;
+        Social.Julian.KeepFriendship(who, 23);
+        Check(monitor, "friendship holds between visits, but not after a day in town", held && who.friendshipData[Social.Julian.Name].Points == 480);
+        who.friendshipData.Remove(Social.Julian.Name);
     }
 
     // Glazes, highlights and Masterpieces (2026-10-25).

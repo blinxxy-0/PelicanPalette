@@ -80,6 +80,7 @@ internal static class DevMedia
             Game1.warpCharacter(npc, args[1], new Vector2(int.Parse(args[2]), int.Parse(args[3])));
             npc.faceDirection(args.Length > 4 ? int.Parse(args[4]) : 2);
             npc.controller = null;
+            npc.IsInvisible = false;              // (Julian hides between visits)
             npc.Halt();
         });
         DevTools.AddCommand(helper, "museart_give", "Gives the farmer an item, for staging shots. Usage: museart_give <qualified id> [count], or museart_give tube <pigment index> [count]", (_, args) =>

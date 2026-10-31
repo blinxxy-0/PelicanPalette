@@ -1,0 +1,82 @@
+// Julian Vane (1.2): the city art critic who reviewed Sable's first show ten
+// years ago. He/him; not marriageable. He lives in Zuzu City (an unseen
+// location, below) and visits the valley the 22nd to the 24th of every
+// season, off the morning bus and back on the evening one: the C# mod
+// keeps him out of sight before 10am and after he's back at the bus stop
+// (Social/Julian.cs). See docs/julian_brief.md.
+{
+  "Changes": [
+    // ---- Who he is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "Entries": {
+        "JulianVane": {
+          "DisplayName": "{{i18n:julian.name}}",
+          "Gender": "Male",
+          "Age": "Adult",
+          "Manner": "Rude",
+          "SocialAnxiety": "Outgoing",
+          "Optimism": "Negative",
+          "BirthSeason": "Winter",
+          "BirthDay": 22,
+          // Not from around here: no town introductions, and not on the
+          // calendar or social page until you've met him.
+          "HomeRegion": "Other",
+          "CanBeRomanced": false,
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "UnknownUntilMet",
+          "IntroductionsQuest": false,
+          "FlowerDanceCanDance": false,
+          "Home": [
+            // Visit days: he starts by the bus (hidden until it "arrives" at 10).
+            { "Id": "Visit", "Condition": "DAY_OF_MONTH 22 23 24", "Location": "BusStop", "Tile": { "X": 22, "Y": 11 }, "Direction": "down" },
+            { "Id": "Default", "Location": "blinxxy.MuseArt_JulianHome", "Tile": { "X": 1, "Y": 1 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/JulianVane", "FromFile": "assets/julian/sprites.png" },
+    { "Action": "Load", "Target": "Portraits/JulianVane", "FromFile": "assets/julian/portraits.png" },
+    {
+      "Action": "EditData",
+      "Target": "Mods/Bouhm.NPCMapLocations/NPCs",
+      "Entries": { "JulianVane": { "MarkerCropOffset": 2 } },
+      "When": { "HasMod": "Bouhm.NPCMapLocations" }
+    },
+
+    // ---- Where he is between visits ----
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_JulianHome", "FromFile": "assets/JulianHome.tmx" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_JulianHome": {
+          "DisplayName": "{{i18n:location.zuzu-city}}",
+          "DefaultArrivalTile": { "X": 1, "Y": 1 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_JulianHome" }
+        }
+      }
+    },
+
+    // ---- Gifts: love / like / dislike / hate / neutral ----
+    // Loves: wine, truffle oil, prismatic shards (and fine paintings, which
+    // the C# mod handles for everyone). Likes cheese and preserves. Hates
+    // Joja Cola, slime and seaweed.
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "Entries": {
+        "JulianVane": "{{i18n:julian.gift.love}}/348 432 74/{{i18n:julian.gift.like}}/424 426 344 340/{{i18n:julian.gift.dislike}}/346 92 330/{{i18n:julian.gift.hate}}/167 766 152/{{i18n:julian.gift.neutral}}/"
+      }
+    },
+
+    // ---- His visits ----
+    {
+      "Action": "Load",
+      "Target": "Characters/schedules/JulianVane",
+      "FromFile": "data/julian_schedule.json"
+    },
+    { "Action": "Include", "FromFile": "data/julian_dialogue.json" }
+  ]
+}

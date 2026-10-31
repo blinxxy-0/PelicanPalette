@@ -1,0 +1,48 @@
+// Julian Vane's dialogue (1.2): an introduction, and a line for each visit
+// day (season_day: the 22nd to the 24th). Portraits: $0 stern, $h happy,
+// $s regret, $u his dry smirk, $l touched, $a annoyed, $6 surprised,
+// $7 thoughtful. Voice: long sentences with a sting at the end; fair
+// underneath. Heart-level lines and his events come with his story.
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Characters/Dialogue/JulianVane", "FromFile": "data/blank.json" },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/JulianVane",
+      "Entries": {
+        "Introduction": "{{i18n:julian.dialogue.Introduction}}",
+        "spring_22": "{{i18n:julian.dialogue.spring_22}}",
+        "spring_23": "{{i18n:julian.dialogue.spring_23}}",
+        "spring_24": "{{i18n:julian.dialogue.spring_24}}",
+        "summer_22": "{{i18n:julian.dialogue.summer_22}}",
+        "summer_23": "{{i18n:julian.dialogue.summer_23}}",
+        "summer_24": "{{i18n:julian.dialogue.summer_24}}",
+        "fall_22": "{{i18n:julian.dialogue.fall_22}}",
+        "fall_23": "{{i18n:julian.dialogue.fall_23}}",
+        "fall_24": "{{i18n:julian.dialogue.fall_24}}",
+        "winter_22": "{{i18n:julian.dialogue.winter_22}}",
+        "winter_23": "{{i18n:julian.dialogue.winter_23}}",
+        "winter_24": "{{i18n:julian.dialogue.winter_24}}"
+      }
+    },
+    // Sable on his visit days: short, and elsewhere.
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/Sable",
+      "Entries": {
+        "spring_22": "{{i18n:sable.julian-visit.22}}",
+        "spring_23": "{{i18n:sable.julian-visit.23}}",
+        "spring_24": "{{i18n:sable.julian-visit.24}}",
+        "summer_22": "{{i18n:sable.julian-visit.22}}",
+        "summer_23": "{{i18n:sable.julian-visit.23}}",
+        "summer_24": "{{i18n:sable.julian-visit.24}}",
+        "fall_22": "{{i18n:sable.julian-visit.22}}",
+        "fall_23": "{{i18n:sable.julian-visit.23}}",
+        "fall_24": "{{i18n:sable.julian-visit.24}}",
+        "winter_22": "{{i18n:sable.julian-visit.22}}",
+        "winter_23": "{{i18n:sable.julian-visit.23}}",
+        "winter_24": "{{i18n:sable.julian-visit.24}}"
+      }
+    }
+  ]
+}

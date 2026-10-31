@@ -1,0 +1,12 @@
+{
+  // Julian visits the 22nd to the 24th of every season (day-of-month keys,
+  // which come before rain and weekdays in the game's order). He starts the
+  // day by the bus (Data/Characters Home, out of sight until 10) and is back
+  // there for the evening bus. A time is when he sets off.
+  // The 22nd: your portfolio in the art shop's back room, the museum, the Saloon.
+  "22": "1000 blinxxy.MuseArt_ArtShopBackRoom 5 5 0/1300 ArchaeologyHouse 28 8 0/1600 Saloon 6 21 0/1800 BusStop 22 11 2",
+  // The 23rd: the sea, the museum again, the Saloon.
+  "23": "1000 Beach 42 22 2/1300 ArchaeologyHouse 28 8 0/1600 Saloon 6 21 0/1800 BusStop 22 11 2",
+  // The 24th: the portfolio once more, the river where Sable paints, the Saloon.
+  "24": "1000 blinxxy.MuseArt_ArtShopBackRoom 5 5 0/1330 Forest 84 40 2/1600 Saloon 6 21 0/1800 BusStop 22 11 2"
+}
