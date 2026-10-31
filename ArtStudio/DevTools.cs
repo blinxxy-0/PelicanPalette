@@ -313,6 +313,27 @@ internal static class DevTools
             Game1.player.modData[ModEntry.Id + "/CollectionPerks"] = "tubes,palette";
             return new CollectionMenu(Game1.player);
         });
+        foreach (var tab in new[] { RecordTab.Crops, RecordTab.Fish, RecordTab.Portraits, RecordTab.Views, RecordTab.Other })
+            yield return ("record_" + tab.ToString().ToLowerInvariant(), () =>
+            {
+                var entries = new Dictionary<string, CatalogueEntry>
+                {
+                    ["(O)24"] = new() { Count = 7, BestQuality = 2, FirstDay = 3 },
+                    ["(O)24|(O)145"] = new() { Count = 1, BestQuality = 1, FirstDay = 5 },
+                    ["(O)190"] = new() { Count = 2, BestQuality = 4, FirstDay = 6 },
+                    ["(O)192"] = new() { Count = 1, BestQuality = 0, FirstDay = 6 },
+                    ["sitter:Abigail"] = new() { Count = 2, BestQuality = 4, FirstDay = 9 },
+                    ["sitter:Leah"] = new() { Count = 1, BestQuality = 1, FirstDay = 10 },
+                    ["view:Forest:spring"] = new() { Count = 1, BestQuality = 0, FirstDay = 12 },
+                    ["view:Forest:fall"] = new() { Count = 1, BestQuality = 1, FirstDay = 70 },
+                    ["view:Beach:summer"] = new() { Count = 1, BestQuality = 2, FirstDay = 40 },
+                    ["(O)340"] = new() { Count = 1, BestQuality = 1, FirstDay = 20 },
+                    ["(O)428"] = new() { Count = 3, BestQuality = 2, FirstDay = 21 },
+                };
+                Game1.player.modData[ModEntry.Id + "/Catalogue"] = System.Text.Json.JsonSerializer.Serialize(entries);
+                Game1.player.modData[ModEntry.Id + "/CollectionPerks"] = "tubes,tab-crops-25";
+                return new CollectionMenu(Game1.player, tab);
+            });
         yield return ("consign", () => new Shop.ConsignMenu(Game1.player));
         yield return ("palette", () =>
         {

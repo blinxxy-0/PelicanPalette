@@ -95,9 +95,12 @@ internal static class Catalogue
         return null;
     }
 
+    public static void AddPerk(Farmer who, string perk) =>
+        who.modData[PerksKey] = who.modData.TryGetValue(PerksKey, out string raw) && raw.Length > 0 ? raw + "," + perk : perk;
+
     private static void Grant(Farmer who, string perk)
     {
-        who.modData[PerksKey] = who.modData.TryGetValue(PerksKey, out string raw) && raw.Length > 0 ? raw + "," + perk : perk;
+        AddPerk(who, perk);
         switch (perk)
         {
             case "tubes":

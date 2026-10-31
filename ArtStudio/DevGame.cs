@@ -145,6 +145,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
+        DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
         DevTools.AddCommand(helper, "museart_palettetest", "Palette tiers, tubes going straight in, and a placed Palette as storage. Run 'museart_palettetest' in the farmhouse, then 'museart_palettetest check' a second later.", (_, args) => PaletteTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
@@ -1190,6 +1191,88 @@ internal static class DevGame
         Check(monitor, "a tool picks it up with its paint", !house.objects.ContainsKey(tile) && dropped != null
             && PaletteItem.Read(dropped)[charcoal] == 200 && PaletteItem.Read(dropped)[crimson] == 300);
         house.debris.Clear();
+    }
+
+    // The painting record's tabs (1.2).
+    private static void RecordTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        string catalogueKey = ModEntry.Id + "/Catalogue", perksKey = ModEntry.Id + "/CollectionPerks";
+        who.modData.TryGetValue(catalogueKey, out string? savedCatalogue);
+        who.modData.TryGetValue(perksKey, out string? savedPerks);
+        var savedOwned = ArtProgress.OwnedPigments(who).ToList();
+        void SetCatalogue(System.Collections.Generic.IEnumerable<string> subjects) =>
+            who.modData[catalogueKey] = System.Text.Json.JsonSerializer.Serialize(subjects.Distinct().ToDictionary(s => s, _ => new CatalogueEntry { Count = 1, BestQuality = 1, FirstDay = 1 }));
+        try
+        {
+            // What goes where.
+            Check(monitor, "a parsnip is a crop", RecordTabs.TabOfItem("(O)24") == RecordTab.Crops);
+            Check(monitor, "wild horseradish and salmonberries are forage", RecordTabs.TabOfItem("(O)16") == RecordTab.Forage && RecordTabs.TabOfItem("(O)296") == RecordTab.Forage);
+            Check(monitor, "a sunfish is a fish, trash isn't", RecordTabs.TabOfItem("(O)145") == RecordTab.Fish && RecordTabs.TabOfItem("(O)168") != RecordTab.Fish);
+            Check(monitor, "an amethyst and a geode mineral are minerals", RecordTabs.TabOfItem("(O)66") == RecordTab.Minerals && RecordTabs.TabOfItem("(O)538") == RecordTab.Minerals);
+            Check(monitor, "a fried egg is cooking", RecordTabs.TabOfItem("(O)194") == RecordTab.Cooking);
+            Check(monitor, "honey goes in everything else", RecordTabs.TabOfItem("(O)340") == RecordTab.Other);
+            Check(monitor, "portraits and views have their own tabs",
+                RecordTabs.TabOfSubject("sitter:Leah") == RecordTab.Portraits && RecordTabs.TabOfSubject("view:Beach:summer") == RecordTab.Views);
+
+            // What each tab holds.
+            SetCatalogue(Array.Empty<string>());
+            foreach (var tab in RecordTabs.Completable)
+            {
+                var (done, total) = RecordTabs.Progress(who, tab);
+                monitor.Log($"  {tab}: {total} to paint", LogLevel.Info);
+                Check(monitor, $"the {tab} tab has things to paint, none painted yet", total > 3 && done == 0, $"{done} of {total}");
+            }
+            var crops = RecordTabs.Members(who, RecordTab.Crops).Select(m => m.Key).ToList();
+            Check(monitor, "the crops tab holds the parsnip but no fish", crops.Contains("(O)24") && !crops.Contains("(O)145"));
+            var sitters = RecordTabs.Members(who, RecordTab.Portraits).Select(m => m.Key).ToList();
+            Check(monitor, "the portraits tab holds Leah and Sable", sitters.Contains("sitter:Leah") && sitters.Contains("sitter:Sable"));
+            var views = RecordTabs.Members(who, RecordTab.Views).Select(m => m.Key).ToList();
+            Check(monitor, "the views tab holds the beach, the desert and the island, but not the mines", views.Contains("view:Beach") && views.Contains("view:Desert")
+                && views.Any(v => v.StartsWith("view:Island")) && !views.Any(v => v.StartsWith("view:UndergroundMine")));
+
+            // A still life counts for each item; a view for its place in each season.
+            SetCatalogue(new[] { "(O)24|(O)145", "view:Beach:summer", "view:Beach:winter", "(O)340" });
+            Check(monitor, "a still life of two counts for both", RecordTabs.Progress(who, RecordTab.Crops).Done == 1 && RecordTabs.Progress(who, RecordTab.Fish).Done == 1);
+            var beach = RecordTabs.Members(who, RecordTab.Views).First(m => m.Key == "view:Beach");
+            Check(monitor, "a place painted in two seasons is one view, with both seasons", beach.Painted?.Count == 2 && beach.Seasons.Count == 2, string.Join(",", beach.Seasons));
+            Check(monitor, "everything else shows only what's painted", RecordTabs.Members(who, RecordTab.Other).Select(m => m.Key).SequenceEqual(new[] { "(O)340" }));
+
+            // Rewards: a quarter, a half, all of it.
+            who.modData[perksKey] = "";
+            var forage = RecordTabs.Members(who, RecordTab.Forage).Select(m => m.Key).ToList();
+            int moss = Palette.IndexOf("moss");
+            ArtProgress.SetOwned(who, ArtProgress.OwnedPigments(who).Where(p => p != moss).ToList());
+            string tube = "(O)" + ArtItems.TubeId(moss);
+            int tubesBefore = who.Items.Where(i => i?.QualifiedItemId == tube).Sum(i => i.Stack);
+            SetCatalogue(forage.Take((forage.Count + 3) / 4));
+            var first = RecordTabs.GrantRewards(who);
+            Check(monitor, "a quarter of a tab brings its first reward", first.Count == 1 && RecordTabs.HasReward(who, RecordTab.Forage, 25), string.Join(" / ", first));
+            Check(monitor, "...three tubes of its colour, and the colour",
+                who.Items.Where(i => i?.QualifiedItemId == tube).Sum(i => i.Stack) == tubesBefore + RecordTabs.RewardTubes && ArtProgress.Owns(who, moss));
+            Check(monitor, "a reward comes once", RecordTabs.GrantRewards(who).Count == 0);
+            Check(monitor, "a part-painted tab doesn't sell for more", RecordTabs.ValueFor(who, forage[0]) == 1f);
+            SetCatalogue(forage);
+            var rest = RecordTabs.GrantRewards(who);
+            Check(monitor, "the whole tab brings the half and the whole", rest.Count == 2 && RecordTabs.HasReward(who, RecordTab.Forage, 100), string.Join(" / ", rest));
+            Check(monitor, "then its paintings sell for more, and only its own", RecordTabs.ValueFor(who, forage[0]) == RecordTabs.SpecialistValue && RecordTabs.ValueFor(who, "(O)24") == 1f);
+            foreach (var item in who.Items.Where(i => i?.QualifiedItemId == tube || i?.QualifiedItemId == "(O)" + ArtItems.FrameItemId).ToList())
+                who.removeItemFromInventory(item);
+
+            // The menu, on every tab.
+            bool opened = true;
+            foreach (var tab in Enum.GetValues<RecordTab>())
+                try { _ = new Menus.CollectionMenu(who, tab); }
+                catch (Exception ex) { opened = false; monitor.Log($"  {tab}: {ex}", LogLevel.Error); }
+            Check(monitor, "the record opens on every tab", opened);
+        }
+        finally
+        {
+            if (savedCatalogue != null) who.modData[catalogueKey] = savedCatalogue; else who.modData.Remove(catalogueKey);
+            if (savedPerks != null) who.modData[perksKey] = savedPerks; else who.modData.Remove(perksKey);
+            ArtProgress.SetOwned(who, savedOwned);
+        }
     }
 
     // Glazes, highlights and Masterpieces (2026-10-25).

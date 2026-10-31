@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2 (in progress)
+
+- **The painting record has tabs.** Crops, Forage, Fish, Minerals, Cooking, Portraits, Views and everything else, like the game's Collections tab. What you haven't painted yet shows faded, with how to paint it. Painting a quarter, half and all of a tab brings rewards: paint, Picture Frames, and 10% more for that tab's paintings.
+
 ## 1.1.5
 
 - **Glazing on Relaxed.** From a medium canvas, Relaxed now has the Glaze tool too, to glaze wherever you like on a flat-colour painting. A painting for a glazed commission asks for its glazes on Relaxed as well (but no highlights), so Relaxed players can fill those requests (thanks, Hiname, for asking where the Glaze tool was).

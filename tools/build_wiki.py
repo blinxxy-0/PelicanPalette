@@ -582,6 +582,35 @@ Every subject you paint goes in your **painting record**: how many times you've 
 
 Free canvases don't count.
 
+## Tabs
+The record opens on an **overview** of everything you've painted, with the milestones below. The tabs along the top sort it like the game's Collections tab:
+
+| Tab | Holds |
+|---|---|
+| Crops | Everything grown from seeds or fruit trees |
+| Forage | Wild produce: greens, berries, mushrooms |
+| Fish | Everything in the fishing collection |
+| Minerals | Gems and minerals |
+| Cooking | Every dish |
+| Portraits | Everyone who can sit for a portrait |
+| Views | Every outdoor place you can set up an easel |
+| Everything else | Artisan goods, animal products and the rest (only what you've painted) |
+
+- **Still to paint:** what you haven't painted yet shows faded. Hover over it to see how to paint it. Something you've never had shows as "???".
+- **Still lifes of several items** count for each item in them.
+- **Views** count for their place in any season. Small squares on the tile show the seasons you've painted it in.
+
+## Tab rewards
+Every tab except "everything else" rewards you for painting a share of it:
+
+| Painted | Reward |
+|---|---|
+| 25% | Three tubes of the tab's colour (and the colour) |
+| 50% | Two Picture Frames |
+| 100% | Every painting from that tab sells for 1.1x |
+
+The colours: Leaf (crops), Moss (forage), Cerulean (fish), Iridium Violet (minerals), Crimson (cooking), Peach (portraits) and Slate (views). Rewards come after the painting that reaches them, so a record from before the tabs catches up with the next painting you make.
+
 ## Novelty
 A subject's first painting ever sells for more. Painting the same subject again and again in one week sells for less, and the count starts over every Monday; see {link("Selling and Prices")}.
 

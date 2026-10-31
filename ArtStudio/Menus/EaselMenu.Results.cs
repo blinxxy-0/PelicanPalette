@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ArtStudio.Core;
 using ArtStudio.Painting;
@@ -30,6 +31,7 @@ internal sealed partial class EaselMenu
     private bool _linen, _masterpiece;
     private int _timesBefore, _timesThisWeek;
     private (int Subjects, string Perk)? _milestone;
+    private List<string> _tabRewards = new();
 
     private void Finish(bool lightGone)
     {
@@ -110,8 +112,9 @@ internal sealed partial class EaselMenu
             _timesBefore = Catalogue.TimesPainted(_who, subject);
             _timesThisWeek = Catalogue.TimesThisWeek(_who, subject);
             _novelty = Catalogue.Novelty(_who, subject);
-            price = (int)Math.Round(price * _novelty * (Catalogue.HasPerk(_who, "renown") ? Catalogue.RenownValue : 1f));
+            price = (int)Math.Round(price * _novelty * (Catalogue.HasPerk(_who, "renown") ? Catalogue.RenownValue : 1f) * RecordTabs.ValueFor(_who, subject));
             _milestone = Catalogue.Record(_who, subject, _quality);
+            _tabRewards = RecordTabs.GrantRewards(_who);
         }
 
         var data = new PaintingData
@@ -218,6 +221,8 @@ internal sealed partial class EaselMenu
             Game1.addHUDMessage(new HUDMessage(I18n.Get("results.level-up", new { level = _newLevel })) { noIcon = true });
         if (_milestone is { } m)
             Game1.addHUDMessage(new HUDMessage(I18n.Get("catalogue.milestone." + m.Perk, new { count = m.Subjects })) { noIcon = true });
+        foreach (string reward in _tabRewards)
+            Game1.addHUDMessage(new HUDMessage(reward) { noIcon = true });
         _resultTexture?.Dispose();
     }
 
