@@ -338,7 +338,7 @@ internal static class DevGame
         Game1.exitActiveMenu();
 
         // 1. Paint through the real easel flow.
-        GivePalette(who);
+        DevTools.GivePalette(who);
         if (Count(canvasId) == 0)
             who.addItemToInventory(ItemRegistry.Create(canvasId, 2));
         int canvasesBefore = Count(canvasId), xpBefore = ArtProgress.Xp(who);
@@ -1294,7 +1294,7 @@ internal static class DevGame
         SObject? Paint(bool linen, bool techniques)
         {
             FreshStart(who);
-            GivePalette(who);
+            DevTools.GivePalette(who);
             who.addItemToInventory(ItemRegistry.Create(linen ? ArtItems.QualifiedLinenId(CanvasKind.Medium) : ArtItems.QualifiedCanvasId(CanvasKind.Medium)));
             var m = new EaselMenu(who);
             Game1.activeClickableMenu = m;
@@ -1327,19 +1327,6 @@ internal static class DevGame
     // Varnishing (2026-10-25): the cabinet works like a cask.
     // Tests begin in the morning, with an empty painting record, so what ran
     // before (time spent painting, novelty, milestone rewards) can't sway them.
-    // Normal paints from a Palette (1.1): a wooden one, full of every colour.
-    private static void GivePalette(Farmer who)
-    {
-        var palette = PaletteItem.Find(who);
-        if (palette == null)
-        {
-            palette = ItemRegistry.Create("(O)" + PaletteItem.Tiers[0].Id);
-            who.addItemToInventory(palette);
-        }
-        int full = PaletteItem.Capacity(palette, who);
-        PaletteItem.Write(palette, Enumerable.Repeat(full, Palette.All.Length).ToArray());
-    }
-
     private static void FreshStart(Farmer who)
     {
         ArtHooks.DevFreshMorning();

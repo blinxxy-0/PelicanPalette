@@ -90,6 +90,20 @@ internal static class DevTools
     // Every screen and popup the easel can show, at the two common UI sizes.
     // Each render is also audited for overlapping or spilling text; the
     // findings go to snapshots/layout_report.txt and the console.
+    // Normal paints from a Palette (1.1): a wooden one, full of every colour.
+    internal static void GivePalette(Farmer who)
+    {
+        var palette = PaletteItem.Find(who);
+        if (palette == null)
+        {
+            palette = ItemRegistry.Create("(O)" + PaletteItem.Tiers[0].Id);
+            if (!who.addItemToInventoryBool(palette))
+                who.Items[who.Items.Count - 1] = palette;     // (a full bag)
+        }
+        int full = PaletteItem.Capacity(palette, who);
+        PaletteItem.Write(palette, Enumerable.Repeat(full, Palette.All.Length).ToArray());
+    }
+
     private static void Snap(string modDir, IMonitor monitor, string[] args)
     {
         string dir = Path.Combine(modDir, "snapshots");
@@ -199,6 +213,7 @@ internal static class DevTools
 
         EaselMenu Paint(CanvasKind kind, params string[] items)
         {
+            GivePalette(Game1.player);            // (Normal paints from one)
             var menu = EaselMenu.StartStillLife(Game1.player, kind, items);
             menu.DevPaintPartly(0.55f, 1);
             return menu;
@@ -232,6 +247,11 @@ internal static class DevTools
         yield return ("tech_glaze_relaxed", () => { ModEntry.Config.Difficulty = Difficulty.Relaxed; var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.7f, 5); m.DevSelectTool(PaintTool.Glaze); return m; });
         yield return ("spark_canvas", () => { var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.5f, 5); m.DevHover(9, 12, false); return m; });
         yield return ("spark_reference", () => { var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.5f, 5); m.DevHover(9, 12, true); return m; });
+        // The Nexus page's painting shots (1.1.5): the spark ring, and a cell
+        // pointed at, framed on both grids and named under the reference.
+        yield return ("shot_glaze", () => { var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(0.7f, 5); m.DevSelectTool(PaintTool.Glaze); m.DevHoldSpark(); m.DevHover(10, 12, false); return m; });
+        yield return ("shot_highlight", () => { var m = Paint(CanvasKind.Large, "(O)72"); m.DevPaintPartly(0.9f, 5); m.DevSelectTool(PaintTool.Highlight); m.DevHoldSpark(); m.DevHover(16, 15, false); return m; });
+        yield return ("shot_mixing", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevOpenMixWell(moss, 0.7f); m.DevHoldSpark(); m.DevFreeze(); return m; });
         yield return ("tech_highlight", () => { var m = Paint(CanvasKind.Large, "(O)72"); m.DevPaintPartly(0.9f, 5); m.DevSelectTool(PaintTool.Highlight); return m; });
         yield return ("tech_results", () => { ArtProgress.SetLevel(Game1.player, 10); var m = Paint(CanvasKind.Medium, pumpkin); m.DevPaintPartly(1f, 5); m.DevFinish(false); return m; });
         yield return ("tech_masterpiece", () =>

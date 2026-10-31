@@ -136,6 +136,7 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     public override void update(GameTime time)
     {
+        if (_devFrozen) return;                      // (staged for a screenshot)
         _prevMouse = _mouse;
         _mouse = Game1.input.GetMouseState();
         _prevKeys = _keys;
@@ -225,7 +226,11 @@ internal sealed partial class EaselMenu : IClickableMenu
             base.draw(b);
         if (_hoverText != null)
             drawHoverText(b, _hoverText, Game1.smallFont);
-        drawMouse(b);
+        if (_devMouse is Point pointer)              // (staged for a screenshot: the cursor where it points)
+            b.Draw(Game1.mouseCursors, pointer.ToVector2(), Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 0, 16, 16),
+                Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+        else
+            drawMouse(b);
     }
 
     // Draws a pigment grid into `area` (cells may be non-square-pixel-exact;

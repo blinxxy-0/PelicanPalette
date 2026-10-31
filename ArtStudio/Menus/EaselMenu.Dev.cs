@@ -80,6 +80,15 @@ internal sealed partial class EaselMenu
             _mix.Tick(i % 40 < 22);
     }
 
+    // A mix going well: the band steered onto the hue (as a player would,
+    // holding to lift it) until the meter is most of the way up.
+    internal void DevOpenMixWell(int pigment, float meter)
+    {
+        DevOpenMix(pigment, 0, armed: true);
+        for (int i = 0; i < 1200 && _mix!.Outcome == MixOutcome.Mixing && _mix.Meter < meter; i++)
+            _mix.Tick(_mix.BandPos + _mix.BandHeight / 2f > _mix.Marker);
+    }
+
     // A few colors already mixed, at each purity.
     internal void DevMixedPalette()
     {
@@ -193,6 +202,13 @@ internal sealed partial class EaselMenu
     }
 
     internal bool DevIsPainting => _stage == EaselStage.Painting;
+
+    // The spark stays up (for screenshots taken a moment later).
+    internal void DevHoldSpark() => _sparkLife = _sparkLeft = float.PositiveInfinity;
+
+    // Nothing moves on (the mix bar, the light), so a screenshot shows the staged moment.
+    internal void DevFreeze() => _devFrozen = true;
+    private bool _devFrozen;
 
     // Why Begin didn't start a painting, for a failed check.
     internal string DevWhyNot => $"stage {_stage}, canvas {HasCanvas}, too late {TooLate} ({Game1.timeOfDay}), needs palette {NeedsPalette}, mode {ModEntry.Config.Difficulty}";

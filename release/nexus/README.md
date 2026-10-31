@@ -38,7 +38,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 2. `shop_exterior.png`: *The art shop in Cindersap Forest, and Sable*
 3. `shop_interior.png`: *Inside: canvases, pigments, paint and the commission board*
 4. `mixing.png`: *Mixing a colour on the fishing-style bar*
-5. `paint_glaze.png`: *Glazing on a medium canvas*
+5. `paint_glaze.png`: *Glazing on a medium canvas; point at a cell and its colour is named*
 6. `palette_menu.png`: *A palette's wells: tubes go straight in*
 7. `paint_highlight.png`: *Highlights on a large canvas*
 8. `results_masterpiece.png`: *A Masterpiece*
@@ -49,6 +49,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 13. `board.png`: *The commission board*
 14. `farmhouse_varnish.png`: *A Varnishing Cabinet, curing a painting*
 15. `event_gallery_1.png`: *A gallery evening at the shop*
+16. `sable_room.png`: *Sable's room, down the trapdoor in the shop*
 
 ## Updates
 

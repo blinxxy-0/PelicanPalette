@@ -123,6 +123,7 @@ def shell(seb):
     room.put("Front", 11, 11, None)
     room.put("Buildings", 10, 11, None)
     room.put("Buildings", 11, 11, None)
+    room.put("Buildings", 1, 11, None)           # his plant, half over the wall
     return grid
 
 

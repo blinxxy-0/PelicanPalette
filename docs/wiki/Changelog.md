@@ -2,6 +2,7 @@
 
 - **Glazing on Relaxed.** From a medium canvas, Relaxed now has the Glaze tool too, to glaze wherever you like on a flat-colour painting. A painting for a glazed commission asks for its glazes on Relaxed as well (but no highlights), so Relaxed players can fill those requests (thanks, Hiname, for asking where the Glaze tool was).
 - **Glazed commissions want real glazing.** They used to take any painting with a single glaze on it. Now the painting has to be painted to a reference with glazes, with at least half of them (and any highlights) in place. Paintings from before 1.1.5 count as before. The easel's setup screen says when a commission is for a glazed painting.
+- **Fixed: Sable's room.** Sable now sleeps with their head on the pillow (it was off the edge of the bed), and a leftover plant that stuck out over the bottom wall is gone.
 
 ## 1.1.4
 
