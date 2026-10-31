@@ -14,7 +14,7 @@ import json, math, os, sys
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from vanillafy import recolour_black
+from vanillafy import recolour_black, selout
 import wall_bins
 
 SHEET_TILES = 16            # sheet width in tiles
@@ -96,7 +96,7 @@ def load(gen_dir, job, n):
     im = Image.open(os.path.join(gen_dir, job, f"{job.split('/')[-1]}_{n}.png")).convert("RGBA")
     im.putalpha(im.getchannel("A").point(lambda a: 255 if a >= 128 else 0))
     im = drop_specks(im)
-    return recolour_black(im.crop(im.getbbox()))
+    return selout(recolour_black(im.crop(im.getbbox())))
 
 
 def on_grid(im, hang=False):

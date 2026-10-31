@@ -1,0 +1,23 @@
+{
+ "batch": "stardew-artshop-backroom",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_usage": "Stardew Valley interior pixel art: palette, outline weight, wood grain and shading, and the high top-down front camera where furniture shows its front with the top as a band above it",
+  "reference_usage": "camera and outline: the front face square-on with its top seen as a band above it; keep this size and shape, bottom edge on the floor"
+ },
+ "jobs": {
+  "plan_chest": {
+   "image_size": {"width": 48, "height": 48},
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_interior/style_front_shelf.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_interior/low_shelf_small_guide.png",
+   "description": "one wide low wooden plan chest, an artist's flat file cabinet, Stardew Valley pixel art, the same front-facing angle, size and warm wood as the style image: a stack of many wide shallow drawers, each with a small brass handle and a little paper label, and on its flat top a rolled drawing, a sketchbook or a few loose sheets of paper. Furniture only, transparent background."
+  },
+  "lectern": {
+   "image_size": {"width": 32, "height": 32},
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_interior/pierre_bins.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_interior/small_prop_guide.png",
+   "description": "one small wooden book stand, a lectern on a single carved post, Stardew Valley pixel art, holding a big open portfolio book with little paintings on its pages, or a closed leather portfolio with a ribbon; seen from the front and a little above. Furniture only, transparent background."
+  }
+ }
+}

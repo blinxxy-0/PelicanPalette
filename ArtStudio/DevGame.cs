@@ -146,6 +146,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
+        DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
         DevTools.AddCommand(helper, "museart_palettetest", "Palette tiers, tubes going straight in, and a placed Palette as storage. Run 'museart_palettetest' in the farmhouse, then 'museart_palettetest check' a second later.", (_, args) => PaletteTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
@@ -613,10 +614,11 @@ internal static class DevGame
         if (!Context.IsWorldReady) return;
         var who = Game1.player;
         var shop = Game1.getLocationFromName(Shop.ArtShop.LocationName);
+        var back = Game1.getLocationFromName(Shop.ArtShop.BackRoom);
         var room = Game1.getLocationFromName(Shop.ArtShop.Basement);
         if (args.FirstOrDefault() == "down")
         {
-            shop!.performAction("LockedDoorWarp 1 2 " + Shop.ArtShop.Basement + " 600 2600 Sable 500", who, new xTile.Dimensions.Location(18, 9));
+            back!.performAction("LockedDoorWarp 1 2 " + Shop.ArtShop.Basement + " 600 2600 Sable 500", who, new xTile.Dimensions.Location(9, 7));
             return;
         }
         if (args.FirstOrDefault() == "check")
@@ -625,12 +627,16 @@ internal static class DevGame
             Check(monitor, "once let in, the trapdoor stays open", who.mailReceived.Contains("doorUnlockSable"));
             return;
         }
-        Check(monitor, "Sable's room exists", room != null);
-        if (shop == null || room == null) return;
-        Check(monitor, "the trapdoor is a door down to Sable's room", shop.doors.TryGetValue(new Point(18, 9), out var to) && to == Shop.ArtShop.Basement);
-        Check(monitor, "the gallery evening has no trapdoor in the way", Game1.content.Load<xTile.Map>("Maps/" + ModEntry.Id + "_ArtShopGallery").GetLayer("Buildings").Tiles[18, 9] == null);
+        Check(monitor, "Sable's room and the back room exist", room != null && back != null);
+        if (shop == null || room == null || back == null) return;
+        Check(monitor, "the shop's back wall has a door to the back room", shop.doors.TryGetValue(new Point(12, 3), out var through) && through == Shop.ArtShop.BackRoom);
+        Check(monitor, "the back room's doorway leads back into the shop", back.warps.Any(w => w.TargetName == Shop.ArtShop.LocationName && w.TargetX == 12 && w.TargetY == 4) && shop.isTilePassable(new Vector2(12, 4)));
+        Check(monitor, "the trapdoor is in the back room, a door down to Sable's room", back.doors.TryGetValue(new Point(9, 7), out var to) && to == Shop.ArtShop.Basement);
+        Check(monitor, "the shop floor has no trapdoor any more", shop.map.GetLayer("Buildings").Tiles[18, 9] == null);
         var stairs = room.warps.FirstOrDefault();
-        Check(monitor, "the stairs lead up to beside the trapdoor", stairs != null && stairs.TargetName == Shop.ArtShop.LocationName && stairs.TargetX == 17 && stairs.TargetY == 9 && shop.isTilePassable(new Vector2(17, 9)), $"{stairs?.TargetName} {stairs?.TargetX},{stairs?.TargetY}");
+        Check(monitor, "the stairs lead up to beside the trapdoor", stairs != null && stairs.TargetName == Shop.ArtShop.BackRoom && stairs.TargetX == 8 && stairs.TargetY == 7 && back.isTilePassable(new Vector2(8, 7)), $"{stairs?.TargetName} {stairs?.TargetX},{stairs?.TargetY}");
+        Check(monitor, "the book and the plan chest have their actions",
+            back.doesTileHaveProperty(6, 4, "Action", "Buildings")?.Contains("_Portfolio") == true && back.doesTileHaveProperty(3, 4, "Action", "Buildings")?.Contains("_PlanChest") == true);
         Check(monitor, "the foot of the stairs is open to arrive on", !room.isCollidingPosition(new Rectangle(64 + 8, 2 * 64 + 8, 48, 48), Game1.viewport, true, 0, false, who));
         Check(monitor, "Sable's bed is free to lie in, and reachable from beside it", room.isTilePassable(new Vector2(10, 5)) && room.isTilePassable(new Vector2(9, 5)));
         var route = StardewValley.Pathfinding.WarpPathfindingCache.GetLocationRoute("Forest", Shop.ArtShop.Basement, StardewValley.Gender.Undefined);
@@ -645,7 +651,7 @@ internal static class DevGame
         who.mailReceived.Remove("doorUnlockSable");
         who.HasTownKey = false;
         Check(monitor, "a stranger can't go down", !Shop.ArtShop.MayGoDown(who));
-        shop.performAction("LockedDoorWarp 1 2 " + Shop.ArtShop.Basement + " 600 2600 Sable 500", who, new xTile.Dimensions.Location(18, 9));
+        back.performAction("LockedDoorWarp 1 2 " + Shop.ArtShop.Basement + " 600 2600 Sable 500", who, new xTile.Dimensions.Location(9, 7));
         Check(monitor, "a stranger is told it's bolted", Game1.activeClickableMenu is DialogueBox && Game1.locationRequest == null);
         CloseDialogue();
         Check(monitor, "the key to the town opens it", (who.HasTownKey = true) && Shop.ArtShop.MayGoDown(who) && !who.mailReceived.Contains("doorUnlockSable"));
@@ -1273,6 +1279,96 @@ internal static class DevGame
             if (savedPerks != null) who.modData[perksKey] = savedPerks; else who.modData.Remove(perksKey);
             ArtProgress.SetOwned(who, savedOwned);
         }
+    }
+
+    // The portfolio book and the plan chest (1.2). A shared lock is handed
+    // over on the next tick, so the menus are checked a step at a time: run
+    // it, then 'museart_portfoliotest book', 'openchest', 'chest' and 'closed', a second apart.
+    private static void PortfolioTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        switch (args.FirstOrDefault())
+        {
+            case "book":
+                Check(monitor, "the book opens and is kept for whoever opened it", Game1.activeClickableMenu is Menus.PortfolioMenu && Portfolio.Mutex.IsLockHeld());
+                Game1.exitActiveMenu();
+                return;
+            case "openchest":
+                Check(monitor, "closing the book lets it go", !Portfolio.Mutex.IsLockHeld());
+                Shop.PlanChest.Open(who);
+                return;
+            case "chest":
+                var grab = Game1.activeClickableMenu as ItemGrabMenu;
+                Check(monitor, "the plan chest opens as a chest", grab?.context is Shop.PlanChest, $"{Game1.activeClickableMenu?.GetType().Name ?? "no menu"}, lock {Game1.player.team.GetOrCreateGlobalInventoryMutex(Shop.PlanChest.InventoryId).IsLocked()}");
+                Check(monitor, "...holding seventy", grab?.ItemsToGrabMenu.capacity == 70, $"{grab?.ItemsToGrabMenu.capacity}");
+                Check(monitor, "...and taking paintings, not parsnips", grab != null && grab.inventory.highlightMethod(DevTools.TestPainting("(O)24", 1)) && !grab.inventory.highlightMethod(ItemRegistry.Create("(O)24")));
+                Game1.exitActiveMenu();
+                return;
+            case "closed":
+                Check(monitor, "closing it lets the chest go", !Game1.player.team.GetOrCreateGlobalInventoryMutex(Shop.PlanChest.InventoryId).IsLockHeld());
+                return;
+        }
+        var book = Portfolio.Items;
+        void Reset()
+        {
+            for (int i = 0; i < book.Count; i++) book[i] = null;
+            foreach (var page in Portfolio.Pages)
+            {
+                who.mailReceived.Remove(Portfolio.PageFlag(page));
+                who.mailForTomorrow.Remove(Portfolio.PageFlag(page) + "_Letter");
+            }
+            foreach (var item in who.Items.Where(Portfolio.IsKeepable).ToList())
+                who.removeItemFromInventory(item);
+        }
+        SObject Give(string subject, int quality, float stars = 4f)
+        {
+            var painting = DevTools.TestPainting(subject, quality, stars);
+            who.addItemToInventory(painting);
+            return painting;
+        }
+        Reset();
+        try
+        {
+            Check(monitor, "the book has a slot for every page's slots", book.Count == Portfolio.SlotCount && Portfolio.SlotCount == 15, $"{book.Count}");
+
+            // Into a slot, kept; a better one swaps in; a worse one doesn't fit.
+            var spring = Give("view:Town:spring", PaintingRules.Silver);
+            var (slot, replaced) = Portfolio.Place(who, 0, spring);
+            Check(monitor, "a spring view of town goes in its slot and leaves the bag", slot == 0 && replaced == null && Portfolio.In(0) == spring && !who.Items.Contains(spring));
+            var better = Give("view:Town:spring", PaintingRules.Gold);
+            (slot, replaced) = Portfolio.Place(who, 0, better);
+            Check(monitor, "a better one swaps in, and the old one comes back", slot == 0 && replaced == spring && Portfolio.In(0) == better && who.Items.Contains(spring));
+            Check(monitor, "a worse one has nowhere to go", Portfolio.SlotFor(0, spring) < 0);
+            var winterBeach = Give("view:Beach:winter", PaintingRules.Iridium);
+            Check(monitor, "a view of somewhere else doesn't fit the town's slots", Portfolio.SlotFor(0, winterBeach) < 0);
+
+            // The hardest slot a painting fits, first.
+            int harvest = Portfolio.FirstIndex(1), fine = Portfolio.FirstIndex(2);
+            Check(monitor, "a parsnip still life is a spring crop", Portfolio.SlotFor(1, Give("(O)24", PaintingRules.Silver)) == harvest);
+            Check(monitor, "three crops together go in three crops", Portfolio.SlotFor(1, Give("(O)24|(O)190|(O)276", PaintingRules.Silver)) == harvest + 4);
+            Check(monitor, "an apple goes in the orchard slot", Portfolio.SlotFor(1, Give("(O)613", PaintingRules.Silver)) == harvest + 3);
+            var master = Give("(O)24", PaintingRules.Iridium);
+            master.modData[PaintingData.MasterpieceKey] = "1";
+            master.modData[Varnish.FinishKey] = "gallery";
+            Check(monitor, "a Masterpiece goes in the Masterpiece slot, not the gold one", Portfolio.SlotFor(2, master) == fine + 4);
+            Check(monitor, "a plain painting fits none of fine work", Portfolio.SlotFor(2, Give("(O)24", PaintingRules.Silver)) < 0);
+
+            // A finished page: everyone's flag, and Sable's letter.
+            foreach (string season in new[] { "summer", "fall", "winter" })
+                Portfolio.Place(who, 0, Give("view:Town:" + season, PaintingRules.Silver));
+            Check(monitor, "four of five isn't finished", !Portfolio.IsFinished(Portfolio.Pages[0]));
+            Portfolio.Place(who, 0, Give("view:Farm:spring", PaintingRules.Silver));
+            Check(monitor, "the last slot finishes the page", Portfolio.IsFinished(Portfolio.Pages[0]) && who.mailForTomorrow.Contains(Portfolio.PageFlag(Portfolio.Pages[0]) + "_Letter"));
+            Check(monitor, "the letter is in the game's mail", DataLoader.Mail(Game1.content).ContainsKey(Portfolio.PageFlag(Portfolio.Pages[0]) + "_Letter"));
+
+        }
+        finally
+        {
+            Reset();
+        }
+        // The book's menu, checked next step.
+        Menus.PortfolioMenu.Open(who);
     }
 
     // Glazes, highlights and Masterpieces (2026-10-25).
@@ -2214,6 +2310,29 @@ internal static class DevGame
                 break;
             case "consign":
                 Game1.activeClickableMenu = new Shop.ConsignMenu(Game1.player);
+                break;
+            case "portfolio":
+                // The book with a page half kept, and paintings in the bag that fit (museart_menu portfolio).
+                {
+                    var book = Portfolio.Items;
+                    for (int i = 0; i < book.Count; i++) book[i] = null;
+                    book[0] = DevTools.TestPainting("view:Town:spring", PaintingRules.Gold);
+                    book[1] = DevTools.TestPainting("view:Town:summer", PaintingRules.Silver);
+                    book[4] = DevTools.TestPainting("view:Farm:fall", PaintingRules.Iridium);
+                    Game1.player.addItemToInventory(DevTools.TestPainting("view:Town:fall", PaintingRules.Silver));
+                    Game1.player.addItemToInventory(DevTools.TestPainting("(O)24", PaintingRules.Gold));
+                    Menus.PortfolioMenu.Open(Game1.player);
+                }
+                break;
+            case "planchest":
+                // The plan chest with a few paintings in it (museart_menu planchest).
+                {
+                    var drawer = Game1.player.team.GetOrCreateGlobalInventory(Shop.PlanChest.InventoryId);
+                    drawer.Clear();
+                    foreach (string subject in new[] { "(O)24", "view:Beach:summer", "(O)613", "sitter:Leah" })
+                        drawer.Add(DevTools.TestPainting(subject, PaintingRules.Silver));
+                    Shop.PlanChest.Open(Game1.player);
+                }
                 break;
             case "map":
                 // The world map page (museart_menu map).

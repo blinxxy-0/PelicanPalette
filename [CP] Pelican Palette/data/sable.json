@@ -174,7 +174,11 @@
       "Target": "Data/mail",
       "Entries": {
         "blinxxy.MuseArt_GrandOpening": "{{i18n:mail.grand-opening}} %item id (O)blinxxy.MuseArt_Canvas_Small 2 %%[#]{{i18n:mail.grand-opening.title}}",
-        "blinxxy.MuseArt_Collection50": "{{i18n:mail.collection50}} %item id (O)blinxxy.MuseArt_Brush_iridium 1 %%[#]{{i18n:mail.collection50.title}}"
+        "blinxxy.MuseArt_Collection50": "{{i18n:mail.collection50}} %item id (O)blinxxy.MuseArt_Brush_iridium 1 %%[#]{{i18n:mail.collection50.title}}",
+        // The portfolio book's pages (1.2), each with its reward.
+        "blinxxy.MuseArt_Portfolio_seasons_Letter": "{{i18n:mail.portfolio-seasons}} %item id (BC)blinxxy.MuseArt_VarnishCabinet 1 %%[#]{{i18n:mail.portfolio-seasons.title}}",
+        "blinxxy.MuseArt_Portfolio_harvest_Letter": "{{i18n:mail.portfolio-harvest}} %item id (BC)blinxxy.MuseArt_PigmentMill 1 %%[#]{{i18n:mail.portfolio-harvest.title}}",
+        "blinxxy.MuseArt_Portfolio_fine-work_Letter": "{{i18n:mail.portfolio-fine-work}} %item id (O)blinxxy.MuseArt_Linen_Medium 2 %%[#]{{i18n:mail.portfolio-fine-work.title}}"
       }
     },
     {

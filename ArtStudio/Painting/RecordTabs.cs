@@ -186,6 +186,34 @@ internal static class RecordTabs
         return keys;
     }
 
+    // ---- Kept paintings ----
+
+    // The best painting of each record key kept in the portfolio book or the
+    // plan chest (1.2), so the record can show your own painting of a
+    // subject instead of its icon.
+    public static Dictionary<string, Item> KeptPaintings()
+    {
+        var kept = new Dictionary<string, Item>();
+        void Offer(string key, Item item)
+        {
+            if (!kept.TryGetValue(key, out var have) || Portfolio.IsBetter(item, have))
+                kept[key] = item;
+        }
+        var all = Portfolio.Items.Concat(Game1.player.team.GetOrCreateGlobalInventory(Shop.PlanChest.InventoryId));
+        foreach (var item in all)
+        {
+            if (!Portfolio.IsKeepable(item) || PaintingData.Read(item!) is not { } data) continue;
+            string subject = data.Subject;
+            Offer(Catalogue.SubjectKey(subject), item!);
+            if (Views.IsView(subject))
+                Offer(ViewPrefix + Views.PlaceOf(subject), item!);
+            else if (!Sitters.IsSitter(subject) && !data.IsOriginal && !data.IsPortrait)
+                foreach (string id in data.SubjectItems)
+                    Offer(id, item!);
+        }
+        return kept;
+    }
+
     // ---- What the player knows of it ----
 
     // Whether to name a subject not yet painted (like the Collections tab,

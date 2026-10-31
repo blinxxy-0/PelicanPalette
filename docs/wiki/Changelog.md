@@ -1,5 +1,9 @@
 ## 1.2 (in progress)
 
+- **The back room.** A door in the shop's back wall leads to a back room, where you keep your work: the **portfolio book**, a Community Center for paintings (pages of slots, each asking for a particular painting, which stays there and shows in its slot; a better one can replace it later), and the **plan chest**, a big chest's worth of drawers for any paintings you want to keep. Both are shared by the whole farm. Finishing a page brings a letter from Sable with a reward. Pages so far: The Four Seasons, Harvest and Fine Work.
+- **Sable's trapdoor moved to the back room**, so the shop floor is clear.
+- **The painting record shows your own painting** of a subject, where one's kept in the portfolio or the plan chest.
+- **Softer outlines on the shop's furniture**, a darker shade of each piece's own colour instead of near-black.
 - **The painting record has tabs.** Crops, Forage, Fish, Minerals, Cooking, Portraits, Views and everything else, like the game's Collections tab. What you haven't painted yet shows faded, with how to paint it. Painting a quarter, half and all of a tab brings rewards: paint, Picture Frames, and 10% more for that tab's paintings.
 
 ## 1.1.5

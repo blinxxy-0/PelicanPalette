@@ -74,6 +74,52 @@ def recolour_black(im, threshold=34):
     return im
 
 
+def outline_shade(c):
+    """A furniture outline: the neighbouring colour, darker, in its own hue
+    (a touch warmer, as vanilla's wood and goods darken)."""
+    r, g, b = c
+    return (int(r * 0.52), int(g * 0.42), int(b * 0.46))
+
+
+def lum(c):
+    return 0.3 * c[0] + 0.59 * c[1] + 0.11 * c[2]
+
+
+def selout(im, ratio=0.45):
+    """Furniture and props (1.2, from the user: "stardew items outlines take
+    a darker version of the color of the interior pixels next to it. they
+    are rarely black outlines"). An outline pixel (on the piece's edge, or a
+    one-pixel line inside it) far darker than the colour it borders becomes
+    a darker shade of that colour, so a canvas's edge is a warm mid brown,
+    a crate's a deep brown, never near-black. Thick dark areas (the inside
+    of a shelf, a barrel's mouth) are shading, and stay."""
+    px = im.load()
+    w, h = im.size
+
+    def at(x, y):
+        return px[x, y] if 0 <= x < w and 0 <= y < h else (0, 0, 0, 0)
+
+    changes = {}
+    for y in range(h):
+        for x in range(w):
+            p = px[x, y]
+            if p[3] == 0:
+                continue
+            l = lum(p)
+            ring = [at(x + dx, y + dy) for dy in (-1, 0, 1) for dx in (-1, 0, 1) if dx or dy]
+            edge = any(q[3] == 0 for q in ring)
+            brighter = [q[:3] for q in ring if q[3] and lum(q) * ratio > l]
+            if not brighter or not (edge or len(brighter) >= 5):
+                continue
+            base = max(set(brighter), key=brighter.count)
+            shade = outline_shade(base)
+            if lum(shade) > l:
+                changes[(x, y)] = shade + (255,)
+    for k, v in changes.items():
+        px[k] = v
+    return im
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("src"); ap.add_argument("out"); ap.add_argument("--colors", type=int, default=32)

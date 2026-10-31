@@ -51,6 +51,17 @@ internal static class ArtShop
                 ArtHooks.OpenEasel(who, tile.ToVector2());
             return true;
         });
+        // The back room (1.2): the portfolio book on its lectern, and the plan chest.
+        GameLocation.RegisterTileAction(ModEntry.Id + "_Portfolio", (_, _, who, _) =>
+        {
+            Menus.PortfolioMenu.Open(who);
+            return true;
+        });
+        GameLocation.RegisterTileAction(ModEntry.Id + "_PlanChest", (_, _, who, _) =>
+        {
+            PlanChest.Open(who);
+            return true;
+        });
         GameLocation.RegisterTileAction(ModEntry.Id + "_Sign", (_, _, _, _) =>
         {
             Game1.drawObjectDialogue(I18n.Get("shop.sign"));
@@ -71,6 +82,7 @@ internal static class ArtShop
     // ---- The trapdoor down to Sable's room ----
 
     public const string Basement = ModEntry.Id + "_SableBasement";
+    public const string BackRoom = ModEntry.Id + "_ArtShopBackRoom";
 
     // The trapdoor's tiles are a LockedDoorWarp, so Sable goes down it at
     // night like through any door. Your way down follows the rule for a
@@ -230,6 +242,8 @@ internal static class ArtShop
 
     private static void OnMenuChanged(object? sender, MenuChangedEventArgs e)
     {
+        PlanChest.ReleaseIfClosed();
+        Menus.PortfolioMenu.ReleaseIfClosed();
         if (e.NewMenu is ShopMenu shop && shop.ShopId == ShopId)
             _reflection.GetField<float>(shop, "sellPercentage").SetValue(PaintingPremium);
     }

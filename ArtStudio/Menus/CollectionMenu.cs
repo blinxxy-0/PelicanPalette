@@ -30,10 +30,15 @@ internal sealed class CollectionMenu : IClickableMenu
     private int _page, _perPage = 1;
     private string? _hoverText;
 
+    // Your own paintings of subjects, where one's kept (the portfolio or the
+    // plan chest), shown in place of the subject's icon.
+    private readonly Dictionary<string, Item> _kept;
+
     public CollectionMenu(Farmer who, RecordTab tab = RecordTab.Overview)
         : base(0, 0, 0, 0, showUpperRightCloseButton: true)
     {
         _who = who;
+        _kept = RecordTabs.KeptPaintings();
         _tab = tab;
         _members = RecordTabs.Members(who, tab);
         Layout();
@@ -225,7 +230,9 @@ internal sealed class CollectionMenu : IClickableMenu
         string key = member.Key;
         string[] ids = key.Split('|');
 
-        if (Sitters.IsSitter(key))
+        if (painted && _kept.TryGetValue(key, out var kept) && PaintingRenderer.TextureFor(kept) is { } picture)
+            b.Draw(picture, inner, Color.White);
+        else if (Sitters.IsSitter(key))
         {
             var texture = Sitters.PortraitTexture(Sitters.NpcOf(key));
             if (texture != null)

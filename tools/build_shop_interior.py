@@ -30,7 +30,7 @@ Every other tile references the game's own tilesheets (townInterior,
 townInterior_2), so no vanilla art is copied.
 
 Reads maps written by the museart_export_map debug command.
-Usage: build_shop_interior.py <exports dir> <furniture.json> <out dir> <door x> <door y>
+Usage: build_shop_interior.py <exports dir> <furniture.json> <out dir> <door x> <door y> [<back room x> <back room y>]
   (furniture.json: where build_shop_furniture.py packed each piece; the
    sheet itself, ArtShopFurniture.png, is read from <out dir>, beside the maps;
    door x/y: the Forest tile you arrive on when leaving the shop)
@@ -46,16 +46,16 @@ BOARD_X = 6                 # the commission board's left column (3 wide)
 FIRE_X = 14                 # the fireplace's left column (4 wide, against the right-hand corner)
 ARRIVAL = (DOOR_X, H - 2)   # where you appear coming in
 FURNITURE_COLS = 16
-# The trapdoor down to Sable's room (SableTrapdoor.png, tools/art/trapdoor.py):
-# one tile, in the dead-end nook between the canvas rack and Sable's easels,
-# where nobody walks (and not in the gallery: its floor stays clear for the
-# exhibition). Its tile is a
-# LockedDoorWarp, so Sable walks through it at night like any door; the
-# player's way down is checked by ArtShop.Trapdoor (2 hearts, or the key to
-# the town), not by the warp's own friendship rule.
-TRAPDOOR = (18, 9)
-TRAPDOOR_ARRIVAL = (17, 9)   # where the stairs up bring you, beside it
-TRAPDOOR_ACTION = "LockedDoorWarp 1 2 blinxxy.MuseArt_SableBasement 600 2600 Sable 500"
+# The trapdoor down to Sable's room is in the back room (1.2; it was on the
+# shop floor, by the canvas rack): build_back_room.py. Its tileset stays in
+# tilesets() below, which the back room shares.
+# The back room (1.2): a door in the back wall, where a painting and the
+# leaning canvases were (they moved into the back room). It's Emily's
+# closet door from Haley's house (townInterior: frame top on Front, the
+# door on Buildings), and a Warp, clicked like any house door.
+BACK_DOOR_X = 12
+BACK_DOOR_TILES = {("Front", 1): 1390, ("Buildings", 2): 1389, ("Buildings", 3): 1421}
+BACK_ROOM = "blinxxy.MuseArt_ArtShopBackRoom"
 
 # Light (2026-10-25: the user found the shop unlit). Windows either side of
 # the fireplace, from the game's own window tiles: their sunlight falls
@@ -236,9 +236,9 @@ def furnish(room, leah, pierre, gallery):
     room.place(walls[0], 2, 1, solid=0)
     room.place(walls[1], 4, 1, solid=0)
     room.place("rack_cubbies", 9, 2)
-    room.place("painting_stripes" if gallery else "painting_river", 12, 1, solid=0)
-    if not gallery:
-        room.place("stack_canvases", 12, 3)         # blank canvases leaning on the wall
+    for (layer, y), tile in BACK_DOOR_TILES.items():
+        room.put(layer, BACK_DOOR_X, y, INTERIOR + tile)
+    room.actions.append(("Buildings", BACK_DOOR_X, 3, f"Warp {room.back_room_arrival[0]} {room.back_room_arrival[1]} {BACK_ROOM}"))
     # Leah's fireplace (her tiles x 10-13: log piles either side of the
     # hearth, the chimney cap in the frame) in the right-hand corner, under
     # the exterior's chimney.
@@ -287,8 +287,6 @@ def furnish(room, leah, pierre, gallery):
         room.place("low_craft", 11, 7)
         room.place("low_craft_b", 11, 10)
         room.place("rack_canvases", 16, 6)
-        room.put("Buildings", *TRAPDOOR, room.trapdoor)
-        room.actions.append(("Buildings", *TRAPDOOR, TRAPDOOR_ACTION))
         return
 
     # --- The exhibition ----------------------------------------------------
@@ -314,6 +312,7 @@ def furnish(room, leah, pierre, gallery):
 
 def main():
     exports, furniture_json, out_dir, door_x, door_y = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5])
+    back_room_arrival = (int(sys.argv[6]), int(sys.argv[7])) if len(sys.argv) > 7 else (5, 8)
     leah = read(f"{exports}/LeahHouse.tmx")
     pierre = read(f"{exports}/SeedShop.tmx")
     pieces = json.load(open(furniture_json))
@@ -337,7 +336,7 @@ def main():
     for gallery, name in ((False, "ArtShop.tmx"), (True, "ArtShopGallery.tmx")):
         room = Room(stretch(shell(leah[1])), pieces)
         room.empty = empty
-        room.trapdoor = FURNITURE + rows * FURNITURE_COLS
+        room.back_room_arrival = back_room_arrival
         furnish(room, (leah[0], leah[1]), (pierre[0], pierre[1]), gallery)
         write(f"{out_dir}/{name}", room.grid, props, room.actions, rows)
         print(f"wrote {out_dir}/{name}")

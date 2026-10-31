@@ -91,6 +91,15 @@ internal static class DevTools
     // Each render is also audited for overlapping or spilling text; the
     // findings go to snapshots/layout_report.txt and the console.
     // Normal paints from a Palette (1.1): a wooden one, full of every colour.
+    // A painting for tests and staged menus: any picture, the subject and
+    // quality asked for.
+    internal static SObject TestPainting(string subject, int quality, float stars = 4f, string painter = "Tester")
+    {
+        int size = PaintingRules.CanvasSize(CanvasKind.Small);
+        var cells = ReferenceBuilder.StillLife(new[] { "(O)24" }, size, Enumerable.Range(0, Palette.All.Length).ToList()).Cells;
+        return PaintingItems.Create(new PaintingData { Size = size, Cells = cells, Purity = new Purity[size, size], Subject = subject, Stars = stars, Painter = painter }, quality, 100);
+    }
+
     internal static void GivePalette(Farmer who)
     {
         var palette = PaletteItem.Find(who);
@@ -335,6 +344,17 @@ internal static class DevTools
                 return new CollectionMenu(Game1.player, tab);
             });
         yield return ("consign", () => new Shop.ConsignMenu(Game1.player));
+        for (int page = 0; page < Portfolio.Pages.Length; page++)
+        {
+            int p = page;
+            yield return ("portfolio_" + Portfolio.Pages[p].Id, () =>
+            {
+                var book = Portfolio.Items;
+                for (int i = 0; i < book.Count; i++) book[i] = null;
+                book[Portfolio.FirstIndex(p)] = TestPainting(p == 0 ? "view:Town:spring" : "(O)24", PaintingRules.Gold);
+                return Menus.PortfolioMenu.DevCreate(Game1.player, p);
+            });
+        }
         yield return ("palette", () =>
         {
             var palette = ItemRegistry.Create("(O)" + PaletteItem.Tiers[1].Id);

@@ -16,7 +16,7 @@ on Front, covers them).
 
 Reads maps written by the museart_export_map debug command.
 Usage: build_sable_basement.py <exports dir> <content pack assets dir> <x> <y>
-  (x/y: the shop tile the stairs up bring you to, beside the trapdoor)
+  (x/y: the back room tile the stairs up bring you to, beside the trapdoor)
 """
 import json, os, sys
 from xml.sax.saxutils import quoteattr
@@ -188,7 +188,7 @@ def main():
 
     props = {
         # Up the stairs to beside the trapdoor.
-        "Warp": f"1 0 blinxxy.MuseArt_ArtShop {ux} {uy}",
+        "Warp": f"1 0 blinxxy.MuseArt_ArtShopBackRoom {ux} {uy}",
         "Light": " ".join(f"{x} {y} {LIGHT_TEXTURE}" for x, y in LIGHTS),
     }
     studio_w, studio_h = STUDIO["tiles_wide"] * 16, STUDIO["tiles_high"] * 16
