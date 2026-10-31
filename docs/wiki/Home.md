@@ -6,7 +6,7 @@
 - an art supply shop in Cindersap Forest,
 - Sable, the former museum restorer who runs it.
 
-This wiki covers every item, recipe, price and mechanic. It's written for version 1.1.3.
+This wiki covers every item, recipe, price and mechanic. It's written for version 1.1.4.
 
 ## Start here
 - [Getting Started](Getting-Started): your first easel, canvas and painting

@@ -46,6 +46,16 @@ BOARD_X = 6                 # the commission board's left column (3 wide)
 FIRE_X = 14                 # the fireplace's left column (4 wide, against the right-hand corner)
 ARRIVAL = (DOOR_X, H - 2)   # where you appear coming in
 FURNITURE_COLS = 16
+# The trapdoor down to Sable's room (SableTrapdoor.png, tools/art/trapdoor.py):
+# one tile, in the dead-end nook between the canvas rack and Sable's easels,
+# where nobody walks (and not in the gallery: its floor stays clear for the
+# exhibition). Its tile is a
+# LockedDoorWarp, so Sable walks through it at night like any door; the
+# player's way down is checked by ArtShop.Trapdoor (2 hearts, or the key to
+# the town), not by the warp's own friendship rule.
+TRAPDOOR = (18, 9)
+TRAPDOOR_ARRIVAL = (17, 9)   # where the stairs up bring you, beside it
+TRAPDOOR_ACTION = "LockedDoorWarp 1 2 blinxxy.MuseArt_SableBasement 600 2600 Sable 500"
 
 # Light (2026-10-25: the user found the shop unlit). Windows either side of
 # the fireplace, from the game's own window tiles: their sunlight falls
@@ -65,7 +75,8 @@ def tilesets(furniture_rows):
     return [("p", 1, "paths", 64, 256, 4), ("untitled tile sheet", INTERIOR, "townInterior", 512, 1088, 32),
             ("v15_TownInterior2", INTERIOR2, "townInterior_2", 512, 656, 32),
             ("z_blinxxy.MuseArt_ArtShopBoard", BOARD, "ArtShopBoard.png", 48, 32, 3),
-            ("z_blinxxy.MuseArt_ArtShopFurniture", FURNITURE, "ArtShopFurniture.png", FURNITURE_COLS * 16, furniture_rows * 16, FURNITURE_COLS)]
+            ("z_blinxxy.MuseArt_ArtShopFurniture", FURNITURE, "ArtShopFurniture.png", FURNITURE_COLS * 16, furniture_rows * 16, FURNITURE_COLS),
+            ("z_blinxxy.MuseArt_SableTrapdoor", FURNITURE + furniture_rows * FURNITURE_COLS, "SableTrapdoor.png", 16, 16, 1)]
 
 
 def read(path):
@@ -276,6 +287,8 @@ def furnish(room, leah, pierre, gallery):
         room.place("low_craft", 11, 7)
         room.place("low_craft_b", 11, 10)
         room.place("rack_canvases", 16, 6)
+        room.put("Buildings", *TRAPDOOR, room.trapdoor)
+        room.actions.append(("Buildings", *TRAPDOOR, TRAPDOOR_ACTION))
         return
 
     # --- The exhibition ----------------------------------------------------
@@ -324,6 +337,7 @@ def main():
     for gallery, name in ((False, "ArtShop.tmx"), (True, "ArtShopGallery.tmx")):
         room = Room(stretch(shell(leah[1])), pieces)
         room.empty = empty
+        room.trapdoor = FURNITURE + rows * FURNITURE_COLS
         furnish(room, (leah[0], leah[1]), (pierre[0], pierre[1]), gallery)
         write(f"{out_dir}/{name}", room.grid, props, room.actions, rows)
         print(f"wrote {out_dir}/{name}")

@@ -751,7 +751,10 @@ internal sealed partial class EaselMenu
             if (_sparkCell.HasValue)
                 DrawReferenceSpark(b, CellRect(_refArea, _canvas.Size, _sparkCell.Value.X, _sparkCell.Value.Y));
             if (_mix == null && LinkedCell(MousePos) is Point linked)
+            {
                 DrawLinkedCell(b, CellRect(_refArea, _canvas.Size, linked.X, linked.Y));
+                DrawWantedColour(b, linked);
+            }
         }
         else
         {
@@ -909,6 +912,32 @@ internal sealed partial class EaselMenu
         int g = Math.Max(3, cell.Width / 3);
         foreach (var (x, y) in new[] { (ring.Left - g, ring.Top - g), (ring.Right, ring.Top - g), (ring.Left - g, ring.Bottom), (ring.Right, ring.Bottom) })
             Ui.Fill(b, new Rectangle(x, y, g, g), SparkGold * SparkFade);
+    }
+
+    // The colour the pointed-at cell wants, by name and palette key, under
+    // the reference (1.1.4, from player feedback: Cream and Snow, Moss and
+    // Leaf look alike in small cells).
+    private void DrawWantedColour(SpriteBatch b, Point cell)
+    {
+        byte want = _reference!.Cells[cell.X, cell.Y];
+        string text;
+        var at = new Vector2(_refArea.X, _refArea.Bottom + 8);
+        if (want == PixelCanvas.Blank)
+            text = I18n.Get("paint.wants-bare");
+        else
+        {
+            var swatch = new Rectangle((int)at.X, (int)at.Y + 4, 20, 20);
+            Ui.Fill(b, swatch, PaintingRenderer.CellColor(want, Purity.Pure, _reference.Marks[cell.X, cell.Y]));
+            Ui.Outline(b, swatch, Game1.textColor * 0.6f, 1);
+            int slot = _owned.ToList().IndexOf(want);
+            text = slot is >= 0 and < 10
+                ? I18n.Get("paint.wants-key", new { pigment = I18n.Pigment(want), key = (slot + 1) % 10 })
+                : I18n.Pigment(want);
+            if (_reference.Marks[cell.X, cell.Y] == Mark.Glaze) text += I18n.Get("paint.wants-glaze");
+            else if (_reference.Marks[cell.X, cell.Y] == Mark.Highlight) text += I18n.Get("paint.wants-highlight");
+            at.X += 28;
+        }
+        Ui.Text(b, text, at, Game1.textColor, 0.85f);
     }
 
     // ---- The canvas and the reference, linked (1.1.1) ----

@@ -140,6 +140,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_watchtest", "Sable at the yard easel on a Friday: the line, and watching. Run it, then 'museart_watchtest check' a few seconds later.", (_, args) => WatchTest(monitor, args));
         DevTools.AddCommand(helper, "museart_modetest", "The easel's mode button: cycling, saving, and the rules it sets. Then 'museart_modetest restore'.", (_, args) => ModeTest(monitor, args));
         DevTools.AddCommand(helper, "museart_blanktest", "A painting with no picture (as CJB Item Spawner makes): names, gift tastes, price, drawing, consigning, varnishing.", (_, _) => BlankTest(monitor));
+        DevTools.AddCommand(helper, "museart_trapdoortest", "Sable's room under the shop: the trapdoor's lock (2 hearts, or the key to the town), Sable's way down, and a trip down. Then 'museart_trapdoortest down', then 'check'.", (_, args) => TrapdoorTest(monitor, args));
         DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
@@ -544,13 +545,64 @@ internal static class DevGame
         Game1.player.CanMove = true;
     }
 
+    private static void TrapdoorTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var shop = Game1.getLocationFromName(Shop.ArtShop.LocationName);
+        var room = Game1.getLocationFromName(Shop.ArtShop.Basement);
+        if (args.FirstOrDefault() == "down")
+        {
+            shop!.performAction("LockedDoorWarp 1 2 " + Shop.ArtShop.Basement + " 600 2600 Sable 500", who, new xTile.Dimensions.Location(18, 9));
+            return;
+        }
+        if (args.FirstOrDefault() == "check")
+        {
+            Check(monitor, "the trapdoor takes you down to the foot of Sable's stairs", who.currentLocation == room && who.TilePoint == new Point(1, 2), $"{who.currentLocation?.Name} {who.TilePoint}");
+            Check(monitor, "once let in, the trapdoor stays open", who.mailReceived.Contains("doorUnlockSable"));
+            return;
+        }
+        Check(monitor, "Sable's room exists", room != null);
+        if (shop == null || room == null) return;
+        Check(monitor, "the trapdoor is a door down to Sable's room", shop.doors.TryGetValue(new Point(18, 9), out var to) && to == Shop.ArtShop.Basement);
+        Check(monitor, "the gallery evening has no trapdoor in the way", Game1.content.Load<xTile.Map>("Maps/" + ModEntry.Id + "_ArtShopGallery").GetLayer("Buildings").Tiles[18, 9] == null);
+        var stairs = room.warps.FirstOrDefault();
+        Check(monitor, "the stairs lead up to beside the trapdoor", stairs != null && stairs.TargetName == Shop.ArtShop.LocationName && stairs.TargetX == 17 && stairs.TargetY == 9 && shop.isTilePassable(new Vector2(17, 9)), $"{stairs?.TargetName} {stairs?.TargetX},{stairs?.TargetY}");
+        Check(monitor, "the foot of the stairs is open to arrive on", !room.isCollidingPosition(new Rectangle(64 + 8, 2 * 64 + 8, 48, 48), Game1.viewport, true, 0, false, who));
+        Check(monitor, "Sable's bed is free to lie in, and reachable from beside it", room.isTilePassable(new Vector2(10, 5)) && room.isTilePassable(new Vector2(9, 5)));
+        var route = StardewValley.Pathfinding.WarpPathfindingCache.GetLocationRoute("Forest", Shop.ArtShop.Basement, StardewValley.Gender.Undefined);
+        Check(monitor, "Sable can walk from the Forest down to their room", route != null, route == null ? "no route" : string.Join(" > ", route));
+        var sable = Game1.getCharacterFromName("Sable");
+        Check(monitor, "Sable lives in their room", sable?.DefaultMap == Shop.ArtShop.Basement && sable.DefaultPosition / 64f == new Vector2(10, 5), $"{sable?.DefaultMap} {sable?.DefaultPosition / 64f}");
+
+        // The lock, as a stranger, with the key to the town, and as a friend.
+        int points = who.friendshipData.TryGetValue("Sable", out var f) ? f.Points : 0;
+        bool hadKey = who.HasTownKey;
+        who.friendshipData["Sable"] = new Friendship(0);
+        who.mailReceived.Remove("doorUnlockSable");
+        who.HasTownKey = false;
+        Check(monitor, "a stranger can't go down", !Shop.ArtShop.MayGoDown(who));
+        shop.performAction("LockedDoorWarp 1 2 " + Shop.ArtShop.Basement + " 600 2600 Sable 500", who, new xTile.Dimensions.Location(18, 9));
+        Check(monitor, "a stranger is told it's bolted", Game1.activeClickableMenu is DialogueBox && Game1.locationRequest == null);
+        CloseDialogue();
+        Check(monitor, "the key to the town opens it", (who.HasTownKey = true) && Shop.ArtShop.MayGoDown(who) && !who.mailReceived.Contains("doorUnlockSable"));
+        who.HasTownKey = hadKey;
+        who.friendshipData["Sable"] = new Friendship(500);
+        // (Not into the shop first: at 2 hearts, Sable's event there would start.)
+        monitor.Log($"(Sable's friendship was {points}; now 2 hearts. Next: 'museart_trapdoortest down'.)", LogLevel.Info);
+    }
+
+    // A villager walks a tile in 32 ticks (2 pixels a tick), and ten game
+    // minutes are 7 seconds: about 13 tiles every ten minutes.
+    private static int WalkMinutes(int tiles) => (int)Math.Ceiling(tiles * 32 / 60.0 / (Game1.realMilliSecondsPerGameTenMinutes / 10000.0));
+
     private static void NpcTest(IMonitor monitor)
     {
         if (!Context.IsWorldReady) return;
         var sable = Game1.getCharacterFromName("Sable");
         Check(monitor, "Sable exists", sable != null);
         if (sable == null) return;
-        Check(monitor, "Sable lives at the art shop", sable.DefaultMap == Shop.ArtShop.LocationName, sable.DefaultMap);
+        Check(monitor, "Sable lives under the art shop", sable.DefaultMap == Shop.ArtShop.Basement, sable.DefaultMap);
         Check(monitor, "Sable's sprite sheet is 64x384 (walking, then the Flower Dance at 40-47)", sable.Sprite.Texture.Width == 64 && sable.Sprite.Texture.Height == 384);
         Check(monitor, "Sable's portraits are 128x256", sable.Portrait?.Width == 128 && sable.Portrait?.Height == 256);
         Check(monitor, "Sable is romanceable and they/them", sable.datable.Value && sable.Gender == StardewValley.Gender.Undefined);
@@ -580,6 +632,7 @@ internal static class DevGame
                 problems.Add("nothing parsed");
             foreach (var stop in parsed.OrderBy(p => p.Key).Select(p => p.Value))
             {
+                int tiles = 0;
                 var locations = from == stop.targetLocationName
                     ? new[] { from }
                     : StardewValley.Pathfinding.WarpPathfindingCache.GetLocationRoute(from, stop.targetLocationName, sable.Gender);
@@ -594,17 +647,51 @@ internal static class DevGame
                     {
                         var location = Game1.RequireLocation(locations[i]);
                         var end = i < locations.Length - 1 ? location.getWarpPointTo(locations[i + 1]) : stop.targetTile;
-                        if (StardewValley.Pathfinding.PathFindController.findPathForNPCSchedules(start, end, location, 30000, sable) == null)
+                        var path = StardewValley.Pathfinding.PathFindController.findPathForNPCSchedules(start, end, location, 30000, sable);
+                        if (path == null)
                             problems.Add($"{stop.time}: no path in {location.Name} from {start} to {end}");
+                        else
+                            tiles += path.Count;
                         if (i < locations.Length - 1)
                             start = location.getWarpPointTarget(end, sable);
                     }
+                }
+                // Sable sets off at the stop's time; at the counter they must
+                // be there by opening, not leave for it then.
+                if (stop.targetLocationName == Shop.ArtShop.LocationName && Shop.ArtShop.KeeperArea.Contains(stop.targetTile))
+                {
+                    int opens = key == "Sun" ? 1300 : 1000;
+                    int arrives = Utility.ModifyTime(stop.time, WalkMinutes(tiles));
+                    Check(monitor, $"schedule '{key}': Sable reaches the counter by {opens}", arrives <= opens, $"leaves {stop.time}, {tiles} tiles, there at {arrives}");
                 }
                 from = stop.targetLocationName;
                 at = stop.targetTile;
             }
             Check(monitor, $"schedule '{key}' is walkable", problems.Count == 0,
                 problems.Count == 0 ? $"{parsed.Count} stops" : string.Join("; ", problems));
+        }
+        // Married, the game starts their day at the Bus Stop (10, 23), as
+        // for any spouse going out.
+        foreach (var (key, script) in raw.Where(r => r.Key.StartsWith("marriage")))
+        {
+            var first = script.Split('/')[0].Split(' ');
+            if (first[1] != Shop.ArtShop.LocationName)
+                continue;           // (Sundays, from the beach: as when single)
+            int leaves = int.Parse(first[0]);
+            var at = new Point(10, 23);
+            var locations = StardewValley.Pathfinding.WarpPathfindingCache.GetLocationRoute("BusStop", Shop.ArtShop.LocationName, sable.Gender);
+            int tiles = 0;
+            for (int i = 0; locations != null && i < locations.Length; i++)
+            {
+                var location = Game1.RequireLocation(locations[i]);
+                var end = i < locations.Length - 1 ? location.getWarpPointTo(locations[i + 1]) : new Point(3, 4);
+                tiles += StardewValley.Pathfinding.PathFindController.findPathForNPCSchedules(at, end, location, 30000, sable)?.Count ?? 9999;
+                if (i < locations.Length - 1)
+                    at = location.getWarpPointTarget(end, sable);
+            }
+            int opens = key == "marriage_Sun" ? 1300 : 1000;
+            int arrives = Utility.ModifyTime(leaves, WalkMinutes(tiles));
+            Check(monitor, $"schedule '{key}': Sable reaches the counter from the farm by {opens}", locations != null && arrives <= opens, $"leaves {leaves}, {tiles} tiles, there at {arrives}");
         }
         Game1.warpCharacter(sable, home, homeTile.ToVector2());
         sable.TryLoadSchedule();

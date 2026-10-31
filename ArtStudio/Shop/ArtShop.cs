@@ -57,6 +57,8 @@ internal static class ArtShop
             return true;
         });
 
+        harmony.Patch(AccessTools.Method(typeof(GameLocation), nameof(GameLocation.lockedDoorWarp)),
+            prefix: new HarmonyMethod(typeof(ArtShop), nameof(TrapdoorPrefix)));
         harmony.Patch(AccessTools.Method(typeof(NPC), nameof(NPC.tryToReceiveActiveObject)),
             prefix: new HarmonyMethod(typeof(ArtShop), nameof(ReceivePrefix)));
         harmony.Patch(AccessTools.Method(typeof(NPC), nameof(NPC.checkAction)),
@@ -64,6 +66,38 @@ internal static class ArtShop
 
         helper.Events.Display.MenuChanged += OnMenuChanged;
         helper.Events.GameLoop.DayStarted += OnDayStarted;
+    }
+
+    // ---- The trapdoor down to Sable's room ----
+
+    public const string Basement = ModEntry.Id + "_SableBasement";
+
+    // The trapdoor's tiles are a LockedDoorWarp, so Sable goes down it at
+    // night like through any door. Your way down follows the rule for a
+    // villager's bedroom door instead of the warp's own: 2 hearts (and once
+    // you've been let in, it stays open, as vanilla doors do), or the key to
+    // the town.
+    private static bool TrapdoorPrefix(Point tile, string locationName)
+    {
+        if (locationName != Basement)
+            return true;
+        var who = Game1.player;
+        if (MayGoDown(who))
+        {
+            who.completelyStopAnimatingOrDoingAction();
+            Game1.playSound("stairsdown");
+            Game1.warpFarmer(locationName, tile.X, tile.Y, Game1.down);
+        }
+        else
+            Game1.drawObjectDialogue(I18n.Get("shop.trapdoor.locked"));
+        return false;
+    }
+
+    internal static bool MayGoDown(Farmer who)
+    {
+        if (who.getFriendshipHeartLevelForNPC("Sable") >= 2)
+            who.mailReceived.Add("doorUnlockSable");
+        return who.mailReceived.Contains("doorUnlockSable") || who.HasTownKey;
     }
 
     private static bool Counter(Farmer who)
@@ -111,7 +145,7 @@ internal static class ArtShop
     public const int WatchMinutes = 30, WatchXp = 15;
 
     public static bool SableAtYardEasel(NPC npc) =>
-        npc.Name == "Sable" && npc.currentLocation?.Name == "Forest" && npc.TilePoint == YardEaselSpot && Game1.timeOfDay < 1000;
+        npc.Name == "Sable" && npc.currentLocation?.Name == "Forest" && npc.TilePoint == YardEaselSpot && Game1.timeOfDay < 930;
 
     // Once Sable's said what's on the easel, talking to them again offers to
     // stay and watch: half an hour, and a little Painting XP (once a day).

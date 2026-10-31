@@ -56,7 +56,7 @@ def events():
     )
 
     # ---- 4 hearts: side by side (the riverbank, sunny morning) ------------
-    forest["blinxxy.MuseArt_Sable4h/Friendship Sable 1000/Time 800 1000/Weather sunny/DayOfWeek Mon Tue Thu Sat/SawEvent blinxxy.MuseArt_Sable2h"] = script(
+    forest["blinxxy.MuseArt_Sable4h/Friendship Sable 1000/Time 800 930/Weather sunny/DayOfWeek Mon Tue Thu Sat/SawEvent blinxxy.MuseArt_Sable2h"] = script(
         "continue", "89 39", "farmer 93 35 2 Sable 88 40 0", "skippable",
         "addBigProp 88 39 blinxxy.MuseArt_Easel", "addBigProp 90 39 blinxxy.MuseArt_Easel",
         "animate Sable false true 300 32 32 33 33 32 34",

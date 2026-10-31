@@ -1,4 +1,4 @@
-<table align="right"><tr><th colspan="2">Sable</th></tr><tr><td colspan="2" align="center"><img src="images/sable_portrait.png" width="128"><br><sub>Outfits (click to enlarge):</sub><table><tr><td align="center"><a href="images/sable_portrait_winter.png"><img src="images/sable_portrait_winter.png" width="64" alt="Winter"></a><br><sub>Winter</sub></td><td align="center"><a href="images/sable_portrait_beach.png"><img src="images/sable_portrait_beach.png" width="64" alt="Ginger Island"></a><br><sub>Ginger Island</sub></td><td align="center"><a href="images/sable_portrait_wedding.png"><img src="images/sable_portrait_wedding.png" width="64" alt="Wedding"></a><br><sub>Wedding</sub></td></tr></table></td></tr><tr><td><b>Pronouns</b></td><td>they/them</td></tr><tr><td><b>Birthday</b></td><td>Fall 9</td></tr><tr><td><b>Lives in</b></td><td>The art shop, Cindersap Forest</td></tr><tr><td><b>Marriage</b></td><td>Yes, by anyone</td></tr></table>
+<table align="right"><tr><th colspan="2">Sable</th></tr><tr><td colspan="2" align="center"><img src="images/sable_portrait.png" width="128"><br><sub>Outfits (click to enlarge):</sub><table><tr><td align="center"><a href="images/sable_portrait_winter.png"><img src="images/sable_portrait_winter.png" width="64" alt="Winter"></a><br><sub>Winter</sub></td><td align="center"><a href="images/sable_portrait_beach.png"><img src="images/sable_portrait_beach.png" width="64" alt="Ginger Island"></a><br><sub>Ginger Island</sub></td><td align="center"><a href="images/sable_portrait_wedding.png"><img src="images/sable_portrait_wedding.png" width="64" alt="Wedding"></a><br><sub>Wedding</sub></td></tr></table></td></tr><tr><td><b>Pronouns</b></td><td>they/them</td></tr><tr><td><b>Birthday</b></td><td>Fall 9</td></tr><tr><td><b>Lives in</b></td><td>A room under the art shop, Cindersap Forest</td></tr><tr><td><b>Marriage</b></td><td>Yes, by anyone</td></tr></table>
 
 **Sable** runs the art supply shop in Cindersap Forest.
 - **Before the valley:** a restorer at the Zuzu City Museum of Art, fixing other people's masterpieces.
@@ -18,6 +18,8 @@
 | Friday | Painting outside the shop in the morning, the counter until 5pm, then the Saloon |
 | Sunday | The beach in the morning, the counter from 1pm |
 | Rain and winter | Indoors, painting until the shop opens |
+
+At 10pm Sable goes down the trapdoor in the shop's corner (by the canvas rack) to their room underneath, and sleeps there. You can follow from 2 hearts, or with the Key to the Town; once they've let you in, it stays open.
 
 Sable goes to every festival, and dresses for the weather: a coat and scarf outdoors in winter, a linen shirt on Ginger Island.
 

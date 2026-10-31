@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="8">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="9">
   <properties>
     <property name="Warp" value="9 14 Forest 83 34" />
     <property name="DayTiles" value="Front 14 1 256 Front 14 2 288 Front 17 1 256 Front 17 2 288" />
@@ -21,6 +21,9 @@
   </tileset>
   <tileset firstgid="3559" name="z_blinxxy.MuseArt_ArtShopFurniture" tilewidth="16" tileheight="16" tilecount="288" columns="16">
     <image source="ArtShopFurniture.png" width="256" height="288" />
+  </tileset>
+  <tileset firstgid="3847" name="z_blinxxy.MuseArt_SableTrapdoor" tilewidth="16" tileheight="16" tilecount="1" columns="1">
+    <image source="SableTrapdoor.png" width="16" height="16" />
   </tileset>
   <layer id="1" name="Back" width="20" height="15">
     <data encoding="csv">
@@ -71,7 +74,7 @@
 65,3575,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,65,
 65,3591,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,65,
 65,3607,0,0,0,3672,3673,3674,0,0,0,3678,3679,3680,0,0,3595,3596,3597,65,
-65,3623,3785,3786,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,65,
+65,3623,3785,3786,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3847,65,
 65,3639,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,65,
 65,0,0,0,0,3675,3676,3677,0,0,0,3681,3682,3683,3787,3788,0,3789,0,65,
 65,1432,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,599,65,
@@ -161,6 +164,9 @@
     </object>
     <object id="7" name="TileData" x="128" y="48" width="16" height="16">
       <properties><property name="Action" value="blinxxy.MuseArt_Board" /></properties>
+    </object>
+    <object id="8" name="TileData" x="288" y="144" width="16" height="16">
+      <properties><property name="Action" value="LockedDoorWarp 1 2 blinxxy.MuseArt_SableBasement 600 2600 Sable 500" /></properties>
     </object>
   </objectgroup>
   <objectgroup id="10" name="Front">

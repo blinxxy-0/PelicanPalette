@@ -22,6 +22,9 @@
   <tileset firstgid="3559" name="z_blinxxy.MuseArt_ArtShopFurniture" tilewidth="16" tileheight="16" tilecount="288" columns="16">
     <image source="ArtShopFurniture.png" width="256" height="288" />
   </tileset>
+  <tileset firstgid="3847" name="z_blinxxy.MuseArt_SableTrapdoor" tilewidth="16" tileheight="16" tilecount="1" columns="1">
+    <image source="SableTrapdoor.png" width="16" height="16" />
+  </tileset>
   <layer id="1" name="Back" width="20" height="15">
     <data encoding="csv">
 0,0,426,426,426,426,426,426,426,426,426,426,426,426,426,0,0,426,0,0,

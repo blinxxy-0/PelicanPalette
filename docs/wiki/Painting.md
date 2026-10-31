@@ -38,7 +38,7 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 
 **Paint.** Every cell you paint uses one cell of paint from your Palette (except on Relaxed). See [Pigments and Paint](Pigments-and-Paint).
 
-**Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on.
+**Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on. Under the reference, the colour that cell wants is named with its palette key (for example "Snow (6)"), so look-alike colours like Cream and Snow can't be mixed up.
 
 **The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all. The choice is saved, and is the same setting as in the config.
 

@@ -50,7 +50,7 @@
             { "Id": "Island", "IsIslandAttire": true, "Portrait": "Portraits/Sable_Beach", "Sprite": "Characters/Sable_Beach" }
           ],
           "Home": [
-            { "Id": "Default", "Location": "blinxxy.MuseArt_ArtShop", "Tile": { "X": 13, "Y": 5 }, "Direction": "up" }
+            { "Id": "Default", "Location": "blinxxy.MuseArt_SableBasement", "Tile": { "X": 10, "Y": 5 }, "Direction": "left" }
           ]
         }
       }

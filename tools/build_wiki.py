@@ -226,7 +226,7 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 
 **Paint.** Every cell you paint uses one cell of paint from your Palette (except on Relaxed). See {link("Pigments and Paint")}.
 
-**Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on.
+**Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on. Under the reference, the colour that cell wants is named with its palette key (for example "Snow (6)"), so look-alike colours like Cream and Snow can't be mixed up.
 
 **The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all. The choice is saved, and is the same setting as in the config.
 
@@ -793,7 +793,7 @@ def sable():
     box = infobox("Sable", '<img src="images/sable_portrait.png" width="128">' + outfit_row(), [
         ("Pronouns", "they/them"),
         ("Birthday", s["birthday"]),
-        ("Lives in", "The art shop, Cindersap Forest"),
+        ("Lives in", "A room under the art shop, Cindersap Forest"),
         ("Marriage", "Yes, by anyone"),
     ])
     page("Sable", box + f"""
@@ -815,6 +815,8 @@ def sable():
 | Friday | Painting outside the shop in the morning, the counter until 5pm, then the Saloon |
 | Sunday | The beach in the morning, the counter from 1pm |
 | Rain and winter | Indoors, painting until the shop opens |
+
+At 10pm Sable goes down the trapdoor in the shop's corner (by the canvas rack) to their room underneath, and sleeps there. You can follow from 2 hearts, or with the Key to the Town; once they've let you in, it stays open.
 
 Sable goes to every festival, and dresses for the weather: a coat and scarf outdoors in winter, a linen shirt on Ginger Island.
 

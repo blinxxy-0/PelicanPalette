@@ -18,6 +18,14 @@
       "Target": "Maps/blinxxy.MuseArt_ArtShopGallery",
       "FromFile": "assets/ArtShopGallery.tmx"
     },
+    // Sable's room under the shop, down the trapdoor in front of the hearth
+    // (2 hearts, or the key to the town; ArtShop.cs). Built by
+    // tools/build_sable_basement.py from Sebastian's basement room.
+    {
+      "Action": "Load",
+      "Target": "Maps/blinxxy.MuseArt_SableBasement",
+      "FromFile": "assets/SableBasement.tmx"
+    },
     {
       "Action": "EditData",
       "Target": "Data/Locations",
@@ -26,6 +34,11 @@
           "DisplayName": "{{i18n:location.art-shop}}",
           "DefaultArrivalTile": { "X": 9, "Y": 13 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ArtShop" }
+        },
+        "blinxxy.MuseArt_SableBasement": {
+          "DisplayName": "{{i18n:location.sable-room}}",
+          "DefaultArrivalTile": { "X": 1, "Y": 2 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_SableBasement" }
         }
       }
     },
@@ -75,7 +88,7 @@
       "Entries": {
         "blinxxy.MuseArt_ArtShop": {
           "Id": "blinxxy.MuseArt_ArtShop",
-          "LocationNames": [ "blinxxy.MuseArt_ArtShop", "blinxxy.MuseArt_ArtShopGallery" ],
+          "LocationNames": [ "blinxxy.MuseArt_ArtShop", "blinxxy.MuseArt_ArtShopGallery", "blinxxy.MuseArt_SableBasement" ],
           "MapPixelArea": { "X": 96, "Y": 113, "Width": 1, "Height": 1 }
         }
       },
