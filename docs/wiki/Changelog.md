@@ -2,6 +2,7 @@
 
 - **Sable's room.** A trapdoor in the corner of the shop, by the canvas rack, leads down to Sable's bedroom, where they go at 10pm and sleep. Like other villagers' rooms, it opens at 2 hearts (and stays open), or with the Key to the Town.
 - **Fixed: Sable opening the shop late.** They now set off early enough to be behind the counter by 10am (by 1pm on Sundays, coming from the beach), married or not. Married, they used to arrive after 11.
+- **CJB Cheats Menu.** Its Skills tab now has Painting beside the vanilla skills (level up with the level-up screen and the profession choice), and its Professions list has the six Painting professions.
 - **Tell similar colours apart.** Point at a cell of the reference or the canvas and the colour it wants is named under the reference, with its palette key, e.g. "Snow (6)" or "Cream (4)" (thanks again, Hiname: Cream and Snow, Moss and Leaf look alike in small cells).
 
 ## 1.1.3

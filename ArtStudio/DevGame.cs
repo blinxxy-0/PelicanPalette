@@ -140,6 +140,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_watchtest", "Sable at the yard easel on a Friday: the line, and watching. Run it, then 'museart_watchtest check' a few seconds later.", (_, args) => WatchTest(monitor, args));
         DevTools.AddCommand(helper, "museart_modetest", "The easel's mode button: cycling, saving, and the rules it sets. Then 'museart_modetest restore'.", (_, args) => ModeTest(monitor, args));
         DevTools.AddCommand(helper, "museart_blanktest", "A painting with no picture (as CJB Item Spawner makes): names, gift tastes, price, drawing, consigning, varnishing.", (_, _) => BlankTest(monitor));
+        DevTools.AddCommand(helper, "museart_cjbtest", "CJB Cheats Menu: the Painting skill button and professions on its Skills tab. Stages: (none) or 'at <level>', 'click', 'check', 'profession'.", (_, args) => CjbTest(helper, monitor, args));
         DevTools.AddCommand(helper, "museart_trapdoortest", "Sable's room under the shop: the trapdoor's lock (2 hearts, or the key to the town), Sable's way down, and a trip down. Then 'museart_trapdoortest down', then 'check'.", (_, args) => TrapdoorTest(monitor, args));
         DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
@@ -543,6 +544,58 @@ internal static class DevGame
         Game1.dialogueUp = false;
         Game1.currentSpeaker = null;
         Game1.player.CanMove = true;
+    }
+
+    private static void CjbTest(IModHelper helper, IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        System.Collections.Generic.List<OptionsElement> Options() =>
+            HarmonyLib.Traverse.Create(Game1.activeClickableMenu).Field("Options").GetValue<System.Collections.IList>()?.Cast<OptionsElement>().ToList() ?? new();
+        OptionsElement? Painting() => Options().FirstOrDefault(o => o.label.Contains(PaintingSkill.Instance.GetName()) && o.GetType().Name == "CheatButton");
+        switch (args.FirstOrDefault())
+        {
+            case null:
+            case "at":
+            {
+                var cjb = helper.ModRegistry.Get(Integrations.CjbCheatsIntegration.ModId);
+                Check(monitor, "CJB Cheats Menu is installed", cjb != null);
+                if (cjb == null) return;
+                ArtProgress.SetLevel(who, args.Length > 1 ? int.Parse(args[1]) : 0);
+                var mod = HarmonyLib.Traverse.Create(cjb).Property("Mod").GetValue<object>();
+                var tab = Enum.Parse(HarmonyLib.AccessTools.TypeByName("CJBCheatsMenu.Framework.MenuTab"), "Skills");
+                HarmonyLib.AccessTools.Method(mod.GetType(), "OpenCheatsMenu", new[] { tab.GetType(), typeof(bool) }).Invoke(mod, new[] { tab, (object)true });
+                var options = Options();
+                int button = options.IndexOf(Painting()!);
+                Check(monitor, "the Skills tab has a Painting button after the vanilla skills", button == 6, $"at {button}: {(button >= 0 ? options[button].label : "none")}");
+                int professions = options.Count(o => o.GetType().Name == "CheatCheckbox" && o.label.Contains(PaintingSkill.Instance.GetName()));
+                Check(monitor, "the Professions list has the six Painting professions", professions == 6, $"{professions}");
+                return;
+            }
+            case "click":
+            {
+                var button = Painting();
+                if (button == null) return;
+                var bounds = HarmonyLib.Traverse.Create(button).Field("SetButtonBounds").GetValue<Microsoft.Xna.Framework.Rectangle>();
+                button.receiveLeftClick(bounds.Center.X, bounds.Center.Y);
+                return;
+            }
+            case "check":
+                Check(monitor, "the button raises Painting a level", ArtProgress.Level(who) == 1, $"{ArtProgress.Level(who)}");
+                Check(monitor, "with Painting's own level-up screen", Game1.activeClickableMenu is SpaceCore.Interface.SkillLevelUpMenu, Game1.activeClickableMenu?.GetType().Name);
+                var queued = HarmonyLib.Traverse.Create(typeof(SpaceCore.Skills)).Property("NewLevels").GetValue<System.Collections.IList>();
+                Check(monitor, "and not again at the end of the day", queued.Count == 0, $"{queued.Count} queued");
+                return;
+            case "profession":
+            {
+                var gallerist = Options().FirstOrDefault(o => o.label.Contains(PaintingSkill.Instance.Gallerist.GetName()));
+                gallerist?.receiveLeftClick(gallerist.bounds.X + 4, gallerist.bounds.Y + 4);
+                Check(monitor, "ticking Gallerist gives you the profession", PaintingSkill.Has(who, PaintingSkill.Instance.Gallerist));
+                gallerist?.receiveLeftClick(gallerist.bounds.X + 4, gallerist.bounds.Y + 4);
+                Check(monitor, "unticking takes it away", !PaintingSkill.Has(who, PaintingSkill.Instance.Gallerist));
+                return;
+            }
+        }
     }
 
     private static void TrapdoorTest(IMonitor monitor, string[] args)
