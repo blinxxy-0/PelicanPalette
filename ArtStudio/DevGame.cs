@@ -338,13 +338,16 @@ internal static class DevGame
         Game1.exitActiveMenu();
 
         // 1. Paint through the real easel flow.
+        GivePalette(who);
+        if (Count(canvasId) == 0)
+            who.addItemToInventory(ItemRegistry.Create(canvasId, 2));
         int canvasesBefore = Count(canvasId), xpBefore = ArtProgress.Xp(who);
         var brushItem = who.Items.FirstOrDefault(i => ArtItems.BrushFor(i) != null);
         int usesBefore = brushItem == null ? -1 : ArtHooks.UsesLeft(brushItem, ArtItems.BrushFor(brushItem)!);
         var menu = new Menus.EaselMenu(who);
         Game1.activeClickableMenu = menu;
         menu.DevBeginFromSetup("(O)24");
-        Check(monitor, "Begin starts painting", menu.DevIsPainting);
+        Check(monitor, "Begin starts painting", menu.DevIsPainting, menu.DevWhyNot);
         Check(monitor, "Begin uses up one small canvas", Count(canvasId) == canvasesBefore - 1, $"{canvasesBefore} -> {Count(canvasId)}");
         menu.DevPaintPartly(1f, 7);
         menu.DevFinish(false);
@@ -505,7 +508,13 @@ internal static class DevGame
             Check(monitor, "a glazed request turns down a painting without glazes", !Delivered(Shop.Commissions.Glazed, Painting()));
             var marks = new Mark[28, 28];
             marks[10, 10] = Mark.Glaze;
-            Check(monitor, "...and takes a glazed one", Delivered(Shop.Commissions.Glazed, Painting(marks)));
+            Check(monitor, "...and takes a glazed one (from before 1.1.5)", Delivered(Shop.Commissions.Glazed, Painting(marks)));
+            var stray = Painting(marks);
+            stray.modData[ModEntry.Id + "/Glazed"] = "0";
+            Check(monitor, "a stray glaze isn't a glazed painting", !Delivered(Shop.Commissions.Glazed, stray));
+            var glazed = Painting(marks);
+            glazed.modData[ModEntry.Id + "/Glazed"] = "1";
+            Check(monitor, "one glazed to its reference is", Delivered(Shop.Commissions.Glazed, glazed));
 
             // Late in the skill, some postings ask for them, for more, with time to cure.
             int oldLevel = ArtProgress.Level(who);
@@ -1251,18 +1260,48 @@ internal static class DevGame
             && Technique.Count(reread.Marks, Mark.Glaze) == Technique.Count(largeMenu.DevReference!.Marks, Mark.Glaze),
             reread?.Marks == null ? "none" : $"{Technique.Count(reread.Marks, Mark.Glaze)} glazes, {Technique.Count(reread.Marks, Mark.Highlight)} highlights");
         Check(monitor, "results score the technique", largeMenu.DevResult?.Technique is >= 0.9f, largeMenu.DevResult?.Technique.ToString() ?? "none");
+        Check(monitor, "it counts as glazed", painted != null && PaintingData.GlazedOf(painted) == true);
+        var bare = EaselMenu.StartStillLife(who, CanvasKind.Medium, new[] { "(O)254" });
+        bare.DevPaintPartly(1f, 3, techniques: false);
+        bare.DevFinish(false);
+        Check(monitor, "with the glazes left out, it doesn't", bare.DevPainting != null && PaintingData.GlazedOf(bare.DevPainting) == false);
+
+        // Relaxed (1.1.5): flat references, but the Glaze tool from a medium
+        // canvas, and a glazed commission's reference asks for its glazes.
+        ModEntry.Config.Difficulty = Difficulty.Relaxed;
+        Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+        var relaxedMedium = EaselMenu.StartStillLife(who, CanvasKind.Medium, new[] { "(O)254" });
+        var relaxedLarge = EaselMenu.StartStillLife(who, CanvasKind.Large, new[] { "(O)254" });
+        Check(monitor, "relaxed: flat references", !relaxedMedium.DevReference!.UsesTechniques && !relaxedLarge.DevReference!.UsesTechniques);
+        Check(monitor, "relaxed: the Glaze tool from a medium canvas, no highlights",
+            relaxedMedium.DevToolAvailable(PaintTool.Glaze) && !relaxedLarge.DevToolAvailable(PaintTool.Highlight)
+            && !EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" }).DevToolAvailable(PaintTool.Glaze));
+        relaxedMedium.DevPaintPartly(1f, 3);
+        relaxedMedium.DevFinish(false);
+        Check(monitor, "relaxed: a flat painting isn't a glazed one", relaxedMedium.DevPainting != null && PaintingData.GlazedOf(relaxedMedium.DevPainting) == false);
+        Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission> {
+            new() { Npc = "Pierre", ItemId = "(O)254", MinQuality = PaintingRules.Silver, Reward = 100, ExpiresOn = Game1.Date.TotalDays + 5, Accepted = true, Requirement = Shop.Commissions.Glazed } });
+        var forPierre = EaselMenu.StartStillLife(who, CanvasKind.Large, new[] { "(O)254" });
+        Check(monitor, "relaxed: a glazed commission asks for glazes, not highlights",
+            Technique.Count(forPierre.DevReference!.Marks, Mark.Glaze) > 0 && Technique.Count(forPierre.DevReference.Marks, Mark.Highlight) == 0);
+        forPierre.DevPaintPartly(1f, 3);
+        forPierre.DevFinish(false);
+        Check(monitor, "relaxed: glazed to it, it's a glazed painting", forPierre.DevPainting != null && PaintingData.GlazedOf(forPierre.DevPainting) == true);
+        Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+        ModEntry.Config.Difficulty = Difficulty.Normal;
 
         // Masterpieces: only on linen, only when everything's right.
         SObject? Paint(bool linen, bool techniques)
         {
             FreshStart(who);
+            GivePalette(who);
             who.addItemToInventory(ItemRegistry.Create(linen ? ArtItems.QualifiedLinenId(CanvasKind.Medium) : ArtItems.QualifiedCanvasId(CanvasKind.Medium)));
             var m = new EaselMenu(who);
             Game1.activeClickableMenu = m;
             m.DevSetCanvas(CanvasKind.Medium);
             m.DevSetLinen(linen);
             m.DevBeginFromSetup("(O)254");
-            if (!m.DevIsPainting) return null;
+            if (!m.DevIsPainting) { monitor.Log("  didn't start: " + m.DevWhyNot, LogLevel.Info); return null; }
             m.DevPaintPerfect(techniques);
             m.DevFinish(false);
             var p = m.DevPainting;
@@ -1288,6 +1327,19 @@ internal static class DevGame
     // Varnishing (2026-10-25): the cabinet works like a cask.
     // Tests begin in the morning, with an empty painting record, so what ran
     // before (time spent painting, novelty, milestone rewards) can't sway them.
+    // Normal paints from a Palette (1.1): a wooden one, full of every colour.
+    private static void GivePalette(Farmer who)
+    {
+        var palette = PaletteItem.Find(who);
+        if (palette == null)
+        {
+            palette = ItemRegistry.Create("(O)" + PaletteItem.Tiers[0].Id);
+            who.addItemToInventory(palette);
+        }
+        int full = PaletteItem.Capacity(palette, who);
+        PaletteItem.Write(palette, Enumerable.Repeat(full, Palette.All.Length).ToArray());
+    }
+
     private static void FreshStart(Farmer who)
     {
         ArtHooks.DevFreshMorning();
@@ -1418,6 +1470,8 @@ internal static class DevGame
             return;
         }
         _modeBefore = ModEntry.Config.Difficulty;
+        if (!Game1.player.Items.Any(i => i?.QualifiedItemId == ArtItems.QualifiedCanvasId(CanvasKind.Small)))
+            Game1.player.addItemToInventory(ItemRegistry.Create(ArtItems.QualifiedCanvasId(CanvasKind.Small)));     // (no warning in the button's place)
         ModEntry.Config.Difficulty = Difficulty.Relaxed;
         var menu = new EaselMenu(Game1.player);
         menu.DevSetup("(O)24");

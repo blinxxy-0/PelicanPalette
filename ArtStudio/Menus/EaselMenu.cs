@@ -268,13 +268,20 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     private Reference? BuildReference(IReadOnlyList<string> ids, int size) =>
         ids.Count == 0 ? null
-        : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned, TechniquesFor(size))
-        : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned, TechniquesFor(size)) : null)
-        : ReferenceBuilder.StillLife(ids, size, _owned, TechniquesFor(size));
+        : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned, TechniquesFor(ids, size))
+        : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned, TechniquesFor(ids, size)) : null)
+        : ReferenceBuilder.StillLife(ids, size, _owned, TechniquesFor(ids, size));
 
-    // Glazing from a medium canvas, highlights on a large one (not in Relaxed).
-    private static Techniques TechniquesFor(int size) =>
-        PaintingRules.TechniquesFor(size, ModEntry.Config.Difficulty == Difficulty.Relaxed);
+    private static bool Relaxed => ModEntry.Config.Difficulty == Difficulty.Relaxed;
+
+    // Glazing from a medium canvas, highlights on a large one; on Relaxed,
+    // glazes only for a glazed commission.
+    private Techniques TechniquesFor(IReadOnlyList<string> ids, int size) =>
+        PaintingRules.TechniquesFor(size, Relaxed, HasGlazedCommission(ids));
+
+    // Someone's waiting on a glazed painting of this subject.
+    private bool HasGlazedCommission(IReadOnlyList<string> ids) =>
+        Shop.Commissions.Accepted(_who).Any(c => c.Requirement == Shop.Commissions.Glazed && ids.Contains(c.ItemId));
 
     // The subject as a title: "Still Life: Parsnip", "Portrait of Leah".
     internal static string SubjectTitle(IReadOnlyList<string> ids) =>

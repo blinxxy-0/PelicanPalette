@@ -320,7 +320,7 @@ A few of the brightest spots (the shine on a gem, the light in an eye) take a **
 ### How techniques are scored
 On a canvas with glazes or highlights, the results add a **Technique** rating: how many of them you put in the right places, and how few in the wrong ones (a cell out is forgiven). A painting with no techniques at all loses about a star. See {link("Quality and Masterpieces")}.
 
-**Relaxed** difficulty paints flat colour on every canvas.
+On **Relaxed**, references are flat colour, but from a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as on Normal.
 
 ## Linen
 From Painting level 8, linen canvases (medium and large) paint like any other. They're the only canvas a **Masterpiece** can be painted on; see {link("Quality and Masterpieces")}. On the setup screen, the **Linen** button next to the canvas sizes switches to linen.
@@ -612,7 +612,7 @@ From medium canvases (Painting level 4), friends at 4 hearts or more sometimes a
 ## Asking for more
 Later on, some requests want more than the subject:
 - **Varnished:** from Painting level 7, about one in four asks for a varnished painting (any finish, satin or better). They pay 30% more, and you have 14 days to deliver, time for the varnish to cure. See {link("Varnishing")}.
-- **Glazed:** once medium canvases are open to you, about one in five asks for a painting with glazing. They pay 25% more. See {link("Canvases and Techniques")}.
+- **Glazed:** once medium canvases are open to you, about one in five asks for a glazed painting: one painted to a reference with glazes, with at least half of them (and any highlights) in the right places. A single stray glaze doesn't count. They pay 25% more, and on Relaxed the reference for that subject shows its glazes. See {link("Canvases and Techniques")}.
 
 The board shows what's wanted beside the quality, and if you hand over a painting without it, the villager tells you what's missing.
 
@@ -878,7 +878,7 @@ Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewval
 
 | Setting | Default | What it does |
 |---|---|---|
-| `Difficulty` | `Normal` | **Relaxed:** no light meter, flat colour on every canvas, no paint needed, and each colour only needs mixing once.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings pay 20% more. |
+| `Difficulty` | `Normal` | **Relaxed:** no light meter, flat colour (except for glazed commissions; the Glaze tool is there from a medium canvas), no paint needed, and each colour only needs mixing once.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings pay 20% more. |
 | `LightTimeMultiplier` | `1.0` | Gives you more (or less) light per painting, on top of the difficulty (0.5x to 3x). |
 | `ArtLoversLikeAnyPainting` | `true` | Whether art lovers like even a normal-quality painting. |
 """)

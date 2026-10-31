@@ -11,7 +11,7 @@ namespace ArtStudio.Menus;
 // snapshot command, so layout can be checked without playing a session.
 internal sealed partial class EaselMenu
 {
-    internal void DevPaintPartly(float fraction, int seed)
+    internal void DevPaintPartly(float fraction, int seed, bool techniques = true)
     {
         if (_reference == null) return;
         var rng = new Random(seed);
@@ -27,7 +27,7 @@ internal sealed partial class EaselMenu
             painted++;
         }
         // A good painter puts the glazes and highlights in too, last.
-        for (int y = 0; y < n; y++)
+        for (int y = 0; y < n && techniques; y++)
         for (int x = 0; x < n; x++)
             if (_reference.Marks[x, y] != Mark.None)
                 _canvas.SetMark(x, y, _reference.Marks[x, y]);
@@ -193,6 +193,9 @@ internal sealed partial class EaselMenu
     }
 
     internal bool DevIsPainting => _stage == EaselStage.Painting;
+
+    // Why Begin didn't start a painting, for a failed check.
+    internal string DevWhyNot => $"stage {_stage}, canvas {HasCanvas}, too late {TooLate} ({Game1.timeOfDay}), needs palette {NeedsPalette}, mode {ModEntry.Config.Difficulty}";
 
     internal void DevKeep() => KeepAndClose();
 

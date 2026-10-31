@@ -276,6 +276,11 @@ internal sealed partial class EaselMenu
 
     private Rectangle _modeButton;
 
+    // "Leah commissioned a painting of this (gold)", saying when it's to be glazed.
+    private static string CommissionedText(Shop.Commission wantedBy) =>
+        I18n.Get(wantedBy.Requirement == Shop.Commissions.Glazed ? "setup.commissioned.glazed" : "setup.commissioned",
+            new { npc = wantedBy.NpcName, quality = Shop.Commissions.QualityText(wantedBy.MinQuality) });
+
     // Relaxed, Normal, Hard, and round again; saved, and used from this painting on.
     private void CycleMode()
     {
@@ -542,7 +547,7 @@ internal sealed partial class EaselMenu
             }
             if (rect.Contains(mouse))
                 _hoverText = I18n.Get("setup.portrait-hover", new { name = Sitters.DisplayName(npc) })
-                    + (wantedBy == null ? "" : "\n" + I18n.Get("setup.commissioned", new { npc = wantedBy.NpcName, quality = Shop.Commissions.QualityText(wantedBy.MinQuality) }));
+                    + (wantedBy == null ? "" : "\n" + CommissionedText(wantedBy));
         }
     }
 
@@ -582,7 +587,7 @@ internal sealed partial class EaselMenu
             }
             if (rect.Contains(mouse))
                 _hoverText = wantedBy == null ? item.DisplayName
-                    : item.DisplayName + "\n" + I18n.Get("setup.commissioned", new { npc = wantedBy.NpcName, quality = Shop.Commissions.QualityText(wantedBy.MinQuality) });
+                    : item.DisplayName + "\n" + CommissionedText(wantedBy);
         }
     }
 }

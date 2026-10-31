@@ -136,8 +136,8 @@ internal sealed partial class EaselMenu
     // The technique tools come with the canvases that use them.
     private bool ToolAvailable(PaintTool tool) => tool switch
     {
-        PaintTool.Glaze => TechniquesFor(_canvas.Size).HasFlag(Techniques.Glaze),
-        PaintTool.Highlight => TechniquesFor(_canvas.Size).HasFlag(Techniques.Highlight),
+        PaintTool.Glaze => PaintingRules.ToolsFor(_canvas.Size, Relaxed).HasFlag(Techniques.Glaze),
+        PaintTool.Highlight => PaintingRules.ToolsFor(_canvas.Size, Relaxed).HasFlag(Techniques.Highlight),
         _ => true,
     };
 

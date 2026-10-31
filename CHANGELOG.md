@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.5
+
+- **Glazing on Relaxed.** From a medium canvas, Relaxed now has the Glaze tool too, to glaze wherever you like on a flat-colour painting. A painting for a glazed commission asks for its glazes on Relaxed as well (but no highlights), so Relaxed players can fill those requests (thanks, Hiname, for asking where the Glaze tool was).
+- **Glazed commissions want real glazing.** They used to take any painting with a single glaze on it. Now the painting has to be painted to a reference with glazes, with at least half of them (and any highlights) in place. Paintings from before 1.1.5 count as before. The easel's setup screen says when a commission is for a glazed painting.
+
 ## 1.1.4
 
 - **Sable's room.** A trapdoor in the corner of the shop, by the canvas rack, leads down to Sable's bedroom, where they go at 10pm and sleep. Like other villagers' rooms, it opens at 2 hearts (and stays open), or with the Key to the Town.

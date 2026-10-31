@@ -139,7 +139,7 @@
   "setup.mode.relaxed": "Relaxed mode",
   "setup.mode.normal": "Normal mode",
   "setup.mode.hard": "Hard mode",
-  "setup.mode-hover.relaxed": "Relaxed: no light meter and no time pressure, sparks wait for you, flat colour on every canvas, and paint is free. Click to change.",
+  "setup.mode-hover.relaxed": "Relaxed: no light meter and no time pressure, sparks wait for you, flat colour (glaze where you like, from a medium canvas), and paint is free. Click to change.",
   "setup.mode-hover.normal": "Normal: a light meter that waits while you mix, mixed colours dry after a while, and paint comes from your Palette. Click to change.",
   "setup.mode-hover.hard": "Hard: the light never waits, the paint on your brush runs out, and sparks fade fast, for 20% more. Click to change.",
   "setup.craft-small": "Craft small canvases from fiber and wood.",
@@ -286,7 +286,7 @@
   "commission.requirement.varnished": "varnished",
   "commission.requirement.glazed": "glazed",
   "commission.needs.varnished": "It's beautiful... but I'd hoped for one with a varnish on it. It'll last longer. Could you finish it?",
-  "commission.needs.glazed": "Lovely! Only, I'd hoped for a glaze, that deep, layered colour. Could you try one with glazing?",
+  "commission.needs.glazed": "Lovely! Only, I'd hoped for a glaze, that deep, layered colour, on the shaded parts. Could you try one with the glazing done?",
   "board.title": "Commission Board",
   "board.note": "Paint it, then hand it to them yourself.",
   "board.empty": "No new requests today. Check back tomorrow.",
@@ -451,5 +451,6 @@
   "married.wall.0": "Your {{painting}} catches the morning light where you hung it. I keep stopping to look.$h",
   "married.wall.1": "I looked at your {{painting}} over breakfast. You've got braver with your colours.$h",
   "married.wall.2": "Your {{painting}}... I'd have hung it a little higher. But I'd have hung it.$u",
-  "married.wall.3": "Sometimes I forget your {{painting}} is yours and start critiquing it. Then I remember, and keep critiquing it.$h"
+  "married.wall.3": "Sometimes I forget your {{painting}} is yours and start critiquing it. Then I remember, and keep critiquing it.$h",
+  "setup.commissioned.glazed": "{{npc}} commissioned a glazed painting of this ({{quality}}): glaze the shaded cells."
 }

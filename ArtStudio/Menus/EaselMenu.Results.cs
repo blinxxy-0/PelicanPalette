@@ -121,6 +121,8 @@ internal sealed partial class EaselMenu
             Purity = purity,
             Marks = marks,
             Masterpiece = _masterpiece,
+            Glazed = _reference != null && _result != null
+                ? PaintingRules.IsGlazed(TechniquesFor(_subjectItems, size), _result.Technique) : null,
             Subject = subject,
             Stars = _result?.Stars ?? 0f,
             Difficulty = _reference?.Difficulty ?? 0,

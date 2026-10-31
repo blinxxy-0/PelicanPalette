@@ -42,6 +42,15 @@ internal sealed class PaintingData
     public const string MasterpieceKey = ModEntry.Id + "/Masterpiece";
     public static bool IsMasterpiece(Item item) => item.modData.ContainsKey(MasterpieceKey);
 
+    // Painted to a reference with glazes, and glazed well enough for a glazed
+    // commission (PaintingRules.IsGlazed). Null when not recorded: paintings
+    // from before 1.1.5, and originals.
+    public bool? Glazed { get; init; }
+    private const string GlazedKey = ModEntry.Id + "/Glazed";
+
+    public static bool? GlazedOf(Item item) =>
+        item.modData.TryGetValue(GlazedKey, out string raw) ? raw == "1" : null;
+
     // A portrait of the farmer, by Sable (the 10-heart event): "portrait:<name>".
     public bool IsPortrait => FarmerPortrait.IsPortrait(Subject);
 
@@ -65,6 +74,8 @@ internal sealed class PaintingData
             item.modData[Varnish.FinishKey] = Finish;
         if (Masterpiece)
             item.modData[MasterpieceKey] = "1";
+        if (Glazed is bool glazed)
+            item.modData[GlazedKey] = glazed ? "1" : "0";
     }
 
     public static string? RawCells(Item item) => item.modData.TryGetValue(CellsKey, out string raw) ? raw : null;
@@ -92,6 +103,7 @@ internal sealed class PaintingData
             Date = date ?? "",
             Finish = Varnish.FinishOf(item),
             Masterpiece = IsMasterpiece(item),
+            Glazed = GlazedOf(item),
         };
     }
 

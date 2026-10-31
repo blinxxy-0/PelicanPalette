@@ -43,7 +43,10 @@ internal sealed class Commission
     public bool MeetsRequirement(Item item) => Requirement switch
     {
         Commissions.Varnished => Varnish.FinishOf(item) != null,
-        Commissions.Glazed => PaintingData.Read(item)?.Marks is { } marks && Technique.Count(marks, Mark.Glaze) > 0,
+        // Glazed to its reference (1.1.5); a painting from before that only
+        // has to have a glaze on it.
+        Commissions.Glazed => PaintingData.GlazedOf(item)
+            ?? (PaintingData.Read(item)?.Marks is { } marks && Technique.Count(marks, Mark.Glaze) > 0),
         _ => true,
     };
 }

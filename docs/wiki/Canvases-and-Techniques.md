@@ -36,7 +36,7 @@ A few of the brightest spots (the shine on a gem, the light in an eye) take a **
 ### How techniques are scored
 On a canvas with glazes or highlights, the results add a **Technique** rating: how many of them you put in the right places, and how few in the wrong ones (a cell out is forgiven). A painting with no techniques at all loses about a star. See [Quality and Masterpieces](Quality-and-Masterpieces).
 
-**Relaxed** difficulty paints flat colour on every canvas.
+On **Relaxed**, references are flat colour, but from a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as on Normal.
 
 ## Linen
 From Painting level 8, linen canvases (medium and large) paint like any other. They're the only canvas a **Masterpiece** can be painted on; see [Quality and Masterpieces](Quality-and-Masterpieces). On the setup screen, the **Linen** button next to the canvas sizes switches to linen.
