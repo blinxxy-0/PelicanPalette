@@ -60,7 +60,10 @@ internal sealed class PaintingData
     // A plein-air view: "view:<location>:<season>".
     public bool IsView => Views.IsView(Subject);
 
-    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter || IsView ? Array.Empty<string>() : Subject.Split('|');
+    // A study of a creature: "creature:<monster name>" (1.2).
+    public bool IsCreature => Creatures.IsCreature(Subject);
+
+    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter || IsView || IsCreature ? Array.Empty<string>() : Subject.Split('|');
 
     public void WriteTo(Item item)
     {

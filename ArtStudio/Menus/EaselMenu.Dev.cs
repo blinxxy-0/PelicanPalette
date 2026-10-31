@@ -203,6 +203,19 @@ internal sealed partial class EaselMenu
 
     internal bool DevIsPainting => _stage == EaselStage.Painting;
 
+    // The setup screen showing creatures in place of the bag, one picked.
+    internal void DevShowCreatures(string? pick = null)
+    {
+        _setupCreatures = true;
+        LayoutSetup();
+        if (pick != null)
+        {
+            _setupItems.Clear();
+            _setupItems.Add(Painting.Creatures.SubjectFor(pick));
+            RefreshPreview();
+        }
+    }
+
     // The spark stays up (for screenshots taken a moment later).
     internal void DevHoldSpark() => _sparkLife = _sparkLeft = float.PositiveInfinity;
 

@@ -55,9 +55,17 @@ internal static class Views
         public Dictionary<int, Reference> BySize { get; } = new();
     }
 
+    // Indoors, but places to paint all the same (1.2): the Skull Cavern's
+    // entry room, for the portfolio's Far Places (its mouth is part of the
+    // desert's map, so a view from there would just be the desert). It's a
+    // lasting place, unlike the mines' floors, so an easel left there stays.
+    public static readonly HashSet<string> IndoorViews = new() { "SkullCave" };
+
+    public static bool CanPaintHere(GameLocation location) => location.IsOutdoors || IndoorViews.Contains(location.Name);
+
     public static Capture? Take(GameLocation location, Vector2 easelTile)
     {
-        if (!location.IsOutdoors || location != Game1.currentLocation) return null;
+        if (!CanPaintHere(location) || location != Game1.currentLocation) return null;
         string name = "museart_view_" + Game1.ticks;
         string? file = Game1.game1.takeMapScreenshot(TilePixels / 64f, name, null);
         if (file == null) return null;

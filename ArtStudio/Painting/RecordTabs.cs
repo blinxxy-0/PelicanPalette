@@ -17,7 +17,7 @@ namespace ArtStudio.Painting;
 //
 // A still life of several items counts for each of them. A view counts for
 // its place in any season.
-internal enum RecordTab { Overview, Crops, Forage, Fish, Minerals, Cooking, Portraits, Views, Other }
+internal enum RecordTab { Overview, Crops, Forage, Fish, Minerals, Cooking, Portraits, Views, Creatures, Other }
 
 // One subject in a tab, painted or not: an item's qualified ID, a sitter
 // ("sitter:Leah") or a place ("view:Beach").
@@ -27,7 +27,7 @@ internal static class RecordTabs
 {
     // The tabs that can be completed (not the overview, nor "everything else").
     public static readonly RecordTab[] Completable =
-        { RecordTab.Crops, RecordTab.Forage, RecordTab.Fish, RecordTab.Minerals, RecordTab.Cooking, RecordTab.Portraits, RecordTab.Views };
+        { RecordTab.Crops, RecordTab.Forage, RecordTab.Fish, RecordTab.Minerals, RecordTab.Cooking, RecordTab.Portraits, RecordTab.Views, RecordTab.Creatures };
 
     // Rewards for painting a share of a tab.
     public static readonly int[] RewardPercents = { 25, 50, 100 };
@@ -43,6 +43,7 @@ internal static class RecordTabs
         RecordTab.Minerals => "violet",
         RecordTab.Cooking => "crimson",
         RecordTab.Portraits => "peach",
+        RecordTab.Creatures => "plum",
         _ => "slate",
     };
 
@@ -100,6 +101,7 @@ internal static class RecordTabs
         if (subject == PaintingData.OriginalSubject || FarmerPortrait.IsPortrait(subject)) return RecordTab.Other;
         if (Sitters.IsSitter(subject)) return RecordTab.Portraits;
         if (Views.IsView(subject)) return RecordTab.Views;
+        if (Creatures.IsCreature(subject)) return RecordTab.Creatures;
         return TabOfItem(subject.Split('|')[0]);
     }
 
@@ -113,7 +115,7 @@ internal static class RecordTabs
         if (tab == RecordTab.Overview)
             return Catalogue.All(who).OrderBy(kv => kv.Value.FirstDay).Select(kv => new TabMember(kv.Key, kv.Value, Array.Empty<string>())).ToList();
         if (tab == RecordTab.Other)
-            return painted.Where(kv => !kv.Key.StartsWith(ViewPrefix) && !Sitters.IsSitter(kv.Key) && TabOfItem(kv.Key) == RecordTab.Other)
+            return painted.Where(kv => !kv.Key.StartsWith(ViewPrefix) && !Sitters.IsSitter(kv.Key) && !Creatures.IsCreature(kv.Key) && TabOfItem(kv.Key) == RecordTab.Other)
                 .OrderBy(kv => kv.Value.Entry.FirstDay)
                 .Select(kv => new TabMember(kv.Key, kv.Value.Entry, kv.Value.Seasons)).ToList();
         return AllKeys(tab)
@@ -137,9 +139,11 @@ internal static class RecordTabs
                     .Where(npc => npc.CanSocialize && Sitters.PortraitTexture(npc.Name) != null)
                     .Select(npc => npc.Name).Distinct()
                     .Select(Sitters.SubjectFor);
+            case RecordTab.Creatures:
+                return Creatures.All.Select(c => Creatures.SubjectFor(c.Name));
             case RecordTab.Views:
                 return Game1.locations
-                    .Where(l => l.IsOutdoors && l is not MineShaft && l is not VolcanoDungeon && !NotViews.Contains(l.Name))
+                    .Where(l => Views.CanPaintHere(l) && l is not MineShaft && l is not VolcanoDungeon && !NotViews.Contains(l.Name))
                     .Select(l => ViewPrefix + l.Name).Distinct();
             default:
                 return Game1.objectData
@@ -177,7 +181,7 @@ internal static class RecordTabs
                 string[] parts = subject.Substring(ViewPrefix.Length).Split(':');
                 Add(ViewPrefix + parts[0], entry, parts.Length > 1 ? parts[1] : null);
             }
-            else if (Sitters.IsSitter(subject))
+            else if (Sitters.IsSitter(subject) || Creatures.IsCreature(subject))
                 Add(subject, entry);
             else if (subject != PaintingData.OriginalSubject && !FarmerPortrait.IsPortrait(subject))
                 foreach (string id in subject.Split('|'))
@@ -207,7 +211,7 @@ internal static class RecordTabs
             Offer(Catalogue.SubjectKey(subject), item!);
             if (Views.IsView(subject))
                 Offer(ViewPrefix + Views.PlaceOf(subject), item!);
-            else if (!Sitters.IsSitter(subject) && !data.IsOriginal && !data.IsPortrait)
+            else if (!Sitters.IsSitter(subject) && !data.IsCreature && !data.IsOriginal && !data.IsPortrait)
                 foreach (string id in data.SubjectItems)
                     Offer(id, item!);
         }
@@ -221,6 +225,7 @@ internal static class RecordTabs
     public static bool Known(Farmer who, RecordTab tab, string key)
     {
         if (tab == RecordTab.Views) return true;
+        if (tab == RecordTab.Creatures) return Creatures.Unlocked(who, Creatures.NameOf(key));
         if (tab == RecordTab.Portraits) return who.friendshipData.ContainsKey(Sitters.NpcOf(key));
         string id = key.StartsWith("(O)") ? key.Substring(3) : key;
         return tab switch

@@ -178,7 +178,9 @@
         // The portfolio book's pages (1.2), each with its reward.
         "blinxxy.MuseArt_Portfolio_seasons_Letter": "{{i18n:mail.portfolio-seasons}} %item id (BC)blinxxy.MuseArt_VarnishCabinet 1 %%[#]{{i18n:mail.portfolio-seasons.title}}",
         "blinxxy.MuseArt_Portfolio_harvest_Letter": "{{i18n:mail.portfolio-harvest}} %item id (BC)blinxxy.MuseArt_PigmentMill 1 %%[#]{{i18n:mail.portfolio-harvest.title}}",
-        "blinxxy.MuseArt_Portfolio_fine-work_Letter": "{{i18n:mail.portfolio-fine-work}} %item id (O)blinxxy.MuseArt_Linen_Medium 2 %%[#]{{i18n:mail.portfolio-fine-work.title}}"
+        "blinxxy.MuseArt_Portfolio_fine-work_Letter": "{{i18n:mail.portfolio-fine-work}} %item id (O)blinxxy.MuseArt_Linen_Medium 2 %%[#]{{i18n:mail.portfolio-fine-work.title}}",
+        "blinxxy.MuseArt_Portfolio_far-places_Letter": "{{i18n:mail.portfolio-far-places}} %item id (O)blinxxy.MuseArt_Linen_Large 2 %%[#]{{i18n:mail.portfolio-far-places.title}}",
+        "blinxxy.MuseArt_Portfolio_legends_Letter": "{{i18n:mail.portfolio-legends}} %item id (O)blinxxy.MuseArt_Palette_Iridium 1 %%[#]{{i18n:mail.portfolio-legends.title}}"
       }
     },
     {

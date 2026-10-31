@@ -125,7 +125,7 @@ internal sealed class PortfolioMenu : IClickableMenu
         for (int i = 0; i < _tabs.Count; i++)
         {
             var page = Portfolio.Pages[i];
-            string label = Portfolio.PageName(page) + (Portfolio.IsFinished(page) ? " *" : "");
+            string label = I18n.Get("portfolio.tab." + page.Id) + (Portfolio.IsFinished(page) ? " *" : "");
             Ui.Button(b, _tabs[i], label, true, i == _page, _tabs[i].Contains(mouse));
             if (i == _page)
                 Ui.Outline(b, _tabs[i], new Color(150, 100, 0), 3);

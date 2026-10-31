@@ -36,6 +36,12 @@ internal sealed partial class EaselMenu
     private static bool IsSitterSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Sitters.IsSitter(ids[0]);
     private bool SetupPortrait => IsSitterSubject(_setupItems);
     private bool SetupView => IsViewSubject(_setupItems);
+    // Creatures (1.2): a slot in the row below opens them in place of the bag.
+    private bool SetupCreature => IsCreatureSubject(_setupItems);
+    private bool CreatureTooSmall => SetupCreature && !Creatures.Fits(Creatures.NameOf(_setupItems[0]), PaintingRules.CanvasSize(_setupCanvas));
+    private bool _setupCreatures;
+    private readonly List<(Rectangle Rect, string Name)> _creatureSlots = new();
+    private const string CreatureSlot = Creatures.Prefix;
     // The view's slot sits first in the sitters' row.
     private const string ViewSlot = Views.Prefix;
     private Rectangle _originalButton, _brushButton, _frameButton, _beginButton, _previewArea, _linenButton;
@@ -79,9 +85,23 @@ internal sealed partial class EaselMenu
         var sitters = _setupFraming || !StardewModdingAPI.Context.IsWorldReady ? new List<string>() : Sitters.Available(_who);
         if (_viewLocation != null && !_setupFraming)
             sitters.Insert(0, ViewSlot);
+        var creatures = _setupFraming || !StardewModdingAPI.Context.IsWorldReady ? new List<string>() : Creatures.Available(_who);
+        if (creatures.Count > 0)
+            sitters.Insert(_viewLocation != null ? 1 : 0, CreatureSlot);
+        else
+            _setupCreatures = false;
+        _creatureSlots.Clear();
         int itemsBottom = sitters.Count > 0 ? rowY - 12 - 40 - SlotSize - 8 : rowY - 12;
         int n = 0;
-        foreach (var item in Game1.player.Items)
+        if (_setupCreatures && !_setupFraming)
+            foreach (string name in creatures)
+            {
+                var rect = new Rectangle(gridX + n % cols * (SlotSize + SlotGap), gridY + n / cols * (SlotSize + SlotGap), SlotSize, SlotSize);
+                if (rect.Bottom > itemsBottom) break;
+                _creatureSlots.Add((rect, name));
+                n++;
+            }
+        foreach (var item in _setupCreatures && !_setupFraming ? Enumerable.Empty<Item>() : Game1.player.Items)
         {
             if (item == null) continue;
             bool wanted = _setupFraming
@@ -134,6 +154,7 @@ internal sealed partial class EaselMenu
             _setupItems.RemoveAt(_setupItems.Count - 1);
         _setupPreview = _setupOriginal || _setupFraming || _setupItems.Count == 0 ? null
             : SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas) ? null
+            : CreatureTooSmall ? null
             : BuildReference(_setupItems, size);
     }
 
@@ -160,6 +181,29 @@ internal sealed partial class EaselMenu
                 return;
             }
 
+        foreach (var (rect, name) in _creatureSlots)
+        {
+            if (!rect.Contains(x, y)) continue;
+            Game1.playSound("smallSelect");
+            _setupOriginal = false;
+            string subject = Creatures.SubjectFor(name);
+            bool again = _setupItems.Contains(subject);
+            _setupItems.Clear();
+            if (!again)
+            {
+                _setupItems.Add(subject);
+                // A bigger creature needs a bigger canvas: the smallest it fits that's unlocked.
+                foreach (var kind in new[] { CanvasKind.Small, CanvasKind.Medium, CanvasKind.Large })
+                    if (CanvasUnlocked(kind) && Creatures.Fits(name, PaintingRules.CanvasSize(kind)) && kind >= _setupCanvas)
+                    {
+                        _setupCanvas = kind;
+                        break;
+                    }
+            }
+            RefreshPreview();
+            return;
+        }
+
         foreach (var (rect, item) in _itemSlots)
         {
             if (!rect.Contains(x, y)) continue;
@@ -170,7 +214,7 @@ internal sealed partial class EaselMenu
                 return;
             }
             _setupOriginal = false;
-            if (SetupPortrait || SetupView) _setupItems.Clear();
+            if (SetupPortrait || SetupView || SetupCreature) _setupItems.Clear();
             string id = item.QualifiedItemId;
             if (_setupItems.Contains(id))
                 _setupItems.Remove(id);
@@ -191,6 +235,13 @@ internal sealed partial class EaselMenu
             if (npc == ViewSlot)
             {
                 ClickView();
+                return;
+            }
+            if (npc == CreatureSlot)
+            {
+                _setupCreatures = !_setupCreatures;
+                Game1.playSound("shwip");
+                LayoutSetup();
                 return;
             }
             Game1.playSound("smallSelect");
@@ -314,6 +365,12 @@ internal sealed partial class EaselMenu
             Toast(I18n.Get("setup.portrait-canvas"), new Color(150, 70, 50), 2.5f);
             return;
         }
+        if (CreatureTooSmall)
+        {
+            Game1.playSound("cancel");
+            Toast(I18n.Get("setup.creature-canvas"), new Color(150, 70, 50), 2.5f);
+            return;
+        }
         if (!HasCanvas)
         {
             Game1.playSound("cancel");
@@ -432,11 +489,12 @@ internal sealed partial class EaselMenu
         }
 
         int max = ReferenceBuilder.MaxItems(PaintingRules.CanvasSize(_setupCanvas));
-        Ui.Text(b, max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
+        Ui.Text(b, _setupCreatures ? I18n.Get("setup.pick-creature") : max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
             new Vector2(left, _canvasButtons[0].Bottom + 18));
-        if (_itemSlots.Count == 0)
+        if (_itemSlots.Count == 0 && !_setupCreatures)
             Ui.Text(b, I18n.Get("setup.nothing-to-paint"), new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
         DrawSlots(b, mouse, slot => _setupItems.IndexOf(slot.QualifiedItemId), max > 1);
+        DrawCreatures(b, mouse);
         DrawSitters(b, left, mouse);
 
         // Preview of what you'll be copying.
@@ -464,8 +522,9 @@ internal sealed partial class EaselMenu
         int hours = PaintingRules.Minutes(_setupCanvas, IsLongSubject(_setupItems)) / 60;
         var shortOf = ShortColours();
         bool portraitTooSmall = SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas);
-        bool warn = portraitTooSmall || !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
+        bool warn = portraitTooSmall || CreatureTooSmall || !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
         string footer = portraitTooSmall ? I18n.Get("setup.portrait-canvas-short")
+            : CreatureTooSmall ? I18n.Get("setup.creature-canvas-short")
             : !HasCanvas ? I18n.Get(_setupLinen ? "setup.need-linen" : "setup.need-canvas." + CanvasKeys[(int)_setupCanvas])
             : TooLate ? I18n.Get("setup.too-late-short")
             : NeedsPalette ? I18n.Get("setup.need-palette-short")
@@ -524,14 +583,25 @@ internal sealed partial class EaselMenu
     private void DrawSitters(SpriteBatch b, int left, Point mouse)
     {
         if (_sitterSlots.Count == 0) return;
-        bool viewOnly = _sitterSlots.Count == 1 && _viewLocation != null;
-        Ui.Text(b, I18n.Get(viewOnly ? "setup.pick-view" : _viewLocation != null ? "setup.pick-view-or-portrait" : "setup.pick-portrait"), new Vector2(left, _sitterLabelY));
+        bool creatures = _sitterSlots.Any(s => s.Npc == CreatureSlot);
+        int friends = _sitterSlots.Count(s => s.Npc != ViewSlot && s.Npc != CreatureSlot);
+        bool viewOnly = friends == 0 && !creatures && _viewLocation != null;
+        Ui.Text(b, I18n.Get(creatures ? "setup.pick-more" : viewOnly ? "setup.pick-view" : _viewLocation != null ? "setup.pick-view-or-portrait" : "setup.pick-portrait"), new Vector2(left, _sitterLabelY));
         foreach (var (rect, npc) in _sitterSlots)
         {
             b.Draw(Game1.menuTexture, rect, Game1.getSourceRectForStandardTileSheet(Game1.menuTexture, 10), Color.White);
             if (npc == ViewSlot)
             {
                 DrawViewSlot(b, rect, mouse);
+                continue;
+            }
+            if (npc == CreatureSlot)
+            {
+                Creatures.Draw(b, Creatures.Available(_who).FirstOrDefault() ?? "Green Slime", new Rectangle(rect.X + 10, rect.Y + 10, rect.Width - 20, rect.Height - 20));
+                if (_setupCreatures)
+                    Ui.Outline(b, rect, new Color(214, 160, 30), 4);
+                if (rect.Contains(mouse))
+                    _hoverText = I18n.Get(_setupCreatures ? "setup.creatures-back" : "setup.creatures-hover");
                 continue;
             }
             var texture = Sitters.PortraitTexture(npc);
@@ -548,6 +618,20 @@ internal sealed partial class EaselMenu
             if (rect.Contains(mouse))
                 _hoverText = I18n.Get("setup.portrait-hover", new { name = Sitters.DisplayName(npc) })
                     + (wantedBy == null ? "" : "\n" + CommissionedText(wantedBy));
+        }
+    }
+
+    // Creatures you've met, in place of the bag, each from memory.
+    private void DrawCreatures(SpriteBatch b, Point mouse)
+    {
+        foreach (var (rect, name) in _creatureSlots)
+        {
+            b.Draw(Game1.menuTexture, rect, Game1.getSourceRectForStandardTileSheet(Game1.menuTexture, 10), Color.White);
+            Creatures.Draw(b, name, new Rectangle(rect.X + 8, rect.Y + 8, rect.Width - 16, rect.Height - 16));
+            if (_setupItems.Contains(Creatures.SubjectFor(name)))
+                Ui.Outline(b, rect, new Color(214, 160, 30), 4);
+            if (rect.Contains(mouse))
+                _hoverText = I18n.Get("setup.creature-hover", new { name = Creatures.DisplayName(name) });
         }
     }
 

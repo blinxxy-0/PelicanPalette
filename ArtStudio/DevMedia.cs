@@ -53,6 +53,19 @@ internal static class DevMedia
             if (args.ElementAtOrDefault(1) != "hud")
                 Game1.displayHUD = false;
         });
+        DevTools.AddCommand(helper, "museart_monstersheets", "Saves the top of every monster sprite sheet (and the Junimo's) to media/monsters/<name>.png, to measure their frames.", (_, _) =>
+        {
+            string dir = Path.Combine(_helper.DirectoryPath, "media", "monsters");
+            Directory.CreateDirectory(dir);
+            var names = Directory.GetFiles(Path.Combine(Constants.GamePath, "Content", "Characters", "Monsters"), "*.xnb").Select(Path.GetFileNameWithoutExtension).ToList();
+            foreach (string name in names.Append("../Junimo"))
+            {
+                var texture = Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>("Characters/Monsters/" + name);
+                using var stream = File.Create(Path.Combine(dir, Path.GetFileName(name) + $"_{texture.Width}x{texture.Height}.png"));
+                texture.SaveAsPng(stream, texture.Width, texture.Height);
+            }
+            _monitor.Log($"Saved {names.Count + 1} sheets.", LogLevel.Info);
+        });
         DevTools.AddCommand(helper, "museart_signtext", "Renders a heading in the game's bold font to media/sign_<slug>.png. Usage: museart_signtext Features", (_, args) => SignText(string.Join(" ", args)));
         DevTools.AddCommand(helper, "museart_wikidata", "Writes media/wikidata.json and media/icons/ for the wiki.", (_, _) => WikiData());
         // Staging a shot.

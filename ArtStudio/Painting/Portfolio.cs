@@ -53,6 +53,26 @@ internal static class Portfolio
             new("varnished", (item, _) => Varnish.FinishOf(item) != null),
             new("masterpiece", (item, _) => PaintingData.IsMasterpiece(item)),
         }),
+        // Views of places the game opens as you go (1.2, step 3). The quarry
+        // and the Skull Cavern's mouth are parts of the Mountain's and the
+        // desert's maps, so the cavern's entry room stands for the cavern.
+        new("far-places", new PortfolioSlot[]
+        {
+            new("desert", (_, d) => d.IsView && Views.PlaceOf(d.Subject) == "Desert"),
+            new("skull-cavern", (_, d) => d.IsView && Views.PlaceOf(d.Subject) == "SkullCave"),
+            new("island-beach", (_, d) => d.IsView && Views.PlaceOf(d.Subject) == "IslandSouth"),
+            new("island-north", (_, d) => d.IsView && Views.PlaceOf(d.Subject) == "IslandNorth"),
+            new("secret-woods", (_, d) => d.IsView && Views.PlaceOf(d.Subject) == "Woods"),
+        }),
+        // The legendary fish, painted from the one in your bag.
+        new("legends", new PortfolioSlot[]
+        {
+            new("crimsonfish", (_, d) => d.SubjectItems.Contains("(O)159")),
+            new("angler", (_, d) => d.SubjectItems.Contains("(O)160")),
+            new("legend", (_, d) => d.SubjectItems.Contains("(O)163")),
+            new("glacierfish", (_, d) => d.SubjectItems.Contains("(O)775")),
+            new("mutant-carp", (_, d) => d.SubjectItems.Contains("(O)682")),
+        }),
     };
 
     public static int SlotCount => Pages.Sum(p => p.Slots.Length);

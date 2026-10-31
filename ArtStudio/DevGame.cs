@@ -147,6 +147,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
         DevTools.AddCommand(helper, "museart_palettetest", "Palette tiers, tubes going straight in, and a placed Palette as storage. Run 'museart_palettetest' in the farmhouse, then 'museart_palettetest check' a second later.", (_, args) => PaletteTest(monitor, args));
         DevTools.AddCommand(helper, "museart_dialoguefit", "Checks every page of Sable's dialogue (and their events') fits the portrait dialogue box, so the game never splits a word across boxes.", (_, _) => DialogueFit(monitor));
@@ -1330,7 +1331,7 @@ internal static class DevGame
         Reset();
         try
         {
-            Check(monitor, "the book has a slot for every page's slots", book.Count == Portfolio.SlotCount && Portfolio.SlotCount == 15, $"{book.Count}");
+            Check(monitor, "the book has a slot for every page's slots", book.Count == Portfolio.SlotCount && Portfolio.SlotCount == 25, $"{book.Count}");
 
             // Into a slot, kept; a better one swaps in; a worse one doesn't fit.
             var spring = Give("view:Town:spring", PaintingRules.Silver);
@@ -1369,6 +1370,73 @@ internal static class DevGame
         }
         // The book's menu, checked next step.
         Menus.PortfolioMenu.Open(who);
+    }
+
+    // Creatures, Krobus and the Wizard, and the far places (1.2, step 3).
+    private static void CreatureTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var kills = new System.Collections.Generic.Dictionary<string, int>(who.stats.specificMonstersKilled);
+        try
+        {
+            // Every creature's first frame is found, and sized like a sprite.
+            var bad = Creatures.All.Where(c => Creatures.Frame(c.Name) is not { } f || f.Source.Width < 6 || f.Source.Height < 6 || f.Source.Width > 32 || f.Source.Height > 32)
+                .Select(c => c.Name + (Creatures.Frame(c.Name) is { } f ? $" {f.Source.Width}x{f.Source.Height}" : " none")).ToList();
+            Check(monitor, "every creature's first frame is found", bad.Count == 0, string.Join(", ", bad));
+            Check(monitor, "creatures have their game names", Creatures.DisplayName("Green Slime").Length > 0 && Creatures.DisplayName("Skeleton") != "");
+
+            // Met only once slain; a Junimo once the Community Center (or Joja's) is done.
+            who.stats.specificMonstersKilled.Clear();
+            Check(monitor, "no creatures before any are slain", Creatures.Available(who).All(n => n == Creatures.Junimo));
+            who.stats.specificMonstersKilled["Green Slime"] = 3;
+            who.stats.specificMonstersKilled["Skeleton"] = 1;
+            Check(monitor, "a slain monster can be painted", Creatures.Available(who).Contains("Green Slime") && Creatures.Available(who).Contains("Skeleton"));
+            Check(monitor, "a Junimo only after the Community Center", Creatures.Unlocked(who, Creatures.Junimo) == (Game1.MasterPlayer.hasCompletedCommunityCenter() || Utility.hasFinishedJojaRoute()));
+
+            // References: a slime fits the small canvas; a skeleton needs the large one.
+            int small = PaintingRules.CanvasSize(CanvasKind.Small), large = PaintingRules.CanvasSize(CanvasKind.Large);
+            var owned = Enumerable.Range(0, Palette.All.Length).ToList();
+            var slime = Creatures.Reference("Green Slime", small, owned);
+            Check(monitor, "a slime is painted green", Creatures.Fits("Green Slime", small) && slime.SubjectCells > 40
+                && slime.PigmentsUsed.Any(p => Palette.All[p].Id is "moss" or "leaf"), $"{slime.SubjectCells} cells");
+            Check(monitor, "a skeleton needs a bigger canvas", !Creatures.Fits("Skeleton", small) && Creatures.Fits("Skeleton", large));
+            Check(monitor, "tougher monsters are worth more", Creatures.SubjectPrice(Creatures.SubjectFor("Pepper Rex")) > Creatures.SubjectPrice(Creatures.SubjectFor("Green Slime")));
+
+            // Through the easel: a study, kept in the record's Creatures tab.
+            FreshStart(who);
+            var menu = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { Creatures.SubjectFor("Green Slime") });
+            menu.DevPaintPartly(1f, 3);
+            menu.DevFinish(false);
+            var painting = menu.DevPainting;
+            var data = painting == null ? null : PaintingData.Read(painting);
+            Check(monitor, "a creature paints as a study", data?.IsCreature == true && data.SubjectItems.Length == 0 && painting!.DisplayName.Contains(Creatures.DisplayName("Green Slime")), painting?.DisplayName ?? "none");
+            Check(monitor, "...and goes in the record's Creatures tab", RecordTabs.TabOfSubject(Creatures.SubjectFor("Green Slime")) == RecordTab.Creatures
+                && RecordTabs.Members(who, RecordTab.Creatures).Any(m => m.Key == Creatures.SubjectFor("Green Slime") && m.Painted != null));
+
+            // Krobus and the Wizard sit once their stories are done.
+            bool hadInk = who.mailReceived.Contains("hasPickedUpMagicInk");
+            who.mailReceived.Remove("hasPickedUpMagicInk");
+            Check(monitor, "the Wizard won't sit before the magic ink", !Sitters.SitsWithoutHearts(who, "Wizard"));
+            who.mailReceived.Add("hasPickedUpMagicInk");
+            Check(monitor, "...and will after it, hearts or not", Sitters.SitsWithoutHearts(who, "Wizard") && (Sitters.PortraitTexture("Wizard") == null || Sitters.CanSitFor(who, "Wizard") || !who.friendshipData.ContainsKey("Wizard")));
+            if (!hadInk) who.mailReceived.Remove("hasPickedUpMagicInk");
+            Check(monitor, "Krobus sits once met", Sitters.SitsWithoutHearts(who, "Krobus") == who.friendshipData.ContainsKey("Krobus"));
+
+            // The far places: the Skull Cavern's entry room counts; the mines don't.
+            var cave = Game1.getLocationFromName("SkullCave");
+            Check(monitor, "the Skull Cavern's entry room is a place to paint", cave != null && Views.CanPaintHere(cave) && !cave.IsOutdoors);
+            Check(monitor, "...and in the record's views", RecordTabs.Members(who, RecordTab.Views).Any(m => m.Key == "view:SkullCave"));
+            int far = Portfolio.FirstIndex(3), legends = Portfolio.FirstIndex(4);
+            Check(monitor, "a view inside the Skull Cavern goes on Far Places", Portfolio.SlotFor(3, DevTools.TestPainting("view:SkullCave:fall", PaintingRules.Silver)) == far + 1);
+            Check(monitor, "the Legend goes on Legends", Portfolio.SlotFor(4, DevTools.TestPainting("(O)163", PaintingRules.Silver)) == legends + 2);
+        }
+        finally
+        {
+            who.stats.specificMonstersKilled.Clear();
+            foreach (var (name, count) in kills)
+                who.stats.specificMonstersKilled[name] = count;
+        }
     }
 
     // Glazes, highlights and Masterpieces (2026-10-25).

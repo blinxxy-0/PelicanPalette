@@ -38,9 +38,18 @@ internal static class Sitters
     }
 
     public static bool CanSitFor(Farmer who, string npc) =>
-        who.getFriendshipHeartLevelForNPC(npc) >= PaintingRules.PortraitHearts
+        (who.getFriendshipHeartLevelForNPC(npc) >= PaintingRules.PortraitHearts || SitsWithoutHearts(who, npc))
         && Game1.getCharacterFromName(npc) is NPC { CanSocialize: true }
         && PortraitTexture(npc) != null;
+
+    // Two who'll sit once their stories are done, hearts or not (1.2): Krobus
+    // once met in the sewers, the Wizard once the magic ink's been brought.
+    public static bool SitsWithoutHearts(Farmer who, string npc) => npc switch
+    {
+        "Krobus" => who.friendshipData.ContainsKey("Krobus"),
+        "Wizard" => who.mailReceived.Contains("hasPickedUpMagicInk"),
+        _ => false,
+    };
 
     // Everyone who'll sit for the player, closest friends first.
     public static List<string> Available(Farmer who) =>

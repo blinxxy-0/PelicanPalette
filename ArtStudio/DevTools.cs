@@ -246,6 +246,14 @@ internal static class DevTools
             return new Shop.CommissionBoardMenu(Game1.player);
         });
         yield return ("setup_bag", () => { var m = new EaselMenu(Game1.player); m.DevSetup(parsnip); return m; });
+        yield return ("setup_creatures", () =>
+        {
+            foreach (string name in new[] { "Green Slime", "Bug", "Fly", "Bat", "Rock Crab", "Dust Spirit", "Frost Bat", "Ghost", "Skeleton", "Metal Head" })
+                Game1.player.stats.specificMonstersKilled[name] = 2;
+            var m = new EaselMenu(Game1.player);
+            m.DevShowCreatures("Dust Spirit");
+            return m;
+        });
         yield return ("setup_free", () => { var m = new EaselMenu(Game1.player); m.DevSetupFree(); return m; });
         yield return ("paint_normal", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevMixedPalette(); return m; });
         yield return ("paint_hard", () => Hard(() => Paint(CanvasKind.Small, parsnip)));
@@ -322,7 +330,7 @@ internal static class DevTools
             Game1.player.modData[ModEntry.Id + "/CollectionPerks"] = "tubes,palette";
             return new CollectionMenu(Game1.player);
         });
-        foreach (var tab in new[] { RecordTab.Crops, RecordTab.Fish, RecordTab.Portraits, RecordTab.Views, RecordTab.Other })
+        foreach (var tab in new[] { RecordTab.Crops, RecordTab.Fish, RecordTab.Portraits, RecordTab.Views, RecordTab.Creatures, RecordTab.Other })
             yield return ("record_" + tab.ToString().ToLowerInvariant(), () =>
             {
                 var entries = new Dictionary<string, CatalogueEntry>
@@ -338,6 +346,8 @@ internal static class DevTools
                     ["view:Beach:summer"] = new() { Count = 1, BestQuality = 2, FirstDay = 40 },
                     ["(O)340"] = new() { Count = 1, BestQuality = 1, FirstDay = 20 },
                     ["(O)428"] = new() { Count = 3, BestQuality = 2, FirstDay = 21 },
+                    ["creature:Green Slime"] = new() { Count = 2, BestQuality = 2, FirstDay = 22 },
+                    ["creature:Skeleton"] = new() { Count = 1, BestQuality = 1, FirstDay = 30 },
                 };
                 Game1.player.modData[ModEntry.Id + "/Catalogue"] = System.Text.Json.JsonSerializer.Serialize(entries);
                 Game1.player.modData[ModEntry.Id + "/CollectionPerks"] = "tubes,tab-crops-25";

@@ -93,6 +93,7 @@ internal sealed partial class EaselMenu
         bool portrait = IsSitterSubject(_subjectItems);
         int subjectPrice = portrait ? PaintingRules.PortraitSubjectPrice
             : IsViewSubject(_subjectItems) ? Views.SubjectPrice(_subjectItems[0])
+            : IsCreatureSubject(_subjectItems) ? Creatures.SubjectPrice(_subjectItems[0])
             : _subjectItems.Length == 0 ? 0
             : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
         int price = _reference != null

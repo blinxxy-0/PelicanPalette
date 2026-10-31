@@ -3,6 +3,9 @@
 ## 1.2 (in progress)
 
 - **The back room.** A door in the shop's back wall leads to a back room, where you keep your work: the **portfolio book**, a Community Center for paintings (pages of slots, each asking for a particular painting, which stays there and shows in its slot; a better one can replace it later), and the **plan chest**, a big chest's worth of drawers for any paintings you want to keep. Both are shared by the whole farm. Finishing a page brings a letter from Sable with a reward. Pages so far: The Four Seasons, Harvest and Fine Work.
+- **Creatures.** Paint a study of any monster you've slain, from memory: the easel's setup screen has a creatures slot that shows them in place of your bag. Junimos join once the Community Center (or Joja's) is done. The record has a Creatures tab.
+- **Krobus and the Wizard sit for portraits** once their stories are done (meeting Krobus in the sewers; bringing the Wizard the magic ink), hearts or not.
+- **Two more portfolio pages:** Far Places (the desert, the Skull Cavern, Ginger Island's beach and north, the Secret Woods) and Legends (the five legendary fish). You can now set up an easel just inside the Skull Cavern.
 - **Sable's trapdoor moved to the back room**, so the shop floor is clear.
 - **The painting record shows your own painting** of a subject, where one's kept in the portfolio or the plan chest.
 - **Softer outlines on the shop's furniture**, a darker shade of each piece's own colour instead of near-black.
