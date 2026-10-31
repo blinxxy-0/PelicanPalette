@@ -1,0 +1,23 @@
+{
+ "batch": "stardew-julian-expressions-annoyed",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "image_size": {
+   "width": 64,
+   "height": 64
+  },
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_elliott.png",
+  "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+  "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/julian_identity.png",
+  "reference_usage": "this exact character in this exact pose and framing: the same hair, glasses, charcoal coat, burgundy scarf, grey collar and head position; keep everything identical and change ONLY the facial expression"
+ },
+ "jobs": {
+  "annoyed": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: cold irritation: eyes narrowed behind the glasses, a flat unamused mouth, the slightest downturn at the corners; a smooth forehead with no wrinkles, brows barely lowered"
+  },
+  "annoyed_b": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: curt displeasure: a sideways look of disdain, lips pressed together, a small sniff; calm smooth brow, no frown lines"
+  }
+ }
+}

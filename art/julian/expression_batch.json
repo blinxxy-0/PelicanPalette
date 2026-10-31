@@ -1,0 +1,38 @@
+{
+ "batch": "stardew-julian-expressions",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "image_size": {
+   "width": 64,
+   "height": 64
+  },
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_elliott.png",
+  "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+  "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/julian_identity.png",
+  "reference_usage": "this exact character in this exact pose and framing: the same hair, glasses, charcoal coat, burgundy scarf, grey collar and head position; keep everything identical and change ONLY the facial expression"
+ },
+ "jobs": {
+  "happy": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: a genuine, warm, slightly surprised smile, eyes softened, the first time he's been pleased in years"
+  },
+  "sad": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: quiet regret, eyes lowered, brows tilted up in the middle, mouth a thin sad line"
+  },
+  "smirk": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: a dry, knowing half-smile on one side of the mouth, one eyebrow raised, amused and a little superior"
+  },
+  "touched": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: moved and caught off guard, a small soft smile, eyes glistening, faint flush on the cheeks"
+  },
+  "annoyed": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: sharp disapproval, brows drawn down hard, lips pressed tight, glaring over his glasses"
+  },
+  "surprised": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: genuine surprise, eyebrows raised high, eyes wide behind the glasses, mouth slightly open"
+  },
+  "thoughtful": {
+   "description": "Stardew Valley portrait of Julian Vane, a stern city art critic of about fifty: pale skin, swept-back dark hair with silver temples, narrow dark-rimmed glasses, charcoal coat, burgundy scarf. Same pose and framing as the reference, three-quarter view. Expression: absorbed in thought, looking slightly down and away, lips pursed, studying something closely"
+  }
+ }
+}

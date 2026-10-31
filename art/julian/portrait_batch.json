@@ -1,0 +1,25 @@
+{
+ "batch": "stardew-julian-portrait",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "image_size": {"width": 64, "height": 64},
+  "no_background": true
+ },
+ "jobs": {
+  "julian_elliott": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_elliott.png",
+   "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+   "description": "Stardew Valley portrait of Julian Vane, a city art critic of about fifty: tall lean man, pale skin, angular face, clean-shaven, dark hair neatly combed back with silver grey at the temples, thin dark rectangular glasses, long charcoal grey wool coat with the collar up, deep burgundy scarf, pale grey shirt buttoned to the top, a cool appraising expression with one eyebrow slightly raised. Close bust portrait, head large in frame, three-quarter view"
+  },
+  "julian_portraits": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_portraits.png",
+   "style_usage": "Stardew Valley character portraits: exact pixel density at 64x64, bust framing (head and shoulders), large expressive eyes, cel shading in 3-4 tone hue-shifted ramps, dark coloured (not black) outlines, about 30 colours, flat transparent background",
+   "description": "Stardew Valley style character portrait of a sharp, elegant art critic around fifty: pale skin, narrow face and nose, clean-shaven, slicked-back dark hair going silver at the sides, thin black rectangular glasses, charcoal overcoat with a turned-up collar, burgundy wool scarf wrapped at the neck, faint superior smile, head and shoulders facing slightly left"
+  },
+  "julian_stern": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_elliott.png",
+   "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+   "description": "portrait of a stern city gentleman in the exact Stardew Valley portrait art style: pale skin, high cheekbones, clean-shaven, neat swept-back black hair with silver temples, narrow dark-rimmed glasses, long dark charcoal coat, rich burgundy scarf, grey shirt collar, unimpressed thoughtful expression, bust portrait, three-quarter view"
+  }
+ }
+}

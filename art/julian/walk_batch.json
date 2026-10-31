@@ -1,0 +1,23 @@
+{
+ "batch": "stardew-julian-walk",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "image_size": {
+   "width": 64,
+   "height": 128
+  },
+  "no_background": true,
+  "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/julian_identity.png",
+  "reference_usage": "the character's identity and colours: pale skin, swept-back dark hair with silver temples, narrow dark glasses, charcoal coat, burgundy scarf. Draw this person as a tiny full-body walking sprite, not a portrait",
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_walk_elliott.png",
+  "style_usage": "exact Stardew Valley NPC sprite sheet: 16x32 frames in a 4x4 grid, row order down/right/up/left, character about 28 px tall, big head, few colours, dark coloured outlines"
+ },
+ "jobs": {
+  "walk_a": {
+   "description": "Stardew Valley NPC walking sprite sheet of Julian Vane, a tall lean city art critic of about fifty: 4 rows by 4 columns of 16x32 pixel frames. Row 1: walking toward the viewer (facing down). Row 2: walking right (side view). Row 3: walking away (back view). Row 4: walking left (side view). Each row is a 4-frame walk cycle. Full body: pale skin, swept-back dark hair with silver temples, narrow dark glasses, a long charcoal grey wool coat down to the knees, a burgundy scarf, dark grey trousers, black shoes, a small black notebook in one hand. Exactly the same sheet layout, character size, proportions and pixel style as the reference sheet"
+  },
+  "walk_b": {
+   "description": "Stardew Valley NPC walking sprite sheet of Julian Vane, a tall lean city art critic of about fifty: 4 rows by 4 columns of 16x32 pixel frames. Row 1: walking toward the viewer (facing down). Row 2: walking right (side view). Row 3: walking away (back view). Row 4: walking left (side view). Each row is a 4-frame walk cycle. Full body: pale skin, swept-back dark hair with silver temples, narrow dark glasses, a long charcoal grey wool coat down to the knees, a burgundy scarf, dark grey trousers, black shoes, hands at his sides. Exactly the same sheet layout, character size, proportions and pixel style as the reference sheet"
+  }
+ }
+}
