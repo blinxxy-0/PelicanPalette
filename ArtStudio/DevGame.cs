@@ -871,10 +871,14 @@ internal static class DevGame
     // Replays each event's 'move' commands from the actors' starting tiles:
     // every tile a character steps onto (and every starting tile) must be
     // walkable on the map, and not under a prop or another character.
+    // Where the mod's events are: Sable's, and Julian's (1.2).
+    private static readonly string[] EventLocations =
+        { Shop.ArtShop.LocationName, "Forest", "JoshHouse", Shop.ArtShop.BackRoom, "ArchaeologyHouse", "BusStop", "Saloon" };
+
     private static void EventPaths(IMonitor monitor)
     {
         if (!Context.IsWorldReady) return;
-        foreach (string locationName in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
+        foreach (string locationName in EventLocations)
         {
             var events = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + locationName);
             foreach (var (key, script) in events.Where(e => e.Key.StartsWith(ModEntry.Id)))
@@ -2249,6 +2253,7 @@ internal static class DevGame
         }
         AddAll("Characters/Dialogue/Sable", "Sable");
         AddAll("Characters/Dialogue/MarriageDialogueSable", "Sable");
+        AddAll("Characters/Dialogue/JulianVane", Social.Julian.Name);
         AddAll("Characters/Dialogue/rainy", "Sable", k => k == "Sable");
         AddAll("Data/EngagementDialogue", "Sable", k => k.StartsWith("Sable"));
         foreach (string festival in new[] { "spring13", "spring24", "summer11", "summer28", "fall16", "fall27", "winter8", "winter25" })
@@ -2265,7 +2270,7 @@ internal static class DevGame
         for (int i = 0; i < tastes.Length; i += 2)
             texts.Add(($"Data/NPCGiftTastes:Sable[{i}]", "Sable", tastes[i]));
         var speak = new System.Text.RegularExpressions.Regex(@"speak (\w+) ""([^""]*)""");
-        foreach (string location in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
+        foreach (string location in EventLocations)
             foreach (var (key, script) in Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + location))
                 if (key.StartsWith(ModEntry.Id))
                     foreach (System.Text.RegularExpressions.Match m in speak.Matches(script))
@@ -2274,7 +2279,7 @@ internal static class DevGame
         // The content pack's text comes from its i18n file: every token should
         // have resolved, in the dialogue and in the rest of what it adds.
         var raw = texts.Select(t => (t.Where, t.Text)).ToList();
-        foreach (string location in new[] { Shop.ArtShop.LocationName, "Forest", "JoshHouse" })
+        foreach (string location in EventLocations)
             foreach (var (key, script) in Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + location))
                 if (key.StartsWith(ModEntry.Id))
                     raw.Add(($"event {key.Split('/')[0]}", script));

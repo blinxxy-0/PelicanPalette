@@ -21,6 +21,12 @@ PICKS = {
     "plan_chest": ("plan_chest", 23),
     "lectern": ("lectern", 47),
 }
+# Drawn pixel by pixel (tools/art/back_room_door.py), already tile-sized: the
+# sign and the window for the back room's door in the shop.
+LOCAL = {
+    "door_sign": "art/back_room/door_sign.png",
+    "door_window": "art/back_room/door_window.png",
+}
 
 
 def load(gen_dir, job, n):
@@ -45,8 +51,10 @@ def main():
     sheet = Image.open(sheet_path).convert("RGBA")
     places = json.load(open(index))
     taken = {(p["x"] + i, p["y"] + j) for p in places.values() for i in range(p["w"]) for j in range(p["h"])}
-    for name, (job, n) in PICKS.items():
-        piece = on_grid(selout(load(gen_dir, job, n)))
+    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+    pieces = [(name, on_grid(selout(load(gen_dir, job, n)))) for name, (job, n) in PICKS.items()]
+    pieces += [(name, Image.open(os.path.join(here, path)).convert("RGBA")) for name, path in LOCAL.items()]
+    for name, piece in pieces:
         w, h = piece.width // 16, piece.height // 16
         rows = sheet.height // 16
         spot = places.get(name) and (places[name]["x"], places[name]["y"]) or free_spot(taken, w, h, rows)

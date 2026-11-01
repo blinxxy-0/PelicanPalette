@@ -28,6 +28,7 @@ internal static class Julian
 
     public static void Register(IModHelper helper)
     {
+        JulianEvents.Register();
         helper.Events.GameLoop.DayStarted += OnDayStarted;
         helper.Events.GameLoop.TimeChanged += (_, e) => UpdateVisibility(e.NewTime);
         helper.Events.GameLoop.DayEnding += (_, _) => RememberFriendship(Game1.player);

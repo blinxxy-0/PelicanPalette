@@ -574,5 +574,10 @@
   "portfolio.slot.glacierfish": "The Glacierfish",
   "portfolio.slot.glacierfish.hint": "A still life of the Glacierfish, caught off Arrowhead Island in winter.",
   "portfolio.slot.mutant-carp": "The Mutant Carp",
-  "portfolio.slot.mutant-carp.hint": "A still life of the Mutant Carp, caught in the sewers."
+  "portfolio.slot.mutant-carp.hint": "A still life of the Mutant Carp, caught in the sewers.",
+  "julian.review.iridium": "{{title}}. The light is right, the colour is right, and I resent not finding the flaw.#$b#One note: you stopped short of the edges. Paint all the way to them next time.$u",
+  "julian.review.gold": "{{title}}. Confident colour, honest light.#$b#The composition is a little polite. Be ruder.$7",
+  "julian.review.plain": "{{title}}. The colours argue in the middle, and the edges wander.#$b#But you saw something, and that's the part nobody can teach.$0",
+  "julian.review.none": "There's nothing of yours in the book. A critic can't review an empty wall.$u",
+  "julian.event.sable-dinner": "Stay for dinner, Julian. The farmer cooks.$u#$b#Badly.$u"
 }

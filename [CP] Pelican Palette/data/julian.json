@@ -77,6 +77,54 @@
       "Target": "Characters/schedules/JulianVane",
       "FromFile": "data/julian_schedule.json"
     },
-    { "Action": "Include", "FromFile": "data/julian_dialogue.json" }
+    { "Action": "Include", "FromFile": "data/julian_dialogue.json" },
+    // His heart events (tools/build_julian_events.py, from docs/julian_events.md).
+    { "Action": "Include", "FromFile": "data/julian_events.json" },
+
+    // ---- The things in his story (tools/art/julian_items.py) ----
+    // The catalogue from Sable's first show (his 8 hearts: you give it to
+    // Sable), and his review of Sable's new painting, framed (10 hearts).
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/JulianItems", "FromFile": "assets/julian/items.png" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "blinxxy.MuseArt_OldCatalogue": {
+          "Name": "blinxxy.MuseArt_OldCatalogue",
+          "DisplayName": "{{i18n:julian.item.catalogue}}",
+          "Description": "{{i18n:julian.item.catalogue.description}}",
+          "Type": "Quest",
+          "Category": 0,
+          "Price": 0,
+          "Texture": "Mods/blinxxy.MuseArt/JulianItems",
+          "SpriteIndex": 0,
+          "Edibility": -300,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Furniture",
+      "Entries": {
+        // name/type/sheet size/bounding box/rotations/price/placement/display name/sprite index/texture/off limits for sale
+        "blinxxy.MuseArt_JulianReview": "blinxxy.MuseArt_JulianReview/painting/2 2/2 2/1/500/-1/{{i18n:julian.item.review}}/1/Mods\\blinxxy.MuseArt\\JulianItems/true"
+      }
+    },
+    // Giving the catalogue to Sable: what they say depends on how close you are.
+    // Either way, they keep it (and Julian's last event can follow).
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/Sable",
+      "Entries": { "AcceptGift_(O)blinxxy.MuseArt_OldCatalogue": "{{i18n:sable.catalogue.cold}}$action AddMail Current blinxxy.MuseArt_CatalogueGiven Received" },
+      "When": { "Hearts:Sable": "0, 1, 2, 3" }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/Sable",
+      "Entries": { "AcceptGift_(O)blinxxy.MuseArt_OldCatalogue": "{{i18n:sable.catalogue.warm}}$action AddMail Current blinxxy.MuseArt_CatalogueGiven Received" },
+      "When": { "Hearts:Sable|contains=0, 1, 2, 3": "false" }
+    }
   ]
 }

@@ -51,10 +51,10 @@ FURNITURE_COLS = 16
 # tilesets() below, which the back room shares.
 # The back room (1.2): a door in the back wall, where a painting and the
 # leaning canvases were (they moved into the back room). It's Emily's
-# closet door from Haley's house (townInterior: frame top on Front, the
-# door on Buildings), and a Warp, clicked like any house door.
+# closet door from Haley's house (townInterior, on Buildings), and a Warp,
+# clicked like any house door.
 BACK_DOOR_X = 12
-BACK_DOOR_TILES = {("Front", 1): 1390, ("Buildings", 2): 1389, ("Buildings", 3): 1421}
+BACK_DOOR_TILES = {("Buildings", 2): 1389, ("Buildings", 3): 1421}
 BACK_ROOM = "blinxxy.MuseArt_ArtShopBackRoom"
 
 # Light (2026-10-25: the user found the shop unlit). Windows either side of
@@ -238,6 +238,11 @@ def furnish(room, leah, pierre, gallery):
     room.place("rack_cubbies", 9, 2)
     for (layer, y), tile in BACK_DOOR_TILES.items():
         room.put(layer, BACK_DOOR_X, y, INTERIOR + tile)
+    # An "Artists only!" sign over it (in place of Emily's sconce), and a
+    # lit window in its upper panel (tools/art/back_room_door.py), so it
+    # reads as a room artists are welcome in, not a cupboard.
+    room.place("door_sign", BACK_DOOR_X - 1, 1, solid=0)
+    room.place("door_window", BACK_DOOR_X, 2, solid=0)
     room.actions.append(("Buildings", BACK_DOOR_X, 3, f"Warp {room.back_room_arrival[0]} {room.back_room_arrival[1]} {BACK_ROOM}"))
     # Leah's fireplace (her tiles x 10-13: log piles either side of the
     # hearth, the chimney cap in the frame) in the right-hand corner, under
