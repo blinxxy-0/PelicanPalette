@@ -22,7 +22,7 @@ Julian judges a painting contest at the Fair, at a table on the grass beside the
 All three nights from 5pm, Sable keeps a little skiff of their own, moored below the bridge to the submarine. Talk to them from the bridge.
 
 - **The Moonlit Frame:** one a night, for 1,500g. Frame a painting in it at an easel, and it hangs in midnight blue and silver. When you have one, the easel's framing screen lets you choose Plain or Moonlit.
-- **Unusual paintings:** Sable buys them for half as much again, up to three a night:
+- **Unusual paintings:** Sable buys them for 50% more (1.5× the usual price), up to three a night:
   - views of the Far Places (the desert, the Skull Cavern, Ginger Island, the Secret Woods)
   - the legendary fish
   - monsters
