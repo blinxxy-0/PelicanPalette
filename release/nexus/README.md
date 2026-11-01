@@ -9,7 +9,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
   - The wiki link points at https://github.com/blinxxy-0/PelicanPalette/wiki. Run `tools/build_wiki.py` and push `docs/wiki` to the wiki repo (`PelicanPalette.wiki.git`) when it changes.
 - The release zip is `ArtStudio/bin/Release/net6.0/PelicanPalette 1.2.0.zip`. Build it with `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false`.
 - Images, all in `docs/media/`:
-  - `page/`: `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description.
+  - `page/`: `update_1_2.png` (what's new in 1.2, made by `tools/art/update_card.py` after `museart_updatecard`), `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description.
   - `screens/`: in-game screenshots for the description and the Images tab.
 
 ## Page fields

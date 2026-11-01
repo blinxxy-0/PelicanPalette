@@ -67,6 +67,7 @@ internal static class DevMedia
             _monitor.Log($"Saved {names.Count + 1} sheets.", LogLevel.Info);
         });
         DevTools.AddCommand(helper, "museart_signtext", "Renders a heading in the game's bold font to media/sign_<slug>.png. Usage: museart_signtext Features", (_, args) => SignText(string.Join(" ", args)));
+        DevTools.AddCommand(helper, "museart_updatecard", "Renders the 1.2 update card's parchment, lines and in-game icons to media/update_card.png (tools/art/update_card.py adds the sky, title and portraits).", (_, _) => UpdateCard());
         DevTools.AddCommand(helper, "museart_wikidata", "Writes media/wikidata.json and media/icons/ for the wiki.", (_, _) => WikiData());
         // Staging a shot.
         DevTools.AddCommand(helper, "museart_zoom", "Sets the game's zoom. Usage: museart_zoom 1.5", (_, args) =>
@@ -211,6 +212,83 @@ internal static class DevMedia
         using var stream = File.Create(Path.Combine(Dir, "sign_" + slug + ".png"));
         target.SaveAsPng(stream, w, h);
         _monitor.Log($"Sign text saved: media/sign_{slug}.png.", LogLevel.Info);
+    }
+
+    // ---- The 1.2 update card ----
+
+    // What's new in 1.2, one line each, with the icons beside it: items drawn
+    // as the game draws them, creatures and villagers from their sprites.
+    // The Python side (tools/art/update_card.py) adds what the game can't
+    // draw here (the lectern, plan chest and skiff from our map art), and
+    // the sky, the gold title and the portraits.
+    private static readonly (string Line, string[] Icons)[] UpdateLines =
+    {
+        ("-A back room and portfolio book", new[] { "lectern" }),
+        ("-A plan chest for your keepers", new[] { "planchest" }),
+        ("-Julian Vane, the visiting critic", new[] { "npc:JulianVane" }),
+        ("-Five new heart events", new[] { "(O)" + ModEntry.Id + "_OldCatalogue", "(F)" + ModEntry.Id + "_JulianReview" }),
+        ("-A painting contest at the Fair", new[] { "ribbon:0", "ribbon:1", "ribbon:2" }),
+        ("-Sable's Night Market stall", new[] { "skiff" }),
+        ("-The Moonlit Frame", new[] { "(O)" + ArtItems.MoonlitFrameItemId, "moonlit-painting" }),
+        ("-Paint the monsters you've slain", new[] { "creature:Green Slime", "creature:Bat", "creature:Dust Spirit" }),
+        ("-Krobus and the Wizard sit for you", new[] { "npc:Krobus", "npc:Wizard" }),
+        ("-Your portfolio at the gallery", new[] { "painting" }),
+        ("-The painting record, in tabs", new[] { "tabs" }),
+        ("-Fits Stardew Valley Expanded", Array.Empty<string>()),
+    };
+
+    public const int CardWidth = 1200, CardTop = 250, CardLine = 72;
+
+    private static void UpdateCard()
+    {
+        if (!Context.IsWorldReady) return;
+        var device = Game1.graphics.GraphicsDevice;
+        int textW = UpdateLines.Max(l => SpriteText.getWidthOfString(l.Line));
+        int iconX = 64 + textW + 40;
+        int h = CardTop + UpdateLines.Length * CardLine + 260;
+        using var target = new RenderTarget2D(device, CardWidth, h);
+        var previous = device.GetRenderTargets();
+        device.SetRenderTarget(target);
+        device.Clear(Color.Transparent);
+        var b = Game1.spriteBatch;
+        b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+        StardewValley.Menus.IClickableMenu.drawTextureBox(b, 0, 0, CardWidth, h, Color.White);
+        SpriteText.drawStringHorizontallyCenteredAt(b, "1.2 Update", CardWidth / 2, CardTop - 84);
+        var slots = new List<string>();
+        for (int i = 0; i < UpdateLines.Length; i++)
+        {
+            var (line, icons) = UpdateLines[i];
+            int y = CardTop + i * CardLine;
+            SpriteText.drawString(b, line, 64, y);
+            for (int j = 0; j < icons.Length; j++)
+            {
+                var at = new Vector2(iconX + j * 72, y - 12);
+                string icon = icons[j];
+                if (icon.StartsWith("(") )
+                    ItemRegistry.Create(icon).drawInMenu(b, at, 1f, 1f, 0.9f, StackDrawType.Hide);
+                else if (icon == "moonlit-painting")
+                    ArtHooks.Frame(DevTools.TestPainting("view:Town:winter", PaintingRules.Gold), moonlit: true).drawInMenu(b, at, 1f, 1f, 0.9f, StackDrawType.Hide);
+                else if (icon == "painting")
+                    ArtHooks.Frame(DevTools.TestPainting("(O)24", PaintingRules.Iridium)).drawInMenu(b, at, 1f, 1f, 0.9f, StackDrawType.Hide);
+                else if (icon == "tabs")
+                    DevTools.TestPainting("(O)24", PaintingRules.Gold).drawInMenu(b, at, 1f, 1f, 0.9f, StackDrawType.Hide);
+                else if (icon.StartsWith("creature:"))
+                    Creatures.Draw(b, icon.Substring("creature:".Length), new Rectangle((int)at.X + 4, (int)at.Y + 4, 56, 56));
+                else if (icon.StartsWith("ribbon:"))
+                    b.Draw(Game1.content.Load<Texture2D>($"Mods/{ModEntry.Id}/JulianItems"), new Rectangle((int)at.X + 8, (int)at.Y + 4, 48, 48),
+                        new Rectangle(48 + 16 * int.Parse(icon.Substring("ribbon:".Length)), 0, 16, 16), Color.White);
+                else if (icon.StartsWith("npc:") && Game1.getCharacterFromName(icon.Substring(4)) is { } npc)
+                    b.Draw(npc.Sprite.Texture, new Rectangle((int)at.X + 16, (int)at.Y - 6, 32, 64), new Rectangle(0, 0, 16, 32), Color.White);
+                else
+                    slots.Add($"{icon} {(int)at.X} {(int)at.Y}");       // drawn by the Python side
+            }
+        }
+        b.End();
+        device.SetRenderTargets(previous);
+        using (var stream = File.Create(Path.Combine(Dir, "update_card.png")))
+            target.SaveAsPng(stream, CardWidth, h);
+        File.WriteAllLines(Path.Combine(Dir, "update_card_slots.txt"), slots);
+        _monitor.Log($"Update card saved: media/update_card.png ({CardWidth}x{h}), {slots.Count} icons left for the Python side.", LogLevel.Info);
     }
 
     // ---- The wiki's data ----
