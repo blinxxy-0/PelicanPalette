@@ -126,6 +126,16 @@ internal static class DevMedia
             foreach (string id in args)
                 Game1.player.eventsSeen.Add(id);
         });
+        DevTools.AddCommand(helper, "museart_flag", "Sets mail flags, then sleeps to the next morning so Content Patcher's conditions see them. Usage: museart_flag blinxxy.MuseArt_MargotCottageBuilt", (_, args) =>
+        {
+            foreach (string id in args)
+                Game1.player.mailReceived.Add(id);
+            Game1.saveOnNewDay = false;
+            Game1.player.currentLocation = Utility.getHomeOfFarmer(Game1.player);
+            Game1.player.Position = new Microsoft.Xna.Framework.Vector2(9f, 9f) * 64f;
+            Game1.player.isInBed.Value = true;
+            Game1.NewDay(0f);
+        });
         DevTools.AddCommand(helper, "museart_scenario", "Opens one of the easel snapshot scenarios in the game. Usage: museart_scenario <name> [level]", (_, args) =>
         {
             var match = DevTools.Scenarios(args.Length > 1 ? int.Parse(args[1]) : 8).FirstOrDefault(s => s.Name == args[0]);

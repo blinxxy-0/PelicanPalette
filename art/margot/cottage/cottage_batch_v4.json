@@ -1,0 +1,37 @@
+{
+ "batch": "stardew-margot-cottage4",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "image_size": {
+   "width": 96,
+   "height": 96
+  },
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/style_town_houses.png",
+  "style_usage": "the exact Stardew Valley town building style and PIXEL SCALE of these houses: doors, windows, boards and shingles must be exactly this size; square-on front view from above",
+  "reference_images": [
+   [
+    "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/cottage_guide_v4.png",
+    "layout and outline: a steep gable roof rising to a central peak, a cream triangular gable face with a small window, the big window left and the full-size arched door right below; keep this size, shape and layout exactly"
+   ],
+   [
+    "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/c3_look.png",
+    "the look AND THE SHAPE to keep: this cottage's steep front gable with its cream triangle face, sage shingle roof slopes, stone chimney, arched door with a round window, ivy on the left corner, pink flower box; draw the same shape at the reference houses' larger pixel scale"
+   ]
+  ]
+ },
+ "jobs": {
+  "cottage_v4a": {
+   "description": "Stardew Valley town building at exactly the pixel scale of the reference houses: a small cottage six tiles wide and six tall, drawn square-on from the front and above, shaped like a steep front-gabled cottage: sage green shingled roof slopes rising to a peak in the middle, a cream boarded triangular gable facing us with a small window, a small stone chimney. Below, the face we see is the back of the house: a big multi-paned picture window with a pink flower box, and at the right an arched wooden door with a small round window, exactly as big as the doors of the reference houses. Ivy climbing the left corner. Dark coloured (not black) outlines, transparent background",
+   "seed": 20
+  },
+  "cottage_v4b": {
+   "description": "Stardew Valley town building at exactly the pixel scale of the reference houses: a small cottage six tiles wide and six tall, drawn square-on from the front and above, shaped like a steep front-gabled cottage: sage green shingled roof slopes rising to a peak in the middle, a cream boarded triangular gable facing us with a small window, a small stone chimney. Below, the face we see is the back of the house: a big multi-paned picture window with a pink flower box, and at the right an arched wooden door with a small round window, exactly as big as the doors of the reference houses. Ivy climbing the left corner. Dark coloured (not black) outlines, transparent background",
+   "seed": 21
+  },
+  "cottage_v4c": {
+   "description": "Stardew Valley town building at exactly the pixel scale of the reference houses: a small cottage six tiles wide and six tall, drawn square-on from the front and above, shaped like a steep front-gabled cottage: sage green shingled roof slopes rising to a peak in the middle, a cream boarded triangular gable facing us with a small window, a small stone chimney. Below, the face we see is the back of the house: a big multi-paned picture window with a pink flower box, and at the right an arched wooden door with a small round window, exactly as big as the doors of the reference houses. Ivy climbing the left corner. Dark coloured (not black) outlines, transparent background",
+   "seed": 22
+  }
+ }
+}

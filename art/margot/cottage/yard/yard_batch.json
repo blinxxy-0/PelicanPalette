@@ -1,0 +1,44 @@
+{
+ "batch": "stardew-margot-yard",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/style_town_houses.png",
+  "style_usage": "the exact Stardew Valley town style, pixel scale and colours of this scene's outdoor objects (lamp posts, bins, planters): square-on, top seen as a band",
+  "reference_usage": "camera and outline: the front face square-on with its top seen as a flat band above it, no side faces; keep this size and shape, bottom edge on the ground"
+ },
+ "jobs": {
+  "workbench": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/yard/bench_guide.png",
+   "description": "Stardew Valley outdoor yard object, one object alone on a transparent background, drawn square-on from the front with its top seen as a band above, no side faces, at exactly the pixel scale of the reference town (one tile is 16 pixels), dark coloured (not black) outlines: a sturdy wooden frame-maker's workbench with a vice holding a length of picture-frame moulding, a hand plane on top and curly wood shavings"
+  },
+  "mitre": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/yard/saw_guide.png",
+   "description": "Stardew Valley outdoor yard object, one object alone on a transparent background, drawn square-on from the front with its top seen as a band above, no side faces, at exactly the pixel scale of the reference town (one tile is 16 pixels), dark coloured (not black) outlines: a wooden sawhorse with a mitre box and a backsaw on it, cutting a length of gilded picture-frame moulding at an angle"
+  },
+  "moulding_rack": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/yard/rack_guide.png",
+   "description": "Stardew Valley outdoor yard object, one object alone on a transparent background, drawn square-on from the front with its top seen as a band above, no side faces, at exactly the pixel scale of the reference town (one tile is 16 pixels), dark coloured (not black) outlines: an upright wooden rack holding long lengths of picture-frame moulding, gilded, carved and plain, and two old empty frames leaning against it"
+  },
+  "water_bench": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/yard/seat_guide.png",
+   "description": "Stardew Valley outdoor yard object, one object alone on a transparent background, drawn square-on from the front with its top seen as a band above, no side faces, at exactly the pixel scale of the reference town (one tile is 16 pixels), dark coloured (not black) outlines: a simple weathered wooden garden bench seen from behind, facing away toward the water, with a sketchbook left on the seat"
+  }
+ }
+}

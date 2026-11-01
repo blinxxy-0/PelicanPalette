@@ -17,6 +17,9 @@ internal static class Margot
     public const string Name = "MargotPell";
     public const string LetterFlag = ModEntry.Id + "_MargotLetter";
     public const string ArrivedFlag = ModEntry.Id + "_MargotArrived";
+    public const string CottageFlag = ModEntry.Id + "_MargotCottageBuilt";
+    // Her cottage on the town map, with its bench (tools/build_margot_cottage.py).
+    public static readonly Microsoft.Xna.Framework.Rectangle CottageArea = new(18, 91, 6, 8);
     private const string DueKey = ModEntry.Id + "/MargotDue";
     public const int DaysAfterLetter = 7;
 
@@ -26,7 +29,26 @@ internal static class Margot
 
     public static void Register(IModHelper helper)
     {
-        helper.Events.GameLoop.DayStarted += (_, _) => Update();
+        helper.Events.GameLoop.DayStarted += (_, _) =>
+        {
+            Update();
+            ClearCottagePlot();
+        };
+    }
+
+    // Once the cottage stands, nothing the town grew there (its bush, weeds,
+    // stones) stays under it.
+    internal static void ClearCottagePlot()
+    {
+        if (!Context.IsMainPlayer || !Game1.MasterPlayer.mailReceived.Contains(CottageFlag)) return;
+        var town = Game1.getLocationFromName("Town");
+        if (town == null) return;
+        var area = new Microsoft.Xna.Framework.Rectangle(CottageArea.X * 64, CottageArea.Y * 64, CottageArea.Width * 64, CottageArea.Height * 64);
+        town.largeTerrainFeatures.RemoveWhere(f => f.getBoundingBox().Intersects(area));
+        foreach (var tile in town.terrainFeatures.Keys.Where(t => CottageArea.Contains((int)t.X, (int)t.Y)).ToList())
+            town.terrainFeatures.Remove(tile);
+        foreach (var tile in town.objects.Keys.Where(t => CottageArea.Contains((int)t.X, (int)t.Y)).ToList())
+            town.objects.Remove(tile);
     }
 
     internal static void Update()

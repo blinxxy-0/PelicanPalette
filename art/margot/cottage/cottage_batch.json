@@ -1,0 +1,29 @@
+{
+ "batch": "stardew-margot-cottage2",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "image_size": {
+   "width": 64,
+   "height": 80
+  },
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/style_town_houses.png",
+  "style_usage": "the exact Stardew Valley town building style, camera, pixel scale and colours of these houses: square-on front view from above, the roof seen as a big sloped area, wood and shingle ramps, dark coloured outlines",
+  "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/cottage/cottage_guide.png",
+  "reference_usage": "layout and outline: a roof across the top half, the wall below with a big window across the left three quarters and a small porch with a door at the right end; keep this size, shape and layout exactly; the door is full size, a whole tile wide and nearly as tall as the wall, like the reference houses' doors: the building is small, the door is not"
+ },
+ "jobs": {
+  "cottage_a": {
+   "description": "Stardew Valley town building, a small cosy cottage, 4 tiles wide and 5 tall, drawn square-on from the front and above exactly like the reference town houses: a big sloped roof seen from above taking the top half, the wall face below. Cream painted wooden boards, a sage green shingled roof, a small brick chimney. The face we see is the back of the house: one big multi-paned picture window across most of it, looking out at the water, with a flower box under it. At the right end, a small covered side porch with a full-size wooden door exactly as big as the doors on the reference houses (a whole tile wide and nearly the full height of the wall). Dark coloured (not black) outlines, transparent background",
+   "seed": 1
+  },
+  "cottage_b": {
+   "description": "Stardew Valley town building, a small cosy cottage, 4 tiles wide and 5 tall, drawn square-on from the front and above exactly like the reference town houses: a big sloped roof seen from above taking the top half, the wall face below. Warm cream and pale sage painted wooden boards, a deep teal-green shingled roof, a small brick chimney. The face we see is the back of the house: one big multi-paned picture window across most of it, looking out at the water, with a flower box under it. At the right end, a small covered side porch with a full-size wooden door exactly as big as the doors on the reference houses (a whole tile wide and nearly the full height of the wall). Dark coloured (not black) outlines, transparent background",
+   "seed": 2
+  },
+  "cottage_c": {
+   "description": "Stardew Valley town building, a small cosy cottage, 4 tiles wide and 5 tall, drawn square-on from the front and above exactly like the reference town houses: a big sloped roof seen from above taking the top half, the wall face below. Cream painted wooden boards, a sage green shingled roof, a small stone chimney, ivy climbing one corner. The face we see is the back of the house: one big multi-paned picture window across most of it, looking out at the water, with a flower box under it. At the right end, a small covered side porch with a full-size wooden door exactly as big as the doors on the reference houses (a whole tile wide and nearly the full height of the wall). Dark coloured (not black) outlines, transparent background",
+   "seed": 3
+  }
+ }
+}

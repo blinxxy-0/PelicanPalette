@@ -133,6 +133,39 @@
       ]
     },
 
+    // ---- Her cottage (tools/build_margot_cottage.py) ----
+    // Built by Robin after her 4-heart event, between the main road and the
+    // river south of Haley and Emily's: the back of the house faces us, a
+    // big window to the water, and the door's at the right-hand end, by the
+    // cherry tree. The patch only adds its own tiles (Overlay), so the
+    // ground is the town's own, vanilla or Stardew Valley Expanded.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/Town",
+      "FromFile": "assets/MargotCottagePatch.tmx",
+      "ToArea": { "X": 18, "Y": 91, "Width": 6, "Height": 8 },
+      "PatchMode": "Overlay",
+      "MapTiles": [
+        { "Position": { "X": 21, "Y": 96 }, "Layer": "Buildings", "SetProperties": { "Action": "LockedDoorWarp 6 8 blinxxy.MuseArt_MargotCottage 900 2200" } },
+        // The town's bush on the plot (its spawn tile); Social/Margot.cs
+        // clears the bush itself from saves that already have it.
+        { "Position": { "X": 19, "Y": 94 }, "Layer": "Paths", "Remove": true }
+      ],
+      "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
+    },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_MargotCottage", "FromFile": "assets/MargotCottage.tmx" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_MargotCottage": {
+          "DisplayName": "{{i18n:location.margot-cottage}}",
+          "DefaultArrivalTile": { "X": 6, "Y": 8 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_MargotCottage", "Type": "StardewValley.Locations.DecoratableLocation" }
+        }
+      }
+    },
+
     // ---- Gifts: love / like / dislike / hate / neutral ----
     // Loves: green tea, rhubarb pie, the ancient doll, the golden mask,
     // diamonds (and fine paintings, which the C# mod handles for everyone).

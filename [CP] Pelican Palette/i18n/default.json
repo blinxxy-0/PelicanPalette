@@ -406,5 +406,6 @@
   "margot.dialogue.rainy": "Rain's good for paintings. Steady and damp and nobody tracking mud in. Well. Fewer people.$7",
   "mail.margot-letter.title": "A visitor from the city",
   "mail.margot-letter": "Dear @,^^The painting you found has caused quite a stir. I wrote to the Museum of Art in Zuzu City, and they are sending a conservator to see it, and any others the valley turns up.^^Her name is Margot Pell. She arrives next week, and Gus has a room for her. I'm told she talks a great deal.^^   -Gunther",
-  "location.margot-room": "Margot's Room"
+  "location.margot-room": "Margot's Room",
+  "location.margot-cottage": "Margot's Cottage"
 }
