@@ -137,36 +137,114 @@ internal static class Creatures
 
     public static void Draw(SpriteBatch b, string name, Rectangle area, Color? multiply = null)
     {
-        if (Frame(name) is not { } frame) return;
-        float scale = Math.Min(area.Width / (float)frame.Source.Width, area.Height / (float)frame.Source.Height);
+        if (Frame(name) is { } frame)
+            DrawSprite(b, frame.Texture, frame.Source, TintOf(name), area, multiply);
+    }
+
+    // A sprite in a slot, as big as fits (shared with animals).
+    public static void DrawSprite(SpriteBatch b, Texture2D texture, Rectangle source, Color tint, Rectangle area, Color? multiply = null)
+    {
+        float scale = Math.Min(area.Width / (float)source.Width, area.Height / (float)source.Height);
         scale = scale >= 2f ? MathF.Floor(scale) : scale;     // (whole steps when there's room; a tall one fills its slot)
-        var size = new Vector2(frame.Source.Width, frame.Source.Height) * scale;
+        var size = new Vector2(source.Width, source.Height) * scale;
         var at = new Vector2(area.Center.X - size.X / 2, area.Center.Y - size.Y / 2);
-        var tint = TintOf(name);
         if (multiply is { } m) tint = new Color(tint.ToVector4() * m.ToVector4());
-        b.Draw(frame.Texture, at, frame.Source, tint, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
+        b.Draw(texture, at, source, tint, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
+    }
+
+    // A frame trimmed to its figure's pixels (those at least minAlpha), or null if it's empty.
+    public static Rectangle? Trim(Texture2D texture, Rectangle frame, int minAlpha = 1)
+    {
+        frame = Rectangle.Intersect(frame, texture.Bounds);
+        if (frame.Width <= 0 || frame.Height <= 0) return null;
+        var pixels = new Color[frame.Width * frame.Height];
+        texture.GetData(0, frame, pixels, 0, pixels.Length);
+        int left = frame.Width, right = -1, top = frame.Height, bottom = -1;
+        for (int y = 0; y < frame.Height; y++)
+        for (int x = 0; x < frame.Width; x++)
+            if (pixels[y * frame.Width + x].A >= minAlpha)
+                (left, right, top, bottom) = (Math.Min(left, x), Math.Max(right, x), Math.Min(top, y), Math.Max(bottom, y));
+        return right < 0 ? null : new Rectangle(frame.X + left, frame.Y + top, right - left + 1, bottom - top + 1);
     }
 
     // The reference: the frame's pixels, tinted, in the painter's colours, centred.
     public static Reference Reference(string name, int canvasSize, IReadOnlyList<int> owned, Techniques allowed = Techniques.None)
     {
         var (texture, source) = Frame(name) ?? throw new InvalidOperationException($"No sprite for {name}.");
+        return ReferenceFrom(texture, source, TintOf(name), canvasSize, owned, allowed);
+    }
+
+    // Any sprite as a reference (shared with animals). With shrink, a sprite
+    // too big for the canvas is made smaller to fit, a block of pixels to a
+    // cell, each cell taking its block's commonest colour; on the figure's
+    // edge, its outline's colour, so the outline stays whole.
+    public static Reference ReferenceFrom(Texture2D texture, Rectangle source, Color tint, int canvasSize, IReadOnlyList<int> owned, Techniques allowed = Techniques.None, bool shrink = false, int minAlpha = 128)
+    {
         var pixels = new Color[source.Width * source.Height];
         texture.GetData(0, source, pixels, 0, pixels.Length);
-        var tint = TintOf(name);
+        for (int i = 0; i < pixels.Length; i++)
+            if (pixels[i].A < minAlpha) pixels[i] = Color.Transparent;
+        int w = source.Width, h = source.Height;
+        if (shrink && Math.Max(w, h) > canvasSize - 2)
+            (pixels, w, h) = Shrunk(pixels, w, h, canvasSize - 2);
         // On a square of blank cells (the technique limit expects one), centred.
-        int side = Math.Max(source.Width, source.Height);
-        int ox = (side - source.Width) / 2, oy = side - source.Height;
+        int side = Math.Max(w, h);
+        int ox = (side - w) / 2, oy = side - h;
         var cells = PixelCanvas.NewBlank(side);
         var marks = new Mark[side, side];
-        for (int x = 0; x < source.Width; x++)
-        for (int y = 0; y < source.Height; y++)
+        for (int x = 0; x < w; x++)
+        for (int y = 0; y < h; y++)
         {
-            var p = pixels[y * source.Width + x];
+            var p = pixels[y * w + x];
             if (p.A < 128) continue;
             (cells[ox + x, oy + y], marks[ox + x, oy + y]) = Technique.Nearest((byte)(p.R * tint.R / 255), (byte)(p.G * tint.G / 255), (byte)(p.B * tint.B / 255), owned, allowed);
         }
         Technique.Limit(cells, marks);
         return Core.Reference.Centered(cells, canvasSize, marks);
+    }
+
+    private static (Color[] Pixels, int Width, int Height) Shrunk(Color[] pixels, int w, int h, int fit)
+    {
+        float scale = fit / (float)Math.Max(w, h);
+        int nw = Math.Max(1, (int)MathF.Round(w * scale)), nh = Math.Max(1, (int)MathF.Round(h * scale));
+        bool Solid(Color[] px, int pw, int ph, int x, int y) => x >= 0 && y >= 0 && x < pw && y < ph && px[y * pw + x].A >= 128;
+        // The sprite's outline: solid pixels next to a clear one.
+        bool Edge(int x, int y) => Solid(pixels, w, h, x, y)
+            && !(Solid(pixels, w, h, x - 1, y) && Solid(pixels, w, h, x + 1, y) && Solid(pixels, w, h, x, y - 1) && Solid(pixels, w, h, x, y + 1));
+        var shrunk = new Color[nw * nh];
+        var outline = new Color?[nw * nh];
+        for (int y = 0; y < nh; y++)
+        for (int x = 0; x < nw; x++)
+        {
+            int x0 = x * w / nw, x1 = Math.Max(x0 + 1, (x + 1) * w / nw);
+            int y0 = y * h / nh, y1 = Math.Max(y0 + 1, (y + 1) * h / nh);
+            var counts = new Dictionary<Color, int>();
+            var edges = new Dictionary<Color, int>();
+            int clear = 0;
+            for (int sy = y0; sy < y1; sy++)
+            for (int sx = x0; sx < x1; sx++)
+            {
+                var p = pixels[sy * w + sx];
+                if (p.A < 128) clear++;
+                else counts[p] = counts.GetValueOrDefault(p) + 1;
+                if (Edge(sx, sy)) edges[p] = edges.GetValueOrDefault(p) + 1;
+            }
+            // Mostly clear stays clear; otherwise the commonest colour.
+            if (counts.Count > 0 && counts.Values.Sum() >= clear)
+                shrunk[y * nw + x] = counts.OrderByDescending(kv => kv.Value).First().Key;
+            if (edges.Count > 0)
+                outline[y * nw + x] = edges.OrderByDescending(kv => kv.Value).First().Key;
+        }
+        // Cells on the shrunk figure's edge take their block's outline colour.
+        var result = (Color[])shrunk.Clone();
+        for (int y = 0; y < nh; y++)
+        for (int x = 0; x < nw; x++)
+        {
+            bool edge = Solid(shrunk, nw, nh, x, y)
+                && !(Solid(shrunk, nw, nh, x - 1, y) && Solid(shrunk, nw, nh, x + 1, y) && Solid(shrunk, nw, nh, x, y - 1) && Solid(shrunk, nw, nh, x, y + 1));
+            if (edge && outline[y * nw + x] is { } line)
+                result[y * nw + x] = line;
+        }
+        return (result, nw, nh);
     }
 }

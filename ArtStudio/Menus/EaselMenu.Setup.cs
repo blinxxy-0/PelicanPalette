@@ -36,12 +36,15 @@ internal sealed partial class EaselMenu
     private static bool IsSitterSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Sitters.IsSitter(ids[0]);
     private bool SetupPortrait => IsSitterSubject(_setupItems);
     private bool SetupView => IsViewSubject(_setupItems);
-    // Creatures (1.2): a slot in the row below opens them in place of the bag.
+    // Creatures (1.2) and animals (1.3): a slot each in the row below opens
+    // them in place of the bag. _setupStudy is the open one's slot, or null.
     private bool SetupCreature => IsCreatureSubject(_setupItems);
-    private bool CreatureTooSmall => SetupCreature && !Creatures.Fits(Creatures.NameOf(_setupItems[0]), PaintingRules.CanvasSize(_setupCanvas));
-    private bool _setupCreatures;
-    private readonly List<(Rectangle Rect, string Name)> _creatureSlots = new();
-    private const string CreatureSlot = Creatures.Prefix;
+    private bool CreatureTooSmall => SetupCreature && !Studies.Fits(_setupItems[0], PaintingRules.CanvasSize(_setupCanvas));
+    private string? _setupStudy;
+    private bool _setupCreatures => _setupStudy != null;
+    private readonly List<(Rectangle Rect, string Subject)> _creatureSlots = new();
+    private const string CreatureSlot = Creatures.Prefix, AnimalSlot = Animals.Prefix;
+    private static bool IsStudySlot(string slot) => slot == CreatureSlot || slot == AnimalSlot;
     // The view's slot sits first in the sitters' row.
     private const string ViewSlot = Views.Prefix;
     private Rectangle _originalButton, _brushButton, _frameButton, _beginButton, _previewArea, _linenButton;
@@ -85,20 +88,25 @@ internal sealed partial class EaselMenu
         var sitters = _setupFraming || !StardewModdingAPI.Context.IsWorldReady ? new List<string>() : Sitters.Available(_who);
         if (_viewLocation != null && !_setupFraming)
             sitters.Insert(0, ViewSlot);
-        var creatures = _setupFraming || !StardewModdingAPI.Context.IsWorldReady ? new List<string>() : Creatures.Available(_who);
-        if (creatures.Count > 0)
-            sitters.Insert(_viewLocation != null ? 1 : 0, CreatureSlot);
-        else
-            _setupCreatures = false;
+        int at = _viewLocation != null ? 1 : 0;
+        foreach (string slot in new[] { CreatureSlot, AnimalSlot })
+        {
+            bool any = !_setupFraming && StardewModdingAPI.Context.IsWorldReady && Studies.Available(_who, slot).Count > 0;
+            if (any)
+                sitters.Insert(at++, slot);
+            else if (_setupStudy == slot)
+                _setupStudy = null;
+        }
+        var creatures = _setupStudy != null ? Studies.Available(_who, _setupStudy) : new List<string>();
         _creatureSlots.Clear();
         int itemsBottom = sitters.Count > 0 ? rowY - 12 - 40 - SlotSize - 8 : rowY - 12;
         int n = 0;
         if (_setupCreatures && !_setupFraming)
-            foreach (string name in creatures)
+            foreach (string subject in creatures)
             {
                 var rect = new Rectangle(gridX + n % cols * (SlotSize + SlotGap), gridY + n / cols * (SlotSize + SlotGap), SlotSize, SlotSize);
                 if (rect.Bottom > itemsBottom) break;
-                _creatureSlots.Add((rect, name));
+                _creatureSlots.Add((rect, subject));
                 n++;
             }
         foreach (var item in _setupCreatures && !_setupFraming ? Enumerable.Empty<Item>() : Game1.player.Items)
@@ -197,12 +205,11 @@ internal sealed partial class EaselMenu
                 return;
             }
 
-        foreach (var (rect, name) in _creatureSlots)
+        foreach (var (rect, subject) in _creatureSlots)
         {
             if (!rect.Contains(x, y)) continue;
             Game1.playSound("smallSelect");
             _setupOriginal = false;
-            string subject = Creatures.SubjectFor(name);
             bool again = _setupItems.Contains(subject);
             _setupItems.Clear();
             if (!again)
@@ -210,7 +217,7 @@ internal sealed partial class EaselMenu
                 _setupItems.Add(subject);
                 // A bigger creature needs a bigger canvas: the smallest it fits that's unlocked.
                 foreach (var kind in new[] { CanvasKind.Small, CanvasKind.Medium, CanvasKind.Large })
-                    if (CanvasUnlocked(kind) && Creatures.Fits(name, PaintingRules.CanvasSize(kind)) && kind >= _setupCanvas)
+                    if (CanvasUnlocked(kind) && Studies.Fits(subject, PaintingRules.CanvasSize(kind)) && kind >= _setupCanvas)
                     {
                         _setupCanvas = kind;
                         break;
@@ -253,9 +260,9 @@ internal sealed partial class EaselMenu
                 ClickView();
                 return;
             }
-            if (npc == CreatureSlot)
+            if (IsStudySlot(npc))
             {
-                _setupCreatures = !_setupCreatures;
+                _setupStudy = _setupStudy == npc ? null : npc;
                 Game1.playSound("shwip");
                 LayoutSetup();
                 return;
@@ -507,7 +514,7 @@ internal sealed partial class EaselMenu
         }
 
         int max = ReferenceBuilder.MaxItems(PaintingRules.CanvasSize(_setupCanvas));
-        Ui.Text(b, _setupCreatures ? I18n.Get("setup.pick-creature") : max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
+        Ui.Text(b, _setupStudy == AnimalSlot ? I18n.Get("setup.pick-animal") : _setupCreatures ? I18n.Get("setup.pick-creature") : max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
             new Vector2(left, _canvasButtons[0].Bottom + 18));
         if (_itemSlots.Count == 0 && !_setupCreatures)
             Ui.Text(b, I18n.Get("setup.nothing-to-paint"), new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
@@ -627,8 +634,8 @@ internal sealed partial class EaselMenu
     private void DrawSitters(SpriteBatch b, int left, Point mouse)
     {
         if (_sitterSlots.Count == 0) return;
-        bool creatures = _sitterSlots.Any(s => s.Npc == CreatureSlot);
-        int friends = _sitterSlots.Count(s => s.Npc != ViewSlot && s.Npc != CreatureSlot);
+        bool creatures = _sitterSlots.Any(s => IsStudySlot(s.Npc));
+        int friends = _sitterSlots.Count(s => s.Npc != ViewSlot && !IsStudySlot(s.Npc));
         bool viewOnly = friends == 0 && !creatures && _viewLocation != null;
         Ui.Text(b, I18n.Get(creatures ? "setup.pick-more" : viewOnly ? "setup.pick-view" : _viewLocation != null ? "setup.pick-view-or-portrait" : "setup.pick-portrait"), new Vector2(left, _sitterLabelY));
         foreach (var (rect, npc) in _sitterSlots)
@@ -639,13 +646,13 @@ internal sealed partial class EaselMenu
                 DrawViewSlot(b, rect, mouse);
                 continue;
             }
-            if (npc == CreatureSlot)
+            if (IsStudySlot(npc))
             {
-                Creatures.Draw(b, Creatures.Available(_who).FirstOrDefault() ?? "Green Slime", new Rectangle(rect.X + 10, rect.Y + 10, rect.Width - 20, rect.Height - 20));
-                if (_setupCreatures)
+                Studies.Draw(b, Studies.Available(_who, npc).FirstOrDefault() ?? Creatures.SubjectFor("Green Slime"), new Rectangle(rect.X + 10, rect.Y + 10, rect.Width - 20, rect.Height - 20));
+                if (_setupStudy == npc)
                     Ui.Outline(b, rect, new Color(214, 160, 30), 4);
                 if (rect.Contains(mouse))
-                    _hoverText = I18n.Get(_setupCreatures ? "setup.creatures-back" : "setup.creatures-hover");
+                    _hoverText = I18n.Get(_setupStudy == npc ? "setup.creatures-back" : npc == AnimalSlot ? "setup.animals-hover" : "setup.creatures-hover");
                 continue;
             }
             var texture = Sitters.PortraitTexture(npc);
@@ -665,17 +672,17 @@ internal sealed partial class EaselMenu
         }
     }
 
-    // Creatures you've met, in place of the bag, each from memory.
+    // Creatures you've met, or animals you own, in place of the bag.
     private void DrawCreatures(SpriteBatch b, Point mouse)
     {
-        foreach (var (rect, name) in _creatureSlots)
+        foreach (var (rect, subject) in _creatureSlots)
         {
             b.Draw(Game1.menuTexture, rect, Game1.getSourceRectForStandardTileSheet(Game1.menuTexture, 10), Color.White);
-            Creatures.Draw(b, name, new Rectangle(rect.X + 8, rect.Y + 8, rect.Width - 16, rect.Height - 16));
-            if (_setupItems.Contains(Creatures.SubjectFor(name)))
+            Studies.Draw(b, subject, new Rectangle(rect.X + 8, rect.Y + 8, rect.Width - 16, rect.Height - 16));
+            if (_setupItems.Contains(subject))
                 Ui.Outline(b, rect, new Color(214, 160, 30), 4);
             if (rect.Contains(mouse))
-                _hoverText = I18n.Get("setup.creature-hover", new { name = Creatures.DisplayName(name) });
+                _hoverText = I18n.Get(Animals.IsAnimal(subject) ? "setup.animal-hover" : "setup.creature-hover", new { name = Studies.DisplayName(subject) });
         }
     }
 

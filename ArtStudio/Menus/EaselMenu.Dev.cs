@@ -206,14 +206,18 @@ internal sealed partial class EaselMenu
     internal bool DevIsPainting => _stage == EaselStage.Painting;
 
     // The setup screen showing creatures in place of the bag, one picked.
-    internal void DevShowCreatures(string? pick = null)
+    internal void DevShowCreatures(string? pick = null) =>
+        DevShowStudies(CreatureSlot, pick == null ? null : Painting.Creatures.SubjectFor(pick));
+
+    // The creatures' or animals' panel open (by its slot), with a subject picked.
+    internal void DevShowStudies(string slot, string? subject = null)
     {
-        _setupCreatures = true;
+        _setupStudy = slot;
         LayoutSetup();
-        if (pick != null)
+        if (subject != null)
         {
             _setupItems.Clear();
-            _setupItems.Add(Painting.Creatures.SubjectFor(pick));
+            _setupItems.Add(subject);
             RefreshPreview();
         }
     }

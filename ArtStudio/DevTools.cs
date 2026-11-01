@@ -382,6 +382,24 @@ internal static class DevTools
             m.DevShowCreatures("Dust Spirit");
             return m;
         });
+        yield return ("setup_animals", () =>
+        {
+            var farm = Game1.getFarm();
+            foreach (string type in new[] { "White Chicken", "Duck", "Rabbit", "Brown Cow", "Goat", "Sheep", "Pig", "Ostrich", "Dinosaur" })
+                if (!farm.animals.Values.Any(a => a.type.Value == type))
+                {
+                    var animal = new FarmAnimal(type, Game1.Multiplayer.getNewID(), Game1.player.UniqueMultiplayerID) { Position = new Vector2(50, 20) * 64f };
+                    farm.animals.Add(animal.myID.Value, animal);
+                }
+            if (!farm.characters.Any(c => c is StardewValley.Characters.Pet))
+                farm.characters.Add(new StardewValley.Characters.Pet(52, 20, "1", "Dog"));
+            if (!farm.characters.Any(c => c is StardewValley.Characters.Horse))
+                farm.characters.Add(new StardewValley.Characters.Horse(Guid.NewGuid(), 53, 20));
+            var m = new EaselMenu(Game1.player);
+            m.DevShowStudies(Painting.Animals.Prefix, Painting.Animals.SubjectFor("Goat"));
+            m.DevSetCanvas(CanvasKind.Medium);
+            return m;
+        });
         yield return ("setup_free", () => { var m = new EaselMenu(Game1.player); m.DevSetupFree(); return m; });
         yield return ("paint_normal", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevMixedPalette(); return m; });
         yield return ("paint_hard", () => Hard(() => Paint(CanvasKind.Small, parsnip)));
@@ -458,7 +476,7 @@ internal static class DevTools
             Game1.player.modData[ModEntry.Id + "/CollectionPerks"] = "tubes,palette";
             return new CollectionMenu(Game1.player);
         });
-        foreach (var tab in new[] { RecordTab.Crops, RecordTab.Fish, RecordTab.Portraits, RecordTab.Views, RecordTab.Creatures, RecordTab.Other })
+        foreach (var tab in new[] { RecordTab.Crops, RecordTab.Fish, RecordTab.Portraits, RecordTab.Views, RecordTab.Creatures, RecordTab.Animals, RecordTab.Other })
             yield return ("record_" + tab.ToString().ToLowerInvariant(), () =>
             {
                 var entries = new Dictionary<string, CatalogueEntry>

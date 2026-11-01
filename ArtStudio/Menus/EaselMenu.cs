@@ -268,7 +268,8 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     private static bool IsViewSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Views.IsView(ids[0]);
 
-    private static bool IsCreatureSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Creatures.IsCreature(ids[0]);
+    // Creatures and animals (Studies).
+    private static bool IsCreatureSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Studies.IsStudy(ids[0]);
 
     // Portraits and views fill the canvas: they take an hour longer.
     private static bool IsLongSubject(IReadOnlyList<string> ids) => IsSitterSubject(ids) || IsViewSubject(ids);
@@ -276,7 +277,7 @@ internal sealed partial class EaselMenu : IClickableMenu
     private Reference? BuildReference(IReadOnlyList<string> ids, int size) =>
         ids.Count == 0 ? null
         : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned, TechniquesFor(ids, size))
-        : IsCreatureSubject(ids) ? Creatures.Reference(Creatures.NameOf(ids[0]), size, _owned, TechniquesFor(ids, size))
+        : IsCreatureSubject(ids) ? Studies.Reference(ids[0], size, _owned, TechniquesFor(ids, size))
         : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned, TechniquesFor(ids, size)) : null)
         : ReferenceBuilder.StillLife(ids, size, _owned, TechniquesFor(ids, size));
 
@@ -295,7 +296,7 @@ internal sealed partial class EaselMenu : IClickableMenu
     internal static string SubjectTitle(IReadOnlyList<string> ids) =>
         ids.Count == 0 ? I18n.Get("paint.title.free")
         : IsSitterSubject(ids) ? I18n.Get("painting.title.portrait", new { name = Sitters.DisplayName(Sitters.NpcOf(ids[0])) })
-        : IsCreatureSubject(ids) ? I18n.Get("painting.title.creature", new { name = Creatures.DisplayName(Creatures.NameOf(ids[0])) })
+        : IsCreatureSubject(ids) ? Studies.Title(ids[0])
         : IsViewSubject(ids) ? I18n.Get("painting.title.view", new { place = Views.PlaceName(ids[0]), season = Views.SeasonName(ids[0]) })
         : ids.Count == 1 ? I18n.Get("paint.title.still-life-of", new { item = ItemRegistry.GetDataOrErrorItem(ids[0]).DisplayName })
         : I18n.Get("paint.title.still-life");
@@ -304,7 +305,7 @@ internal sealed partial class EaselMenu : IClickableMenu
     {
         if (itemIds.Count == 0) return I18n.Get("subject.anything");
         if (IsSitterSubject(itemIds)) return Sitters.DisplayName(Sitters.NpcOf(itemIds[0]));
-        if (IsCreatureSubject(itemIds)) return Creatures.DisplayName(Creatures.NameOf(itemIds[0]));
+        if (IsCreatureSubject(itemIds)) return Studies.DisplayName(itemIds[0]);
         if (IsViewSubject(itemIds)) return I18n.Get("subject.view");
         if (itemIds.Count > 1) return I18n.Get("subject.still-life");
         string name = ItemRegistry.GetDataOrErrorItem(itemIds[0]).DisplayName.ToLowerInvariant();

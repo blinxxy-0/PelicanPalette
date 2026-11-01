@@ -72,7 +72,13 @@ internal sealed class PaintingData
     // A study of a creature: "creature:<monster name>" (1.2).
     public bool IsCreature => Creatures.IsCreature(Subject);
 
-    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter || IsView || IsCreature ? Array.Empty<string>() : Subject.Split('|');
+    // A study of one of your animals: "animal:<type>" (1.3).
+    public bool IsAnimal => Animals.IsAnimal(Subject);
+
+    // Either: painted from a sprite, from memory.
+    public bool IsStudy => IsCreature || IsAnimal;
+
+    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter || IsView || IsStudy ? Array.Empty<string>() : Subject.Split('|');
 
     public void WriteTo(Item item)
     {

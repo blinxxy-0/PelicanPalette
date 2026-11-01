@@ -161,6 +161,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_animaltest", "Animals: your pet, horse and farm animals as subjects, and the record's Animals tab (1.3).", (_, _) => AnimalTest(monitor));
         DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
         DevTools.AddCommand(helper, "museart_stalltest", "Sable's Night Market stall (1.2). Throwaway farm: 'museart_stalltest' goes to the market on Winter 15 at 6pm, then 'museart_stalltest check' a few seconds later.", (_, args) => StallTest(monitor, args));
         DevTools.AddCommand(helper, "museart_festactors", "At a festival: logs every villager and where they stand, for finding a free spot.", (_, _) =>
@@ -1462,6 +1463,74 @@ internal static class DevGame
             who.stats.specificMonstersKilled.Clear();
             foreach (var (name, count) in kills)
                 who.stats.specificMonstersKilled[name] = count;
+        }
+    }
+
+    // Animals (1.3, step 1): pets, the horse and farm animals as subjects.
+    private static void AnimalTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var farm = Game1.getFarm();
+        var added = new System.Collections.Generic.List<NPC>();
+        var addedAnimals = new System.Collections.Generic.List<long>();
+        try
+        {
+            // Every animal's side-on frame is found, and fits the large canvas.
+            int small = PaintingRules.CanvasSize(CanvasKind.Small), large = PaintingRules.CanvasSize(CanvasKind.Large);
+            var sizes = Animals.AllTypes().Select(t => (t, f: Animals.Frame(t))).ToList();
+            var bad = sizes.Where(x => x.f is not { } f || f.Source.Width < 8 || f.Source.Height < 8 || !Animals.Fits(x.t, large)).Select(x => x.t + (x.f is { } f ? $" {f.Source.Width}x{f.Source.Height}" : " none")).ToList();
+            Check(monitor, "every animal's frame is found and fits a large canvas", bad.Count == 0, string.Join(", ", bad));
+            monitor.Log("Animal frames: " + string.Join(", ", sizes.Select(x => x.f is { } f ? $"{x.t} {f.Source.Width}x{f.Source.Height}" : x.t + " none")), LogLevel.Info);
+            Check(monitor, "animals have their game names", Animals.DisplayName("White Cow") != "White Cow" || Animals.DisplayName("White Cow").Length > 0);
+
+            // Only the ones you own: none on a fresh farm, then a cow, a cat and a horse.
+            bool hadAny = Animals.Available().Count > 0;
+            var cow = new FarmAnimal("White Cow", Game1.Multiplayer.getNewID(), who.UniqueMultiplayerID);
+            cow.Position = new Vector2(60, 15) * 64f;
+            farm.animals.Add(cow.myID.Value, cow);
+            addedAnimals.Add(cow.myID.Value);
+            var cat = new StardewValley.Characters.Pet(62, 15, "2", "Cat");
+            farm.characters.Add(cat);
+            added.Add(cat);
+            var horse = new StardewValley.Characters.Horse(Guid.NewGuid(), 63, 15);
+            farm.characters.Add(horse);
+            added.Add(horse);
+            var available = Animals.Available();
+            Check(monitor, "your animals can be painted", available.Contains("White Cow") && available.Contains("Cat") && available.Contains(Animals.Horse), string.Join(", ", available));
+            Check(monitor, "...and not ones you don't own", hadAny || (!available.Contains("Pig") && !available.Contains("Dinosaur")));
+            Check(monitor, "a pet is painted as your own pet's breed", Animals.Frame("Cat") is { } catFrame && catFrame.Texture.Name?.Contains("cat2", StringComparison.OrdinalIgnoreCase) != false, Animals.Frame("Cat")?.Texture.Name ?? "none");
+
+            // References: a chicken fits the small canvas; a cow needs a bigger one.
+            var owned = Enumerable.Range(0, Palette.All.Length).ToList();
+            var chicken = Animals.Reference("White Chicken", small, owned);
+            Check(monitor, "a chicken fits a small canvas", Animals.Fits("White Chicken", small) && chicken.SubjectCells > 40, $"{chicken.SubjectCells} cells");
+            int medium = PaintingRules.CanvasSize(CanvasKind.Medium);
+            Check(monitor, "a cow needs a bigger canvas", !Animals.Fits("White Cow", small) && Animals.Fits("White Cow", large));
+            var goatRef = Animals.Reference("Goat", medium, owned);
+            var goatBig = Animals.Reference("Goat", large, owned);
+            Check(monitor, "a goat shrinks to fit a medium canvas", Animals.Fits("Goat", medium) && Animals.Fits("Sheep", medium) && Animals.Fits("Ostrich", medium)
+                && goatRef.SubjectCells > 150 && goatRef.SubjectCells < goatBig.SubjectCells, $"{goatRef.SubjectCells} of {goatBig.SubjectCells} cells");
+            Check(monitor, "the cows, the pig and the horse are large only", new[] { "White Cow", "Brown Cow", "Pig", Animals.Horse }.All(t => !Animals.Fits(t, medium) && Animals.Fits(t, large)));
+            Check(monitor, "rarer animals are worth more", Animals.SubjectPrice(Animals.SubjectFor("Ostrich")) > Animals.SubjectPrice(Animals.SubjectFor("White Chicken")));
+
+            // Through the easel: a study, kept in the record's Animals tab.
+            FreshStart(who);
+            var menu = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { Animals.SubjectFor("White Chicken") });
+            menu.DevPaintPartly(1f, 3);
+            menu.DevFinish(false);
+            var painting = menu.DevPainting;
+            var data = painting == null ? null : PaintingData.Read(painting);
+            Check(monitor, "an animal paints as a study", data?.IsAnimal == true && data.SubjectItems.Length == 0 && painting!.DisplayName.Contains(Animals.DisplayName("White Chicken")), painting?.DisplayName ?? "none");
+            Check(monitor, "...and goes in the record's Animals tab", RecordTabs.TabOfSubject(Animals.SubjectFor("White Chicken")) == RecordTab.Animals
+                && RecordTabs.Members(who, RecordTab.Animals).Any(m => m.Key == Animals.SubjectFor("White Chicken") && m.Painted != null)
+                && !RecordTabs.Members(who, RecordTab.Other).Any(m => Animals.IsAnimal(m.Key)));
+            Check(monitor, "the record lists every animal", RecordTabs.Progress(who, RecordTab.Animals).Total == Animals.AllTypes().Count());
+        }
+        finally
+        {
+            foreach (var c in added) farm.characters.Remove(c);
+            foreach (long id in addedAnimals) farm.animals.Remove(id);
         }
     }
 

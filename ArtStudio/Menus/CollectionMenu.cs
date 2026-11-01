@@ -195,6 +195,9 @@ internal sealed class CollectionMenu : IClickableMenu
             case RecordTab.Creatures:
                 Creatures.Draw(b, "Green Slime", inner);
                 break;
+            case RecordTab.Animals:
+                Animals.Draw(b, "White Chicken", inner);
+                break;
             default:
                 ItemRegistry.Create(TabIcon(tab)).drawInMenu(b, new Vector2(rect.X, rect.Y), 0.85f, 1f, 0.9f, StackDrawType.Hide, Color.White, false);
                 break;
@@ -235,8 +238,8 @@ internal sealed class CollectionMenu : IClickableMenu
 
         if (painted && _kept.TryGetValue(key, out var kept) && PaintingRenderer.TextureFor(kept) is { } picture)
             b.Draw(picture, inner, Color.White);
-        else if (Creatures.IsCreature(key))
-            Creatures.Draw(b, Creatures.NameOf(key), inner, painted ? null : Color.Black * 0.35f);
+        else if (Studies.IsStudy(key))
+            Studies.Draw(b, key, inner, painted ? null : Color.Black * 0.35f);
         else if (Sitters.IsSitter(key))
         {
             var texture = Sitters.PortraitTexture(Sitters.NpcOf(key));
@@ -290,11 +293,11 @@ internal sealed class CollectionMenu : IClickableMenu
     private string HoverFor(TabMember member)
     {
         string key = member.Key;
-        bool view = Views.IsView(key), sitter = Sitters.IsSitter(key), creature = Creatures.IsCreature(key);
+        bool view = Views.IsView(key), sitter = Sitters.IsSitter(key), creature = Studies.IsStudy(key);
         string name = _tab == RecordTab.Overview ? EaselMenu.SubjectTitle(key.Split('|'))
             : view ? Views.PlaceName(key)
             : sitter ? Sitters.DisplayName(Sitters.NpcOf(key))
-            : creature ? Creatures.DisplayName(Creatures.NameOf(key))
+            : creature ? Studies.DisplayName(key)
             : ItemRegistry.GetDataOrErrorItem(key).DisplayName;
 
         if (member.Painted is not { } entry)
@@ -304,7 +307,8 @@ internal sealed class CollectionMenu : IClickableMenu
             string hint = view ? "record.unpainted.view"
                 : key == Sitters.SubjectFor("Krobus") ? "record.unpainted.krobus"
                 : key == Sitters.SubjectFor("Wizard") ? "record.unpainted.wizard"
-                : sitter ? "record.unpainted.sitter" : creature ? (key == Creatures.SubjectFor(Creatures.Junimo) ? "record.unpainted.junimo" : "record.unpainted.creature") : "record.unpainted.item";
+                : sitter ? "record.unpainted.sitter" : Animals.IsAnimal(key) ? "record.unpainted.animal"
+                : creature ? (key == Creatures.SubjectFor(Creatures.Junimo) ? "record.unpainted.junimo" : "record.unpainted.creature") : "record.unpainted.item";
             return name + "\n" + I18n.Get(hint, new { hearts = Core.PaintingRules.PortraitHearts });
         }
         string text = name + "\n" + I18n.Get("record.hover", new { count = entry.Count, quality = Ui.QualityName(entry.BestQuality), date = WorldDate.ForDaysPlayed(entry.FirstDay).Localize() });
