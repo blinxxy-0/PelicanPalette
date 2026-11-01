@@ -205,7 +205,13 @@ internal static class PaintingContest
         // Leaning against the tree beside it, the villagers' entries: drawn
         // below (a prop would sort level with the trunk and go behind it), so
         // their prop is a blank one, only there to make them solid.
-        _blank ??= new Texture2D(Game1.graphics.GraphicsDevice, 32, 32);
+        if (_blank == null)
+        {
+            // (Cleared explicitly: a new texture's pixels aren't always clear,
+            // and some players saw a black block under the entries.)
+            _blank = new Texture2D(Game1.graphics.GraphicsDevice, 32, 32);
+            _blank.SetData(new Color[32 * 32]);
+        }
         fair.festivalProps.Add(new Prop(_blank, 0, 2, 1, 2, EntriesTile.X, EntriesTile.Y));
     }
 

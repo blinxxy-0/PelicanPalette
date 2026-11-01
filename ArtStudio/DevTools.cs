@@ -55,6 +55,11 @@ internal static class DevTools
             AtViewport(1280, 720, () => Render(new GameMenu(GameMenu.socialTab), Path.Combine(dir, "social_1280.png")));
             monitor.Log("Social page rendered.", LogLevel.Info);
         });
+        AddCommand(helper, "museart_pos", "Moves the player to a tile where they are, even during a festival. Usage: museart_pos <x> <y>", (_, args) =>
+        {
+            if (Context.IsWorldReady && args.Length == 2 && int.TryParse(args[0], out int x) && int.TryParse(args[1], out int y))
+                Game1.player.Position = new Vector2(x, y) * 64f;
+        });
         AddCommand(helper, "museart_snapcontest", "In a game: renders the Fair contest's painting picker and Julian's contest lines at both UI sizes, to dialogue_snapshots/contest_*.png.", (_, _) =>
         {
             if (!Context.IsWorldReady || Game1.getCharacterFromName(Social.Julian.Name) is not { } julian) return;

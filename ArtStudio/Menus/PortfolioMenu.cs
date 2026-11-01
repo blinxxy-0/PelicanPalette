@@ -186,11 +186,19 @@ internal sealed class PortfolioMenu : IClickableMenu
             Ui.Outline(b, inner, lit ? new Color(255, 222, 90) : new Color(243, 236, 220) * 0.35f, 2);
         }
 
-        // Its label under the mount, two short lines at most.
-        string label = Game1.parseText(I18n.Get("portfolio.slot." + slot.Id), Game1.smallFont, (int)((SlotSize + SlotGap - 8) / 0.8f));
+        // Its label under the mount, in two lines: smaller if it needs more
+        // (a translation can run long), never cut off.
+        string name = I18n.Get("portfolio.slot." + slot.Id);
+        float scale = 0.8f;
+        string label = Game1.parseText(name, Game1.smallFont, (int)((SlotSize + SlotGap - 8) / scale));
+        while (label.Split('\n').Length > 2 && scale > 0.55f)
+        {
+            scale -= 0.05f;
+            label = Game1.parseText(name, Game1.smallFont, (int)((SlotSize + SlotGap - 8) / scale));
+        }
         int line = 0;
         foreach (string text in label.Split('\n').Take(2))
-            Ui.TextCentered(b, text, rect.Center.X, rect.Bottom + 10 + line++ * 26, Game1.textColor * 0.8f, 0.8f);
+            Ui.TextCentered(b, text, rect.Center.X, rect.Bottom + 10 + line++ * (int)(32 * scale), Game1.textColor * 0.8f, scale);
 
         if (!rect.Contains(mouse)) return;
         if (painting != null && PaintingData.Read(painting) is { } data)
