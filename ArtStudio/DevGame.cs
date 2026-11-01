@@ -161,6 +161,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_ordertest", "Special orders (1.3): the painting tags, the orders' data, and Lewis's portraits delivered.", (_, _) => OrderTest(monitor));
         DevTools.AddCommand(helper, "museart_festtest", "Festivals, round two (1.3): run at Spirit's Eve or the Jellies (museart_festival fall27 / summer28) to paint there; with 'gift', Sable's Winter Star painting.", (_, args) => FestTest(helper, monitor, args));
         DevTools.AddCommand(helper, "museart_booktest", "The finished portfolio (1.3): Faces of the Valley, the gold-leaf frame, the Summit page and scene, and Julian buying a painting. Then 'museart_booktest scene' to watch the Summit scene.", (_, args) => BookTest(monitor, args));
         DevTools.AddCommand(helper, "museart_animaltest", "Animals: your pet, horse and farm animals as subjects, and the record's Animals tab (1.3).", (_, _) => AnimalTest(monitor));
@@ -1468,6 +1469,83 @@ internal static class DevGame
             foreach (var (name, count) in kills)
                 who.stats.specificMonstersKilled[name] = count;
         }
+    }
+
+    // Special orders (1.3, step 4).
+    private static void OrderTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        SObject Tagged(string subject, int quality, string? conditions = null, bool masterpiece = false)
+        {
+            var painting = DevTools.TestPainting(subject, quality);
+            if (conditions != null) painting.modData[ModEntry.Id + "/Conditions"] = conditions;
+            if (masterpiece) painting.modData[PaintingData.MasterpieceKey] = "1";
+            painting.MarkContextTagsDirty();
+            return painting;
+        }
+        // The tags follow the painting.
+        var portrait = Tagged("sitter:Leah", PaintingRules.Silver);
+        Check(monitor, "a portrait is tagged as one, and whose", portrait.HasContextTag("muse_subject_portrait") && portrait.HasContextTag("muse_sitter_leah") && portrait.HasContextTag("muse_painting"));
+        var night = Tagged("view:Beach:summer", PaintingRules.Silver, "night");
+        Check(monitor, "a night view of the beach is tagged so", night.HasContextTag("muse_view_beach") && night.HasContextTag("muse_night") && !night.HasContextTag("muse_subject_portrait"));
+        var dish = Tagged("(O)194|(O)24", PaintingRules.Gold);
+        Check(monitor, "a still life with a dish is food, gold", dish.HasContextTag("muse_subject_food") && dish.HasContextTag("quality_gold"));
+        Check(monitor, "a still life of wine is food (a drink)", Tagged("(O)348", PaintingRules.Silver).HasContextTag("muse_subject_food"));
+        Check(monitor, "a parsnip isn't", !Tagged("(O)24", PaintingRules.Gold).HasContextTag("muse_subject_food"));
+        var legend = Tagged("(O)163", PaintingRules.Iridium, masterpiece: true);
+        Check(monitor, "a Masterpiece of the Legend is tagged for Qi", legend.HasContextTag("muse_masterpiece") && legend.HasContextTag("muse_legendary_fish"));
+
+        // The orders, their letters, and the level they appear from.
+        var orders = DataLoader.SpecialOrders(Game1.content);
+        string[] ids = { "LewisPortraits", "GusSaloon", "LeahWoods", "ElliottBeach", "QiLegend" };
+        Check(monitor, "the five orders are in the game", ids.All(id => orders.ContainsKey(ModEntry.Id + "_" + id)));
+        var mail = DataLoader.Mail(Game1.content);
+        Check(monitor, "...with their reward letters", new[] { "Lewis", "Gus", "Leah", "Elliott" }.All(n => mail.ContainsKey($"{ModEntry.Id}_Order{n}_Reward")));
+        int level = ArtProgress.Level(who);
+        ArtProgress.SetLevel(who, 2);
+        bool low = GameStateQuery.CheckConditions(orders[ModEntry.Id + "_LewisPortraits"].Condition);
+        ArtProgress.SetLevel(who, 3);
+        bool high = GameStateQuery.CheckConditions(orders[ModEntry.Id + "_LewisPortraits"].Condition);
+        ArtProgress.SetLevel(who, level);
+        Check(monitor, "Lewis's order appears from Painting level 3", !low && high);
+
+        // Lewis takes three portraits, and the order's done.
+        string lewisOrder = ModEntry.Id + "_LewisPortraits";
+        who.team.specialOrders.RemoveWhere(o => o.questKey.Value == lewisOrder);
+        who.team.AddSpecialOrder(lewisOrder);
+        var lewis = Game1.getCharacterFromName("Lewis");
+        int toolIndex = who.CurrentToolIndex;
+        // (An order's objectives hook in on the next update, so a moment later.)
+        DelayedAction.functionAfterDelay(() =>
+        {
+            var order = who.team.specialOrders.FirstOrDefault(o => o.questKey.Value == lewisOrder);
+            try
+            {
+                Check(monitor, "the order can be taken", order != null && lewis != null);
+                if (order == null || lewis == null) return;
+                var parsnip = Tagged("(O)24", PaintingRules.Gold);
+                who.addItemToInventory(parsnip);
+                who.CurrentToolIndex = who.Items.IndexOf(parsnip);
+                Check(monitor, "Lewis won't take a still life for it", !lewis.tryToReceiveActiveObject(who, probe: true) || order.objectives[0].GetCount() == 0);
+                who.removeItemFromInventory(parsnip);
+                foreach (string sitter in new[] { "Abigail", "Gus", "Robin" })
+                {
+                    var p = Tagged("sitter:" + sitter, PaintingRules.Silver);
+                    who.addItemToInventory(p);
+                    who.CurrentToolIndex = who.Items.IndexOf(p);
+                    lewis.tryToReceiveActiveObject(who);
+                    (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+                    lewis.CurrentDialogue.Clear();
+                }
+                Check(monitor, "three portraits complete it", order.objectives[0].GetCount() == 3 && order.objectives[0].IsComplete(), $"{order.objectives[0].GetCount()} of 3");
+            }
+            finally
+            {
+                who.team.specialOrders.RemoveWhere(o => o.questKey.Value == lewisOrder);
+                who.CurrentToolIndex = toolIndex;
+            }
+        }, 1000);
     }
 
     // Festivals, round two (1.3, step 3).

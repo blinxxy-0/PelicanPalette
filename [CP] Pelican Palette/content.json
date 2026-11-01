@@ -139,6 +139,8 @@
     { "Action": "Include", "FromFile": "data/sable.json" },
     // Julian Vane, the critic (1.2): his visits, data and dialogue.
     { "Action": "Include", "FromFile": "data/julian.json" },
+    // Special orders on the town board, and one of Qi's (1.3).
+    { "Action": "Include", "FromFile": "data/special_orders.json" },
 
     // What the shop sells. Stock widens with the Painting skill. It also
     // buys paintings (at a premium; see the C# mod).

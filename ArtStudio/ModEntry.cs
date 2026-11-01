@@ -37,6 +37,8 @@ public class ModEntry : Mod
         Social.Julian.Register(helper);
         Social.JulianPurchase.Register(harmony);
         Social.FestivalPainting.Apply(harmony, helper);
+        PaintingTags.Apply(harmony);
+        Social.PaintingOrders.Apply(harmony);
         Social.PaintingContest.Apply(harmony, helper);
         Social.NightMarketStall.Register(harmony, helper);
         Shop.Consignment.Apply(harmony, helper, Monitor);

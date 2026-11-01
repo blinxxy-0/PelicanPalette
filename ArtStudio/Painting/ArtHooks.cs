@@ -60,6 +60,10 @@ internal static class ArtHooks
 
         // Shop stock and other conditions can ask whether you know a colour:
         // "blinxxy.MuseArt_KNOWS_PIGMENT <player> <pigment id>".
+        // "blinxxy.MuseArt_PAINTING_LEVEL <min>": the current player's Painting
+        // level is at least that (1.3: the special orders appear from there).
+        GameStateQuery.Register(ModEntry.Id + "_PAINTING_LEVEL", (query, _) =>
+            ArgUtility.TryGetInt(query, 1, out int min, out string error) ? ArtProgress.Level(Game1.player) >= min : GameStateQuery.Helpers.ErrorResult(query, error));
         GameStateQuery.Register(ModEntry.Id + "_KNOWS_PIGMENT", (query, context) =>
             GameStateQuery.Helpers.WithPlayer(context.Player, query[1], who => ArtProgress.Owns(who, Palette.IndexOf(query[2]))));
     }

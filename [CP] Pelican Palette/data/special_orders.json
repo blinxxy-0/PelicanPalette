@@ -1,0 +1,129 @@
+// Special orders (1.3): a few on the town board, and one of Qi's. Each asks
+// for a kind of painting, matched by the tags the C# mod gives paintings
+// (ArtStudio/Painting/PaintingTags.cs). None needs a particular difficulty.
+// They appear once you've reached a Painting level (the mod's own
+// PAINTING_LEVEL query); an item reward comes by letter, below.
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/SpecialOrders",
+      "Entries": {
+        "blinxxy.MuseArt_LewisPortraits": {
+          "Name": "{{i18n:order.lewis.name}}",
+          "Requester": "Lewis",
+          "Duration": "TwoWeeks",
+          "Repeatable": false,
+          "Condition": "blinxxy.MuseArt_PAINTING_LEVEL 3",
+          "Text": "{{i18n:order.lewis.text}}",
+          "Objectives": [
+            {
+              "Type": "Deliver",
+              "Text": "{{i18n:order.lewis.objective}}",
+              "RequiredCount": "3",
+              "Data": { "AcceptedContextTags": "muse_subject_portrait", "TargetName": "Lewis", "Message": "{{i18n:order.lewis.thanks}}" }
+            }
+          ],
+          "Rewards": [
+            { "Type": "Money", "Data": { "Amount": "3000" } },
+            { "Type": "Friendship", "Data": { "TargetName": "Lewis", "Amount": "250" } },
+            { "Type": "Mail", "Data": { "MailReceived": "blinxxy.MuseArt_OrderLewis_Reward" } }
+          ]
+        },
+        "blinxxy.MuseArt_GusSaloon": {
+          "Name": "{{i18n:order.gus.name}}",
+          "Requester": "Gus",
+          "Duration": "TwoWeeks",
+          "Repeatable": false,
+          "Condition": "blinxxy.MuseArt_PAINTING_LEVEL 2",
+          "Text": "{{i18n:order.gus.text}}",
+          "Objectives": [
+            {
+              "Type": "Deliver",
+              "Text": "{{i18n:order.gus.objective}}",
+              "RequiredCount": "2",
+              "Data": { "AcceptedContextTags": "muse_subject_food,quality_gold/quality_iridium", "TargetName": "Gus", "Message": "{{i18n:order.gus.thanks}}" }
+            }
+          ],
+          "Rewards": [
+            { "Type": "Money", "Data": { "Amount": "2000" } },
+            { "Type": "Friendship", "Data": { "TargetName": "Gus", "Amount": "250" } },
+            { "Type": "Mail", "Data": { "MailReceived": "blinxxy.MuseArt_OrderGus_Reward" } }
+          ]
+        },
+        "blinxxy.MuseArt_LeahWoods": {
+          "Name": "{{i18n:order.leah.name}}",
+          "Requester": "Leah",
+          "Duration": "TwoWeeks",
+          "Repeatable": false,
+          "Condition": "blinxxy.MuseArt_PAINTING_LEVEL 4, PLAYER_HAS_MAIL Host beenToWoods",
+          "Text": "{{i18n:order.leah.text}}",
+          "Objectives": [
+            {
+              "Type": "Deliver",
+              "Text": "{{i18n:order.leah.objective}}",
+              "RequiredCount": "1",
+              "Data": { "AcceptedContextTags": "muse_view_woods", "TargetName": "Leah", "Message": "{{i18n:order.leah.thanks}}" }
+            }
+          ],
+          "Rewards": [
+            { "Type": "Money", "Data": { "Amount": "2500" } },
+            { "Type": "Friendship", "Data": { "TargetName": "Leah", "Amount": "250" } },
+            { "Type": "Mail", "Data": { "MailReceived": "blinxxy.MuseArt_OrderLeah_Reward" } }
+          ]
+        },
+        "blinxxy.MuseArt_ElliottBeach": {
+          "Name": "{{i18n:order.elliott.name}}",
+          "Requester": "Elliott",
+          "Duration": "TwoWeeks",
+          "Repeatable": false,
+          "Condition": "blinxxy.MuseArt_PAINTING_LEVEL 4",
+          "Text": "{{i18n:order.elliott.text}}",
+          "Objectives": [
+            {
+              "Type": "Deliver",
+              "Text": "{{i18n:order.elliott.objective}}",
+              "RequiredCount": "1",
+              "Data": { "AcceptedContextTags": "muse_view_beach,muse_night", "TargetName": "Elliott", "Message": "{{i18n:order.elliott.thanks}}" }
+            }
+          ],
+          "Rewards": [
+            { "Type": "Money", "Data": { "Amount": "2500" } },
+            { "Type": "Friendship", "Data": { "TargetName": "Elliott", "Amount": "250" } },
+            { "Type": "Mail", "Data": { "MailReceived": "blinxxy.MuseArt_OrderElliott_Reward" } }
+          ]
+        },
+        "blinxxy.MuseArt_QiLegend": {
+          "Name": "{{i18n:order.qi.name}}",
+          "Requester": "Qi",
+          "Duration": "TwoWeeks",
+          "Repeatable": false,
+          "OrderType": "Qi",
+          "Condition": "blinxxy.MuseArt_PAINTING_LEVEL 8",
+          "Text": "{{i18n:order.qi.text}}",
+          "Objectives": [
+            {
+              "Type": "Ship",
+              "Text": "{{i18n:order.qi.objective}}",
+              "RequiredCount": "1",
+              "Data": { "AcceptedContextTags": "muse_masterpiece,muse_legendary_fish" }
+            }
+          ],
+          "Rewards": [
+            { "Type": "Gems", "Data": { "Amount": "30" } }
+          ]
+        }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/mail",
+      "Entries": {
+        "blinxxy.MuseArt_OrderLewis_Reward": "{{i18n:mail.order-lewis}} %item id (O)blinxxy.MuseArt_PictureFrame 4 %%[#]{{i18n:mail.order-lewis.title}}",
+        "blinxxy.MuseArt_OrderGus_Reward": "{{i18n:mail.order-gus}} %item id (O)blinxxy.MuseArt_Tube_ruby 3 %%[#]{{i18n:mail.order-gus.title}}",
+        "blinxxy.MuseArt_OrderLeah_Reward": "{{i18n:mail.order-leah}} %item id (O)blinxxy.MuseArt_Brush_rigger 1 %%[#]{{i18n:mail.order-leah.title}}",
+        "blinxxy.MuseArt_OrderElliott_Reward": "{{i18n:mail.order-elliott}} %item id (O)blinxxy.MuseArt_MoonlitFrame 2 %%[#]{{i18n:mail.order-elliott.title}}"
+      }
+    }
+  ]
+}

@@ -96,6 +96,7 @@ internal sealed class PaintingData
             item.modData[GlazedKey] = glazed ? "1" : "0";
         if (Conditions != null)
             item.modData[ConditionsKey] = Conditions;
+        item.MarkContextTagsDirty();     // (its tags follow its data: PaintingTags)
     }
 
     public static string? RawCells(Item item) => item.modData.TryGetValue(CellsKey, out string raw) ? raw : null;
