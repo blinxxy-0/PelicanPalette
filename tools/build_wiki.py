@@ -668,7 +668,15 @@ def julian():
 <br clear="right">
 
 ## Visits
-Julian comes in on the morning bus on the **22nd, 23rd and 24th** of every season, and leaves on the evening one. In between he looks round: your portfolio in the shop's back room, the museum, the beach, the Saloon. His friendship doesn't fade while he's away.
+Julian is in the valley on the **22nd, 23rd and 24th** of every season. He gets off the morning bus at 10am and leaves on the evening one, once he's walked back to the bus stop after 6pm. His friendship doesn't fade while he's away.
+
+| Day | 10am | 1pm | 4pm | 6pm |
+|---|---|---|---|---|
+| 22nd | The art shop's back room, looking through your portfolio | The museum | The Saloon | The bus stop, then gone |
+| 23rd | The beach | The museum | The Saloon | The bus stop, then gone |
+| 24th | The art shop's back room | Cindersap Forest, by the river where Sable paints (from 1:30pm) | The Saloon | The bus stop, then gone |
+
+The times are when he sets off, so give him a little while to walk there. He's at the Stardew Valley Fair too, on the 16th of fall (see {link("Festivals")}).
 
 ## Gifts
 - **Loves:** wine, truffle oil, prismatic shards, and fine paintings
