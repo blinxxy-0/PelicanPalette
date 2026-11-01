@@ -12,6 +12,10 @@
       "Target": "Characters/Dialogue/Sable",
       "Entries": {
         "Introduction": "{{i18n:dialogue.Introduction}}",
+        "WinterStar_GiveGift_Before": "{{i18n:dialogue.WinterStar_GiveGift_Before}}",
+        "WinterStar_GiveGift_After": "{{i18n:dialogue.WinterStar_GiveGift_After}}",
+        "WinterStar_GiveGift_Before_Spouse": "{{i18n:dialogue.WinterStar_GiveGift_Before_Spouse}}",
+        "WinterStar_GiveGift_After_Spouse": "{{i18n:dialogue.WinterStar_GiveGift_After_Spouse}}",
 
         // ---- Every week ----
         "Mon": "{{i18n:dialogue.Mon}}",

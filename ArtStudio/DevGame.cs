@@ -161,6 +161,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_festtest", "Festivals, round two (1.3): run at Spirit's Eve or the Jellies (museart_festival fall27 / summer28) to paint there; with 'gift', Sable's Winter Star painting.", (_, args) => FestTest(helper, monitor, args));
         DevTools.AddCommand(helper, "museart_booktest", "The finished portfolio (1.3): Faces of the Valley, the gold-leaf frame, the Summit page and scene, and Julian buying a painting. Then 'museart_booktest scene' to watch the Summit scene.", (_, args) => BookTest(monitor, args));
         DevTools.AddCommand(helper, "museart_animaltest", "Animals: your pet, horse and farm animals as subjects, and the record's Animals tab (1.3).", (_, _) => AnimalTest(monitor));
         DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
@@ -1466,6 +1467,71 @@ internal static class DevGame
             who.stats.specificMonstersKilled.Clear();
             foreach (var (name, count) in kills)
                 who.stats.specificMonstersKilled[name] = count;
+        }
+    }
+
+    // Festivals, round two (1.3, step 3).
+    private static void FestTest(IModHelper helper, IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        if (args.FirstOrDefault() == "gift")
+        {
+            var shipped = new System.Collections.Generic.Dictionary<string, int>(who.basicShipped.Pairs.ToDictionary(kv => kv.Key, kv => kv.Value));
+            try
+            {
+                who.basicShipped.Clear();
+                Check(monitor, "with nothing shipped, Sable paints a parsnip", Social.FestivalPainting.Favourite(who) == "(O)24");
+                who.basicShipped["190"] = 40;     // cauliflower
+                who.basicShipped["24"] = 12;
+                var gift = Social.FestivalPainting.SablesPainting(who);
+                var data = PaintingData.Read(gift);
+                Check(monitor, "Sable's gift is their painting of what you ship most", data?.Subject == "(O)190" && data.Painter == "Sable" && gift.Quality == PaintingRules.Iridium, gift.DisplayName);
+                Check(monitor, "Sable has Winter Star lines", Game1.getCharacterFromName("Sable")?.Dialogue.ContainsKey("WinterStar_GiveGift_Before") == true);
+            }
+            finally
+            {
+                who.basicShipped.Clear();
+                foreach (var (id, n) in shipped) who.basicShipped[id] = n;
+            }
+            return;
+        }
+        if (Social.FestivalPainting.Current is not { } spot)
+        {
+            Check(monitor, "at a festival with an easel", false, "start one with museart_festival fall27 or summer28");
+            return;
+        }
+        var festival = Game1.CurrentEvent!;
+        if (args.FirstOrDefault() == "all")
+        {
+            // Every pigment and canvas, to see the view at its best ('museart_frame' it next).
+            ArtProgress.SetLevel(who, 10);
+            ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length));
+        }
+        Check(monitor, $"{spot.Place}: the easel is set up", festival.festivalProps.Count > 0);
+        bool used = festival.checkAction(new xTile.Dimensions.Location(spot.Easel.X, spot.Easel.Y), Game1.viewport, who);
+        Check(monitor, "...and opens the easel", used && Game1.activeClickableMenu is EaselMenu);
+        if (Game1.activeClickableMenu is not EaselMenu menu) return;
+        menu.DevPickView();
+        Check(monitor, "...with the festival's own view", menu.DevViewSubject == $"view:{spot.Place}:{Game1.season.ToString().ToLowerInvariant()}", menu.DevViewSubject ?? "none");
+        Check(monitor, "...named for the festival", !Views.PlaceName(menu.DevViewSubject ?? "view:x").StartsWith("view.place"), Views.PlaceName(menu.DevViewSubject ?? "view:x"));
+        if (menu.DevViewThumbnail is { } thumb)
+        {
+            string dir = System.IO.Path.Combine(helper.DirectoryPath, "media");
+            System.IO.Directory.CreateDirectory(dir);
+            using var stream = System.IO.File.Create(System.IO.Path.Combine(dir, "festview_" + spot.Place + ".png"));
+            thumb.SaveAsPng(stream, thumb.Width, thumb.Height);
+        }
+        Check(monitor, "...and in the record's views", RecordTabs.Members(who, RecordTab.Views).Any(m => m.Key == "view:" + spot.Place));
+        if (menu.DevViewSubject is { } view)
+        {
+            menu.DevSetCanvas(args.FirstOrDefault() == "all" ? CanvasKind.Large : CanvasKind.Medium);
+            menu.DevSetup(view);
+            var cells = menu.DevPreview?.Cells;
+            int dark = 0, total = 0;
+            if (cells != null)
+                foreach (byte c in cells) { total++; if (Palette.All.ElementAtOrDefault(c)?.Id == "charcoal") dark++; }
+            Check(monitor, "...and isn't mostly charcoal", total > 0 && dark * 100 / total < 40, $"{dark * 100 / Math.Max(1, total)}% charcoal");
         }
     }
 

@@ -27,7 +27,9 @@ internal static class Views
 
     public static bool IsView(string? subject) => subject?.StartsWith(Prefix) == true;
 
-    public static string SubjectFor(GameLocation location) => $"{Prefix}{location.NameOrUniqueName}:{location.GetSeasonKey()}";
+    // (At Spirit's Eve or the Jellies, 1.3, the festival is the place.)
+    public static string SubjectFor(GameLocation location) =>
+        $"{Prefix}{(Social.FestivalPainting.AtFestivalEasel(location) ? Social.FestivalPainting.Current!.Place : location.NameOrUniqueName)}:{location.GetSeasonKey()}";
 
     public static string PlaceOf(string subject) => subject.Substring(Prefix.Length).Split(':')[0];
 
@@ -40,6 +42,8 @@ internal static class Views
     public static string PlaceName(string subject)
     {
         string name = PlaceOf(subject);
+        if (Social.FestivalPainting.IsFestivalPlace(name))
+            return I18n.Get("view.place." + name);
         var location = Game1.getLocationFromName(name);
         return location?.DisplayName ?? name;
     }
@@ -61,13 +65,21 @@ internal static class Views
     // lasting place, unlike the mines' floors, so an easel left there stays.
     public static readonly HashSet<string> IndoorViews = new() { "SkullCave" };
 
-    public static bool CanPaintHere(GameLocation location) => location.IsOutdoors || IndoorViews.Contains(location.Name);
+    public static bool CanPaintHere(GameLocation location) =>
+        location.IsOutdoors || IndoorViews.Contains(location.Name) || Social.FestivalPainting.AtFestivalEasel(location);
 
     public static Capture? Take(GameLocation location, Vector2 easelTile)
     {
         if (!CanPaintHere(location) || location != Game1.currentLocation) return null;
         string name = "museart_view_" + Game1.ticks;
-        string? file = Game1.game1.takeMapScreenshot(TilePixels / 64f, name, null);
+        // The maze at Spirit's Eve is taken in its true colours, without the
+        // night's darkness over it (which reduces to a canvas of near-black),
+        // and given a gentler night of its own after (1.3).
+        bool unlit = Social.FestivalPainting.AtFestivalEasel(location) && Social.FestivalPainting.Current!.Unlit, lit = Game1.drawLighting;
+        if (unlit) Game1.drawLighting = false;
+        string? file;
+        try { file = Game1.game1.takeMapScreenshot(TilePixels / 64f, name, null); }
+        finally { Game1.drawLighting = lit; }
         if (file == null) return null;
         string path = Path.Combine(Game1.game1.GetScreenshotFolder(), file);
         // The game never closes the file it saved (it leaves the stream to
@@ -79,11 +91,18 @@ internal static class Views
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             using var shot = Texture2D.FromStream(Game1.graphics.GraphicsDevice, stream);
             int size = Tiles * TilePixels;
-            int x0 = Math.Clamp(((int)easelTile.X - Tiles / 2) * TilePixels, 0, Math.Max(0, shot.Width - size));
-            int y0 = Math.Clamp(((int)easelTile.Y - Tiles + 3) * TilePixels, 0, Math.Max(0, shot.Height - size));
+            // A festival's view is its set patch of the map, not the ground around the easel.
+            var spot = Social.FestivalPainting.AtFestivalEasel(location) ? Social.FestivalPainting.Current : null;
+            var corner = spot?.ViewCorner ?? new Point((int)easelTile.X - Tiles / 2, (int)easelTile.Y - Tiles + 3);
+            int x0 = Math.Clamp(corner.X * TilePixels, 0, Math.Max(0, shot.Width - size));
+            int y0 = Math.Clamp(corner.Y * TilePixels, 0, Math.Max(0, shot.Height - size));
             int side = Math.Min(size, Math.Min(shot.Width - x0, shot.Height - y0));
             var pixels = new Color[side * side];
             shot.GetData(0, new Rectangle(x0, y0, side, side), pixels, 0, pixels.Length);
+            if (spot?.Unlit == true)
+                Social.FestivalPainting.NightGrade(pixels);
+            if (spot?.Jellies == true)
+                Social.FestivalPainting.AddJellies(pixels, side);
             var thumb = new Texture2D(Game1.graphics.GraphicsDevice, side, side);
             thumb.SetData(pixels);
             return new Capture { Subject = SubjectFor(location), Pixels = pixels, Size = side, Thumbnail = thumb };
@@ -169,6 +188,7 @@ internal static class Views
             "Forest" or "Beach" or "Mountain" => 300,
             "Woods" or "Railroad" or "Backwoods" => 450,
             "Summit" or "Desert" => 800,
+            "SpiritsEve" or "MoonlightJellies" => 700,
             _ when place.StartsWith("Island") => 700,
             _ => 350,
         };

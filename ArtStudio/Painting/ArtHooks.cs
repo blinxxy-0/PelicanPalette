@@ -189,7 +189,8 @@ internal static class ArtHooks
     // the shared clock kept running while you painted, so nothing is added.
     public static void PassTime(int minutes)
     {
-        if (Context.IsMultiplayer) return;
+        // (Nor at a festival, whose clock stands still: 1.3's festival easels.)
+        if (Context.IsMultiplayer || Game1.isFestival()) return;
         Game1.globalFadeToBlack(() =>
         {
             int target = Math.Min(Utility.ModifyTime(Game1.timeOfDay, minutes), PaintingRules.LatestFinish);

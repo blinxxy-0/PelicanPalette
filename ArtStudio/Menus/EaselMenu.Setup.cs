@@ -348,7 +348,7 @@ internal sealed partial class EaselMenu
 
     // A painting may not run past 2am (in multiplayer the clock is shared
     // and keeps running anyway, so there's no extra time to add).
-    private bool TooLate => !Context.IsMultiplayer && Context.IsWorldReady
+    private bool TooLate => !Context.IsMultiplayer && Context.IsWorldReady && !Game1.isFestival()
         && ArtHooks.FinishTime(PaintingRules.Minutes(_setupCanvas, IsLongSubject(_setupItems))) > PaintingRules.LatestFinish;
 
     private bool NeedsPalette => UsesPaint && _palette == null;

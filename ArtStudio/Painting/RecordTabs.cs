@@ -148,7 +148,9 @@ internal static class RecordTabs
             case RecordTab.Views:
                 return Game1.locations
                     .Where(l => Views.CanPaintHere(l) && l is not MineShaft && l is not VolcanoDungeon && !NotViews.Contains(l.Name))
-                    .Select(l => ViewPrefix + l.Name).Distinct();
+                    .Select(l => ViewPrefix + l.Name)
+                    .Concat(Social.FestivalPainting.Spots.Select(s => ViewPrefix + s.Place))
+                    .Distinct();
             default:
                 return Game1.objectData
                     .Where(kv => !kv.Value.ExcludeFromShippingCollection || kv.Value.Category == SObject.FishCategory)

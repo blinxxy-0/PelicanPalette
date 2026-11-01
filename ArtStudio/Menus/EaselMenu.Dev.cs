@@ -251,6 +251,8 @@ internal sealed partial class EaselMenu
 
     internal string? DevViewSubject => _view?.Subject;
 
+    internal Microsoft.Xna.Framework.Graphics.Texture2D? DevViewThumbnail => _view?.Thumbnail;
+
     internal void DevSetup(params string[] itemIds)
     {
         _setupItems.Clear();

@@ -304,7 +304,8 @@ internal sealed class CollectionMenu : IClickableMenu
         {
             if (!RecordTabs.Known(_who, _tab, key))
                 name = I18n.Get("record.unknown");
-            string hint = view ? "record.unpainted.view"
+            string hint = view && Social.FestivalPainting.IsFestivalPlace(Views.PlaceOf(key)) ? "record.unpainted.festival-view"
+                : view ? "record.unpainted.view"
                 : key == Sitters.SubjectFor("Krobus") ? "record.unpainted.krobus"
                 : key == Sitters.SubjectFor("Wizard") ? "record.unpainted.wizard"
                 : sitter ? "record.unpainted.sitter" : Animals.IsAnimal(key) ? "record.unpainted.animal"
