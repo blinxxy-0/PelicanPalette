@@ -70,10 +70,13 @@ internal sealed partial class EaselMenu
         _canvas = new PixelCanvas(size);
         _subjectItems = itemIds.ToArray();
         _reference = BuildReference(itemIds, size);
+        // Restoring (1.3): the canvas is the old painting, what's left of it already there.
+        if (Restoring is { } old)
+            _canvas.Load(OldPaintings.Damaged(old), new Purity[size, size]);
 
         _timed = !IsOriginal && _rules.LightTimer;
         _lightTotal = _lightLeft = _timed
-            ? PaintingRules.LightSeconds(size, _reference!.Difficulty, _level, LightMultiplier)
+            ? PaintingRules.LightSeconds(size, _reference!.Difficulty, _level, LightMultiplier) * (Restoring != null ? RestoreLight : 1f)
             : float.PositiveInfinity;
         _nextSpark = 5f + (float)_random.NextDouble() * 4f;
         _stage = EaselStage.Painting;
@@ -746,6 +749,7 @@ internal sealed partial class EaselMenu
         {
             Ui.TextCentered(b, I18n.Get("paint.reference"), _noteArea.Center.X, _noteArea.Y + 12);
             DrawCells(b, _reference.Cells, null, _refArea, CanvasColor, false, _reference.Marks);
+            DrawDamage(b, _refArea, _reference.Cells);
             DrawMarkHints(b, _refArea);
             Ui.Fill(b, _refArea, DuskTint());
             if (_sparkCell.HasValue)
@@ -827,12 +831,34 @@ internal sealed partial class EaselMenu
         _ => new Color(150, 70, 50),
     };
 
+    // Restoring (1.3): the damaged cells still bare are hatched, on the
+    // reference and the canvas, so what's missing can't be mistaken for
+    // pale paint.
+    private void DrawDamage(SpriteBatch b, Rectangle area, byte[,] cells)
+    {
+        if (Restoring is not { } old) return;
+        var damaged = OldPaintings.Damage(old);
+        int n = cells.GetLength(0);
+        var hatch = new Color(150, 120, 90) * 0.55f;
+        for (int x = 0; x < n; x++)
+        for (int y = 0; y < n; y++)
+        {
+            if (!damaged[x, y] || cells[x, y] != PixelCanvas.Blank) continue;
+            var r = CellRect(area, n, x, y);
+            int t = Math.Max(1, r.Width / 5);
+            // A diagonal stroke, corner to corner, in small steps.
+            for (int i = 0; i + t <= r.Width; i += t)
+                Ui.Fill(b, new Rectangle(r.X + i, r.Y + i * r.Height / r.Width, t, t), hatch);
+        }
+    }
+
     private void DrawCanvas(SpriteBatch b, Point mouse)
     {
         var border = new Rectangle(_canvasArea.X - 12, _canvasArea.Y - 12, _canvasArea.Width + 24, _canvasArea.Height + 24);
         Ui.Fill(b, border, new Color(110, 70, 40));
         Ui.Outline(b, border, new Color(60, 35, 20), 4);
         DrawCells(b, _canvas.Snapshot(), _canvas.PuritySnapshot(), _canvasArea, CanvasColor, true, _canvas.MarksSnapshot());
+        DrawDamage(b, _canvasArea, _canvas.Snapshot());
         DrawMarkHints(b, _canvasArea);
 
         // Faint grid so cells can be counted against the reference.

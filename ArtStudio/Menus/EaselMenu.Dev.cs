@@ -236,6 +236,13 @@ internal sealed partial class EaselMenu
 
     internal void DevKeep() => KeepAndClose();
 
+    // Restoring: put the old painting back exactly as it was (1.3).
+    internal void DevRestorePerfectly()
+    {
+        if (Restoring is { } old)
+            _canvas.Load(Painting.OldPaintings.Original(old), new Purity[_canvas.Size, _canvas.Size]);
+    }
+
     internal void DevSetCanvas(CanvasKind kind)
     {
         _setupCanvas = kind;

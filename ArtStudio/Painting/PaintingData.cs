@@ -78,7 +78,10 @@ internal sealed class PaintingData
     // Either: painted from a sprite, from memory.
     public bool IsStudy => IsCreature || IsAnimal;
 
-    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter || IsView || IsStudy ? Array.Empty<string>() : Subject.Split('|');
+    // A restored old painting: "old:<id>" (1.3).
+    public bool IsOld => OldPaintings.IsOld(Subject);
+
+    public string[] SubjectItems => IsOriginal || IsPortrait || IsSitter || IsView || IsStudy || IsOld ? Array.Empty<string>() : Subject.Split('|');
 
     public void WriteTo(Item item)
     {

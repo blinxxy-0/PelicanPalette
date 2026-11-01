@@ -69,7 +69,9 @@ internal sealed partial class EaselMenu
 
         if (_reference != null)
         {
-            _result = PaintingJudge.Judge(cells, purity, _reference, marks);
+            _result = Restoring is { } restoring
+                ? RestorationJudge.Judge(cells, purity, OldPaintings.Original(restoring), OldPaintings.Damage(restoring))
+                : PaintingJudge.Judge(cells, purity, _reference, marks);
             float inspiredBonus = Has(PaintingSkill.Instance.Visionary) ? PaintingSkill.VisionaryInspiredBonus : PaintingRules.InspiredBonus;
             _score = PaintingRules.Score(_result.Stars, _level, _inspired, _allPure, inspiredBonus);
             _quality = PaintingRules.Quality(_score, _level);
@@ -108,7 +110,9 @@ internal sealed partial class EaselMenu
 
         // Something you've never painted is worth more than your tenth of it.
         string subject = _subjectItems.Length == 0 ? PaintingData.OriginalSubject : string.Join("|", _subjectItems);
-        if (_reference != null)
+        if (Restoring is { } old)
+            price = OldPaintings.RestoredValue(old, _quality);
+        else if (_reference != null)
         {
             _timesBefore = Catalogue.TimesPainted(_who, subject);
             _timesThisWeek = Catalogue.TimesThisWeek(_who, subject);
@@ -135,6 +139,8 @@ internal sealed partial class EaselMenu
             Date = I18n.Get("painting.date", new { season = Utility.getSeasonNameFromNumber(Game1.seasonIndex), day = Game1.dayOfMonth, year = Game1.year }),
         };
         _painting = PaintingItems.Create(data, _quality, price);
+        if (Restoring is { } restored)
+            OldPaintings.UseUp(_who, restored);
         _resultTexture = PaintingRenderer.Build(size, cells, purity, CanvasColor, marks);
 
         _newLevel = ArtProgress.AddXp(_who, _xp);

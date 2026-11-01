@@ -46,7 +46,7 @@ internal static class PaintingItems
         // follows the subject's own (translated) name, the way "Blueberry
         // Wine" follows the blueberry's.
         var subjects = data.SubjectItems;
-        if (data.IsPortrait || data.IsSitter || data.IsView || data.IsStudy)
+        if (data.IsPortrait || data.IsSitter || data.IsView || data.IsStudy || data.IsOld)
             item.displayNameFormat = Title(data);
         else if (subjects.Length == 1)
         {
@@ -71,6 +71,7 @@ internal static class PaintingItems
         if (data.IsSitter) return I18n.Get("painting.title.portrait", new { name = Sitters.DisplayName(Sitters.NpcOf(data.Subject)) });
         if (data.IsView) return I18n.Get("painting.title.view", new { place = Views.PlaceName(data.Subject), season = Views.SeasonName(data.Subject) });
         if (data.IsStudy) return Studies.Title(data.Subject);
+        if (OldPaintings.OfSubject(data.Subject) is { } old) return OldPaintings.Title(old);
         var subjects = data.SubjectItems;
         if (subjects.Length == 0) return I18n.Get("painting.title.original");
         string first = ItemRegistry.GetDataOrErrorItem(subjects[0]).DisplayName;
@@ -80,6 +81,12 @@ internal static class PaintingItems
     // Shown under the item's name: who painted it, when, and of what.
     public static string Provenance(PaintingData data)
     {
+        // An old painting, restored (1.3): whose hand it was isn't known.
+        if (OldPaintings.OfSubject(data.Subject) is { } old)
+        {
+            string text2 = I18n.Get("painting.provenance.restored", new { set = OldPaintings.SetName(old.Set), painter = data.Painter, date = data.Date });
+            return data.Finish == null ? text2 : text2 + "\n" + I18n.Get("painting.provenance.varnished", new { finish = I18n.Get("varnish.finish." + data.Finish) });
+        }
         string subject = data.IsPortrait
             ? I18n.Get("painting.provenance.portrait", new { name = FarmerPortrait.SitterName(data.Subject) })
             : data.IsSitter

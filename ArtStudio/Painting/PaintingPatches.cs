@@ -36,7 +36,8 @@ internal static class PaintingPatches
     // quality star and stack number on top.
     private static bool DrawInMenuPrefix(SObject __instance, SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
     {
-        if (!PaintingItems.IsPainting(__instance)) return true;
+        // (A damaged old painting, 1.3, draws as the painting it is.)
+        if (!PaintingItems.IsPainting(__instance) && !OldPaintings.IsDamaged(__instance)) return true;
         try
         {
             if (drawShadow)
@@ -69,7 +70,7 @@ internal static class PaintingPatches
 
     private static bool DrawWhenHeldPrefix(SObject __instance, SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f)
     {
-        if (!PaintingItems.IsPainting(__instance)) return true;
+        if (!PaintingItems.IsPainting(__instance) && !OldPaintings.IsDamaged(__instance)) return true;
         float layerDepth = Math.Max(0f, (f.StandingPixel.Y + 3) / 10000f);
         PaintingRenderer.DrawFramed(spriteBatch, __instance, objectPosition + new Vector2(32f, 32f), 4f, Color.White, layerDepth);
         return false;
@@ -78,12 +79,19 @@ internal static class PaintingPatches
     // Every painting is one of a kind.
     private static void MaximumStackSizePostfix(SObject __instance, ref int __result)
     {
-        if (PaintingItems.IsPainting(__instance))
+        if (PaintingItems.IsPainting(__instance) || OldPaintings.IsDamaged(__instance))
             __result = 1;
     }
 
     private static void GetDescriptionPostfix(SObject __instance, ref string __result)
     {
+        if (OldPaintings.Of(__instance) is { } old)
+        {
+            __result = Game1.parseText(I18n.Get("item.damaged-painting.found", new { title = OldPaintings.Title(old), set = OldPaintings.SetName(old.Set) })
+                + "\n" + I18n.Get(OldPaintings.CanRestore(Game1.player) ? "item.damaged-painting.restore" : "item.damaged-painting.margot"),
+                Game1.smallFont, Traverse.Create(__instance).Method("getDescriptionWidth").GetValue<int>());
+            return;
+        }
         if (!PaintingItems.IsPainting(__instance)) return;
         var data = PaintingData.Read(__instance);
         if (data != null)

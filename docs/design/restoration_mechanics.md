@@ -125,3 +125,18 @@ Her restorations come back **silver** quality: careful, but cautious.
 3. **Before Margot exists:** Margot (step 6) is built before her fee
    service, so it's hers from day one. Step 5's parts 1 to 5 come first,
    then Margot, then the fee service.
+
+## Built so far (2026-11-01)
+
+Parts 1 to 3 (`Painting/OldPaintings.cs`, `Painting/OldPaintingFinds.cs`,
+`Core/RestorationJudge.cs`, `data/old_paintings.json`, `museart_oldtest`):
+the 21 paintings and their fixed damage (33 to 36% each), the damaged
+painting items, finding them (the rates above, the Travelling Cart, the
+guaranteed first from Painting level 3), and restoring at the easel. Two
+things added while building: the damaged cells still bare are hatched on
+the reference and the canvas, so missing paint can't be mistaken for pale
+paint; and a restoration gets half again the usual light, since what's
+missing has to be worked out as well as painted. Restoring is unlocked by
+the Painting Mastery flag, which Margot's test restoration will set
+(step 6); until then only the dev test sets it.
+

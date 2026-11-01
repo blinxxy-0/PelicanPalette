@@ -161,6 +161,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_oldtest", "Old paintings (1.3): the 21 pictures and their damage, finding them, and restoring one at the easel. With 'show', opens a restoration to look at.", (_, args) => OldTest(monitor, args));
         DevTools.AddCommand(helper, "museart_ordertest", "Special orders (1.3): the painting tags, the orders' data, and Lewis's portraits delivered.", (_, _) => OrderTest(monitor));
         DevTools.AddCommand(helper, "museart_festtest", "Festivals, round two (1.3): run at Spirit's Eve or the Jellies (museart_festival fall27 / summer28) to paint there; with 'gift', Sable's Winter Star painting.", (_, args) => FestTest(helper, monitor, args));
         DevTools.AddCommand(helper, "museart_booktest", "The finished portfolio (1.3): Faces of the Valley, the gold-leaf frame, the Summit page and scene, and Julian buying a painting. Then 'museart_booktest scene' to watch the Summit scene.", (_, args) => BookTest(monitor, args));
@@ -1468,6 +1469,94 @@ internal static class DevGame
             who.stats.specificMonstersKilled.Clear();
             foreach (var (name, count) in kills)
                 who.stats.specificMonstersKilled[name] = count;
+        }
+    }
+
+    // Old paintings and restoring them (1.3, step 5).
+    private static void OldTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        bool hadMastery = who.mailReceived.Contains(OldPaintings.MasteryFlag);
+        if (args.FirstOrDefault() == "show")
+        {
+            // A restoration on the easel, half done, to look at ('museart_frame' it).
+            who.mailReceived.Add(OldPaintings.MasteryFlag);
+            var mill = OldPaintings.Get(args.ElementAtOrDefault(1) ?? "valley_mill")!;
+            who.addItemToInventory(OldPaintings.CreateDamaged(mill));
+            var easel = EaselMenu.StartStillLife(who, mill.Size > 28 ? CanvasKind.Large : CanvasKind.Medium, new[] { OldPaintings.SubjectFor(mill.Id) });
+            Game1.activeClickableMenu = easel;
+            return;
+        }
+        try
+        {
+            // The pictures: whole canvases, damaged by about a third, the same every time.
+            var bad = OldPaintings.All.Where(p =>
+            {
+                var cells = OldPaintings.Original(p);
+                int painted = cells.Cast<byte>().Count(c => c != PixelCanvas.Blank);
+                return cells.GetLength(0) != p.Size || painted < p.Size * p.Size * 9 / 10;
+            }).Select(p => p.Id).ToList();
+            Check(monitor, "all 21 old paintings load as whole pictures", OldPaintings.All.Length == 21 && bad.Count == 0, string.Join(", ", bad));
+            var shares = OldPaintings.All.Select(p => OldPaintings.Damage(p).Cast<bool>().Count(d => d) * 100 / (p.Size * p.Size)).ToList();
+            Check(monitor, "each is about a third damaged", shares.All(s => s >= 28 && s <= 42), string.Join(" ", shares));
+            Check(monitor, "...and named", OldPaintings.All.All(p => !OldPaintings.Title(p).StartsWith("old.")));
+
+            // A find from a set becomes one of that set, one not found before.
+            who.modData.Remove(ModEntry.Id + "/OldFound");
+            var found = new System.Collections.Generic.HashSet<string>();
+            for (int i = 0; i < 5; i++)
+            {
+                var item = ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor("wreck"));
+                OldPaintings.Assign(who, item);
+                if (OldPaintings.Of(item) is { } p) found.Add(p.Id);
+            }
+            Check(monitor, "five wreck finds are the five wreck paintings", found.Count == 5 && found.All(id => id.StartsWith("wreck_")), string.Join(", ", found));
+            var damaged = OldPaintings.CreateDamaged(OldPaintings.Get("valley_mill")!);
+            Check(monitor, "a damaged painting isn't a painting to anything else", OldPaintings.IsDamaged(damaged) && !PaintingItems.IsPainting(damaged)
+                && !Portfolio.IsKeepable(damaged) && !Social.JulianPurchase.CanSell(damaged));
+
+            // The first is guaranteed from Painting level 3.
+            who.modData.Remove(ModEntry.Id + "/OldFound");
+            who.mailReceived.Remove(ModEntry.Id + "_OldPaintingFirst");
+            int level = ArtProgress.Level(who);
+            ArtProgress.SetLevel(who, 2);
+            bool early = OldPaintingFinds.FirstDue(who);
+            ArtProgress.SetLevel(who, 3);
+            var farm = Game1.getFarm();
+            int before = farm.debris.Count;
+            farm.digUpArtifactSpot(10, 10, who);
+            bool dug = farm.debris.Skip(before).Any(d => d.item != null && OldPaintings.IsDamaged(d.item));
+            ArtProgress.SetLevel(who, level);
+            Check(monitor, "the first old painting comes with the first dig from level 3", !early && dug);
+            farm.debris.Clear();
+
+            // Restoring (at Painting 10, as Mastery comes): perfectly, then not at all.
+            who.mailReceived.Add(OldPaintings.MasteryFlag);
+            FreshStart(who);
+            ArtProgress.SetLevel(who, 10);
+            var mill = OldPaintings.Get("valley_mill")!;
+            who.addItemToInventory(OldPaintings.CreateDamaged(mill));
+            Check(monitor, "with Mastery, the easel offers the old painting", Studies.Available(who, OldPaintings.Prefix).Contains(OldPaintings.SubjectFor(mill.Id)));
+            var easel = EaselMenu.StartStillLife(who, CanvasKind.Medium, new[] { OldPaintings.SubjectFor(mill.Id) });
+            easel.DevRestorePerfectly();
+            easel.DevFinish(false);
+            var restored = easel.DevPainting;
+            var data = restored == null ? null : PaintingData.Read(restored);
+            Check(monitor, "a perfect restoration is iridium, and titled as the old painting", restored?.Quality == PaintingRules.Iridium && data?.IsOld == true
+                && restored.DisplayName == OldPaintings.Title(mill), $"{restored?.DisplayName} q{restored?.Quality}");
+            Check(monitor, "...worth its set's value", restored != null && restored.Price == OldPaintings.RestoredValue(mill, PaintingRules.Iridium), $"{restored?.Price}g");
+            Check(monitor, "...and the damaged one is used up", !who.Items.Any(i => i != null && OldPaintings.Of(i)?.Id == mill.Id));
+            who.addItemToInventory(OldPaintings.CreateDamaged(mill));
+            var lazy = EaselMenu.StartStillLife(who, CanvasKind.Medium, new[] { OldPaintings.SubjectFor(mill.Id) });
+            lazy.DevFinish(false);
+            Check(monitor, "leaving the damage as it was is poor", lazy.DevPainting == null || lazy.DevPainting.Quality <= PaintingRules.Silver, $"q{lazy.DevPainting?.Quality}");
+            foreach (var item in who.Items.Where(i => i != null && (OldPaintings.IsDamaged(i) || PaintingData.Read(i)?.IsOld == true)).ToList())
+                who.removeItemFromInventory(item);
+        }
+        finally
+        {
+            if (!hadMastery) who.mailReceived.Remove(OldPaintings.MasteryFlag);
         }
     }
 

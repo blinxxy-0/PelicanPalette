@@ -38,6 +38,8 @@ public class ModEntry : Mod
         Social.JulianPurchase.Register(harmony);
         Social.FestivalPainting.Apply(harmony, helper);
         PaintingTags.Apply(harmony);
+        OldPaintings.Register(helper);
+        OldPaintingFinds.Apply(harmony);
         Social.PaintingOrders.Apply(harmony);
         Social.PaintingContest.Apply(harmony, helper);
         Social.NightMarketStall.Register(harmony, helper);
@@ -126,6 +128,7 @@ public class ModEntry : Mod
             {
                 var data = asset.AsDictionary<string, ObjectData>().Data;
                 PaintingItems.AddObjectData(data);
+                OldPaintings.AddObjectData(data);
                 ArtItems.AddObjects(data);
             });
         else if (name.IsEquivalentTo("Data/BigCraftables"))

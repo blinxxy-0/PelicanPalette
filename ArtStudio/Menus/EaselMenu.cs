@@ -268,6 +268,12 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     private static bool IsViewSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Views.IsView(ids[0]);
 
+    // Restorations get half again the light: what's missing has to be worked out as well as painted.
+    private const float RestoreLight = 1.5f;
+
+    // The old painting being restored, if that's what this is (1.3).
+    private OldPainting? Restoring => _subjectItems.Length == 1 ? OldPaintings.OfSubject(_subjectItems[0]) : null;
+
     // Creatures and animals (Studies).
     private static bool IsCreatureSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Studies.IsStudy(ids[0]);
 

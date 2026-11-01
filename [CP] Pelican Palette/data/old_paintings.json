@@ -1,0 +1,27 @@
+// Old paintings (1.3): the Travelling Cart now and then sells a damaged one,
+// from any set, for anyone unlucky finding them (one day in six). The rest
+// turn up from digs, treasure and crates (ArtStudio/Painting/OldPaintingFinds.cs).
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "Traveler", "Items" ],
+      "Entries": {
+        "blinxxy.MuseArt_DamagedPainting": {
+          "Id": "blinxxy.MuseArt_DamagedPainting",
+          "RandomItemId": [
+            "(O)blinxxy.MuseArt_DamagedPainting_valley",
+            "(O)blinxxy.MuseArt_DamagedPainting_wreck",
+            "(O)blinxxy.MuseArt_DamagedPainting_miners",
+            "(O)blinxxy.MuseArt_DamagedPainting_calico",
+            "(O)blinxxy.MuseArt_DamagedPainting_dwarvish"
+          ],
+          "Price": 3000,
+          "AvailableStock": 1,
+          "Condition": "SYNCED_RANDOM day blinxxy.MuseArt_OldPaintingCart 0.17"
+        }
+      }
+    }
+  ]
+}

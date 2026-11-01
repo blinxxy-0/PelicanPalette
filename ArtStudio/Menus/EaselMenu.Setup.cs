@@ -43,8 +43,10 @@ internal sealed partial class EaselMenu
     private string? _setupStudy;
     private bool _setupCreatures => _setupStudy != null;
     private readonly List<(Rectangle Rect, string Subject)> _creatureSlots = new();
-    private const string CreatureSlot = Creatures.Prefix, AnimalSlot = Animals.Prefix;
-    private static bool IsStudySlot(string slot) => slot == CreatureSlot || slot == AnimalSlot;
+    private const string CreatureSlot = Creatures.Prefix, AnimalSlot = Animals.Prefix, RestoreSlot = OldPaintings.Prefix;
+    private static bool IsStudySlot(string slot) => slot == CreatureSlot || slot == AnimalSlot || slot == RestoreSlot;
+    // Restoring an old painting (1.3): it's its own canvas, so none is used.
+    private bool SetupRestoring => _setupItems.Count == 1 && OldPaintings.IsOld(_setupItems[0]);
     // The view's slot sits first in the sitters' row.
     private const string ViewSlot = Views.Prefix;
     private Rectangle _originalButton, _brushButton, _frameButton, _beginButton, _previewArea, _linenButton;
@@ -89,7 +91,7 @@ internal sealed partial class EaselMenu
         if (_viewLocation != null && !_setupFraming)
             sitters.Insert(0, ViewSlot);
         int at = _viewLocation != null ? 1 : 0;
-        foreach (string slot in new[] { CreatureSlot, AnimalSlot })
+        foreach (string slot in new[] { RestoreSlot, CreatureSlot, AnimalSlot })
         {
             bool any = !_setupFraming && StardewModdingAPI.Context.IsWorldReady && Studies.Available(_who, slot).Count > 0;
             if (any)
@@ -149,7 +151,7 @@ internal sealed partial class EaselMenu
         : ArtItems.FrameStyles.FirstOrDefault(s => StyleCount(s) > 0) ?? ArtItems.Plain;
     private int FramesToUse => StyleCount(UsingStyle);
 
-    private bool HasCanvas => !_needsSupplies || (_setupLinen ? LinenCount(_setupCanvas) : CanvasCount(_setupCanvas)) > 0;
+    private bool HasCanvas => !_needsSupplies || SetupRestoring || (_setupLinen ? LinenCount(_setupCanvas) : CanvasCount(_setupCanvas)) > 0;
 
     private int LinenCount(CanvasKind kind) => kind == CanvasKind.Small ? 0 : CountInBag(ArtItems.QualifiedLinenId(kind));
 
@@ -417,7 +419,7 @@ internal sealed partial class EaselMenu
             return;
         }
         Game1.playSound("bigSelect");
-        if (_needsSupplies)
+        if (_needsSupplies && !SetupRestoring)
             UseCanvas(_setupCanvas);
         _linen = _setupLinen;
         BeginPainting(_setupCanvas, _setupOriginal ? Array.Empty<string>() : _setupItems.ToArray());
@@ -519,7 +521,7 @@ internal sealed partial class EaselMenu
         }
 
         int max = ReferenceBuilder.MaxItems(PaintingRules.CanvasSize(_setupCanvas));
-        Ui.Text(b, _setupStudy == AnimalSlot ? I18n.Get("setup.pick-animal") : _setupCreatures ? I18n.Get("setup.pick-creature") : max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
+        Ui.Text(b, _setupStudy == RestoreSlot ? I18n.Get("setup.pick-old") : _setupStudy == AnimalSlot ? I18n.Get("setup.pick-animal") : _setupCreatures ? I18n.Get("setup.pick-creature") : max == 1 ? I18n.Get("setup.pick-one") : I18n.Get("setup.pick-many", new { max }),
             new Vector2(left, _canvasButtons[0].Bottom + 18));
         if (_itemSlots.Count == 0 && !_setupCreatures)
             Ui.Text(b, I18n.Get("setup.nothing-to-paint"), new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
@@ -676,7 +678,7 @@ internal sealed partial class EaselMenu
                 if (_setupStudy == npc)
                     Ui.Outline(b, rect, new Color(214, 160, 30), 4);
                 if (rect.Contains(mouse))
-                    _hoverText = I18n.Get(_setupStudy == npc ? "setup.creatures-back" : npc == AnimalSlot ? "setup.animals-hover" : "setup.creatures-hover");
+                    _hoverText = I18n.Get(_setupStudy == npc ? "setup.creatures-back" : npc == AnimalSlot ? "setup.animals-hover" : npc == RestoreSlot ? "setup.restore-hover" : "setup.creatures-hover");
                 continue;
             }
             var texture = Sitters.PortraitTexture(npc);
@@ -706,7 +708,7 @@ internal sealed partial class EaselMenu
             if (_setupItems.Contains(subject))
                 Ui.Outline(b, rect, new Color(214, 160, 30), 4);
             if (rect.Contains(mouse))
-                _hoverText = I18n.Get(Animals.IsAnimal(subject) ? "setup.animal-hover" : "setup.creature-hover", new { name = Studies.DisplayName(subject) });
+                _hoverText = I18n.Get(OldPaintings.IsOld(subject) ? "setup.old-hover" : Animals.IsAnimal(subject) ? "setup.animal-hover" : "setup.creature-hover", new { name = Studies.DisplayName(subject) });
         }
     }
 

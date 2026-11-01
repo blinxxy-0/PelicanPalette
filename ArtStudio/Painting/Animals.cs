@@ -156,30 +156,38 @@ internal static class Animals
 // its prefix, which is also its slot in the setup screen's row.
 internal static class Studies
 {
-    public static bool IsStudy(string? subject) => Creatures.IsCreature(subject) || Animals.IsAnimal(subject);
+    // (And restorations, 1.3: an old painting's slot opens the damaged ones in your bag.)
+    public static bool IsStudy(string? subject) => Creatures.IsCreature(subject) || Animals.IsAnimal(subject) || OldPaintings.IsOld(subject);
 
     public static List<string> Available(Farmer who, string prefix) => prefix == Animals.Prefix
         ? Animals.Available().Select(Animals.SubjectFor).ToList()
+        : prefix == OldPaintings.Prefix ? (OldPaintings.CanRestore(who) ? OldPaintings.InBag(who) : new List<string>())
         : Creatures.Available(who).Select(Creatures.SubjectFor).ToList();
 
-    public static string DisplayName(string subject) => Animals.IsAnimal(subject)
-        ? Animals.DisplayName(Animals.TypeOf(subject)) : Creatures.DisplayName(Creatures.NameOf(subject));
+    public static string DisplayName(string subject) => OldPaintings.OfSubject(subject) is { } old ? OldPaintings.Title(old)
+        : Animals.IsAnimal(subject) ? Animals.DisplayName(Animals.TypeOf(subject)) : Creatures.DisplayName(Creatures.NameOf(subject));
 
-    public static bool Fits(string subject, int canvasSize) => Animals.IsAnimal(subject)
-        ? Animals.Fits(Animals.TypeOf(subject), canvasSize) : Creatures.Fits(Creatures.NameOf(subject), canvasSize);
+    // An old painting is restored on its own canvas, so only that size.
+    public static bool Fits(string subject, int canvasSize) => OldPaintings.OfSubject(subject) is { } old ? old.Size == canvasSize
+        : Animals.IsAnimal(subject) ? Animals.Fits(Animals.TypeOf(subject), canvasSize) : Creatures.Fits(Creatures.NameOf(subject), canvasSize);
 
     public static void Draw(SpriteBatch b, string subject, Rectangle area, Color? multiply = null)
     {
-        if (Animals.IsAnimal(subject)) Animals.Draw(b, Animals.TypeOf(subject), area, multiply);
+        if (OldPaintings.OfSubject(subject) is { } old) OldPaintings.Draw(b, old, area, multiply);
+        else if (Animals.IsAnimal(subject)) Animals.Draw(b, Animals.TypeOf(subject), area, multiply);
         else Creatures.Draw(b, Creatures.NameOf(subject), area, multiply);
     }
 
-    public static Reference Reference(string subject, int canvasSize, IReadOnlyList<int> owned, Techniques allowed) => Animals.IsAnimal(subject)
-        ? Animals.Reference(Animals.TypeOf(subject), canvasSize, owned, allowed) : Creatures.Reference(Creatures.NameOf(subject), canvasSize, owned, allowed);
+    public static Reference Reference(string subject, int canvasSize, IReadOnlyList<int> owned, Techniques allowed) =>
+        OldPaintings.OfSubject(subject) is { } old ? OldPaintings.DamagedReference(old)
+        : Animals.IsAnimal(subject) ? Animals.Reference(Animals.TypeOf(subject), canvasSize, owned, allowed)
+        : Creatures.Reference(Creatures.NameOf(subject), canvasSize, owned, allowed);
 
-    public static int SubjectPrice(string subject) => Animals.IsAnimal(subject) ? Animals.SubjectPrice(subject) : Creatures.SubjectPrice(subject);
+    public static int SubjectPrice(string subject) => OldPaintings.OfSubject(subject) is { } old ? OldPaintings.SetValue(old.Set)
+        : Animals.IsAnimal(subject) ? Animals.SubjectPrice(subject) : Creatures.SubjectPrice(subject);
 
-    public static string Title(string subject) => I18n.Get(Animals.IsAnimal(subject) ? "painting.title.animal" : "painting.title.creature", new { name = DisplayName(subject) });
+    public static string Title(string subject) => OldPaintings.OfSubject(subject) is { } old ? OldPaintings.Title(old)
+        : I18n.Get(Animals.IsAnimal(subject) ? "painting.title.animal" : "painting.title.creature", new { name = DisplayName(subject) });
 
     public static string Provenance(string subject) => I18n.Get(Animals.IsAnimal(subject) ? "painting.provenance.animal" : "painting.provenance.creature", new { name = DisplayName(subject) });
 }
