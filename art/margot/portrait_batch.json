@@ -1,0 +1,30 @@
+{
+ "batch": "stardew-margot-portrait",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "image_size": {"width": 64, "height": 64},
+  "no_background": true
+ },
+ "jobs": {
+  "margot_leah": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_leah.png",
+   "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: small woman, warm light skin with freckles across the nose and cheeks, warm brown eyes, dark auburn hair pinned up untidily in a loose bun with a pencil stuck through it and loose strands at the sides, a small brass jeweller's loupe pushed up on her forehead, cream blouse with sleeves rolled up, a sage green work apron over it, a bright curious friendly half-smile. Close bust portrait, head large in frame, three-quarter view"
+  },
+  "margot_elliott": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_elliott.png",
+   "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: warm light skin with freckles, warm brown eyes, dark auburn red-brown hair pinned up messily on top of her head with a yellow pencil through the bun, a brass jeweller's loupe on a band pushed up on her forehead, cream collared blouse, sage green apron straps over the shoulders, an eager talkative smile. Close bust portrait, head large in frame, three-quarter view"
+  },
+  "margot_portraits": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_portraits.png",
+   "style_usage": "Stardew Valley character portraits: exact pixel density at 64x64, bust framing (head and shoulders), large expressive eyes, cel shading in 3-4 tone hue-shifted ramps, dark coloured (not black) outlines, about 30 colours, flat transparent background",
+   "description": "Stardew Valley style character portrait of a warm, quick, slightly messy art restorer woman in her early thirties: freckled light skin, brown eyes, dark auburn hair in an untidy pinned-up bun with a pencil through it, a brass magnifying loupe pushed up on her forehead, cream blouse, sage green work apron. Friendly open expression, mid-sentence enthusiasm"
+  },
+  "margot_leah_b": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_leah.png",
+   "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+   "description": "Stardew Valley portrait of Margot Pell, a city museum conservator, early thirties: round friendly face, freckles, warm brown eyes, dark auburn hair twisted up and pinned with a pencil, a few loose strands framing her face, small brass loupe resting on her forehead, cream blouse with a soft collar under a sage green canvas apron, a warm attentive smile as if she just noticed something interesting. Close bust portrait, head large in frame, three-quarter view facing left"
+  }
+ }
+}

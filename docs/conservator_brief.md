@@ -11,7 +11,7 @@ through her story.
 - **Marriage:** yes, by any farmer, like Sable.
 - **Age:** early thirties, about Sable's age.
 - **Birthday:** Spring 19 (decided 2026-11-01; free in vanilla and in Stardew Valley Expanded, a week after the Egg Festival).
-- **Home:** the Saloon's spare room when she arrives; from her 8-heart event, the rooms above the museum, which she turns into a little conservation studio.
+- **Home (decided 2026-11-01):** a room of her own when she arrives, down a short flight of steps from Gus's storeroom upstairs at the Saloon (the Saloon's only bedroom is Gus's), like the steps down to Sebastian's room. Its furniture is new art made for her: a restoration table with a magnifying lamp, a plan chest, crates and wrapped paintings from the city museum, her travelling trunk. From her 4-heart event (decided 2026-11-01: early, so the cottage is her home for a good while before any marriage), **a cottage of her own in town, built by Robin** (an event with Robin at the building site), which she makes into her home and a little conservation studio. Her Saloon room then becomes **a guest room** (Gus redoes it, with new art).
 - **Role in the mod:**
   - looks after the old paintings that start turning up in the valley (restoration: 1.3's Mastery)
   - works at the museum with Gunther
@@ -54,13 +54,13 @@ Sample lines:
 - **Weekdays:** the museum, at her table, from 9 to 5; the Saloon in the evening.
 - **Sundays:** sketching by the river or at the beach (badly; she won't show you).
 - **Rain:** the museum all day.
-- **After she moves:** her rooms above the museum in the evening instead of the Saloon.
+- **After she moves:** her cottage in the evening instead of the Saloon.
 
 ## Heart events (outline; scripts to be written for approval)
 - **2 hearts (the museum):** she's working on a damaged old painting under a lamp, and shows you how inpainting works: matching what's missing to what's left.
 - **4 hearts (the river):** she's looking for the exact spot an old painting was painted from. You find it together.
 - **6 hearts (the Saloon, her room):** she admits she was sent to bring the "E." landscape back. A choice: tell her to report it, to talk to Sable, or that it's not your business.
-- **8 hearts (the museum, after hours):** she tells the museum the painting couldn't be found. Gunther offers her the rooms upstairs, and she moves in (her home changes from here).
+- **8 hearts (the museum, after hours):** she tells the museum the painting couldn't be found, and decides to stay. She asks Robin to build her a cottage in town; a short scene at the building site with Robin follows, and she moves in (her home changes from here).
 - **10 hearts (her studio, dating):** she shows you the drawing under one of the old paintings (the artist changed their mind), and asks to paint something of her own. With you.
 - **14 hearts (married):** the first old painting the two of you restored hangs in the museum, with both your names on the card.
 

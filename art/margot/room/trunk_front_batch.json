@@ -1,0 +1,20 @@
+{
+ "batch": "stardew-margot-room-trunk",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, pixel scale and colours of this room's furniture: square-on front view, the top seen as a band above, wood ramps, dark coloured outlines",
+  "reference_usage": "camera and outline: the front face square-on with its top seen as a flat band above it, no side faces; keep this size and shape, bottom edge on the floor"
+ },
+ "jobs": {
+  "trunk_front": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/trunk_guide.png",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, drawn square-on from the front with its top seen as a flat band above the front face, no side faces visible at all, at exactly the pixel scale of the reference room (one tile is 16 pixels), dark coloured (not black) outlines: a battered brown leather travelling trunk seen straight from the front, closed, filling the lower part of the canvas, its leather solid and opaque, brass corners, a brass clasp in the middle, a leather strap and two faded travel stickers on the front"
+  }
+ }
+}

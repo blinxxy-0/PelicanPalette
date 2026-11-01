@@ -143,6 +143,8 @@
     { "Action": "Include", "FromFile": "data/special_orders.json" },
     // Damaged old paintings at the Travelling Cart (1.3).
     { "Action": "Include", "FromFile": "data/old_paintings.json" },
+    // Margot Pell, the conservator (1.3).
+    { "Action": "Include", "FromFile": "data/margot.json" },
 
     // What the shop sells. Stock widens with the Painting skill. It also
     // buys paintings (at a premium; see the C# mod).

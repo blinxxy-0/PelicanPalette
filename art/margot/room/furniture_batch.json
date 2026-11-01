@@ -1,0 +1,39 @@
+{
+ "batch": "stardew-margot-room",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle, pixel scale and colours of this room's furniture: front-facing from slightly above, wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "restoration_table": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a painting conservator's restoration work table, two tiles wide: a sturdy wooden table with a small damaged old framed painting lying flat on it, a magnifying lamp on a jointed metal arm clamped to the table's back edge, cotton swabs, two tiny glass solvent jars and a brush"
+  },
+  "plan_chest": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a wide low wooden plan chest, three tiles wide and two tall, with four shallow drawers stacked, each drawer with a small brass handle and a tiny white paper label, a rolled paper drawing tied with ribbon lying on top"
+  },
+  "crates": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: two wooden shipping crates stacked, two tiles wide, with a painting wrapped in brown paper and tied with string leaning against the front of them"
+  },
+  "trunk": {
+   "image_size": {
+    "width": 32,
+    "height": 24
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a battered brown leather travelling trunk, two tiles wide, closed, with brass corners, a leather strap and two faded travel stickers"
+  }
+ }
+}

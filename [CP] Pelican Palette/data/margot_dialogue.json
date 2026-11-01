@@ -1,0 +1,29 @@
+// Margot Pell's dialogue (1.3): first lines, to be grown with her story.
+// Portraits: $0 neutral, $h happy, $s sad, $u explaining (her own), $l
+// flustered, $a annoyed, $6 surprised, $7 thoughtful. Voice: quick and warm,
+// explains things nobody asked about, describes people as paintings.
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Characters/Dialogue/MargotPell", "FromFile": "data/blank.json" },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/MargotPell",
+      "Entries": {
+        "Introduction": "{{i18n:margot.dialogue.Introduction}}",
+        "Mon": "{{i18n:margot.dialogue.Mon}}",
+        "Tue": "{{i18n:margot.dialogue.Tue}}",
+        "Wed": "{{i18n:margot.dialogue.Wed}}",
+        "Thu": "{{i18n:margot.dialogue.Thu}}",
+        "Fri": "{{i18n:margot.dialogue.Fri}}",
+        "Sat": "{{i18n:margot.dialogue.Sat}}",
+        "Sun": "{{i18n:margot.dialogue.Sun}}"
+      }
+    },
+    // Rainy days (the game's own file for every villager).
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "Entries": { "MargotPell": "{{i18n:margot.dialogue.rainy}}" }
+    }
+  ]
+}

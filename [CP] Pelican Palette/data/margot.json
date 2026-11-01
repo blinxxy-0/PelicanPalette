@@ -1,0 +1,162 @@
+// Margot Pell (1.3): the conservator from the Zuzu City museum, sent when
+// old paintings start turning up in the valley. She/her; marriage candidate.
+// She arrives the week after the first damaged old painting is found
+// (Gunther writes first; ArtStudio/Social/Margot.cs sets the flag), and
+// lives in a room of her own down a few steps from the Saloon's storeroom (the Saloon's
+// only bedroom is Gus's). See docs/conservator_brief.md.
+// (Heart events, the wedding and married life come in later pack files.)
+{
+  "Changes": [
+    // ---- Who she is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "Entries": {
+        "MargotPell": {
+          "DisplayName": "{{i18n:margot.name}}",
+          "Gender": "Female",
+          "Age": "Adult",
+          "Manner": "Polite",
+          "SocialAnxiety": "Outgoing",
+          "Optimism": "Positive",
+          "BirthSeason": "Spring",
+          "BirthDay": 19,
+          "HomeRegion": "Town",
+          "CanBeRomanced": true,
+          // Not in the valley until she's sent for.
+          "UnlockConditions": "PLAYER_HAS_MAIL Host blinxxy.MuseArt_MargotArrived Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // She dances (frames 40-47), and has the kiss (28), working at an
+          // easel from behind (32-34) and sleeping (39), as Sable's sheet.
+          "FlowerDanceCanDance": true,
+          "KissSpriteIndex": 28,
+          "KissSpriteFacingRight": true,
+          // A coat and scarf outdoors in winter, linen on Ginger Island.
+          "Appearance": [
+            { "Id": "Winter", "Season": "Winter", "Indoors": false, "Outdoors": true, "Portrait": "Portraits/MargotPell_Winter", "Sprite": "Characters/MargotPell_Winter" },
+            { "Id": "Island", "IsIslandAttire": true, "Portrait": "Portraits/MargotPell_Beach", "Sprite": "Characters/MargotPell_Beach" }
+          ],
+          // Her room down the steps from the Saloon's storeroom.
+          "Home": [
+            { "Id": "Default", "Location": "blinxxy.MuseArt_MargotRoom", "Tile": { "X": 6, "Y": 6 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/MargotPell", "FromFile": "assets/margot/sprites.png" },
+    { "Action": "Load", "Target": "Portraits/MargotPell", "FromFile": "assets/margot/portraits.png" },
+    { "Action": "Load", "Target": "Characters/MargotPell_Winter", "FromFile": "assets/margot/sprites_winter.png" },
+    { "Action": "Load", "Target": "Portraits/MargotPell_Winter", "FromFile": "assets/margot/portraits_winter.png" },
+    { "Action": "Load", "Target": "Characters/MargotPell_Beach", "FromFile": "assets/margot/sprites_beach.png" },
+    { "Action": "Load", "Target": "Portraits/MargotPell_Beach", "FromFile": "assets/margot/portraits_beach.png" },
+    // Her wedding dress, worn only for the ceremony.
+    { "Action": "Load", "Target": "Characters/MargotPell_Wedding", "FromFile": "assets/margot/sprites_wedding.png" },
+    { "Action": "Load", "Target": "Portraits/MargotPell_Wedding", "FromFile": "assets/margot/portraits_wedding.png" },
+    {
+      "Action": "EditData",
+      "Target": "Mods/Bouhm.NPCMapLocations/NPCs",
+      "Entries": { "MargotPell": { "MarkerCropOffset": 2 } },
+      "When": { "HasMod": "Bouhm.NPCMapLocations" }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/AnimationDescriptions",
+      "Entries": {
+        "margot_work": "34/32 32 32 33 33 33 32 32 32 33 33 33 34 34 34 34 34 34/34",
+        "margot_sleep": "39/39/39"
+      }
+    },
+
+    // ---- Her room (tools/build_margot_room.py) ----
+    // Down a short flight of steps from Gus's storeroom upstairs, between
+    // the barrels, like the steps down to Sebastian's room at Robin's (the
+    // same tiles), against the storeroom's right wall. The storeroom has three empty rows beneath it before the
+    // arcade's wall, in vanilla and in Stardew Valley Expanded alike; only
+    // the steps' own tiles change, so SVE's storeroom floor stays its own.
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_MargotRoom", "FromFile": "assets/MargotRoom.tmx" },
+    // The mod's wallpapers (a real wallpaper set, so it papers her room the
+    // way the farmhouse's walls are papered): the sage damask is pattern 0.
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/Wallpapers", "FromFile": "assets/Wallpapers.png" },
+    {
+      "Action": "EditData",
+      "Target": "Data/AdditionalWallpaperFlooring",
+      "Entries": {
+        "blinxxy.MuseArt_Wallpapers": { "Id": "blinxxy.MuseArt_Wallpapers", "Texture": "Mods/blinxxy.MuseArt/Wallpapers", "IsFlooring": false, "Count": 1 }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_MargotRoom": {
+          "DisplayName": "{{i18n:location.margot-room}}",
+          "DefaultArrivalTile": { "X": 5, "Y": 8 },
+          // Decoratable, like the farmhouse: the game papers its walls (the
+          // map's WallIDs: her sage damask) and floors it.
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_MargotRoom", "Type": "StardewValley.Locations.DecoratableLocation" }
+        }
+      }
+    },
+    {
+      "Action": "EditMap",
+      "Target": "Maps/Saloon",
+      "MapTiles": [
+        // The storeroom's bottom edge opens beside its right wall, which
+        // carries straight on down past the steps (its rounded corner goes).
+        { "Position": { "X": 35, "Y": 9 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 162 },
+        { "Position": { "X": 36, "Y": 9 }, "Layer": "Front", "Remove": true },
+        { "Position": { "X": 37, "Y": 9 }, "Layer": "Front", "Remove": true },
+        { "Position": { "X": 38, "Y": 9 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 68 },
+        // The steps, two wide, and their walls.
+        { "Position": { "X": 36, "Y": 10 }, "Layer": "Back", "SetTilesheet": "1", "SetIndex": 1043 },
+        { "Position": { "X": 37, "Y": 10 }, "Layer": "Back", "SetTilesheet": "1", "SetIndex": 1043 },
+        { "Position": { "X": 36, "Y": 11 }, "Layer": "Back", "SetTilesheet": "1", "SetIndex": 1075 },
+        { "Position": { "X": 37, "Y": 11 }, "Layer": "Back", "SetTilesheet": "1", "SetIndex": 1075 },
+        { "Position": { "X": 36, "Y": 10 }, "Layer": "Buildings", "Remove": true },
+        { "Position": { "X": 37, "Y": 10 }, "Layer": "Buildings", "Remove": true },
+        { "Position": { "X": 36, "Y": 11 }, "Layer": "Buildings", "Remove": true },
+        { "Position": { "X": 37, "Y": 11 }, "Layer": "Buildings", "Remove": true },
+        { "Position": { "X": 35, "Y": 11 }, "Layer": "Buildings", "SetTilesheet": "1", "SetIndex": 0 },
+        { "Position": { "X": 38, "Y": 10 }, "Layer": "Buildings", "SetTilesheet": "1", "SetIndex": 0 },
+        { "Position": { "X": 38, "Y": 11 }, "Layer": "Buildings", "SetTilesheet": "1", "SetIndex": 0 },
+        { "Position": { "X": 35, "Y": 10 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 64 },
+        { "Position": { "X": 38, "Y": 10 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 68 },
+        { "Position": { "X": 35, "Y": 11 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 96 },
+        { "Position": { "X": 36, "Y": 11 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 165 },
+        { "Position": { "X": 37, "Y": 11 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 165 },
+        { "Position": { "X": 38, "Y": 11 }, "Layer": "Front", "SetTilesheet": "1", "SetIndex": 130 }
+      ],
+      "TextOperations": [
+        { "Operation": "Append", "Target": [ "MapProperties", "Warp" ], "Value": "36 10 blinxxy.MuseArt_MargotRoom 5 8 37 10 blinxxy.MuseArt_MargotRoom 5 8", "Delimiter": " " }
+      ]
+    },
+
+    // ---- Gifts: love / like / dislike / hate / neutral ----
+    // Loves: green tea, rhubarb pie, the ancient doll, the golden mask,
+    // diamonds (and fine paintings, which the C# mod handles for everyone).
+    // Likes coffee, cheese, honey, quartz and earth crystals. Dislikes sap
+    // and Joja Cola; hates slime, trash and green algae.
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "Entries": {
+        "MargotPell": "{{i18n:margot.gift.love}}/614 222 103 124 72/{{i18n:margot.gift.like}}/395 424 340 80 86/{{i18n:margot.gift.dislike}}/92 167/{{i18n:margot.gift.hate}}/766 168 153/{{i18n:margot.gift.neutral}}/"
+      }
+    },
+
+    // ---- Her arrival: Gunther's letter ----
+    {
+      "Action": "EditData",
+      "Target": "Data/mail",
+      "Entries": {
+        "blinxxy.MuseArt_MargotLetter": "{{i18n:mail.margot-letter}}[#]{{i18n:mail.margot-letter.title}}"
+      }
+    },
+
+    // ---- A day in her life ----
+    { "Action": "Load", "Target": "Characters/schedules/MargotPell", "FromFile": "data/margot_schedule.json" },
+    { "Action": "Include", "FromFile": "data/margot_dialogue.json" }
+  ]
+}

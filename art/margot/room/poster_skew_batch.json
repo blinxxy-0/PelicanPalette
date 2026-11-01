@@ -1,0 +1,28 @@
+{
+ "batch": "stardew-margot-poster-skew",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, pixel scale and colours of this room",
+  "reference_images": [
+   [
+    "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/poster_pick.png",
+    "this exact poster: the same dark frame, cream paper, title lines and the black vase with blue flowers; keep its design"
+   ],
+   [
+    "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/poster_skew_guide.png",
+    "shape and camera: the poster hangs on a side wall that recedes to the right, so it is a parallelogram with upright left and right edges and its top and bottom edges sloping down to the right at 45 degrees; narrower than seen front-on; keep this exact outline"
+   ]
+  ]
+ },
+ "jobs": {
+  "poster_skew": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "the same framed city museum exhibition poster of a black vase with blue flowers, hung on a side wall seen at an angle: a narrow parallelogram, upright sides, top and bottom edges sloping down to the right at 45 degrees, Stardew Valley pixel art, dark coloured (not black) outline, transparent background"
+  }
+ }
+}

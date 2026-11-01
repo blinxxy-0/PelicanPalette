@@ -1,0 +1,53 @@
+{
+ "batch": "stardew-margot-eyes",
+ "common": {
+  "endpoint": "edit-image-pixen"
+ },
+ "jobs": {
+  "kiss_right_1": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_right.png",
+   "description": "this tiny sprite of the same character with her eyes gently closed, a little pink blush on the cheek; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 1
+  },
+  "kiss_left_1": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_left.png",
+   "description": "this tiny sprite of the same character with her eyes gently closed, a little pink blush on the cheek; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 1
+  },
+  "sleep_1": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_front.png",
+   "description": "this tiny sprite of the same character asleep with both eyes closed, peaceful; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 1
+  },
+  "kiss_right_2": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_right.png",
+   "description": "this tiny sprite of the same character with her eyes gently closed, a little pink blush on the cheek; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 2
+  },
+  "kiss_left_2": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_left.png",
+   "description": "this tiny sprite of the same character with her eyes gently closed, a little pink blush on the cheek; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 2
+  },
+  "sleep_2": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_front.png",
+   "description": "this tiny sprite of the same character asleep with both eyes closed, peaceful; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 2
+  },
+  "kiss_right_3": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_right.png",
+   "description": "this tiny sprite of the same character with her eyes gently closed, a little pink blush on the cheek; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 3
+  },
+  "kiss_left_3": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_left.png",
+   "description": "this tiny sprite of the same character with her eyes gently closed, a little pink blush on the cheek; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 3
+  },
+  "sleep_3": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/outfits/frame_front.png",
+   "description": "this tiny sprite of the same character asleep with both eyes closed, peaceful; keep exactly the same pose, hair, bun, pencil, loupe, clothes, colours, size and pixel-art style; change only the eyes",
+   "seed": 3
+  }
+ }
+}

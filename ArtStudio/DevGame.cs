@@ -82,6 +82,7 @@ internal static class DevGame
                 monitor.Log($"Exported {asset} ({data.Count} entries).", LogLevel.Info);
             }
         });
+        DevTools.AddCommand(helper, "museart_margottest", "Margot Pell (1.3): her arrival after the first old painting, her data, sheets, gifts, dialogue and schedule walks.", (_, _) => MargotTest(monitor));
         DevTools.AddCommand(helper, "museart_npctest", "Checks Sable: data, sprites, gift tastes, and that every schedule entry finds its routes.", (_, _) => NpcTest(monitor));
         DevTools.AddCommand(helper, "museart_where", "Logs where Sable (or another villager) is and what they're doing. Usage: museart_where [JulianVane]", (_, args) =>
         {
@@ -693,6 +694,80 @@ internal static class DevGame
     // A villager walks a tile in 32 ticks (2 pixels a tick), and ten game
     // minutes are 7 seconds: about 13 tiles every ten minutes.
     private static int WalkMinutes(int tiles) => (int)Math.Ceiling(tiles * 32 / 60.0 / (Game1.realMilliSecondsPerGameTenMinutes / 10000.0));
+
+    // Margot Pell (1.3, step 6).
+    private static void MargotTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        // Her arrival: nothing before a find, the letter after one, then her a week on.
+        Social.Margot.DevReset();
+        string found = who.modData.TryGetValue(ModEntry.Id + "/OldFound", out string f) ? f : null;
+        who.modData.Remove(ModEntry.Id + "/OldFound");
+        Social.Margot.Update();
+        Check(monitor, "no letter before any old painting is found", !who.mailForTomorrow.Contains(Social.Margot.LetterFlag) && Social.Margot.Npc == null);
+        who.modData[ModEntry.Id + "/OldFound"] = "valley_mill";
+        Social.Margot.Update();
+        Check(monitor, "Gunther's letter comes the morning after a find", who.mailForTomorrow.Contains(Social.Margot.LetterFlag)
+            && DataLoader.Mail(Game1.content).ContainsKey(Social.Margot.LetterFlag));
+        Social.Margot.Update();
+        Check(monitor, "...and she isn't here yet", Social.Margot.Npc == null && !Social.Margot.Arrived);
+        Game1.MasterPlayer.modData[ModEntry.Id + "/MargotDue"] = Game1.Date.TotalDays.ToString();
+        Social.Margot.Update();
+        var margot = Social.Margot.Npc;
+        Check(monitor, "a week after the letter, she arrives", margot != null && Social.Margot.Arrived);
+        if (found == null) who.modData.Remove(ModEntry.Id + "/OldFound"); else who.modData[ModEntry.Id + "/OldFound"] = found;
+        if (margot == null) return;
+
+        Check(monitor, "she lives in her room down the Saloon storeroom's steps", margot.DefaultMap == "blinxxy.MuseArt_MargotRoom", $"{margot.DefaultMap} {margot.DefaultPosition / 64}");
+        Check(monitor, "her sheets: sprites 64x384, portraits 128x256", margot.Sprite.Texture.Width == 64 && margot.Sprite.Texture.Height == 384
+            && margot.Portrait?.Width == 128 && margot.Portrait?.Height == 256);
+        Check(monitor, "she's romanceable, she/her", margot.datable.Value && margot.Gender == StardewValley.Gender.Female);
+        var outfits = new[] { "Winter", "Beach", "Wedding" }.Where(o =>
+            Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>("Characters/MargotPell_" + o).Height == 384 && Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>("Portraits/MargotPell_" + o).Height == 256).ToList();
+        Check(monitor, "her winter, beach and wedding outfits load", outfits.Count() == 3, string.Join(", ", outfits));
+        int Taste(string id) => margot.getGiftTasteForThisItem(ItemRegistry.Create(id));
+        Check(monitor, "she loves green tea, likes coffee, hates slime", Taste("(O)614") == NPC.gift_taste_love && Taste("(O)395") == NPC.gift_taste_like && Taste("(O)766") == NPC.gift_taste_hate);
+        var dialogue = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Characters/Dialogue/MargotPell");
+        Check(monitor, "she has an introduction and a line for every day", dialogue.ContainsKey("Introduction") && new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" }.All(dialogue.ContainsKey));
+
+        // Every schedule entry is walkable, and she's at the museum by 9.
+        var home = margot.currentLocation;
+        var homeTile = margot.TilePoint;
+        foreach (var (key, script) in margot.getMasterScheduleRawData())
+        {
+            var problems = new System.Collections.Generic.List<string>();
+            string from = margot.DefaultMap;
+            var at = (margot.DefaultPosition / 64).ToPoint();
+            foreach (var stop in margot.parseMasterSchedule(key, script).OrderBy(p => p.Key).Select(p => p.Value))
+            {
+                int tiles = 0;
+                var locations = from == stop.targetLocationName ? new[] { from }
+                    : StardewValley.Pathfinding.WarpPathfindingCache.GetLocationRoute(from, stop.targetLocationName, margot.Gender);
+                if (locations == null) { problems.Add($"{stop.time}: no way from {from} to {stop.targetLocationName}"); continue; }
+                var start = at;
+                for (int i = 0; i < locations.Length; i++)
+                {
+                    var location = Game1.RequireLocation(locations[i]);
+                    var end = i < locations.Length - 1 ? location.getWarpPointTo(locations[i + 1]) : stop.targetTile;
+                    var path = StardewValley.Pathfinding.PathFindController.findPathForNPCSchedules(start, end, location, 30000, margot);
+                    if (path == null) problems.Add($"{stop.time}: no path in {location.Name} from {start} to {end}");
+                    else tiles += path.Count;
+                    if (i < locations.Length - 1) start = location.getWarpPointTarget(end, margot);
+                }
+                if (stop.targetLocationName == "ArchaeologyHouse")
+                {
+                    int arrives = Utility.ModifyTime(stop.time, WalkMinutes(tiles));
+                    Check(monitor, $"schedule '{key}': at the museum by 9", arrives <= 900, $"leaves {stop.time}, {tiles} tiles, there at {arrives}");
+                }
+                from = stop.targetLocationName;
+                at = stop.targetTile;
+            }
+            Check(monitor, $"schedule '{key}' is walkable", problems.Count == 0, string.Join("; ", problems));
+        }
+        Game1.warpCharacter(margot, home, homeTile.ToVector2());
+        margot.TryLoadSchedule();
+    }
 
     private static void NpcTest(IMonitor monitor)
     {

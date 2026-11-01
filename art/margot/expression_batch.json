@@ -1,0 +1,38 @@
+{
+ "batch": "stardew-margot-expressions",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "image_size": {
+   "width": 64,
+   "height": 64
+  },
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/sable/style_leah.png",
+  "style_usage": "Stardew Valley portrait style and FRAMING exactly like this portrait: large head filling most of the frame, shoulders cut off at the bottom; saturated hue-shifted cel shading, dark coloured (not black) outlines, about 30 colours",
+  "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/margot_identity.png",
+  "reference_usage": "this exact character in this exact pose and framing: the same hair, bun, pencil, loupe and band, blouse, apron and head position; keep everything identical and change ONLY the facial expression"
+ },
+ "jobs": {
+  "happy": {
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: freckled light skin, warm brown eyes, dark auburn hair pinned up in a messy bun with a yellow pencil through it, a brass jeweller's loupe on a green band pushed up on her forehead, cream collared blouse, sage green apron. Same pose and framing as the reference, three-quarter view. Expression: a big warm delighted smile, eyes bright, cheeks lifted"
+  },
+  "sad": {
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: freckled light skin, warm brown eyes, dark auburn hair pinned up in a messy bun with a yellow pencil through it, a brass jeweller's loupe on a green band pushed up on her forehead, cream collared blouse, sage green apron. Same pose and framing as the reference, three-quarter view. Expression: quietly sad and apologetic, eyes lowered, brows tilted up in the middle, a small downturned mouth"
+  },
+  "explaining": {
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: freckled light skin, warm brown eyes, dark auburn hair pinned up in a messy bun with a yellow pencil through it, a brass jeweller's loupe on a green band pushed up on her forehead, cream collared blouse, sage green apron. Same pose and framing as the reference, three-quarter view. Expression: mid-sentence, eagerly explaining something fascinating, mouth open talking, eyebrows raised with enthusiasm"
+  },
+  "blush": {
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: freckled light skin, warm brown eyes, dark auburn hair pinned up in a messy bun with a yellow pencil through it, a brass jeweller's loupe on a green band pushed up on her forehead, cream collared blouse, sage green apron. Same pose and framing as the reference, three-quarter view. Expression: shy and flustered, cheeks blushing pink, a small embarrassed smile, eyes glancing aside"
+  },
+  "annoyed": {
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: freckled light skin, warm brown eyes, dark auburn hair pinned up in a messy bun with a yellow pencil through it, a brass jeweller's loupe on a green band pushed up on her forehead, cream collared blouse, sage green apron. Same pose and framing as the reference, three-quarter view. Expression: exasperated and cross, brows drawn down, lips pressed flat, a small frown"
+  },
+  "surprised": {
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: freckled light skin, warm brown eyes, dark auburn hair pinned up in a messy bun with a yellow pencil through it, a brass jeweller's loupe on a green band pushed up on her forehead, cream collared blouse, sage green apron. Same pose and framing as the reference, three-quarter view. Expression: startled and surprised, eyes wide, eyebrows high, mouth a small round O"
+  },
+  "thoughtful": {
+   "description": "Stardew Valley portrait of Margot Pell, a museum painting conservator in her early thirties: freckled light skin, warm brown eyes, dark auburn hair pinned up in a messy bun with a yellow pencil through it, a brass jeweller's loupe on a green band pushed up on her forehead, cream collared blouse, sage green apron. Same pose and framing as the reference, three-quarter view. Expression: absorbed and studying something closely, eyes narrowed slightly in concentration, lips pursed, focused"
+  }
+ }
+}
