@@ -823,7 +823,7 @@ Once you have medium canvases (Painting level 4), friends at **4 hearts or more*
 - **Value:** it sells for {DATA["market"]["portrait"]}x, and gives 30% more Painting XP.
 - **As a gift:** the sitter always loves being given theirs.
 - **Commissions:** friends at 4+ hearts also post portrait requests on the {link("Commissions", "commission board")}.
-- **Krobus and the Wizard** sit once their stories are done, hearts or not: Krobus once you've met him in the sewers, the Wizard once you've brought him the magic ink.
+- **Krobus and the Wizard** sit sooner, without the usual 4 hearts: Krobus once you've met him in the sewers, the Wizard once you've brought him the magic ink.
 
 ## Creatures
 Paint a study of any monster you've slain, from memory. On the setup screen, the creatures slot shows them in place of your bag. Junimos join once the Community Center (or Joja's) is done.

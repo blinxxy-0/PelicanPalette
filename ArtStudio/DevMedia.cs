@@ -231,7 +231,7 @@ internal static class DevMedia
         ("-Sable's Night Market stall", new[] { "skiff" }),
         ("-The Moonlit Frame", new[] { "(O)" + ArtItems.MoonlitFrameItemId, "moonlit-painting" }),
         ("-Paint the monsters you've slain", new[] { "creature:Green Slime", "creature:Bat", "creature:Dust Spirit" }),
-        ("-Krobus and the Wizard sit for you", new[] { "npc:Krobus", "npc:Wizard" }),
+        ("-Krobus and the Wizard sit sooner", new[] { "npc:Krobus", "npc:Wizard" }),
         ("-Your portfolio at the gallery", new[] { "painting" }),
         ("-The painting record, in tabs", new[] { "tabs" }),
         ("-Fits Stardew Valley Expanded", Array.Empty<string>()),
@@ -278,7 +278,11 @@ internal static class DevMedia
                     b.Draw(Game1.content.Load<Texture2D>($"Mods/{ModEntry.Id}/JulianItems"), new Rectangle((int)at.X + 8, (int)at.Y + 4, 48, 48),
                         new Rectangle(48 + 16 * int.Parse(icon.Substring("ribbon:".Length)), 0, 16, 16), Color.White);
                 else if (icon.StartsWith("npc:") && Game1.getCharacterFromName(icon.Substring(4)) is { } npc)
-                    b.Draw(npc.Sprite.Texture, new Rectangle((int)at.X + 16, (int)at.Y - 6, 32, 64), new Rectangle(0, 0, 16, 32), Color.White);
+                {
+                    // (Each villager's own frame size: Krobus's frames are shorter than most.)
+                    int fw = npc.Sprite.SpriteWidth, fh = npc.Sprite.SpriteHeight;
+                    b.Draw(npc.Sprite.Texture, new Rectangle((int)at.X + 32 - fw, (int)at.Y + 58 - fh * 2, fw * 2, fh * 2), new Rectangle(0, 0, fw, fh), Color.White);
+                }
                 else
                     slots.Add($"{icon} {(int)at.X} {(int)at.Y}");       // drawn by the Python side
             }
