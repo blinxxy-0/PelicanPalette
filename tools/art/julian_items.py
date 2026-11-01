@@ -1,9 +1,13 @@
 """Draws the two items of Julian Vane's story (1.2), pixel by pixel, to
-[CP] Pelican Palette/assets/julian/items.png (48x32):
+[CP] Pelican Palette/assets/julian/items.png (96x48):
   - (0, 0) 16x16: the Old Catalogue, the booklet from Sable's first show,
     cream and worn, a little framed picture on its cover
   - (16, 0) 32x32: the framed review, a newspaper page in a wooden frame
     (wall decor, the reward at 10 hearts)
+  - (48, 0), (64, 0), (80, 0) 16x16: the Fair painting contest's ribbons,
+    blue for first, red for second, yellow for third (wall decor)
+  - (48, 16) 32x32: the villagers' contest entries, a stack of painted
+    canvases (PixelLab, art/back_room/fair_entries.png), at the Fair
 Outlines are dark shades of their own colours, never black.
 
 Usage: julian_items.py <out.png>
@@ -63,12 +67,49 @@ def review(px, ox):
         rect(px, ox + 7, y, ox + 13, y, INK_LIGHT)
 
 
+RIBBONS = [((70, 110, 200), (40, 66, 140), (130, 170, 235)),     # first: blue
+           ((200, 60, 56), (128, 34, 36), (236, 120, 106)),     # second: red
+           ((232, 186, 56), (156, 112, 30), (250, 222, 120))]   # third: yellow
+
+
+def ribbon(px, ox, colours):
+    base, dark, light = colours
+    # Two tails hanging below, notched at the ends.
+    for x0 in (ox + 5, ox + 9):
+        rect(px, x0, 9, x0 + 2, 14, base)
+        rect(px, x0, 9, x0, 14, dark)
+        px[x0 + 1, 14] = (0, 0, 0, 0)
+    # The rosette: a ring of points around a round middle.
+    for y in range(1, 11):
+        for x in range(ox + 3, ox + 13):
+            dx, dy = x - (ox + 7.5), y - 5.5
+            r = (dx * dx + dy * dy) ** 0.5
+            if r <= 4.8:
+                points = r > 3.6 and (x + y) % 2 == 0
+                px[x, y] = (dark if r > 4.2 or points else light if r < 1.8 else base) + (255,)
+    px[ox + 7, 4] = (255, 255, 255, 255)
+
+
+# The villagers' contest entries: the user's pick of the PixelLab stacks
+# (art/back_room/entries_batch.json), 32x32, leaning against the fence by
+# Julian's table at the Fair.
+ENTRIES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "art", "back_room", "fair_entries.png")
+
+
+def entries(im, ox, oy):
+    stack = Image.open(ENTRIES).convert("RGBA")
+    stack = stack.crop(stack.getbbox())
+    im.alpha_composite(stack, (ox + (32 - stack.width) // 2, oy + 32 - stack.height))
+
 def main():
     out = sys.argv[1]
-    im = Image.new("RGBA", (48, 32), (0, 0, 0, 0))
+    im = Image.new("RGBA", (96, 48), (0, 0, 0, 0))
     px = im.load()
     catalogue(px)
     review(px, 16)
+    for i, colours in enumerate(RIBBONS):
+        ribbon(px, 48 + 16 * i, colours)
+    entries(im, 48, 16)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     im.save(out)
     print("wrote", out)

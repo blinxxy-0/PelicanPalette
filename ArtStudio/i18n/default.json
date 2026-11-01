@@ -579,5 +579,17 @@
   "julian.review.gold": "{{title}}. Confident colour, honest light.#$b#The composition is a little polite. Be ruder.$7",
   "julian.review.plain": "{{title}}. The colours argue in the middle, and the edges wander.#$b#But you saw something, and that's the part nobody can teach.$0",
   "julian.review.none": "There's nothing of yours in the book. A critic can't review an empty wall.$u",
-  "julian.event.sable-dinner": "Stay for dinner, Julian. The farmer cooks.$u#$b#Badly.$u"
+  "julian.event.sable-dinner": "Stay for dinner, Julian. The farmer cooks.$u#$b#Badly.$u",
+  "contest.invite": "The painting contest. One entry each, judged when Lewis judges the grange.#$b#Show me what you've brought.$7",
+  "contest.pick": "Enter a painting in the contest",
+  "contest.pick-hover": "Enter {{painting}}",
+  "contest.thanks": "{{painting}}. It goes on the easel until the judging.#$b#Come back to me after Lewis has done his rounds.$0",
+  "contest.entered": "{{painting}} is on the easel. Don't fuss with it.#$b#Come back after the grange judging.$u",
+  "contest.no-painting": "The painting contest. One entry each, and you've brought nothing to enter.#$b#Next year, then. I'll be here, regrettably.$u",
+  "contest.no-entry": "The judging's over, and you didn't enter.#$b#Next year. I'm told it comes around.$u",
+  "contest.result.1": "First place. {{score}} out of 100.#$b#I don't say this often, so listen: it's the best thing in the tent.#$b#{{tokens}} star tokens, and the blue ribbon. Your painting back, too. Hang it somewhere people walk past.$l",
+  "contest.result.2": "Second place, {{score}} out of 100. {{rival}} beat you, narrowly.#$b#{{tokens}} star tokens and the red ribbon. Here's your painting back.$7",
+  "contest.result.3": "Third place, {{score}} out of 100. {{rival}} took first.#$b#{{tokens}} star tokens and the yellow ribbon. And your painting.$0",
+  "contest.result.4": "Fourth, {{score}} out of 100. {{rival}} took first. It happens to everyone, even me. Once.#$b#{{tokens}} star tokens for entering. Here's your painting back.$s",
+  "contest.after": "The contest's done for the year. I'm going to stand very still and hope nobody asks me to judge the pies.$u"
 }

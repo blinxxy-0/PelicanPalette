@@ -148,6 +148,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
         DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
+        DevTools.AddCommand(helper, "museart_contesttest", "The Fair painting contest (1.2): scoring, rivals, prizes. Run at the Fair (museart_festival fall16) to test entering and judging there too.", (_, args) => ContestTest(monitor, args));
         DevTools.AddCommand(helper, "museart_juliantest", "Julian Vane (1.2): his data, art, visits, and comings and goings.", (_, _) => JulianTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
         DevTools.AddCommand(helper, "museart_palettetest", "Palette tiers, tubes going straight in, and a placed Palette as storage. Run 'museart_palettetest' in the farmhouse, then 'museart_palettetest check' a second later.", (_, args) => PaletteTest(monitor, args));
@@ -1445,6 +1446,95 @@ internal static class DevGame
     }
 
     // Julian Vane (1.2, step 4): data, art, visits, and his comings and goings.
+    private static void ContestTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var cells = new byte[20, 20];
+        SObject Painting(int quality, float stars, int difficulty)
+        {
+            var painting = PaintingItems.Create(new PaintingData { Size = 20, Cells = cells, Purity = new Purity[20, 20], Subject = "(O)24", Stars = stars, Difficulty = difficulty }, quality, 200);
+            return painting;
+        }
+
+        // Scoring, out of 100.
+        var plain = Painting(PaintingRules.Normal, 1f, 0);
+        Check(monitor, "a plain one-star painting scores 33", Social.PaintingContest.Score(plain) == 33, Social.PaintingContest.Score(plain).ToString());
+        var best = Painting(PaintingRules.Iridium, 5f, 100);
+        best.modData[Varnish.FinishKey] = "gallery";
+        best.modData[PaintingData.MasterpieceKey] = "true";
+        Check(monitor, "an iridium five-star gallery-varnished Masterpiece scores 100", Social.PaintingContest.Score(best) == 100, Social.PaintingContest.Score(best).ToString());
+        var gold = Painting(PaintingRules.Gold, 4f, 40);
+        Check(monitor, "a gold four-star painting scores 74", Social.PaintingContest.Score(gold) == 74, Social.PaintingContest.Score(gold).ToString());
+
+        // Rivals: in their ranges, and the same all Fair.
+        var rivals = Social.PaintingContest.RivalScores(who);
+        Check(monitor, "three rivals, each in range, the same each time asked", rivals.Count == 3
+            && rivals.All(r => r.Score is >= 45 and <= 78) && rivals.SequenceEqual(Social.PaintingContest.RivalScores(who)),
+            string.Join(", ", rivals.Select(r => $"{r.Npc} {r.Score}")));
+        Check(monitor, "placings: first beats all, ties go to the farmer, last is fourth",
+            Social.PaintingContest.Placing(80, new[] { 70, 60, 50 }) == 1 && Social.PaintingContest.Placing(70, new[] { 70, 60, 50 }) == 1
+            && Social.PaintingContest.Placing(55, new[] { 70, 60, 50 }) == 3 && Social.PaintingContest.Placing(10, new[] { 70, 60, 50 }) == 4);
+        Check(monitor, "the three ribbons exist", Enumerable.Range(1, 3).All(n => ItemRegistry.Exists($"(F){ModEntry.Id}_Ribbon{n}")));
+        var festival = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Festivals/fall16");
+        Check(monitor, "Julian is set up at the Fair, with a line", festival.ContainsKey(Social.Julian.Name)
+            && festival["Set-Up_additionalCharacters"].Contains($"{Social.Julian.Name} 48 59 2"));
+
+        var mapStrings = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Strings/StringsFromMaps");
+        Check(monitor, "the tourist by his table talks about the contest", mapStrings.TryGetValue("Town-Fair.4", out string? tourist) && tourist.Contains("Julian"), tourist ?? "missing");
+
+        // At the Fair: enter, have the grange judged, collect.
+        if (Game1.CurrentEvent is not { isFestival: true } fair || !fair.isSpecificFestival("fall16"))
+        {
+            monitor.Log("Not at the Fair: run 'museart_festival fall16' first to test entering and judging.", LogLevel.Info);
+            return;
+        }
+        var julian = fair.getActorByName(Social.Julian.Name);
+        Check(monitor, "Julian is at the Fair, at his table", julian?.TilePoint == Social.PaintingContest.JulianTile, julian?.TilePoint.ToString() ?? "missing");
+        if (julian == null) return;
+        var easelTile = Social.PaintingContest.EaselTile;
+        monitor.Log("Near his table: " + string.Join(", ", fair.actors.Where(a => Math.Abs(a.TilePoint.X - julian.TilePoint.X) <= 4 && Math.Abs(a.TilePoint.Y - julian.TilePoint.Y) <= 4).Select(a => $"{a.Name} {a.TilePoint}")), LogLevel.Info);
+        Check(monitor, "his easel is solid", fair.checkForCollision(new Rectangle(easelTile.X * 64 + 16, easelTile.Y * 64 + 16, 32, 32), who));
+        who.modData.Remove(ModEntry.Id + "/ContestYear");
+        Social.PaintingContest.Entry(who).Clear();
+        var entry = Painting(PaintingRules.Gold, 4f, 40);
+        who.addItemToInventory(entry);
+        var talkAt = new xTile.Dimensions.Location(julian.TilePoint.X, julian.TilePoint.Y);
+        fair.grangeJudged = false;
+        bool talked = fair.checkAction(talkAt, Game1.viewport, who);
+        Check(monitor, "talking to him before the judging invites an entry", talked && Game1.activeClickableMenu is DialogueBox);
+        (Game1.activeClickableMenu as DialogueBox)?.closeDialogue();      // (as clicking through it does, so the picker follows)
+        Check(monitor, "then a painting can be picked", Game1.activeClickableMenu is Social.ContestMenu, Game1.activeClickableMenu?.GetType().Name ?? "no menu");
+        Game1.activeClickableMenu = null;
+        Social.PaintingContest.Enter(who, entry);
+        Check(monitor, "entered: it's on his easel, not in the bag", Social.PaintingContest.EntryOf(who) == entry && !who.Items.Contains(entry));
+        if (args.FirstOrDefault() == "show")
+        {
+            // Leave it on the easel, and stand in front of it, for a screenshot.
+            // (A real painting, a portrait of the farmer, so it shows.)
+            Social.PaintingContest.Entry(who).Clear();
+            Social.PaintingContest.Entry(who).Add(FarmerPortrait.Create(who));
+            who.setTileLocation(new Vector2(easelTile.X - 1, easelTile.Y + 1));
+            who.FacingDirection = 0;
+            return;
+        }
+
+        int tokens = who.festivalScore;
+        int placing = Social.PaintingContest.Placing(74, rivals.Select(r => r.Score));
+        fair.grangeJudged = true;
+        fair.checkAction(talkAt, Game1.viewport, who);
+        CloseDialogue();
+        Check(monitor, $"after the judging: placed {placing}, {Social.PaintingContest.Prizes[placing - 1]} tokens", who.festivalScore - tokens == Social.PaintingContest.Prizes[placing - 1], $"{who.festivalScore - tokens} tokens");
+        Check(monitor, "the painting's back in the bag, the entry empty", who.Items.Contains(entry) && Social.PaintingContest.EntryOf(who) == null);
+        Check(monitor, placing <= 3 ? "a ribbon for placing" : "no ribbon for fourth",
+            who.Items.Any(i => i?.QualifiedItemId == $"(F){ModEntry.Id}_Ribbon{placing}") == placing <= 3);
+        int after = who.festivalScore;
+        fair.checkAction(talkAt, Game1.viewport, who);
+        CloseDialogue();
+        Check(monitor, "talking again pays nothing more", who.festivalScore == after);
+        who.festivalScore = tokens;
+    }
+
     private static void JulianTest(IMonitor monitor)
     {
         if (!Context.IsWorldReady) return;

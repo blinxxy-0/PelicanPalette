@@ -1,0 +1,19 @@
+{
+ "batch": "stardew-fair-entries",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+  "style_usage": "Stardew Valley pixel art: palette, outline weight (dark coloured, never black), shading and highlights"
+ },
+ "jobs": {
+  "entries_stack": {
+   "image_size": {"width": 32, "height": 32},
+   "description": "a small stack of three finished paintings on stretched canvases leaning back against each other on the ground, Stardew Valley pixel art, seen from the front and slightly above: the back canvas tallest, each one in front shorter and offset to the side, each showing a different little colourful painting (a blue sky landscape, an orange sunset, a flower still life), wooden stretcher edges with shading and highlights, a soft shadow at the base. Narrow and upright, filling the height. Transparent background."
+  },
+  "entries_leaning": {
+   "image_size": {"width": 32, "height": 32},
+   "description": "three small framed oil paintings propped upright and leaning against one another, Stardew Valley pixel art item: rounded warm-wood frames with highlights, colourful painted scenes inside (green hills, a sunset, a portrait), stacked front to back with the front one lowest, a little shadow under them. Compact and tall rather than wide. Transparent background."
+  }
+ }
+}

@@ -109,8 +109,29 @@
       "Target": "Data/Furniture",
       "Entries": {
         // name/type/sheet size/bounding box/rotations/price/placement/display name/sprite index/texture/off limits for sale
-        "blinxxy.MuseArt_JulianReview": "blinxxy.MuseArt_JulianReview/painting/2 2/2 2/1/500/-1/{{i18n:julian.item.review}}/1/Mods\\blinxxy.MuseArt\\JulianItems/true"
+        "blinxxy.MuseArt_JulianReview": "blinxxy.MuseArt_JulianReview/painting/2 2/2 2/1/500/-1/{{i18n:julian.item.review}}/1/Mods\\blinxxy.MuseArt\\JulianItems/true",
+        // The Fair painting contest's ribbons (1.2): first, second, third.
+        "blinxxy.MuseArt_Ribbon1": "blinxxy.MuseArt_Ribbon1/painting/1 1/1 1/1/250/-1/{{i18n:contest.ribbon.1}}/3/Mods\\blinxxy.MuseArt\\JulianItems/true",
+        "blinxxy.MuseArt_Ribbon2": "blinxxy.MuseArt_Ribbon2/painting/1 1/1 1/1/150/-1/{{i18n:contest.ribbon.2}}/4/Mods\\blinxxy.MuseArt\\JulianItems/true",
+        "blinxxy.MuseArt_Ribbon3": "blinxxy.MuseArt_Ribbon3/painting/1 1/1 1/1/100/-1/{{i18n:contest.ribbon.3}}/5/Mods\\blinxxy.MuseArt\\JulianItems/true"
       }
+    },
+    // The Fair: Julian judges the painting contest at a table by the grange
+    // display (the contest itself is ArtStudio/Social/PaintingContest.cs).
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/fall16",
+      "Entries": { "JulianVane": "{{i18n:contest.festival}}" },
+      "TextOperations": [
+        { "Operation": "Append", "Target": [ "Entries", "Set-Up_additionalCharacters" ], "Value": "JulianVane 48 59 2", "Delimiter": "/" }
+      ]
+    },
+    // The tourist beside his table (a figure painted into the Fair's map) talks
+    // about the contest instead.
+    {
+      "Action": "EditData",
+      "Target": "Strings/StringsFromMaps",
+      "Entries": { "Town-Fair.4": "{{i18n:contest.tourist}}" }
     },
     // Giving the catalogue to Sable: what they say depends on how close you are.
     // Either way, they keep it (and Julian's last event can follow).

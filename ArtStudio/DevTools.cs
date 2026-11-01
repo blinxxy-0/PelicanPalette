@@ -55,6 +55,30 @@ internal static class DevTools
             AtViewport(1280, 720, () => Render(new GameMenu(GameMenu.socialTab), Path.Combine(dir, "social_1280.png")));
             monitor.Log("Social page rendered.", LogLevel.Info);
         });
+        AddCommand(helper, "museart_snapcontest", "In a game: renders the Fair contest's painting picker and Julian's contest lines at both UI sizes, to dialogue_snapshots/contest_*.png.", (_, _) =>
+        {
+            if (!Context.IsWorldReady || Game1.getCharacterFromName(Social.Julian.Name) is not { } julian) return;
+            string dir = Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+            Directory.CreateDirectory(dir);
+            var painting = FarmerPortrait.Create(Game1.player);
+            Game1.player.addItemToInventory(painting);
+            string[] keys = { "invite", "thanks", "entered", "no-painting", "no-entry", "result.1", "result.2", "result.3", "result.4", "after" };
+            foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
+            {
+                AtViewport(w, h, () => Render(new Social.ContestMenu(Game1.player, julian), Path.Combine(dir, $"contest_menu_{w}.png")));
+                foreach (string key in keys)
+                foreach (var (page, i) in I18n.Get("contest." + key, new { painting = painting.DisplayName, score = 74, tokens = 500, rival = "Elliott" })
+                    .Split(new[] { "#$b#" }, StringSplitOptions.None).Select((p, i) => (p, i)))
+                    AtViewport(w, h, () =>
+                    {
+                        var box = new DialogueBox(new Dialogue(julian, null, page)) { transitioning = false, transitionInitialized = true };
+                        box.finishTyping();
+                        Render(box, Path.Combine(dir, $"contest_{key}_{i}_{w}.png"));
+                    });
+            }
+            Game1.player.removeItemFromInventory(painting);
+            monitor.Log("Contest snapshots written.", LogLevel.Info);
+        });
         AddCommand(helper, "museart_snapdialogue", "In a game: renders the narration boxes and the longest spoken pages of Sable's events at both UI sizes, to dialogue_snapshots.", (_, _) =>
             SnapDialogue(helper.DirectoryPath, monitor));
 

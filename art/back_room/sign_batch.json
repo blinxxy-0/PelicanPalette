@@ -1,0 +1,19 @@
+{
+ "batch": "stardew-artshop-sign",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_interior/pierre_shelves.png",
+  "style_usage": "Stardew Valley interior pixel art: palette, outline weight (dark coloured, never black), wood grain and shading"
+ },
+ "jobs": {
+  "sign_wood": {
+   "image_size": {"width": 64, "height": 32},
+   "description": "a long, low wooden shop sign plaque hanging flat on a wall, Stardew Valley pixel art, seen straight on: a carved warm-wood frame with rounded corners and two little brass nails at the top, a plain cream painted panel in the middle left completely BLANK for lettering, a tiny paint palette with dabs of colour carved at each end. Wide and short, filling the width. No text, no letters. Transparent background."
+  },
+  "sign_painted": {
+   "image_size": {"width": 64, "height": 32},
+   "description": "a long, low painted wooden sign for an art shop, Stardew Valley pixel art, seen straight on: a rust red border with a thin gold trim, a cream panel in the middle left BLANK for words, a little brush and paint drip painted at the corners, hanging from a short brass chain. Wide and short. No text, no letters. Transparent background."
+  }
+ }
+}
