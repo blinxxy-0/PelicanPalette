@@ -124,13 +124,25 @@
       "Entries": { "JulianVane": "{{i18n:contest.festival}}" },
       "TextOperations": [
         { "Operation": "Append", "Target": [ "Entries", "Set-Up_additionalCharacters" ], "Value": "JulianVane 48 59 2", "Delimiter": "/" }
-      ]
+      ],
+      "When": { "HasMod |contains=FlashShifter.StardewValleyExpandedCP": false }
+    },
+    // (Stardew Valley Expanded fills that corner: on the grass by the lamp, left of the north road.)
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/fall16",
+      "Entries": { "JulianVane": "{{i18n:contest.festival}}" },
+      "TextOperations": [
+        { "Operation": "Append", "Target": [ "Entries", "Set-Up_additionalCharacters" ], "Value": "JulianVane 18 51 2", "Delimiter": "/" }
+      ],
+      "When": { "HasMod |contains=FlashShifter.StardewValleyExpandedCP": true }
     },
     // The tourist beside his table (a figure painted into the Fair's map) talks
     // about the contest instead.
     {
       "Action": "EditData",
       "Target": "Strings/StringsFromMaps",
+      "When": { "HasMod |contains=FlashShifter.StardewValleyExpandedCP": false },     // (with SVE the table's elsewhere, so they keep SVE's line)
       "Entries": { "Town-Fair.4": "{{i18n:contest.tourist}}" }
     },
     // Giving the catalogue to Sable: what they say depends on how close you are.

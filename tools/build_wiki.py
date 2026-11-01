@@ -139,6 +139,7 @@ This wiki covers every item, recipe, price and mechanic. It's written for versio
 | {link("Painting Record")} | Every subject you've painted, and its milestones |
 | {link("Varnishing")} | Curing paintings in a Varnishing Cabinet |
 | {link("Gifting Paintings")} | Who likes what |
+| {link("Portfolio and Back Room")} | The portfolio book and the plan chest |
 
 ## The shop and the rest
 | | |
@@ -146,6 +147,8 @@ This wiki covers every item, recipe, price and mechanic. It's written for versio
 | {link("Art Shop")} | Location, hours and stock |
 | {link("Crafting")} | Every recipe |
 | {link("Sable")} | Schedule, gifts, heart events and marriage |
+| {link("Julian Vane")} | The critic who visits each season |
+| {link("Festivals")} | The Fair's painting contest and the Night Market stall |
 | {link("Multiplayer")} | Playing in co-op |
 | {link("Configuration")} | The settings |
 | {link("Compatibility")} | Other mods |
@@ -594,11 +597,13 @@ The record opens on an **overview** of everything you've painted, with the miles
 | Cooking | Every dish |
 | Portraits | Everyone who can sit for a portrait |
 | Views | Every outdoor place you can set up an easel |
+| Creatures | Every monster you've slain, and the Junimos |
 | Everything else | Artisan goods, animal products and the rest (only what you've painted) |
 
 - **Still to paint:** what you haven't painted yet shows faded. Hover over it to see how to paint it. Something you've never had shows as "???".
 - **Still lifes of several items** count for each item in them.
 - **Views** count for their place in any season. Small squares on the tile show the seasons you've painted it in.
+- **Your own painting:** a subject you keep a painting of, in the portfolio or the plan chest, shows that painting on its tile ({link("Portfolio and Back Room")}).
 
 ## Tab rewards
 Every tab except "everything else" rewards you for painting a share of it:
@@ -618,6 +623,115 @@ A subject's first painting ever sells for more. Painting the same subject again 
 | Different subjects | Reward |
 |---|---|
 {rows}
+""")
+
+
+def back_room():
+    page("Portfolio and Back Room", f"""
+The art shop has a **back room** now: the door in the shop's back wall, under the "Artists only!" sign. It's where you keep your work. Everything in it is shared by the whole farm.
+
+## The portfolio book
+The book on the lectern is a little like the Community Center, but for paintings. Each page asks for particular paintings. Put one in a slot and it stays there, showing in its slot. A better painting of the same thing can take its place later, and the old one comes back to you.
+
+Finish a page and Sable writes the next day, with a reward.
+
+| Page | Asks for | Reward |
+|---|---|---|
+| The Four Seasons | Pelican Town in spring, summer, fall and winter, and your farm | A Varnishing Cabinet |
+| Harvest | A still life of a crop from each of spring, summer and fall, a tree fruit, and three crops together | A Pigment Mill |
+| Fine Work | A gold painting, an iridium one, a glazed one, a varnished one, and a Masterpiece | Two medium linen canvases |
+| Far Places | Views of the Calico Desert, the Skull Cavern, Ginger Island's beach and its north, and the Secret Woods | Two large linen canvases |
+| Legends | The Crimsonfish, Angler, Legend, Glacierfish and Mutant Carp, painted from the fish in your bag | An Iridium Palette |
+
+You can set an easel down just inside the Skull Cavern for its view.
+
+Paintings in the book (and the plan chest) show as **your own painting** in the {link("Painting Record")}.
+
+## The plan chest
+The wide chest of drawers holds any paintings you want to keep: 70 of them, like a big chest, shared by the farm.
+
+## Sable's room
+The trapdoor down to Sable's room is in the back room's corner now, not on the shop floor. It opens at 2 hearts, or with the Key to the Town, as before. See {link("Sable")}.
+""")
+
+
+def julian():
+    box = infobox("Julian Vane", '<img src="images/julian_portrait.png" width="128">', [
+        ("Pronouns", "he/him"),
+        ("Visits", "The 22nd to the 24th of every season"),
+        ("Lives in", "Zuzu City"),
+        ("Marriage", "No"),
+    ])
+    page("Julian Vane", box + f"""
+**Julian Vane** is an art critic from Zuzu City, at *The Zuzu Review*. Ten years ago he reviewed Sable's first show in one sentence everyone still quotes. Now he's visiting the valley.
+
+<br clear="right">
+
+## Visits
+Julian comes in on the morning bus on the **22nd, 23rd and 24th** of every season, and leaves on the evening one. In between he looks round: your portfolio in the shop's back room, the museum, the beach, the Saloon. His friendship doesn't fade while he's away.
+
+## Gifts
+- **Loves:** wine, truffle oil, prismatic shards, and fine paintings
+- **Likes:** cheese and preserves
+- **Hates:** Joja Cola, slime and seaweed
+
+## Heart events
+Five heart events, at 2, 4, 6, 8 and 10 hearts, tell his story with Sable. Along the way there's an Old Catalogue to deliver, and at the end a framed review to hang.
+
+<details><summary>Spoilers: when and where each event happens</summary>
+
+| Hearts | Where and when |
+|---|---|
+| 2 | The shop's back room, a visit morning, once your portfolio holds three paintings |
+| 4 | The museum, a visit afternoon |
+| 6 | The bus stop, the evening of the 24th, after Sable's 6-heart event |
+| 8 | The Saloon, a visit evening |
+| 10 | The art shop, a visit evening, after Sable's 8-heart event and once Sable has the catalogue |
+
+</details>
+
+## The Fair
+Julian judges the painting contest at the Stardew Valley Fair. See {link("Festivals")}.
+""")
+
+
+def festivals():
+    page("Festivals", f"""
+## The Stardew Valley Fair: the painting contest
+Julian judges a painting contest at the Fair, at a table on the grass beside the grange displays.
+
+- **Entering:** talk to him before Lewis judges the grange, and pick one painting from your bag. It stands on his easel for the day. One entry each.
+- **Judging:** it's judged with the grange, out of 100:
+  - quality: 30 normal, 45 silver, 60 gold, 75 iridium
+  - stars: 3 for each
+  - how hard the subject was: up to 5
+  - a varnish: satin 3, gloss 5, gallery 8
+  - a Masterpiece: 10
+- **The rivals:** Leah, Elliott (or Evelyn, later in Sable's story) and Emily enter too. Their stack of canvases leans on the tree beside him.
+- **The result:** talk to Julian after the judging for your placing, star tokens, a ribbon to hang, and your painting back.
+
+| Place | Star tokens | Ribbon |
+|---|---|---|
+| 1st | 1,000 | Blue |
+| 2nd | 500 | Red |
+| 3rd | 200 | Yellow |
+| 4th | 50 | - |
+
+## The Night Market: Sable's stall
+All three nights from 5pm, Sable keeps a little skiff of their own, moored below the bridge to the submarine. Talk to them from the bridge.
+
+- **The Moonlit Frame:** one a night, for 1,500g. Frame a painting in it at an easel, and it hangs in midnight blue and silver. When you have one, the easel's framing screen lets you choose Plain or Moonlit.
+- **Unusual paintings:** Sable buys them for half as much again, up to three a night:
+  - views of the Far Places (the desert, the Skull Cavern, Ginger Island, the Secret Woods)
+  - the legendary fish
+  - monsters
+  - views painted at night (from 7pm) or in the rain
+- **Lupini**, the market's own painter, is three boats along. Ask Sable about them.
+
+A view painted at night or in the rain says so in its description. Views painted before 1.2 don't remember.
+
+## Sable at the festivals
+Sable goes to every festival; see {link("Sable")}.
 """)
 
 
@@ -709,6 +823,13 @@ Once you have medium canvases (Painting level 4), friends at **4 hearts or more*
 - **Value:** it sells for {DATA["market"]["portrait"]}x, and gives 30% more Painting XP.
 - **As a gift:** the sitter always loves being given theirs.
 - **Commissions:** friends at 4+ hearts also post portrait requests on the {link("Commissions", "commission board")}.
+- **Krobus and the Wizard** sit once their stories are done, hearts or not: Krobus once you've met him in the sewers, the Wizard once you've brought him the magic ink.
+
+## Creatures
+Paint a study of any monster you've slain, from memory. On the setup screen, the creatures slot shows them in place of your bag. Junimos join once the Community Center (or Joja's) is done.
+- **The reference** is the creature's own sprite, in the colours you know.
+- **Size:** a bigger creature needs a bigger canvas.
+- **The record** has a Creatures tab ({link("Painting Record")}).
 
 ## Plein air: painting the view
 ![Painting the view](images/screens/setup_view.png)
@@ -844,10 +965,11 @@ def sable():
 | Friday | Painting outside the shop in the morning, the counter until 5pm, then the Saloon |
 | Sunday | The beach in the morning, the counter from 1pm |
 | Rain and winter | Indoors, painting until the shop opens |
+| Winter 15 to 17 | The counter until 4:30, then their stall at the Night Market ({link("Festivals")}) |
 
-At 10pm Sable goes down the trapdoor in the shop's corner (by the canvas rack) to their room underneath, and sleeps there. You can follow from 2 hearts, or with the Key to the Town; once they've let you in, it stays open.
+At 10pm Sable goes down the trapdoor in the shop's back room to their room underneath, and sleeps there. You can follow from 2 hearts, or with the Key to the Town; once they've let you in, it stays open.
 
-Sable goes to every festival, and dresses for the weather: a coat and scarf outdoors in winter, a linen shirt on Ginger Island.
+Sable goes to every festival, and keeps a stall at the Night Market. They dress for the weather: a coat and scarf outdoors in winter, a linen shirt on Ginger Island.
 
 ## Gifts
 | Love | Like | Dislike | Hate |
@@ -866,7 +988,7 @@ Like most villagers, Sable loves iridium paintings, and as an art lover they lik
 | 6 | The art shop, 6pm to 8pm | A letter from the museum, and a choice |
 | 8 | Evelyn and George's house, a Wednesday afternoon | Who "E." was |
 | 10 | The art shop, 6pm to 8pm, while dating | A portrait |
-| 14 | The art shop, a sunny evening, once married | An exhibition |
+| 14 | The art shop, a sunny evening, once married | An exhibition, with your portfolio on show |
 
 </details>
 
@@ -891,11 +1013,13 @@ Pelican Palette works in co-op. Every player needs the mod installed.
 - {link("Painting Record")} and milestones
 - {link("Commissions")}
 - {link("Consignment", "consigned paintings")} (Sable's easels show your own)
+- entry in the Fair's painting contest, and the paintings Sable buys at the Night Market ({link("Festivals")})
 
 **Shared, like any other object:**
 - easels, Pigment Mills and Varnishing Cabinets, which anyone can use
 - placed and framed paintings
 - the art shop and Sable
+- the portfolio book and the plan chest in the back room ({link("Portfolio and Back Room")}): one for the farm
 
 **Time:** painting doesn't move the clock in multiplayer, because time is shared. The host's morning marks varnish as cured, for everyone.
 """)
@@ -918,7 +1042,7 @@ def compatibility():
 - **Stardew Valley** 1.6.15, with **SMAPI** 4.0 or later.
 - **Required:** [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 2.9+ and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
 - **Optional:** [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
-- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too.
+- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too. Julian's events, the Fair contest and Sable's Night Market stall fit SVE's maps as well.
 - **[CJB Cheats Menu](https://www.nexusmods.com/stardewvalley/mods/4):** its Skills tab has a Painting button beside the vanilla skills (one level at a time, with the level-up screen and the profession choice at 5 and 10), and the Professions list has the six Painting professions to tick on or off.
 - **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills and Varnishing Cabinets work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days.
 - **[NPC Map Locations](https://www.nexusmods.com/stardewvalley/mods/239):** Sable shows on the map, their marker cropped to their face.
@@ -1014,10 +1138,13 @@ def sidebar():
 - {link("Painting Record")}
 - {link("Varnishing")}
 - {link("Gifting Paintings")}
+- {link("Portfolio and Back Room")}
 
 **The valley**
 - {link("Art Shop")}
 - {link("Sable")}
+- {link("Julian Vane")}
+- {link("Festivals")}
 - {link("Crafting")}
 
 **Playing**
@@ -1048,6 +1175,8 @@ def images():
     # Sable's neutral portrait, at 2x.
     sheet = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "sable", "portraits.png")).convert("RGBA")
     sheet.crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST).save(os.path.join(out, "sable_portrait.png"))
+    julian = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "julian", "portraits.png")).convert("RGBA")
+    julian.crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST).save(os.path.join(out, "julian_portrait.png"))
     # And in each outfit, at 4x, for the infobox's outfit row (shown small,
     # opened full size on a click).
     for outfit in SABLE_OUTFITS:
@@ -1057,7 +1186,7 @@ def images():
 
 def main():
     for build in (home, getting_started, painting, canvases, quality, pigments, brushes, skill, selling, record,
-                  commissions, consignment, varnishing, portraits, gifting, art_shop, crafting, sable, multiplayer,
+                  back_room, commissions, consignment, varnishing, portraits, gifting, art_shop, crafting, sable, julian, festivals, multiplayer,
                   configuration, compatibility, faq, translating, changelog, sidebar):
         build()
     if os.path.isdir(WIKI):

@@ -20,10 +20,13 @@
 - [Painting Record](Painting-Record)
 - [Varnishing](Varnishing)
 - [Gifting Paintings](Gifting-Paintings)
+- [Portfolio and Back Room](Portfolio-and-Back-Room)
 
 **The valley**
 - [Art Shop](Art-Shop)
 - [Sable](Sable)
+- [Julian Vane](Julian-Vane)
+- [Festivals](Festivals)
 - [Crafting](Crafting)
 
 **Playing**

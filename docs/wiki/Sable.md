@@ -18,10 +18,11 @@
 | Friday | Painting outside the shop in the morning, the counter until 5pm, then the Saloon |
 | Sunday | The beach in the morning, the counter from 1pm |
 | Rain and winter | Indoors, painting until the shop opens |
+| Winter 15 to 17 | The counter until 4:30, then their stall at the Night Market ([Festivals](Festivals)) |
 
-At 10pm Sable goes down the trapdoor in the shop's corner (by the canvas rack) to their room underneath, and sleeps there. You can follow from 2 hearts, or with the Key to the Town; once they've let you in, it stays open.
+At 10pm Sable goes down the trapdoor in the shop's back room to their room underneath, and sleeps there. You can follow from 2 hearts, or with the Key to the Town; once they've let you in, it stays open.
 
-Sable goes to every festival, and dresses for the weather: a coat and scarf outdoors in winter, a linen shirt on Ginger Island.
+Sable goes to every festival, and keeps a stall at the Night Market. They dress for the weather: a coat and scarf outdoors in winter, a linen shirt on Ginger Island.
 
 ## Gifts
 | Love | Like | Dislike | Hate |
@@ -40,7 +41,7 @@ Like most villagers, Sable loves iridium paintings, and as an art lover they lik
 | 6 | The art shop, 6pm to 8pm | A letter from the museum, and a choice |
 | 8 | Evelyn and George's house, a Wednesday afternoon | Who "E." was |
 | 10 | The art shop, 6pm to 8pm, while dating | A portrait |
-| 14 | The art shop, a sunny evening, once married | An exhibition |
+| 14 | The art shop, a sunny evening, once married | An exhibition, with your portfolio on show |
 
 </details>
 

@@ -43,7 +43,9 @@ def events():
     museum[f"blinxxy.MuseArt_Julian4h/Friendship {J} 1000/DayOfMonth 22 23/Time 1300 1600/SawEvent blinxxy.MuseArt_Julian2h"] = script(
         # (The farmer starts inside the display room: walking in from the
         # library crossed the wall between them.)
-        "continue", "27 11", f"farmer 26 13 1 {J} 28 12 0 Gunther 3 8 2", "skippable",
+        # (Gunther, offscreen behind his counter, on a tile that's free in
+        # Stardew Valley Expanded's museum too.)
+        "continue", "27 11", f"farmer 26 13 1 {J} 28 12 0 Gunther 6 8 2", "skippable",
         "pause 500", "move farmer 1 0 1", "faceDirection farmer 0", "pause 400",
         speak(J, "Your museum has room for exactly one painting. I've been deciding which of yours.$u"),
         f"faceDirection {J} 3", "faceDirection farmer 1", "pause 300",

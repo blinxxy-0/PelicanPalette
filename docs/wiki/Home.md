@@ -6,7 +6,7 @@
 - an art supply shop in Cindersap Forest,
 - Sable, the former museum restorer who runs it.
 
-This wiki covers every item, recipe, price and mechanic. It's written for version 1.1.4.
+This wiki covers every item, recipe, price and mechanic. It's written for version 1.2.0.
 
 ## Start here
 - [Getting Started](Getting-Started): your first easel, canvas and painting
@@ -33,6 +33,7 @@ This wiki covers every item, recipe, price and mechanic. It's written for versio
 | [Painting Record](Painting-Record) | Every subject you've painted, and its milestones |
 | [Varnishing](Varnishing) | Curing paintings in a Varnishing Cabinet |
 | [Gifting Paintings](Gifting-Paintings) | Who likes what |
+| [Portfolio and Back Room](Portfolio-and-Back-Room) | The portfolio book and the plan chest |
 
 ## The shop and the rest
 | | |
@@ -40,6 +41,8 @@ This wiki covers every item, recipe, price and mechanic. It's written for versio
 | [Art Shop](Art-Shop) | Location, hours and stock |
 | [Crafting](Crafting) | Every recipe |
 | [Sable](Sable) | Schedule, gifts, heart events and marriage |
+| [Julian Vane](Julian-Vane) | The critic who visits each season |
+| [Festivals](Festivals) | The Fair's painting contest and the Night Market stall |
 | [Multiplayer](Multiplayer) | Playing in co-op |
 | [Configuration](Configuration) | The settings |
 | [Compatibility](Compatibility) | Other mods |

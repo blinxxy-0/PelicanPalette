@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2 (in progress)
+## 1.2.0
 
 - **The back room.** A door in the shop's back wall, marked "Artists only!" and with a lit window, leads to a back room, where you keep your work: the **portfolio book**, a Community Center for paintings (pages of slots, each asking for a particular painting, which stays there and shows in its slot; a better one can replace it later), and the **plan chest**, a big chest's worth of drawers for any paintings you want to keep. Both are shared by the whole farm. Finishing a page brings a letter from Sable with a reward. Pages so far: The Four Seasons, Harvest and Fine Work.
 - **Creatures.** Paint a study of any monster you've slain, from memory: the easel's setup screen has a creatures slot that shows them in place of your bag. Junimos join once the Community Center (or Joja's) is done. The record has a Creatures tab.
@@ -11,6 +11,7 @@
 - **Sable at the Night Market.** All three nights from 5pm, Sable keeps a little skiff of their own, moored below the bridge to the submarine. They sell the **Moonlit Frame** (one a night): frame a painting in it at an easel and it hangs in midnight blue and silver. And they buy unusual paintings for half as much again, up to three a night: views of the Far Places, the legendary fish, monsters, and views painted at night or in the rain.
 - **Views remember the night and the rain.** A view painted from 7pm, or in the rain, says so in its description.
 - **Your portfolio at the gallery evening.** At Sable's exhibition (their 14-heart event), your portfolio book comes out of the back room on its lectern. A guest who finds their own portrait in it says so; otherwise Leah finds your best painting and names it; and if the book's still empty, Sable has put out your sketches.
+- **Stardew Valley Expanded.** Everything new fits SVE's maps: with SVE, Julian's Fair table stands on the grass by the lamp, left of the north road (SVE's stalls fill the corner by the grange), and the tourist keeps SVE's own line.
 - **Sable's trapdoor moved to the back room**, so the shop floor is clear.
 - **The painting record shows your own painting** of a subject, where one's kept in the portfolio or the plan chest.
 - **Softer outlines on the shop's furniture**, a darker shade of each piece's own colour instead of near-black.

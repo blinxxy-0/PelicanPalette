@@ -75,6 +75,10 @@ The painting's quality depends on how closely you copied the picture and on your
 
 **Sable** (they/them) runs the shop, and dresses for the weather like everyone else: a coat and scarf outdoors in winter, a linen shirt on Ginger Island. They have a full schedule, festival appearances, heart events at 2, 4, 6, 8, 10 and 14 hearts, and can be dated and married. Once you're married they still keep the shop. When they're home, it runs on trust.
 
+**The back room** (1.2), through the "Artists only!" door, holds the farm's **portfolio book**, pages of paintings to collect like the Community Center, each finished with a reward from Sable, and a **plan chest** for paintings you want to keep.
+
+**Julian Vane** (he/him), a city art critic with a history with Sable, visits on the 22nd to the 24th of every season. He has five heart events, and judges a **painting contest at the Stardew Valley Fair** for star tokens and ribbons. At the **Night Market**, Sable keeps a stall: they sell the Moonlit Frame and buy your strangest paintings.
+
 ## Settings
 
 Change these with Generic Mod Config Menu, or in `PelicanPalette/PelicanPalette/config.json` after one run:
@@ -87,9 +91,9 @@ Change these with Generic Mod Config Menu, or in `PelicanPalette/PelicanPalette/
 
 ## Compatibility
 
-- Works with **Stardew Valley Expanded**: the shop, Sable's schedules, events and festival spots all fit SVE's maps.
+- Works with **Stardew Valley Expanded**: the shop, Sable's schedules, events and festival spots (Julian's Fair table included) all fit SVE's maps.
 - Other mods that change the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
-- **Multiplayer:** works in co-op. Each player has their own Painting skill, painting record, commissions and consigned paintings. Sable's easels show your own consigned paintings. Paintings don't move the clock in multiplayer, where time is shared.
+- **Multiplayer:** works in co-op. Each player has their own Painting skill, painting record, commissions, consigned paintings and Fair contest entry; the portfolio book and plan chest belong to the farm. Sable's easels show your own consigned paintings. Paintings don't move the clock in multiplayer, where time is shared.
 
 ## Translating
 

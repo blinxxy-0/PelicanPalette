@@ -149,6 +149,11 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
         DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
         DevTools.AddCommand(helper, "museart_stalltest", "Sable's Night Market stall (1.2). Throwaway farm: 'museart_stalltest' goes to the market on Winter 15 at 6pm, then 'museart_stalltest check' a few seconds later.", (_, args) => StallTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_festactors", "At a festival: logs every villager and where they stand, for finding a free spot.", (_, _) =>
+        {
+            if (Game1.CurrentEvent is not { } ev) return;
+            monitor.Log("Festival actors: " + string.Join(", ", ev.actors.OrderBy(a => a.TilePoint.Y).ThenBy(a => a.TilePoint.X).Select(a => $"{a.Name} {a.TilePoint.X},{a.TilePoint.Y}")), LogLevel.Info);
+        });
         DevTools.AddCommand(helper, "museart_contesttest", "The Fair painting contest (1.2): scoring, rivals, prizes. Run at the Fair (museart_festival fall16) to test entering and judging there too.", (_, args) => ContestTest(monitor, args));
         DevTools.AddCommand(helper, "museart_juliantest", "Julian Vane (1.2): his data, art, visits, and comings and goings.", (_, _) => JulianTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
@@ -1552,10 +1557,11 @@ internal static class DevGame
         Check(monitor, "the three ribbons exist", Enumerable.Range(1, 3).All(n => ItemRegistry.Exists($"(F){ModEntry.Id}_Ribbon{n}")));
         var festival = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Festivals/fall16");
         Check(monitor, "Julian is set up at the Fair, with a line", festival.ContainsKey(Social.Julian.Name)
-            && festival["Set-Up_additionalCharacters"].Contains($"{Social.Julian.Name} 48 59 2"));
+            && festival["Set-Up_additionalCharacters"].Contains($"{Social.Julian.Name} {Social.PaintingContest.JulianTile.X} {Social.PaintingContest.JulianTile.Y} 2"));
 
         var mapStrings = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Strings/StringsFromMaps");
-        Check(monitor, "the tourist by his table talks about the contest", mapStrings.TryGetValue("Town-Fair.4", out string? tourist) && tourist.Contains("Julian"), tourist ?? "missing");
+        Check(monitor, Social.PaintingContest.WithSve ? "with SVE, the tourist (far from his table) keeps their own line" : "the tourist by his table talks about the contest",
+            mapStrings.TryGetValue("Town-Fair.4", out string? tourist) && tourist.Contains("Julian") != Social.PaintingContest.WithSve, tourist ?? "missing");
 
         // At the Fair: enter, have the grange judged, collect.
         if (Game1.CurrentEvent is not { isFestival: true } fair || !fair.isSpecificFestival("fall16"))
@@ -1589,6 +1595,9 @@ internal static class DevGame
             Social.PaintingContest.Entry(who).Clear();
             Social.PaintingContest.Entry(who).Add(FarmerPortrait.Create(who));
             who.setTileLocation(new Vector2(easelTile.X - 1, easelTile.Y + 1));
+            // (And the camera on the table, held there for the shot.)
+            Game1.viewportFreeze = true;
+            Game1.viewport.Location = new xTile.Dimensions.Location(easelTile.X * 64 - Game1.viewport.Width / 2, easelTile.Y * 64 - Game1.viewport.Height / 2);
             who.FacingDirection = 0;
             return;
         }

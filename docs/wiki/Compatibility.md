@@ -1,7 +1,7 @@
 - **Stardew Valley** 1.6.15, with **SMAPI** 4.0 or later.
 - **Required:** [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 2.9+ and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
 - **Optional:** [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
-- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too.
+- **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too. Julian's events, the Fair contest and Sable's Night Market stall fit SVE's maps as well.
 - **[CJB Cheats Menu](https://www.nexusmods.com/stardewvalley/mods/4):** its Skills tab has a Painting button beside the vanilla skills (one level at a time, with the level-up screen and the profession choice at 5 and 10), and the Professions list has the six Painting professions to tick on or off.
 - **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills and Varnishing Cabinets work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days.
 - **[NPC Map Locations](https://www.nexusmods.com/stardewvalley/mods/239):** Sable shows on the map, their marker cropped to their face.

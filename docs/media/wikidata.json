@@ -1,5 +1,5 @@
 {
-  "version": "1.1.4",
+  "version": "1.2.0",
   "objects": [
     {
       "id": "(O)blinxxy.MuseArt_Painting",
@@ -66,6 +66,12 @@
       "name": "Picture Frame",
       "description": "Frame one of your paintings at an easel to hang it on a wall.",
       "sellPrice": 60
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_MoonlitFrame",
+      "name": "Moonlit Frame",
+      "description": "A picture frame in midnight blue and silver, with a moon at the top. Sable sells them at the Night Market. Frame a painting in it at an easel.",
+      "sellPrice": 750
     },
     {
       "id": "(O)blinxxy.MuseArt_Palette",
@@ -270,6 +276,12 @@
       "name": "Peach Pigment",
       "description": "Teaches you to mix peach. Once learned, it\u0027s on your palette for good.",
       "sellPrice": 40
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_OldCatalogue",
+      "name": "Old Catalogue",
+      "description": "The catalogue from a small gallery show in Zuzu City, ten years ago. There\u0027s a note in pencil in one margin. Julian asked you to give it to Sable.",
+      "sellPrice": 0
     }
   ],
   "bigCraftables": [

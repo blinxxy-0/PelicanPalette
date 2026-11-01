@@ -21,11 +21,13 @@ The record opens on an **overview** of everything you've painted, with the miles
 | Cooking | Every dish |
 | Portraits | Everyone who can sit for a portrait |
 | Views | Every outdoor place you can set up an easel |
+| Creatures | Every monster you've slain, and the Junimos |
 | Everything else | Artisan goods, animal products and the rest (only what you've painted) |
 
 - **Still to paint:** what you haven't painted yet shows faded. Hover over it to see how to paint it. Something you've never had shows as "???".
 - **Still lifes of several items** count for each item in them.
 - **Views** count for their place in any season. Small squares on the tile show the seasons you've painted it in.
+- **Your own painting:** a subject you keep a painting of, in the portfolio or the plan chest, shows that painting on its tile ([Portfolio and Back Room](Portfolio-and-Back-Room)).
 
 ## Tab rewards
 Every tab except "everything else" rewards you for painting a share of it:

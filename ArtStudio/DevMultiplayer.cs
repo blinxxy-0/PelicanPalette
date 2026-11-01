@@ -158,6 +158,17 @@ internal static class DevMultiplayer
                 }
                 else
                     _monitor.Log("(Farmhand indoors: view capture skipped.)", LogLevel.Info);
+
+                // 1.2: the farm's portfolio book, and a contest entry of one's own.
+                var forBook = DevTools.TestPainting("view:Town:spring", PaintingRules.Gold, painter: who.Name);
+                who.addItemToInventory(forBook);
+                Check("the farmhand puts a painting in the farm's portfolio", Portfolio.Place(who, 0, forBook).Slot >= 0);
+                var entry = DevTools.TestPainting("(O)24", PaintingRules.Gold, painter: who.Name);
+                who.addItemToInventory(entry);
+                Social.PaintingContest.Entry(who).Clear();
+                who.modData.Remove(ModEntry.Id + "/ContestYear");
+                Social.PaintingContest.Enter(who, entry);
+                Check("the farmhand enters the Fair contest", Social.PaintingContest.EntryOf(who) == entry && !who.Items.Contains(entry));
                 break;
             }
             case "host-check":
@@ -177,6 +188,10 @@ internal static class DevMultiplayer
                     Varnish.MarkCured();
                     Check("the host's morning marks it cured", cabinet.readyForHarvest.Value);
                 }
+                Check("the farmhand's painting is in the host's portfolio too", Portfolio.Items.Any(i => i != null && PaintingData.Read(i)?.Painter == farmhand.Name),
+                    $"{Portfolio.Items.Count(i => i != null)} in the book");
+                Check("the host sees the farmhand's contest entry, and has none of their own",
+                    Social.PaintingContest.EntryOf(farmhand) is { } entered && PaintingItems.IsPainting(entered) && Social.PaintingContest.EntryOf(who) == null);
                 break;
             }
             case "client-collect":
@@ -198,6 +213,18 @@ internal static class DevMultiplayer
                 Check("the farmhand's consigned painting sells and pays", who.Money - money == expected && expected > 0 && !Shop.Consignment.All(who).Any(), $"+{who.Money - money}g of {expected}g");
                 Shop.Commissions.NewDay(who, _monitor, new Random(1));
                 Check("the farmhand gets their own commission board", Shop.Commissions.Posted(who).Any());
+
+                // 1.2: the contest pays the farmhand, and Sable's stall buys from them.
+                int tokens = who.festivalScore;
+                var result = Social.PaintingContest.Judge(who);
+                Check("judged, the farmhand's entry pays them and comes back", result != null && who.festivalScore > tokens && Social.PaintingContest.EntryOf(who) == null,
+                    result is { } r ? $"placed {r.Placing}, +{who.festivalScore - tokens} tokens" : "no entry");
+                who.modData.Remove(ModEntry.Id + "/StallBought");
+                var strange = DevTools.TestPainting("view:Desert:spring", PaintingRules.Gold, painter: who.Name);
+                who.addItemToInventory(strange);
+                money = who.Money;
+                Social.NightMarketStall.Sell(who, strange);
+                Check("Sable's stall pays the farmhand, and counts their sale", who.Money > money && Social.NightMarketStall.BoughtTonight(who) == 1, $"+{who.Money - money}g");
                 break;
             }
         }

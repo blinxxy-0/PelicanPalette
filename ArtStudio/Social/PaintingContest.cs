@@ -26,7 +26,18 @@ namespace ArtStudio.Social;
 internal static class PaintingContest
 {
     public const string FestivalId = "fall16";
-    public static readonly Point JulianTile = new(48, 59), EaselTile = new(49, 59), EntriesTile = new(52, 61);
+    // Julian's table: on the grass by the grange row. Stardew Valley Expanded
+    // fills that corner with stalls and planters, so with it he's on the quiet
+    // grass by the lamp, left of the north road (the user's pick).
+    // (The content pack places him to match: data/julian.json.)
+    public static Point JulianTile => _sve ? new(18, 51) : new(48, 59);
+    public static Point EaselTile => new(JulianTile.X + 1, JulianTile.Y);
+
+    // The villagers' entries lean on the tree by the grange row; with Stardew
+    // Valley Expanded, on the birch behind his table.
+    public static Point EntriesTile => _sve ? new(16, 50) : new(52, 61);
+    private static bool _sve;
+    public static bool WithSve => _sve;
     private const string EntryPrefix = ModEntry.Id + "_ContestEntry_";
     private const string DoneKey = ModEntry.Id + "/ContestYear";
 
@@ -41,6 +52,7 @@ internal static class PaintingContest
 
     public static void Apply(Harmony harmony, IModHelper helper)
     {
+        _sve = helper.ModRegistry.IsLoaded("FlashShifter.StardewValleyExpandedCP");
         harmony.Patch(AccessTools.Method(typeof(Event), nameof(Event.checkAction)),
             prefix: new HarmonyMethod(typeof(PaintingContest), nameof(CheckActionPrefix)));
         harmony.Patch(AccessTools.Method(typeof(Event), nameof(Event.draw), new[] { typeof(SpriteBatch) }),
@@ -203,7 +215,7 @@ internal static class PaintingContest
     // they're drawn (in sprite pixels): up against the trunk, the tallest
     // leaning on it.
     private static readonly Rectangle EntriesSource = new(48, 16, 32, 32);
-    private static readonly Point EntriesNudge = new(-6, -9);
+    private static Point EntriesNudge => _sve ? new(4, -6) : new(-6, -9);
 
     // The villagers' entries, just in front of the tree; and your entry on
     // the easel, just in front of the easel.
