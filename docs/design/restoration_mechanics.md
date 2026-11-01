@@ -140,3 +140,17 @@ missing has to be worked out as well as painted. Restoring is unlocked by
 the Painting Mastery flag, which Margot's test restoration will set
 (step 6); until then only the dev test sets it.
 
+Parts 4 and 5 (`Social/MuseumCollection.cs`, `tools/art/masters_easel.py`,
+`tools/art/set_frames.py`, `museart_collectiontest`): the mastery bar
+(Painting XP past level 10, shown in the skill's tooltip; Margot's test
+restoration reads it in step 6), the Master's Easel (15% more light), the
+four set frames (driftwood, iron, sandstone, Dwarvish), and donating to
+Gunther: the collection view, and each finished set's frames by letter.
+The framing screen shows its style buttons in two rows once you have more
+than four.
+
+**Still to make:** the Old Valley's gallery furniture, the living painting
+(6 donated), Margot's loupe (12) and the Junimo statue and museum wing
+(21). Their rewards are wired: each letter is sent as soon as it exists in
+the game's mail, so adding one reaches players who already qualify.
+

@@ -44,7 +44,18 @@ internal static class ArtItems
     public static readonly FrameStyle Plain = new("plain", FrameItemId, FramedSmallId, FramedLargeId);
     public static readonly FrameStyle Moonlit = new("moonlit", MoonlitFrameItemId, MoonlitSmallId, MoonlitLargeId);
     public static readonly FrameStyle GoldLeaf = new("gold-leaf", GoldLeafFrameItemId, GoldLeafSmallId, GoldLeafLargeId);
-    public static readonly FrameStyle[] FrameStyles = { Plain, Moonlit, GoldLeaf };
+    // The museum collection's frames (1.3): one for each set of restored
+    // paintings donated (tools/art/set_frames.py).
+    public static readonly FrameStyle Driftwood = SetFrame("driftwood"), Iron = SetFrame("iron"), Sandstone = SetFrame("sandstone"), Dwarvish = SetFrame("dwarvish");
+    private static readonly string[] SetFrameIds = { "driftwood", "iron", "sandstone", "dwarvish" };
+    private const int SetFrameSprite = 42, SetFrameFurniture = 15;
+
+    private static FrameStyle SetFrame(string id) =>
+        new(id, $"{ModEntry.Id}_{Pascal(id)}Frame", $"{ModEntry.Id}_{Pascal(id)}Painting", $"{ModEntry.Id}_{Pascal(id)}PaintingLarge");
+
+    private static string Pascal(string id) => char.ToUpperInvariant(id[0]) + id.Substring(1);
+
+    public static readonly FrameStyle[] FrameStyles = { Plain, Moonlit, GoldLeaf, Driftwood, Iron, Sandstone, Dwarvish };
 
     public const string BigCraftablesTexture = "Mods/" + ModEntry.Id + "/BigCraftables";
     public const string FurnitureTexture = "Mods/" + ModEntry.Id + "/Furniture";
@@ -115,7 +126,13 @@ internal static class ArtItems
     public static string PigmentId(int pigment) => $"{ModEntry.Id}_Pigment_{Palette.All[pigment].Id}";
 
     public static bool IsOurs(Item? item) => item?.ItemId.StartsWith(ModEntry.Id + "_") == true;
-    public static bool IsEasel(Item? item) => item?.QualifiedItemId == QualifiedEaselId;
+    public static bool IsEasel(Item? item) => item?.QualifiedItemId is QualifiedEaselId or QualifiedMastersEaselId;
+
+    // The Master's Easel (1.3, Painting Mastery's item): an easel in gold
+    // leaf whose paintings get a little more light.
+    public const string MastersEaselId = ModEntry.Id + "_MastersEasel";
+    public const string QualifiedMastersEaselId = "(BC)" + MastersEaselId;
+    public const float MastersEaselLight = 1.15f;
     public static bool IsFramed(Item? item) =>
         item != null && FrameStyles.Any(s => item.QualifiedItemId == "(F)" + s.SmallId || item.QualifiedItemId == "(F)" + s.LargeId);
 
@@ -147,6 +164,11 @@ internal static class ArtItems
         AddObject(objects, FrameItemId, I18n.Get("item.frame"), I18n.Get("item.frame.description"), 60, FrameSprite);
         AddObject(objects, MoonlitFrameItemId, I18n.Get("item.moonlit-frame"), I18n.Get("item.moonlit-frame.description"), 750, MoonlitFrameSprite);
         AddObject(objects, GoldLeafFrameItemId, I18n.Get("item.gold-leaf-frame"), I18n.Get("item.gold-leaf-frame.description"), 2500, GoldLeafFrameSprite);
+        for (int n = 0; n < SetFrameIds.Length; n++)
+        {
+            var style = FrameStyles.First(s => s.Id == SetFrameIds[n]);
+            AddObject(objects, style.ItemId, I18n.Get("item.frame." + style.Id), I18n.Get("item.frame." + style.Id + ".description"), 1500, SetFrameSprite + n);
+        }
         // Palettes are tools: like a hoe or a rod, they can't be given away by accident.
         foreach (var tier in PaletteItem.Tiers)
         {
@@ -196,6 +218,17 @@ internal static class ArtItems
             Price = 100,
             Texture = BigCraftablesTexture,
             SpriteIndex = 0,
+            CanBePlacedIndoors = true,
+            CanBePlacedOutdoors = true,
+        };
+        bigCraftables[MastersEaselId] = new BigCraftableData
+        {
+            Name = MastersEaselId,
+            DisplayName = I18n.Get("item.masters-easel"),
+            Description = I18n.Get("item.masters-easel.description"),
+            Price = 5000,
+            Texture = BigCraftablesTexture,
+            SpriteIndex = 3,
             CanBePlacedIndoors = true,
             CanBePlacedOutdoors = true,
         };
@@ -260,6 +293,13 @@ internal static class ArtItems
         furniture[MoonlitLargeId] = $"{MoonlitLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/7/{texture}/true";
         furniture[GoldLeafSmallId] = $"{GoldLeafSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/10/{texture}/true";
         furniture[GoldLeafLargeId] = $"{GoldLeafLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/12/{texture}/true";
+        for (int n = 0; n < SetFrameIds.Length; n++)
+        {
+            var style = FrameStyles.First(s => s.Id == SetFrameIds[n]);
+            int small = SetFrameFurniture + 5 * n;
+            furniture[style.SmallId] = $"{style.SmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/{small}/{texture}/true";
+            furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
+        }
     }
 
     // ingredients/unused/yield/big craftable/unlock condition/display name

@@ -58,8 +58,10 @@ internal sealed partial class EaselMenu : IClickableMenu
         : base(0, 0, 0, 0, showUpperRightCloseButton: true)
     {
         _who = who;
+        if (easelTile.HasValue)
+            _easelTile = easelTile.Value;
         if (easelTile.HasValue && who.currentLocation is { } outdoors && Views.CanPaintHere(outdoors))
-            (_viewLocation, _easelTile) = (outdoors, easelTile.Value);
+            _viewLocation = outdoors;
         _level = ArtProgress.Level(who);
         _owned = ArtProgress.OwnedPigments(who);
         _brush = brush ?? Brushes.HogBristle;
@@ -103,7 +105,12 @@ internal sealed partial class EaselMenu : IClickableMenu
     // Light on top of the difficulty: the player's own setting and Plein Air.
     private float LightMultiplier =>
         _rules.LightMultiplier * ModEntry.Config.LightTimeMultiplier
-        * (Has(PaintingSkill.Instance.PleinAir) ? PaintingSkill.PleinAirLight : 1f);
+        * (Has(PaintingSkill.Instance.PleinAir) ? PaintingSkill.PleinAirLight : 1f)
+        * (AtMastersEasel ? ArtItems.MastersEaselLight : 1f);
+
+    // Painting at the Master's Easel (1.3).
+    private bool AtMastersEasel =>
+        _who.currentLocation?.getObjectAtTile((int)_easelTile.X, (int)_easelTile.Y)?.QualifiedItemId == ArtItems.QualifiedMastersEaselId;
 
     private Point MousePos => _devMouse ?? new(Game1.getMouseX(true), Game1.getMouseY(true));
 

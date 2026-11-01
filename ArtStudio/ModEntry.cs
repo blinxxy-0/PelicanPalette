@@ -40,6 +40,7 @@ public class ModEntry : Mod
         PaintingTags.Apply(harmony);
         OldPaintings.Register(helper);
         OldPaintingFinds.Apply(harmony);
+        Social.MuseumCollection.Apply(harmony);
         Social.PaintingOrders.Apply(harmony);
         Social.PaintingContest.Apply(harmony, helper);
         Social.NightMarketStall.Register(harmony, helper);

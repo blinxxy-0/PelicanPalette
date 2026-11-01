@@ -145,6 +145,15 @@ internal sealed partial class EaselMenu
     private int StyleCount(FrameStyle style) => CountInBag("(O)" + style.ItemId);
     private List<FrameStyle> OfferedStyles => ArtItems.FrameStyles.Where(s => s == ArtItems.Plain || StyleCount(s) > 0).ToList();
     private bool FrameStylesOffered => OfferedStyles.Count > 1;
+
+    // A button per style you have: in the canvas sizes' row, or with more
+    // than four (1.3's collection frames), two rows of half-height ones.
+    private Rectangle StyleButton(int i, int count)
+    {
+        if (count <= _canvasButtons.Length) return _canvasButtons[i];
+        var first = _canvasButtons[0];
+        return new Rectangle(first.X + i % 4 * 182, first.Y + i / 4 * 30, 170, 26);
+    }
     // The chosen style, if you have that frame; else plain, else the first you have.
     private FrameStyle UsingStyle => _frameStyle != null && StyleCount(_frameStyle) > 0 ? _frameStyle
         : FrameCount > 0 ? ArtItems.Plain
@@ -188,8 +197,8 @@ internal sealed partial class EaselMenu
     private void ClickSetup(int x, int y)
     {
         if (_setupFraming && FrameStylesOffered)
-            for (int i = 0; i < OfferedStyles.Count && i < _canvasButtons.Length; i++)
-                if (_canvasButtons[i].Contains(x, y))
+            for (int i = 0; i < OfferedStyles.Count && i < 8; i++)
+                if (StyleButton(i, OfferedStyles.Count).Contains(x, y))
                 {
                     _frameStyle = OfferedStyles[i];
                     Game1.playSound("smallSelect");
@@ -588,11 +597,12 @@ internal sealed partial class EaselMenu
         if (FrameStylesOffered)
         {
             var styles = OfferedStyles;
-            for (int i = 0; i < styles.Count && i < _canvasButtons.Length; i++)
+            for (int i = 0; i < styles.Count && i < 8; i++)
             {
                 var style = styles[i];
-                Ui.Button(b, _canvasButtons[i], I18n.Get("setup.frame-style." + style.Id, new { frames = StyleCount(style) }), StyleCount(style) > 0, style == UsingStyle, _canvasButtons[i].Contains(mouse));
-                if (_canvasButtons[i].Contains(mouse) && style != ArtItems.Plain)
+                var button = StyleButton(i, styles.Count);
+                Ui.Button(b, button, I18n.Get("setup.frame-style." + style.Id, new { frames = StyleCount(style) }), StyleCount(style) > 0, style == UsingStyle, button.Contains(mouse));
+                if (button.Contains(mouse) && style != ArtItems.Plain)
                     _hoverText = I18n.Get("setup.frame-style." + style.Id + "-hover");
             }
         }
@@ -607,6 +617,8 @@ internal sealed partial class EaselMenu
             DrawMoonlitBorder(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
         else if (UsingStyle == ArtItems.GoldLeaf)
             DrawGoldLeafBorder(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
+        else if (SetFrameColours.TryGetValue(UsingStyle.Id, out var colours))
+            DrawSetFrameBorder(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40), colours);
         Ui.Fill(b, _previewArea, new Color(243, 236, 220));
         if (_setupPainting != null)
         {
@@ -639,6 +651,25 @@ internal sealed partial class EaselMenu
         int cx = r.Center.X;
         foreach (var (x, y, w, h) in new[] { (-8, 0, 12, 4), (-12, 4, 8, 4), (-12, 8, 4, 4), (-12, 12, 8, 4), (-8, 16, 12, 4) })
             Ui.Fill(b, new Rectangle(cx + x, r.Y + 2 + y, w, h), moon);
+    }
+
+    // The collection's frames in the preview (1.3): each one's outline, wood
+    // or metal, highlight and gem, as tools/art/set_frames.py draws them.
+    private static readonly Dictionary<string, (Color Dark, Color Mid, Color Light, Color Gem)> SetFrameColours = new()
+    {
+        ["driftwood"] = (new(58, 56, 60), new(162, 156, 146), new(224, 220, 208), new(200, 236, 250)),
+        ["iron"] = (new(30, 30, 38), new(108, 108, 120), new(176, 176, 188), new(230, 170, 110)),
+        ["sandstone"] = (new(110, 66, 40), new(222, 178, 112), new(250, 232, 190), new(190, 250, 240)),
+        ["dwarvish"] = (new(52, 34, 26), new(176, 122, 56), new(232, 192, 108), new(190, 250, 240)),
+    };
+
+    private static void DrawSetFrameBorder(SpriteBatch b, Rectangle r, (Color Dark, Color Mid, Color Light, Color Gem) c)
+    {
+        Ui.Fill(b, r, c.Dark);
+        Ui.Fill(b, new Rectangle(r.X + 4, r.Y + 4, r.Width - 8, r.Height - 8), c.Mid);
+        Ui.Fill(b, new Rectangle(r.X + 8, r.Y + 8, r.Width - 16, 4), c.Light);
+        Ui.Fill(b, new Rectangle(r.X + 16, r.Y + 16, r.Width - 32, r.Height - 32), c.Light);
+        Ui.Fill(b, new Rectangle(r.Center.X - 6, r.Y + 2, 12, 8), c.Gem);
     }
 
     // The preview in gold leaf: a warm brown edge, gold, a pale gold inner

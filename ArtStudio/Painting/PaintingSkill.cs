@@ -89,7 +89,18 @@ internal sealed class PaintingSkill : Skills.Skill
     }
 
     public override string GetSkillPageHoverText(int level) =>
-        I18n.Get("skill.hover", new { percent = level * 3, quality = QualityName(PaintingRules.MaxQuality(level)) });
+        I18n.Get("skill.hover", new { percent = level * 3, quality = QualityName(PaintingRules.MaxQuality(level)) })
+        + MasteryHoverText(level);
+
+    // At level 10, the mastery bar (1.3): how far, or whether it's claimed.
+    private static string MasteryHoverText(int level)
+    {
+        if (level < PaintingRules.MaxLevel || !Context.IsWorldReady) return "";
+        var who = Game1.player;
+        return "\n" + (ArtProgress.HasMastery(who) ? I18n.Get("skill.mastery.claimed")
+            : ArtProgress.MasteryReady(who) ? I18n.Get("skill.mastery.ready")
+            : I18n.Get("skill.mastery.progress", new { xp = ArtProgress.MasteryXp(who), needed = ArtProgress.MasteryXpNeeded }));
+    }
 
     private static string QualityName(int quality) => quality switch
     {

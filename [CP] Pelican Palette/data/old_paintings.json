@@ -3,6 +3,18 @@
 // turn up from digs, treasure and crates (ArtStudio/Painting/OldPaintingFinds.cs).
 {
   "Changes": [
+    // The museum collection's rewards by letter, from Gunther (the C# mod
+    // sends each once it's earned and its letter exists: Social/MuseumCollection.cs).
+    {
+      "Action": "EditData",
+      "Target": "Data/mail",
+      "Entries": {
+        "blinxxy.MuseArt_Collection_set-wreck": "{{i18n:mail.collection-wreck}} %item id (O)blinxxy.MuseArt_DriftwoodFrame 2 %%[#]{{i18n:mail.collection-wreck.title}}",
+        "blinxxy.MuseArt_Collection_set-miners": "{{i18n:mail.collection-miners}} %item id (O)blinxxy.MuseArt_IronFrame 2 %%[#]{{i18n:mail.collection-miners.title}}",
+        "blinxxy.MuseArt_Collection_set-calico": "{{i18n:mail.collection-calico}} %item id (O)blinxxy.MuseArt_SandstoneFrame 2 %%[#]{{i18n:mail.collection-calico.title}}",
+        "blinxxy.MuseArt_Collection_set-dwarvish": "{{i18n:mail.collection-dwarvish}} %item id (O)blinxxy.MuseArt_DwarvishFrame 2 %%[#]{{i18n:mail.collection-dwarvish.title}}"
+      }
+    },
     {
       "Action": "EditData",
       "Target": "Data/Shops",

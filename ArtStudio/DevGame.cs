@@ -161,6 +161,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_collectiontest", "Painting Mastery's bar and easel, and the museum's collection of restored paintings (1.3). 'view' opens the collection; 'frames' the framing screen with every style.", (_, args) => CollectionTest(monitor, args));
         DevTools.AddCommand(helper, "museart_oldtest", "Old paintings (1.3): the 21 pictures and their damage, finding them, and restoring one at the easel. With 'show', opens a restoration to look at.", (_, args) => OldTest(monitor, args));
         DevTools.AddCommand(helper, "museart_ordertest", "Special orders (1.3): the painting tags, the orders' data, and Lewis's portraits delivered.", (_, _) => OrderTest(monitor));
         DevTools.AddCommand(helper, "museart_festtest", "Festivals, round two (1.3): run at Spirit's Eve or the Jellies (museart_festival fall27 / summer28) to paint there; with 'gift', Sable's Winter Star painting.", (_, args) => FestTest(helper, monitor, args));
@@ -1469,6 +1470,98 @@ internal static class DevGame
             who.stats.specificMonstersKilled.Clear();
             foreach (var (name, count) in kills)
                 who.stats.specificMonstersKilled[name] = count;
+        }
+    }
+
+    // Painting Mastery and the museum collection (1.3, step 5, parts 4 and 5).
+    private static void CollectionTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        SObject Restored(OldPainting old) => PaintingItems.Create(new PaintingData
+        {
+            Size = old.Size, Cells = OldPaintings.Original(old), Purity = new Purity[old.Size, old.Size],
+            Subject = OldPaintings.SubjectFor(old.Id), Stars = 5f, Painter = who.Name,
+        }, PaintingRules.Gold, 1000);
+        void ClearDonations()
+        {
+            foreach (var p in OldPaintings.All) who.mailReceived.Remove(ModEntry.Id + "_Donated_" + p.Id);
+            foreach (var (key, _) in Social.MuseumCollection.Rewards)
+            {
+                who.mailReceived.Remove(Social.MuseumCollection.RewardLetter(key));
+                who.mailForTomorrow.Remove(Social.MuseumCollection.RewardLetter(key));
+            }
+        }
+        if (args.FirstOrDefault() == "view")
+        {
+            ClearDonations();
+            foreach (var p in OldPaintings.All.Where(p => p.Set is "wreck" || p.Id is "valley_mill" or "calico_queen" or "dwarvish_king"))
+                who.mailReceived.Add(ModEntry.Id + "_Donated_" + p.Id);
+            if (!who.friendshipData.ContainsKey("Gunther")) who.friendshipData.Add("Gunther", new Friendship());
+            who.friendshipData["Gunther"].TalkedToToday = true;
+            var gunther = Game1.getCharacterFromName("Gunther");
+            gunther.CurrentDialogue.Clear();
+            gunther.checkAction(who, gunther.currentLocation);
+            return;
+        }
+        if (args.FirstOrDefault() == "frames")
+        {
+            foreach (var style in ArtItems.FrameStyles)
+                who.addItemToInventory(ItemRegistry.Create("(O)" + style.ItemId, 2));
+            var toFrame = DevTools.TestPainting("view:Town:spring", PaintingRules.Gold);
+            who.addItemToInventory(toFrame);
+            var m = new EaselMenu(who);
+            m.DevFraming(toFrame);
+            m.DevFrameStyle(ArtItems.Sandstone);
+            Game1.activeClickableMenu = m;
+            return;
+        }
+        int level = ArtProgress.Level(who), mxp = ArtProgress.MasteryXp(who);
+        try
+        {
+            // The mastery bar fills with Painting XP past level 10.
+            ArtProgress.SetLevel(who, 10);
+            ArtProgress.SetMasteryXp(who, 0);
+            ArtProgress.AddXp(who, 9000);
+            bool partway = !ArtProgress.MasteryReady(who) && ArtProgress.MasteryXp(who) == 9000;
+            ArtProgress.AddXp(who, 6000);
+            Check(monitor, "Painting XP past level 10 fills the mastery bar", partway && ArtProgress.MasteryReady(who), $"{ArtProgress.MasteryXp(who)} XP");
+
+            // The Master's Easel gives more light.
+            var farm = who.currentLocation;
+            var tile = who.Tile + new Vector2(2, 0);
+            farm.objects.Remove(tile);
+            farm.objects.Add(tile, ItemRegistry.Create<SObject>("(BC)" + ArtItems.EaselId));
+            float plain = new EaselMenu(who, easelTile: tile).DevLightMultiplier;
+            farm.objects.Remove(tile);
+            farm.objects.Add(tile, ItemRegistry.Create<SObject>(ArtItems.QualifiedMastersEaselId));
+            float master = new EaselMenu(who, easelTile: tile).DevLightMultiplier;
+            farm.objects.Remove(tile);
+            Check(monitor, "the Master's Easel gives more light", Math.Abs(master / plain - ArtItems.MastersEaselLight) < 0.001f, $"{plain:0.00} -> {master:0.00}");
+
+            // Donating the Wreck's five brings its frames.
+            ClearDonations();
+            var gunther = Game1.getCharacterFromName("Gunther");
+            foreach (var old in OldPaintings.All.Where(p => p.Set == "wreck"))
+            {
+                var painting = Restored(old);
+                who.addItemToInventory(painting);
+                Social.MuseumCollection.Donate(who, gunther, painting, old);
+                (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+                gunther.CurrentDialogue.Clear();
+            }
+            Check(monitor, "five donated, and the Wreck is complete", Social.MuseumCollection.DonatedCount == 5 && Social.MuseumCollection.SetDone("wreck"));
+            Check(monitor, "...which brings Gunther's letter with driftwood frames", who.mailForTomorrow.Contains(Social.MuseumCollection.RewardLetter("set-wreck"))
+                && DataLoader.Mail(Game1.content)[Social.MuseumCollection.RewardLetter("set-wreck")].Contains(ArtItems.Driftwood.ItemId));
+            Check(monitor, "...and not the Miners'", !who.mailForTomorrow.Contains(Social.MuseumCollection.RewardLetter("set-miners")));
+            var framed = ArtHooks.Frame(DevTools.TestPainting("view:Beach:summer", PaintingRules.Gold), ArtItems.Driftwood);
+            Check(monitor, "a painting framed in driftwood hangs in the driftwood frame", framed.QualifiedItemId == "(F)" + ArtItems.Driftwood.SmallId && ArtItems.IsFramed(framed));
+        }
+        finally
+        {
+            ClearDonations();
+            ArtProgress.SetLevel(who, level);
+            ArtProgress.SetMasteryXp(who, mxp);
         }
     }
 

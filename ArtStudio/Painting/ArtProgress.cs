@@ -61,10 +61,29 @@ internal static class ArtProgress
     {
         if (!Context.IsWorldReady) return 0;
         int before = Level(who);
+        // Past level 10, it fills the Painting Mastery bar (1.3).
+        if (before >= PaintingRules.MaxLevel && amount > 0)
+            who.modData[MasteryXpKey] = (MasteryXp(who) + amount).ToString();
         Skills.AddExperience(who, PaintingSkill.SkillId, amount);
         int after = Level(who);
         return after > before ? after : 0;
     }
+
+    // ---- Painting Mastery (1.3) ----
+
+    // Painting XP earned after level 10; Margot offers the test restoration
+    // once it reaches MasteryXpNeeded.
+    public const int MasteryXpNeeded = 15000;
+    private const string MasteryXpKey = ModEntry.Id + "/MasteryXp";
+
+    public static int MasteryXp(Farmer who) =>
+        who.modData.TryGetValue(MasteryXpKey, out string raw) && int.TryParse(raw, out int xp) ? xp : 0;
+
+    public static void SetMasteryXp(Farmer who, int xp) => who.modData[MasteryXpKey] = xp.ToString();
+
+    public static bool MasteryReady(Farmer who) => Level(who) >= PaintingRules.MaxLevel && MasteryXp(who) >= MasteryXpNeeded;
+
+    public static bool HasMastery(Farmer who) => who.mailReceived.Contains(OldPaintings.MasteryFlag);
 
     public static void SetLevel(Farmer who, int level)
     {

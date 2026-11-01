@@ -236,6 +236,8 @@ internal sealed partial class EaselMenu
 
     internal void DevKeep() => KeepAndClose();
 
+    internal float DevLightMultiplier => LightMultiplier;
+
     // Restoring: put the old painting back exactly as it was (1.3).
     internal void DevRestorePerfectly()
     {
