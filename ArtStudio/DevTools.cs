@@ -79,6 +79,68 @@ internal static class DevTools
             Game1.player.removeItemFromInventory(painting);
             monitor.Log("Contest snapshots written.", LogLevel.Info);
         });
+        AddCommand(helper, "museart_gallerynight", "Sable's gallery evening (1.2): who finds what in your portfolio book, for an empty book, portraits, and a gold painting; and renders each line at both UI sizes to dialogue_snapshots/gallery_*.png.", (_, _) =>
+        {
+            if (!Context.IsWorldReady) return;
+            var book = Portfolio.Items;
+            var saved = book.ToList();
+            string dir = Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+            Directory.CreateDirectory(dir);
+            void Empty() { for (int i = 0; i < book.Count; i++) book[i] = null; }
+            void Check(string what, bool ok, string detail) => monitor.Log($"[{(ok ? "PASS" : "FAIL")}] {what}: {detail}", ok ? LogLevel.Info : LogLevel.Error);
+            string Show((string Narration, (string Speaker, string Line)[] Lines) scene) => string.Join(" / ", scene.Lines.Select(l => $"{l.Speaker}: {l.Line}"));
+            var shown = new List<(string Speaker, string Text)>();
+            void Keep((string Narration, (string Speaker, string Line)[] Lines) scene)
+            {
+                shown.Add(("", scene.Narration));
+                shown.AddRange(scene.Lines.Select(l => (l.Speaker, l.Line)));
+            }
+
+            Empty();
+            var scene = SableEvents.GalleryPortfolio();
+            Check("an empty book: Leah finds your sketches, and Sable answers", scene.Lines.Select(l => l.Speaker).SequenceEqual(new[] { "Leah", "Sable" }), Show(scene));
+            Keep(scene);
+
+            Empty();
+            book[0] = TestPainting("sitter:George", PaintingRules.Normal);
+            book[1] = TestPainting("sitter:Robin", PaintingRules.Normal);
+            scene = SableEvents.GalleryPortfolio();
+            Check("portraits of George and Robin: Robin finds hers first", scene.Lines.Length == 1 && scene.Lines[0].Speaker == "Robin", Show(scene));
+            foreach (string guest in SableEvents.GalleryGuests)
+            {
+                Empty();
+                book[0] = TestPainting("sitter:" + guest, PaintingRules.Normal);
+                Keep(SableEvents.GalleryPortfolio());
+            }
+
+            Empty();
+            book[0] = TestPainting("(O)24", PaintingRules.Gold);
+            book[1] = TestPainting("(O)24", PaintingRules.Normal);
+            scene = SableEvents.GalleryPortfolio();
+            Check("no portraits: Leah names your best painting", scene.Lines.Length == 1 && scene.Lines[0].Speaker == "Leah" && scene.Lines[0].Line.Contains("Look at that light"), Show(scene));
+            Keep(scene);
+            book[0] = TestPainting("(O)24", PaintingRules.Iridium);
+            Keep(SableEvents.GalleryPortfolio());
+            Empty();
+            book[0] = TestPainting("(O)24", PaintingRules.Normal);
+            Keep(SableEvents.GalleryPortfolio());
+
+            for (int i = 0; i < book.Count; i++) book[i] = i < saved.Count ? saved[i] : null;
+
+            int n = 0;
+            foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
+            foreach (var (speaker, text) in shown.Distinct())
+            foreach (string page in text.Split(new[] { "#$b#" }, StringSplitOptions.None))
+            {
+                var box = speaker == "" ? new DialogueBox(page) : new DialogueBox(new Dialogue(Game1.getCharacterFromName(speaker), null, page));
+                box.transitioning = false;
+                box.transitionInitialized = true;
+                box.finishTyping();
+                int index = n++;
+                AtViewport(w, h, () => Render(box, Path.Combine(dir, $"gallery_{index:00}_{(speaker == "" ? "narration" : speaker)}_{w}.png")));
+            }
+            monitor.Log($"Gallery lines rendered ({n}).", LogLevel.Info);
+        });
         AddCommand(helper, "museart_snapstall", "In a game: renders Sable's Night Market stall (its question, shop, painting picker and lines) at both UI sizes, to dialogue_snapshots/stall_*.png.", (_, _) =>
         {
             if (!Context.IsWorldReady || Game1.getCharacterFromName("Sable") is not { } sable) return;

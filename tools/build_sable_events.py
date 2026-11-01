@@ -174,6 +174,9 @@ def events():
         "faceDirection Haley 3",
         speak("Haley", "Okay, fine. Painting is kind of cool. Does Sable teach lessons?"),
         speak("Robin", "I built every one of those frames, you know. Just saying."),
+        # Your portfolio, out on its lectern (1.2, docs/gallery_portfolio.md):
+        # the command picks who finds what in it, and writes their lines.
+        "pause 400", "blinxxy.MuseArt_GalleryPortfolio", "pause 400",
         speak("Evelyn", "Forty years, and it's back on a wall in the forest. Isn't that something, George?"),
         speak("George", "Hmph. Best painting in the room.#$b#...After the farmer's."),
         "pause 500", "move Sable -6 0 3", "faceDirection farmer 1", "pause 300",

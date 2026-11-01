@@ -612,5 +612,20 @@
   "stall.pick-hover": "Sell {{painting}} for {{price}}g",
   "stall.sold": "{{painting}}. Yes. {{price}}g, and it goes on the boat where people can see it.$h",
   "stall.sold-last": "{{painting}}. {{price}}g. And that's the boat full for tonight.$h",
-  "stall.shop": "Moonlit Frames. One a night: each takes me a week."
+  "stall.shop": "Moonlit Frames. One a night: each takes me a week.",
+  "gallery.portfolio.book": "Your portfolio book has come out of the back room for the evening, open on its lectern. Someone's paging through it.",
+  "gallery.portfolio.sketches": "Your portfolio book has nothing in it yet, so Sable has laid a pile of your sketches on its lectern.",
+  "gallery.portfolio.portrait.lewis": "Is this me? Hm. You've given me more hair than I've had in years. I approve.$h",
+  "gallery.portfolio.portrait.leah": "That's me! You got the way I squint at things. Nobody ever notices that.$h",
+  "gallery.portfolio.portrait.elliott": "My likeness, caught mid-reverie. I may weep. I may write about weeping.$h",
+  "gallery.portfolio.portrait.haley": "Wait, that's me? ...Okay, the lighting's actually really flattering. I want a copy.$h",
+  "gallery.portfolio.portrait.robin": "That's me in my work clothes! You even got the sawdust. Sort of.$h",
+  "gallery.portfolio.portrait.evelyn": "Oh, my. You painted me with my roses. George, come and look!$h",
+  "gallery.portfolio.portrait.george": "Hmph. That's me.#$b#...Don't tell anyone I like it.",
+  "gallery.portfolio.portrait.emily": "My portrait! Look at the colours you put round me. It's like you saw my aura.$h",
+  "gallery.portfolio.best.iridium": "'{{title}}.' The farmer painted this? I need to sit down.$h",
+  "gallery.portfolio.best.gold": "'{{title}}.' Look at that light. The farmer's going to put us all out of work.$h",
+  "gallery.portfolio.best.plain": "'{{title}}.' It's honest. You can tell they painted what they saw, not what they thought they should.",
+  "gallery.portfolio.sketches.leah": "Sketches? These are the farmer's? Sable, you've been keeping secrets.$h",
+  "gallery.portfolio.sketches.sable": "They're not ready for the book yet. Neither was I, once.$u"
 }

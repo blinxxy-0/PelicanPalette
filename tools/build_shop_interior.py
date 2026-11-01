@@ -313,6 +313,9 @@ def furnish(room, leah, pierre, gallery):
     room.place("gallery_junimo", 8, 8)
     room.place("gallery_wine", 15, 6)
     room.place("gallery_bust", 17, 6)
+    # The portfolio book, out of the back room for the evening (1.2): on its
+    # lectern by the portrait panel, where a guest pages through it.
+    room.place("lectern", 12, 10)
 
 
 def main():
