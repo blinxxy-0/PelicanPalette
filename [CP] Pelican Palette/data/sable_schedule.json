@@ -9,6 +9,11 @@
   "summer": "700 Forest 88 40 2/930 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 7 4 0/1900 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/2200 blinxxy.MuseArt_SableBasement 10 5 2",
   // Winter: too cold for the yard; painting inside before opening.
   "winter": "800 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/930 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 7 4 0/1900 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/2200 blinxxy.MuseArt_SableBasement 10 5 2",
+  // The Night Market (winter 15 to 17): the shop till 4:30, then off to the
+  // stall (from 5pm the mod hides them in town; they're at the market).
+  "winter_15": "800 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/930 blinxxy.MuseArt_ArtShop 3 4 2/1630 blinxxy.MuseArt_SableBasement 10 5 2",
+  "winter_16": "800 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/930 blinxxy.MuseArt_ArtShop 3 4 2/1630 blinxxy.MuseArt_SableBasement 10 5 2",
+  "winter_17": "800 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/930 blinxxy.MuseArt_ArtShop 3 4 2/1630 blinxxy.MuseArt_SableBasement 10 5 2",
   // Rain: inside all day; the shop still opens (but not on Wednesdays; the
   // shop data checks the day).
   "rain": "900 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/930 blinxxy.MuseArt_ArtShop 3 4 2/1800 blinxxy.MuseArt_ArtShop 14 12 0 sable_paint/2200 blinxxy.MuseArt_SableBasement 10 5 2",

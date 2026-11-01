@@ -175,7 +175,16 @@ internal static class Views
         float conditions = 1f;
         if (Game1.IsRainingHere(Game1.getLocationFromName(place))) conditions *= 1.15f;
         if (Game1.season == StardewValley.Season.Winter) conditions *= 1.1f;
-        if (Game1.timeOfDay >= 1900) conditions *= 1.15f;
+        if (Game1.timeOfDay >= NightFrom) conditions *= 1.15f;
         return (int)(price * conditions);
     }
+
+    public const int NightFrom = 1900;
+
+    // What's recorded on a view painted now: "night" from 7pm, "rain" in the
+    // rain (night wins), or null for an ordinary day.
+    public static string? ConditionsNow(string subject) =>
+        Game1.timeOfDay >= NightFrom ? "night"
+        : Game1.IsRainingHere(Game1.getLocationFromName(PlaceOf(subject))) ? "rain"
+        : null;
 }

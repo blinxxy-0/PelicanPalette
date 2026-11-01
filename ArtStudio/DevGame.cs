@@ -148,6 +148,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
         DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
+        DevTools.AddCommand(helper, "museart_stalltest", "Sable's Night Market stall (1.2). Throwaway farm: 'museart_stalltest' goes to the market on Winter 15 at 6pm, then 'museart_stalltest check' a few seconds later.", (_, args) => StallTest(monitor, args));
         DevTools.AddCommand(helper, "museart_contesttest", "The Fair painting contest (1.2): scoring, rivals, prizes. Run at the Fair (museart_festival fall16) to test entering and judging there too.", (_, args) => ContestTest(monitor, args));
         DevTools.AddCommand(helper, "museart_juliantest", "Julian Vane (1.2): his data, art, visits, and comings and goings.", (_, _) => JulianTest(monitor));
         DevTools.AddCommand(helper, "museart_techtest", "Techniques that grow with the canvas (glazes, highlights), and Masterpieces on linen.", (_, _) => TechTest(monitor));
@@ -1446,6 +1447,79 @@ internal static class DevGame
     }
 
     // Julian Vane (1.2, step 4): data, art, visits, and his comings and goings.
+    private static void StallTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;
+        var who = Game1.player;
+        if (args.FirstOrDefault() != "check")
+        {
+            Game1.season = Season.Winter;
+            Game1.dayOfMonth = 15;
+            Game1.timeOfDay = 1800;
+            // (The game sets the day's festivals each morning; this skipped it.)
+            if (!Game1.netWorldState.Value.ActivePassiveFestivals.Contains("NightMarket"))
+                Game1.netWorldState.Value.ActivePassiveFestivals.Add("NightMarket");
+            Game1.warpFarmer("BeachNightMarket", 7, 36, 2);
+            monitor.Log("Off to the Night Market; run 'museart_stalltest check' next.", LogLevel.Info);
+            return;
+        }
+
+        var market = Game1.currentLocation;
+        Check(monitor, "at the Night Market, on market night", market?.Name == "BeachNightMarket" && Social.NightMarketStall.MarketTonight, market?.Name ?? "nowhere");
+        Check(monitor, "the stall's action is below the bridge, where you face the boat",
+            Enumerable.Range(4, 6).All(x => market?.doesTileHaveProperty(x, 37, "Action", "Buildings") == Social.NightMarketStall.ActionKey));
+        Check(monitor, "the lanterns that were under the boat are gone", market?.getTileIndexAt(5, 39, "Buildings", "night market") is -1 or > 1367 || market?.getTileIndexAt(5, 39, "Buildings") != 926);
+        Social.NightMarketStall.UpdateSable(1800);
+        var sable = Game1.getCharacterFromName("Sable");
+        Check(monitor, "Sable's not in town on market evenings", sable?.IsInvisible == true);
+        var schedule = sable?.getMasterScheduleRawData();
+        Check(monitor, "their schedule leaves the shop at 4:30 on market days", schedule != null && new[] { 15, 16, 17 }.All(d => schedule.ContainsKey($"winter_{d}") && schedule[$"winter_{d}"].Contains("1630")));
+
+        // What Sable buys.
+        var cells = new byte[20, 20];
+        SObject Painting(string subject, string? conditions = null) =>
+            PaintingItems.Create(new PaintingData { Size = 20, Cells = cells, Purity = new Purity[20, 20], Subject = subject, Conditions = conditions }, PaintingRules.Gold, 400);
+        var ordinary = Painting("(O)24");
+        var desert = Painting("view:Desert:winter");
+        var night = Painting("view:Town:winter", "night");
+        var monster = Painting(Creatures.SubjectFor("Green Slime"));
+        var legend = Painting("(O)163");
+        Check(monitor, "Sable buys the unusual: the desert, a night view, a monster, a legendary fish",
+            new[] { desert, night, monster, legend }.All(Social.NightMarketStall.IsUnusual));
+        Check(monitor, "but not an ordinary still life, or a day view of town",
+            !Social.NightMarketStall.IsUnusual(ordinary) && !Social.NightMarketStall.IsUnusual(Painting("view:Town:winter")));
+        Check(monitor, "a night view says so", night.getDescription().Contains("by night"), night.getDescription().Replace("\n", " "));
+        Check(monitor, "at half as much again", Social.NightMarketStall.OfferFor(desert) == (int)Math.Round(desert.sellToStorePrice() * 1.5f), $"{Social.NightMarketStall.OfferFor(desert)}g for a {desert.sellToStorePrice()}g painting");
+
+        who.modData.Remove(ModEntry.Id + "/StallBought");
+        int money = who.Money;
+        var bag = new[] { desert, night, monster, legend };
+        foreach (var p in bag) who.addItemToInventory(p);
+        for (int i = 0; i < Social.NightMarketStall.BuysPerNight; i++)
+            Social.NightMarketStall.Sell(who, bag[i]);
+        Check(monitor, "three sold: paid, and gone from the bag", who.Money > money && !who.Items.Contains(desert) && Social.NightMarketStall.BoughtTonight(who) == 3, $"+{who.Money - money}g");
+        who.removeItemFromInventory(legend);
+        who.Money = money;
+        who.modData.Remove(ModEntry.Id + "/StallBought");
+
+        // The frame for sale, and framing in it.
+        var shops = DataLoader.Shops(Game1.content);
+        Check(monitor, "the stall sells the Moonlit Frame, one a night", shops.TryGetValue(Social.NightMarketStall.ShopId, out var shop)
+            && shop.Items.Any(i => i.ItemId == "(O)" + ArtItems.MoonlitFrameItemId && i.AvailableStock == 1));
+        var framed = ArtHooks.Frame(desert, moonlit: true);
+        Check(monitor, "framed in it, a painting hangs in the moonlit frame", framed.QualifiedItemId == "(F)" + ArtItems.MoonlitSmallId && ArtItems.IsFramed(framed));
+        Check(monitor, "the conditions follow it into the frame", PaintingData.ConditionsOf(ArtHooks.Frame(night, moonlit: true)) == "night");
+        Check(monitor, "views painted now are marked by the hour and the weather",
+            ArtStudio.Painting.Views.ConditionsNow("view:Town:winter") == (Game1.timeOfDay >= ArtStudio.Painting.Views.NightFrom ? "night" : Game1.IsRainingHere(Game1.getLocationFromName("Town")) ? "rain" : null));
+
+        // Talking to Sable from the bridge.
+        who.setTileLocation(new Vector2(7, 36));
+        who.FacingDirection = 2;
+        Social.NightMarketStall.Open(who);
+        Check(monitor, "talking to Sable from the bridge opens the stall", Game1.activeClickableMenu is DialogueBox { isQuestion: true }, Game1.activeClickableMenu?.GetType().Name ?? "nothing");
+        CloseDialogue();
+    }
+
     private static void ContestTest(IMonitor monitor, string[] args)
     {
         if (!Context.IsWorldReady) return;

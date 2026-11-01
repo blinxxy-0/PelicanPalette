@@ -25,6 +25,12 @@ internal static class ArtItems
     public const string QualifiedMillId = "(BC)" + MillId;
     public const string FramedSmallId = ModEntry.Id + "_FramedPainting";
     public const string FramedLargeId = ModEntry.Id + "_FramedPaintingLarge";
+    // The Moonlit Frame (1.2, sold at Sable's Night Market stall): a Picture
+    // Frame in midnight blue and silver, and the framed paintings it makes.
+    public const string MoonlitFrameItemId = ModEntry.Id + "_MoonlitFrame";
+    public const string MoonlitSmallId = ModEntry.Id + "_MoonlitPainting";
+    public const string MoonlitLargeId = ModEntry.Id + "_MoonlitPaintingLarge";
+    private const int MoonlitFrameSprite = 40;
 
     public const string BigCraftablesTexture = "Mods/" + ModEntry.Id + "/BigCraftables";
     public const string FurnitureTexture = "Mods/" + ModEntry.Id + "/Furniture";
@@ -96,7 +102,8 @@ internal static class ArtItems
 
     public static bool IsOurs(Item? item) => item?.ItemId.StartsWith(ModEntry.Id + "_") == true;
     public static bool IsEasel(Item? item) => item?.QualifiedItemId == QualifiedEaselId;
-    public static bool IsFramed(Item? item) => item?.QualifiedItemId is "(F)" + FramedSmallId or "(F)" + FramedLargeId;
+    public static bool IsFramed(Item? item) => item?.QualifiedItemId is "(F)" + FramedSmallId or "(F)" + FramedLargeId
+        or "(F)" + MoonlitSmallId or "(F)" + MoonlitLargeId;
 
     public static BrushSpec? BrushFor(Item? item) =>
         item == null ? null : Brushes.All.FirstOrDefault(b => item.QualifiedItemId == "(O)" + BrushId(b));
@@ -124,6 +131,7 @@ internal static class ArtItems
             AddObject(objects, BrushId(brush), I18n.Get("brush." + brush.Id), I18n.Get("brush." + brush.Id + ".description"), brushPrices[brush.Id], sprite++, "muse_brush");
 
         AddObject(objects, FrameItemId, I18n.Get("item.frame"), I18n.Get("item.frame.description"), 60, FrameSprite);
+        AddObject(objects, MoonlitFrameItemId, I18n.Get("item.moonlit-frame"), I18n.Get("item.moonlit-frame.description"), 750, MoonlitFrameSprite);
         // Palettes are tools: like a hoe or a rod, they can't be given away by accident.
         foreach (var tier in PaletteItem.Tiers)
         {
@@ -233,6 +241,8 @@ internal static class ArtItems
         string texture = FurnitureTexture.Replace('/', '\\');
         furniture[FramedSmallId] = $"{FramedSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/0/{texture}/true";
         furniture[FramedLargeId] = $"{FramedLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/2/{texture}/true";
+        furniture[MoonlitSmallId] = $"{MoonlitSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/5/{texture}/true";
+        furniture[MoonlitLargeId] = $"{MoonlitLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/7/{texture}/true";
     }
 
     // ingredients/unused/yield/big craftable/unlock condition/display name
@@ -272,6 +282,7 @@ internal static class ArtItems
     // Pierre buys paintings.
     public static void AddToShops(IDictionary<string, ShopData> shops)
     {
+        Social.NightMarketStall.AddShop(shops);
         if (!shops.TryGetValue("SeedShop", out var pierre)) return;
         pierre.SalableItemTags ??= new List<string>();
         if (!pierre.SalableItemTags.Contains(PaintingItems.ContextTag))

@@ -85,7 +85,7 @@ internal static class PaintingItems
             : data.IsSitter
             ? I18n.Get("painting.provenance.sitter", new { name = Sitters.DisplayName(Sitters.NpcOf(data.Subject)) })
             : data.IsView
-            ? I18n.Get("painting.provenance.view", new { place = Views.PlaceName(data.Subject) })
+            ? I18n.Get("painting.provenance.view" + (data.Conditions != null ? "-" + data.Conditions : ""), new { place = Views.PlaceName(data.Subject) })
             : data.IsCreature
             ? I18n.Get("painting.provenance.creature", new { name = Creatures.DisplayName(Creatures.NameOf(data.Subject)) })
             : data.IsOriginal

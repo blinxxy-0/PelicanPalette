@@ -79,6 +79,48 @@ internal static class DevTools
             Game1.player.removeItemFromInventory(painting);
             monitor.Log("Contest snapshots written.", LogLevel.Info);
         });
+        AddCommand(helper, "museart_snapstall", "In a game: renders Sable's Night Market stall (its question, shop, painting picker and lines) at both UI sizes, to dialogue_snapshots/stall_*.png.", (_, _) =>
+        {
+            if (!Context.IsWorldReady || Game1.getCharacterFromName("Sable") is not { } sable) return;
+            string dir = Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+            Directory.CreateDirectory(dir);
+            var painting = TestPainting("view:Desert:winter", PaintingRules.Gold);
+            Game1.player.addItemToInventory(painting);
+            var responses = new[] { "frames", "sell", "lupini", "leave" }.Select(k => new Response(k, I18n.Get("stall.answer." + k))).ToArray();
+            string[] lines = { "lupini", "nothing", "full", "sold", "sold-last", "closed" };
+            foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
+            {
+                AtViewport(w, h, () => Render(Opened(new DialogueBox(I18n.Get("stall.greeting"), responses)), Path.Combine(dir, $"stall_question_{w}.png")));
+                AtViewport(w, h, () =>
+                {
+                    Utility.TryOpenShopMenu(Social.NightMarketStall.ShopId, "Sable", playOpenSound: false);
+                    if (Game1.activeClickableMenu is { } shop)
+                        Render(shop, Path.Combine(dir, $"stall_shop_{w}.png"));
+                    Game1.activeClickableMenu = null;
+                    // (Pierre's, to compare: how the game lays out its own shops at this size.)
+                    Utility.TryOpenShopMenu("SeedShop", "Pierre", playOpenSound: false);
+                    if (Game1.activeClickableMenu is { } pierre)
+                        Render(pierre, Path.Combine(dir, $"stall_compare_pierre_{w}.png"));
+                    Game1.activeClickableMenu = null;
+                });
+                AtViewport(w, h, () => Render(new PaintingPickerMenu(I18n.Get("stall.pick"), Social.NightMarketStall.IsUnusual, _ => { },
+                    item => I18n.Get("stall.pick-hover", new { painting = item.DisplayName, price = Social.NightMarketStall.OfferFor(item) })), Path.Combine(dir, $"stall_picker_{w}.png")));
+                foreach (string key in lines)
+                foreach (var (page, i) in I18n.Get("stall." + key, new { painting = painting.DisplayName, price = 1350 })
+                    .Split(new[] { "#$b#" }, StringSplitOptions.None).Select((p, i) => (p, i)))
+                    AtViewport(w, h, () => Render(Opened(key == "closed" ? new DialogueBox(page) : new DialogueBox(new Dialogue(sable, null, page))), Path.Combine(dir, $"stall_{key}_{i}_{w}.png")));
+            }
+            Game1.player.removeItemFromInventory(painting);
+            monitor.Log("Stall snapshots written.", LogLevel.Info);
+
+            static DialogueBox Opened(DialogueBox box)
+            {
+                box.transitioning = false;
+                box.transitionInitialized = true;
+                box.finishTyping();
+                return box;
+            }
+        });
         AddCommand(helper, "museart_snapdialogue", "In a game: renders the narration boxes and the longest spoken pages of Sable's events at both UI sizes, to dialogue_snapshots.", (_, _) =>
             SnapDialogue(helper.DirectoryPath, monitor));
 
@@ -422,7 +464,26 @@ internal static class DevTools
                 sable,
                 ItemRegistry.Create("(O)" + ArtItems.FrameItemId),
                 ItemRegistry.Create("(O)" + ArtItems.PigmentId(Palette.IndexOf("rose")), 3),
+                // The Moonlit Frame (1.2) and paintings framed in it.
+                ItemRegistry.Create("(O)" + ArtItems.MoonlitFrameItemId),
+                ArtHooks.Frame(painting, moonlit: true),
+                ArtHooks.Frame(large, moonlit: true),
             });
+        });
+        // Framing with a Moonlit Frame in the bag: the two styles to choose from.
+        yield return ("setup_framing_moonlit", () =>
+        {
+            var painting = FinishedPainting(CanvasKind.Small, parsnip);
+            Game1.player.addItemToInventory(painting);
+            // (The last two slots of the bag, which is full by now.)
+            var items = Game1.player.Items;
+            items[items.Count - 1] = ItemRegistry.Create("(O)" + ArtItems.FrameItemId, 2);
+            items[items.Count - 2] = ItemRegistry.Create("(O)" + ArtItems.MoonlitFrameItemId, 1);
+            var m = new EaselMenu(Game1.player);
+            m.DevFraming(painting);
+            m.DevFrameStyle(moonlit: true);
+            Game1.player.removeItemFromInventory(painting);
+            return m;
         });
     }
 

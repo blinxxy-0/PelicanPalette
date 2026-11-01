@@ -317,10 +317,12 @@ internal static class ArtHooks
     }
 
     // Turns a painting into wall furniture, using up one picture frame.
-    public static Furniture Frame(SObject painting)
+    public static Furniture Frame(SObject painting, bool moonlit = false)
     {
         var data = PaintingData.Read(painting)!;
-        string id = data.Size <= PaintingRules.CanvasSize(CanvasKind.Small) ? ArtItems.FramedSmallId : ArtItems.FramedLargeId;
+        bool small = data.Size <= PaintingRules.CanvasSize(CanvasKind.Small);
+        string id = moonlit ? (small ? ArtItems.MoonlitSmallId : ArtItems.MoonlitLargeId)
+            : small ? ArtItems.FramedSmallId : ArtItems.FramedLargeId;
         var framed = ItemRegistry.Create<Furniture>("(F)" + id);
         data.WriteTo(framed);
         return framed;

@@ -51,6 +51,15 @@ internal sealed class PaintingData
     public static bool? GlazedOf(Item item) =>
         item.modData.TryGetValue(GlazedKey, out string raw) ? raw == "1" : null;
 
+    // A view painted at night (7pm on) or in the rain: "night" or "rain"
+    // (1.2; Sable buys these at the Night Market). Null for everything else,
+    // and for views from before 1.2.
+    public string? Conditions { get; init; }
+    private const string ConditionsKey = ModEntry.Id + "/Conditions";
+
+    public static string? ConditionsOf(Item item) =>
+        item.modData.TryGetValue(ConditionsKey, out string raw) ? raw : null;
+
     // A portrait of the farmer, by Sable (the 10-heart event): "portrait:<name>".
     public bool IsPortrait => FarmerPortrait.IsPortrait(Subject);
 
@@ -79,6 +88,8 @@ internal sealed class PaintingData
             item.modData[MasterpieceKey] = "1";
         if (Glazed is bool glazed)
             item.modData[GlazedKey] = glazed ? "1" : "0";
+        if (Conditions != null)
+            item.modData[ConditionsKey] = Conditions;
     }
 
     public static string? RawCells(Item item) => item.modData.TryGetValue(CellsKey, out string raw) ? raw : null;
@@ -107,6 +118,7 @@ internal sealed class PaintingData
             Finish = Varnish.FinishOf(item),
             Masterpiece = IsMasterpiece(item),
             Glazed = GlazedOf(item),
+            Conditions = ConditionsOf(item),
         };
     }
 

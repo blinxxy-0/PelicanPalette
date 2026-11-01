@@ -128,6 +128,14 @@ internal sealed partial class EaselMenu
 
     private int FrameCount => CountInBag("(O)" + ArtItems.FrameItemId);
 
+    // Framing in a Moonlit Frame (1.2) instead of a plain one: offered once
+    // you have one, as two buttons where the canvas sizes usually are.
+    private bool _moonlit;
+    private int MoonlitCount => CountInBag("(O)" + ArtItems.MoonlitFrameItemId);
+    private bool FrameStylesOffered => MoonlitCount > 0;
+    private bool UsingMoonlit => MoonlitCount > 0 && (_moonlit || FrameCount == 0);
+    private int FramesToUse => UsingMoonlit ? MoonlitCount : FrameCount;
+
     private bool HasCanvas => !_needsSupplies || (_setupLinen ? LinenCount(_setupCanvas) : CanvasCount(_setupCanvas)) > 0;
 
     private int LinenCount(CanvasKind kind) => kind == CanvasKind.Small ? 0 : CountInBag(ArtItems.QualifiedLinenId(kind));
@@ -164,6 +172,14 @@ internal sealed partial class EaselMenu
 
     private void ClickSetup(int x, int y)
     {
+        if (_setupFraming && FrameStylesOffered)
+            for (int i = 0; i < 2; i++)
+                if (_canvasButtons[i].Contains(x, y))
+                {
+                    _moonlit = i == 1;
+                    Game1.playSound("smallSelect");
+                    return;
+                }
         if (!_setupFraming)
             for (int i = 0; i < _canvasButtons.Length; i++)
             {
@@ -410,16 +426,18 @@ internal sealed partial class EaselMenu
 
     private void TryFrame()
     {
-        if (_setupPainting == null || FrameCount <= 0)
+        if (_setupPainting == null || FramesToUse <= 0)
         {
             Game1.playSound("cancel");
             return;
         }
-        var frameItem = _who.Items.First(i => i?.QualifiedItemId == "(O)" + ArtItems.FrameItemId);
+        bool moonlit = UsingMoonlit;
+        string frameId = "(O)" + (moonlit ? ArtItems.MoonlitFrameItemId : ArtItems.FrameItemId);
+        var frameItem = _who.Items.First(i => i?.QualifiedItemId == frameId);
         if (frameItem.Stack > 1) frameItem.Stack--;
         else _who.removeItemFromInventory(frameItem);
 
-        var framed = ArtHooks.Frame(_setupPainting);
+        var framed = ArtHooks.Frame(_setupPainting, moonlit);
         int slot = _who.Items.IndexOf(_setupPainting);
         _who.Items[slot] = framed;
         Game1.playSound("hammer");
@@ -553,12 +571,22 @@ internal sealed partial class EaselMenu
     private void DrawFraming(SpriteBatch b, int left, Point mouse)
     {
         Ui.Text(b, I18n.Get("setup.frame-title"), new Vector2(left, yPositionOnScreen + Pad + 30));
-        Ui.Text(b, I18n.Get("setup.frames", new { frames = FrameCount }), new Vector2(left, _canvasButtons[0].Y + 14), FrameCount > 0 ? Game1.textColor : new Color(150, 70, 50));
+        if (FrameStylesOffered)
+        {
+            Ui.Button(b, _canvasButtons[0], I18n.Get("setup.frame-style.plain", new { frames = FrameCount }), FrameCount > 0, !UsingMoonlit, _canvasButtons[0].Contains(mouse));
+            Ui.Button(b, _canvasButtons[1], I18n.Get("setup.frame-style.moonlit", new { frames = MoonlitCount }), true, UsingMoonlit, _canvasButtons[1].Contains(mouse));
+            if (_canvasButtons[1].Contains(mouse))
+                _hoverText = I18n.Get("setup.frame-style.moonlit-hover");
+        }
+        else
+            Ui.Text(b, I18n.Get("setup.frames", new { frames = FrameCount }), new Vector2(left, _canvasButtons[0].Y + 14), FrameCount > 0 ? Game1.textColor : new Color(150, 70, 50));
         if (_itemSlots.Count == 0)
             Ui.Text(b, I18n.Get("setup.no-paintings"), new Vector2(left, _canvasButtons[0].Bottom + 70), Game1.textColor * 0.6f);
         DrawSlots(b, mouse, slot => slot == _setupPainting ? 0 : -1, false);
 
         Ui.Paper(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
+        if (UsingMoonlit)
+            DrawMoonlitBorder(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
         Ui.Fill(b, _previewArea, new Color(243, 236, 220));
         if (_setupPainting != null)
         {
@@ -571,10 +599,26 @@ internal sealed partial class EaselMenu
             Ui.Text(b, lines, new Vector2(_previewArea.X + 20, _previewArea.Center.Y - 20), Game1.textColor * 0.7f);
         }
 
-        bool ready = _setupPainting != null && FrameCount > 0;
+        bool ready = _setupPainting != null && FramesToUse > 0;
         Ui.Button(b, _beginButton, I18n.Get("setup.frame-it"), ready, false, ready && _beginButton.Contains(mouse));
-        if (FrameCount == 0)
+        if (FramesToUse == 0)
             Ui.Text(b, I18n.Get("setup.need-frame"), new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10), new Color(150, 70, 50));
+    }
+
+    // The preview in the Moonlit Frame's colours, so the choice shows: midnight
+    // blue, a silver inner edge, and the moon at the top (as the furniture has).
+    private static void DrawMoonlitBorder(SpriteBatch b, Rectangle r)
+    {
+        var midnight = new Color(36, 44, 92);
+        var dark = new Color(22, 26, 58);
+        var silver = new Color(168, 180, 210);
+        var moon = new Color(232, 214, 150);
+        Ui.Fill(b, r, dark);
+        Ui.Fill(b, new Rectangle(r.X + 4, r.Y + 4, r.Width - 8, r.Height - 8), midnight);
+        Ui.Fill(b, new Rectangle(r.X + 16, r.Y + 16, r.Width - 32, r.Height - 32), silver);
+        int cx = r.Center.X;
+        foreach (var (x, y, w, h) in new[] { (-8, 0, 12, 4), (-12, 4, 8, 4), (-12, 8, 4, 4), (-12, 12, 8, 4), (-8, 16, 12, 4) })
+            Ui.Fill(b, new Rectangle(cx + x, r.Y + 2 + y, w, h), moon);
     }
 
     // Inventory slots; `order` gives a selected slot its number (or -1).

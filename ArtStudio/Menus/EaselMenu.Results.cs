@@ -130,6 +130,7 @@ internal sealed partial class EaselMenu
             Subject = subject,
             Stars = _result?.Stars ?? 0f,
             Difficulty = _reference?.Difficulty ?? 0,
+            Conditions = IsViewSubject(_subjectItems) ? Views.ConditionsNow(_subjectItems[0]) : null,
             Painter = _who.Name,
             Date = I18n.Get("painting.date", new { season = Utility.getSeasonNameFromNumber(Game1.seasonIndex), day = Game1.dayOfMonth, year = Game1.year }),
         };

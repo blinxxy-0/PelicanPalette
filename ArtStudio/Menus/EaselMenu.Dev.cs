@@ -173,6 +173,8 @@ internal sealed partial class EaselMenu
         _setupPainting = painting;
     }
 
+    internal void DevFrameStyle(bool moonlit) => _moonlit = moonlit;
+
     internal void DevSetupFree()
     {
         _setupOriginal = true;

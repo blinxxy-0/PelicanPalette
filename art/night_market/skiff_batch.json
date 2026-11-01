@@ -1,0 +1,25 @@
+{
+ "batch": "stardew-sable-skiff",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "<a render of the Night Market decoration boat, from the game: not kept in the repo>",
+  "style_usage": "Stardew Valley Night Market boat pixel art: the same three-quarter top-down angle, palette, dark-coloured outlines (never black), wood shading and highlights"
+ },
+ "jobs": {
+  "skiff_easels": {
+   "image_size": {
+    "width": 112,
+    "height": 64
+   },
+   "description": "a small wooden rowing skiff floating on water, Stardew Valley pixel art, seen from three-quarters above like the Night Market boats, bow pointing left, empty space in the middle of the boat for one person to stand. Painted deep teal with a gold trim line and little painted stars along the hull. On board: two small easels holding paintings, a stack of framed canvases, a lantern on a short pole at the stern glowing warm. No people, no water drawn around it. Transparent background."
+  },
+  "skiff_gallery": {
+   "image_size": {
+    "width": 112,
+    "height": 64
+   },
+   "description": "a little floating art stall: a narrow wooden boat, Stardew Valley pixel art, three-quarter top-down view like the Night Market vendor boats, bow to the left. The hull is midnight blue with silver crescent moons painted on its side. Inside: a low wooden counter at the front with picture frames leaning on it, a small easel with a painting at the back, a string of two paper lanterns. An empty spot in the middle for the stall keeper to stand. No people. Transparent background."
+  }
+ }
+}

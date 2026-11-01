@@ -222,41 +222,16 @@ internal static class PaintingContest
 }
 
 // Picking a painting to enter: your bag, with the paintings lit.
-internal sealed class ContestMenu : IClickableMenu
+internal sealed class ContestMenu : PaintingPickerMenu
 {
-    private readonly Farmer _who;
-    private readonly NPC _julian;
-    private readonly InventoryMenu _inventory;
-
     public ContestMenu(Farmer who, NPC julian)
-        : base(Game1.uiViewport.Width / 2 - 432, Game1.uiViewport.Height / 2 - 186, 864, 372, showUpperRightCloseButton: true)
+        : base(I18n.Get("contest.pick"), PaintingItems.IsPainting, item =>
+        {
+            PaintingContest.Enter(who, item);
+            julian.CurrentDialogue.Clear();
+            julian.CurrentDialogue.Push(new Dialogue(julian, null, I18n.Get("contest.thanks", new { painting = item.DisplayName })));
+            Game1.drawDialogue(julian);
+        }, item => I18n.Get("contest.pick-hover", new { painting = item.DisplayName }))
     {
-        _who = who;
-        _julian = julian;
-        _inventory = new InventoryMenu(xPositionOnScreen + 48, yPositionOnScreen + 120, playerInventory: true, highlightMethod: PaintingItems.IsPainting);
-    }
-
-    public override void receiveLeftClick(int x, int y, bool playSound = true)
-    {
-        base.receiveLeftClick(x, y, playSound);
-        if (_inventory.getItemAt(x, y) is not { } item || !PaintingItems.IsPainting(item)) return;
-        PaintingContest.Enter(_who, item);
-        exitThisMenu();
-        _julian.CurrentDialogue.Clear();
-        _julian.CurrentDialogue.Push(new Dialogue(_julian, null, I18n.Get("contest.thanks", new { painting = item.DisplayName })));
-        Game1.drawDialogue(_julian);
-    }
-
-    public override void draw(SpriteBatch b)
-    {
-        b.Draw(Game1.fadeToBlackRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), Color.Black * 0.6f);
-        Ui.Frame(b, new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height));
-        Ui.Text(b, I18n.Get("contest.pick"), new Vector2(xPositionOnScreen + 48, yPositionOnScreen + 48));
-        _inventory.draw(b);
-        var mouse = new Point(Game1.getMouseX(true), Game1.getMouseY(true));
-        base.draw(b);
-        if (_inventory.getItemAt(mouse.X, mouse.Y) is { } hovered)
-            drawHoverText(b, PaintingItems.IsPainting(hovered) ? I18n.Get("contest.pick-hover", new { painting = hovered.DisplayName }) : hovered.DisplayName, Game1.smallFont);
-        drawMouse(b);
     }
 }

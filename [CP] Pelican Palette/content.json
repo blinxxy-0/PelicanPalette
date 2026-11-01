@@ -119,6 +119,22 @@
       "PatchMode": "Overlay"
     },
 
+    // Sable's stall at the Night Market (1.2): their skiff below the bridge
+    // to the submarine (tools/build_night_market_stall.py). The mod draws
+    // Sable aboard from 5pm, from the same sheet (Mods/blinxxy.MuseArt/NightMarketStall).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/Beach-NightMarket",
+      "FromFile": "assets/NightMarketStallPatch.tmx",
+      "ToArea": { "X": 4, "Y": 37, "Width": 6, "Height": 5 },
+      "PatchMode": "ReplaceByLayer"
+    },
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt/NightMarketStall",
+      "FromFile": "assets/NightMarketStall.png"
+    },
+
     // Sable, who runs the shop.
     { "Action": "Include", "FromFile": "data/sable.json" },
     // Julian Vane, the critic (1.2): his visits, data and dialogue.
