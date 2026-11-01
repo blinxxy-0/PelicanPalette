@@ -35,6 +35,7 @@ public class ModEntry : Mod
         ArtHooks.Apply(harmony, helper, Monitor);
         Shop.ArtShop.Apply(harmony, helper, Monitor);
         Social.Julian.Register(helper);
+        Social.JulianPurchase.Register(harmony);
         Social.PaintingContest.Apply(harmony, helper);
         Social.NightMarketStall.Register(harmony, helper);
         Shop.Consignment.Apply(harmony, helper, Monitor);

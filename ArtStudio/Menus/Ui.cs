@@ -109,11 +109,15 @@ internal static class Ui
     {
         var tint = !enabled ? Color.Gray : selected ? new Color(255, 230, 160) : hovered ? Color.Wheat : Color.White;
         IClickableMenu.drawTextureBox(b, Game1.mouseCursors, ButtonBox, r.X, r.Y, r.Width, r.Height, tint, 4f, false);
+        // A label too wide for its button is drawn smaller (a little, at most)
+        // rather than spilling over the edges.
         var size = Game1.smallFont.MeasureString(label);
+        float scale = Math.Clamp((r.Width - 16) / size.X, 0.7f, 1f);
+        size *= scale;
         var pos = new Vector2(r.Center.X - size.X / 2, r.Center.Y - size.Y / 2 + 2);
-        Utility.drawTextWithShadow(b, label, Game1.smallFont, pos, enabled ? Game1.textColor : Game1.textColor * 0.5f);
+        Utility.drawTextWithShadow(b, label, Game1.smallFont, pos, enabled ? Game1.textColor : Game1.textColor * 0.5f, scale);
         int owner = Record(r, label, AuditKind.Button);
-        Record(Measure(label, pos, 1f), label, AuditKind.Label, owner);
+        Record(Measure(label, pos, scale), label, AuditKind.Label, owner);
     }
 
     public static void Text(SpriteBatch b, string text, Vector2 pos, Color? color = null, float scale = 1f)

@@ -513,6 +513,8 @@ internal static class DevTools
                 var book = Portfolio.Items;
                 for (int i = 0; i < book.Count; i++) book[i] = null;
                 book[Portfolio.FirstIndex(p)] = TestPainting(p == 0 ? "view:Town:spring" : "(O)24", PaintingRules.Gold);
+                if (Portfolio.Pages[p].Closing)
+                    Game1.player.mailReceived.Add(Portfolio.BookFlag);      // (its tab shows once the book's finished)
                 return Menus.PortfolioMenu.DevCreate(Game1.player, p);
             });
         }

@@ -173,7 +173,9 @@ internal sealed partial class EaselMenu
         _setupPainting = painting;
     }
 
-    internal void DevFrameStyle(bool moonlit) => _moonlit = moonlit;
+    internal void DevFrameStyle(bool moonlit) => _frameStyle = moonlit ? Painting.ArtItems.Moonlit : Painting.ArtItems.Plain;
+
+    internal void DevFrameStyle(Painting.FrameStyle style) => _frameStyle = style;
 
     internal void DevSetupFree()
     {

@@ -209,6 +209,8 @@ internal sealed partial class EaselMenu
     {
         exitThisMenu();
         GiveResultIfPending();
+        if (_painting != null && PaintingData.Read(_painting) is { } data && SableEvents.SummitSceneDue(_who, data.Subject))
+            SableEvents.StartSummitScene(_who);
     }
 
     private void GiveResultIfPending()

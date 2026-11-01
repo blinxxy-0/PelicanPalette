@@ -19,7 +19,9 @@ namespace ArtStudio.Painting;
 // player gets.
 internal sealed record PortfolioSlot(string Id, Func<Item, PaintingData, bool> Fits);
 
-internal sealed record PortfolioPage(string Id, PortfolioSlot[] Slots);
+// A closing page (the Summit, 1.3) shows only once the rest of the book is
+// finished, and brings no letter of its own.
+internal sealed record PortfolioPage(string Id, PortfolioSlot[] Slots, bool Closing = false);
 
 internal static class Portfolio
 {
@@ -73,7 +75,26 @@ internal static class Portfolio
             new("glacierfish", (_, d) => d.SubjectItems.Contains("(O)775")),
             new("mutant-carp", (_, d) => d.SubjectItems.Contains("(O)682")),
         }),
+        // Portraits, in groups (1.3): a portrait of any one of a group's
+        // members fills its slot.
+        new("faces", new PortfolioSlot[]
+        {
+            new("saloon", (_, d) => IsPortraitOf(d, "Gus", "Emily", "Shane")),
+            new("family", (_, d) => IsPortraitOf(d, "Robin", "Demetrius", "Maru", "Sebastian")),
+            new("old-couple", (_, d) => IsPortraitOf(d, "Evelyn", "George")),
+            new("sable", (_, d) => IsPortraitOf(d, "Sable")),
+            new("visitor", (_, d) => IsPortraitOf(d, Social.Julian.Name)),
+        }),
+        // The book's last page (1.3): the view from the Summit, once every
+        // other page is finished. Painting it there plays Sable's closing scene.
+        new("summit", new PortfolioSlot[]
+        {
+            new("summit", (_, d) => d.IsView && Views.PlaceOf(d.Subject) == "Summit"),
+        }, Closing: true),
     };
+
+    private static bool IsPortraitOf(PaintingData data, params string[] npcs) =>
+        data.IsSitter && npcs.Contains(Sitters.NpcOf(data.Subject));
 
     public static int SlotCount => Pages.Sum(p => p.Slots.Length);
 
@@ -162,6 +183,14 @@ internal static class Portfolio
 
     public static bool IsFinished(PortfolioPage page) => Game1.player.mailReceived.Contains(PageFlag(page));
 
+    // The whole book (1.3): every page but the closing one finished. Sable
+    // writes with the gold-leaf frame, and the Summit page opens.
+    public const string BookFlag = ModEntry.Id + "_PortfolioBook";
+
+    public static bool BookFinished => Game1.player.mailReceived.Contains(BookFlag);
+
+    public static bool IsShown(PortfolioPage page) => !page.Closing || BookFinished;
+
     // A page finished for the first time: the flag for everyone, and Sable's
     // letter (with the page's reward) for whoever filled its last slot.
     private static void CheckFinished(Farmer who)
@@ -172,9 +201,17 @@ internal static class Portfolio
             if (!IsFilled(p) || IsFinished(page)) continue;
             Game1.player.team.RequestSetMail(PlayerActionTarget.All, PageFlag(page), MailType.Received, add: true);
             who.mailReceived.Add(PageFlag(page));
-            Game1.addMailForTomorrow(PageFlag(page) + "_Letter");
+            if (!page.Closing)
+                Game1.addMailForTomorrow(PageFlag(page) + "_Letter");
             Game1.playSound("reward");
-            Game1.addHUDMessage(new HUDMessage(I18n.Get("portfolio.page-done", new { page = PageName(page) })) { noIcon = true });
+            Game1.addHUDMessage(new HUDMessage(I18n.Get(page.Closing ? "portfolio.book-closed" : "portfolio.page-done", new { page = PageName(page) })) { noIcon = true });
+        }
+        if (!BookFinished && Pages.Where(p => !p.Closing).All(IsFinished))
+        {
+            Game1.player.team.RequestSetMail(PlayerActionTarget.All, BookFlag, MailType.Received, add: true);
+            who.mailReceived.Add(BookFlag);
+            Game1.addMailForTomorrow(BookFlag + "_Letter");
+            Game1.addHUDMessage(new HUDMessage(I18n.Get("portfolio.book-done")) { noIcon = true });
         }
     }
 

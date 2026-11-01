@@ -136,13 +136,18 @@ internal sealed partial class EaselMenu
 
     private int FrameCount => CountInBag("(O)" + ArtItems.FrameItemId);
 
-    // Framing in a Moonlit Frame (1.2) instead of a plain one: offered once
-    // you have one, as two buttons where the canvas sizes usually are.
-    private bool _moonlit;
-    private int MoonlitCount => CountInBag("(O)" + ArtItems.MoonlitFrameItemId);
-    private bool FrameStylesOffered => MoonlitCount > 0;
-    private bool UsingMoonlit => MoonlitCount > 0 && (_moonlit || FrameCount == 0);
-    private int FramesToUse => UsingMoonlit ? MoonlitCount : FrameCount;
+    // Framing in a Moonlit Frame (1.2) or a gold-leaf one (1.3) instead of a
+    // plain one: offered once you have one, as buttons where the canvas
+    // sizes usually are (plain first).
+    private FrameStyle? _frameStyle;
+    private int StyleCount(FrameStyle style) => CountInBag("(O)" + style.ItemId);
+    private List<FrameStyle> OfferedStyles => ArtItems.FrameStyles.Where(s => s == ArtItems.Plain || StyleCount(s) > 0).ToList();
+    private bool FrameStylesOffered => OfferedStyles.Count > 1;
+    // The chosen style, if you have that frame; else plain, else the first you have.
+    private FrameStyle UsingStyle => _frameStyle != null && StyleCount(_frameStyle) > 0 ? _frameStyle
+        : FrameCount > 0 ? ArtItems.Plain
+        : ArtItems.FrameStyles.FirstOrDefault(s => StyleCount(s) > 0) ?? ArtItems.Plain;
+    private int FramesToUse => StyleCount(UsingStyle);
 
     private bool HasCanvas => !_needsSupplies || (_setupLinen ? LinenCount(_setupCanvas) : CanvasCount(_setupCanvas)) > 0;
 
@@ -181,10 +186,10 @@ internal sealed partial class EaselMenu
     private void ClickSetup(int x, int y)
     {
         if (_setupFraming && FrameStylesOffered)
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < OfferedStyles.Count && i < _canvasButtons.Length; i++)
                 if (_canvasButtons[i].Contains(x, y))
                 {
-                    _moonlit = i == 1;
+                    _frameStyle = OfferedStyles[i];
                     Game1.playSound("smallSelect");
                     return;
                 }
@@ -438,13 +443,13 @@ internal sealed partial class EaselMenu
             Game1.playSound("cancel");
             return;
         }
-        bool moonlit = UsingMoonlit;
-        string frameId = "(O)" + (moonlit ? ArtItems.MoonlitFrameItemId : ArtItems.FrameItemId);
+        var style = UsingStyle;
+        string frameId = "(O)" + style.ItemId;
         var frameItem = _who.Items.First(i => i?.QualifiedItemId == frameId);
         if (frameItem.Stack > 1) frameItem.Stack--;
         else _who.removeItemFromInventory(frameItem);
 
-        var framed = ArtHooks.Frame(_setupPainting, moonlit);
+        var framed = ArtHooks.Frame(_setupPainting, style);
         int slot = _who.Items.IndexOf(_setupPainting);
         _who.Items[slot] = framed;
         Game1.playSound("hammer");
@@ -580,10 +585,14 @@ internal sealed partial class EaselMenu
         Ui.Text(b, I18n.Get("setup.frame-title"), new Vector2(left, yPositionOnScreen + Pad + 30));
         if (FrameStylesOffered)
         {
-            Ui.Button(b, _canvasButtons[0], I18n.Get("setup.frame-style.plain", new { frames = FrameCount }), FrameCount > 0, !UsingMoonlit, _canvasButtons[0].Contains(mouse));
-            Ui.Button(b, _canvasButtons[1], I18n.Get("setup.frame-style.moonlit", new { frames = MoonlitCount }), true, UsingMoonlit, _canvasButtons[1].Contains(mouse));
-            if (_canvasButtons[1].Contains(mouse))
-                _hoverText = I18n.Get("setup.frame-style.moonlit-hover");
+            var styles = OfferedStyles;
+            for (int i = 0; i < styles.Count && i < _canvasButtons.Length; i++)
+            {
+                var style = styles[i];
+                Ui.Button(b, _canvasButtons[i], I18n.Get("setup.frame-style." + style.Id, new { frames = StyleCount(style) }), StyleCount(style) > 0, style == UsingStyle, _canvasButtons[i].Contains(mouse));
+                if (_canvasButtons[i].Contains(mouse) && style != ArtItems.Plain)
+                    _hoverText = I18n.Get("setup.frame-style." + style.Id + "-hover");
+            }
         }
         else
             Ui.Text(b, I18n.Get("setup.frames", new { frames = FrameCount }), new Vector2(left, _canvasButtons[0].Y + 14), FrameCount > 0 ? Game1.textColor : new Color(150, 70, 50));
@@ -592,8 +601,10 @@ internal sealed partial class EaselMenu
         DrawSlots(b, mouse, slot => slot == _setupPainting ? 0 : -1, false);
 
         Ui.Paper(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
-        if (UsingMoonlit)
+        if (UsingStyle == ArtItems.Moonlit)
             DrawMoonlitBorder(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
+        else if (UsingStyle == ArtItems.GoldLeaf)
+            DrawGoldLeafBorder(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
         Ui.Fill(b, _previewArea, new Color(243, 236, 220));
         if (_setupPainting != null)
         {
@@ -626,6 +637,19 @@ internal sealed partial class EaselMenu
         int cx = r.Center.X;
         foreach (var (x, y, w, h) in new[] { (-8, 0, 12, 4), (-12, 4, 8, 4), (-12, 8, 4, 4), (-12, 12, 8, 4), (-8, 16, 12, 4) })
             Ui.Fill(b, new Rectangle(cx + x, r.Y + 2 + y, w, h), moon);
+    }
+
+    // The preview in gold leaf: a warm brown edge, gold, a pale gold inner
+    // edge, and the crest at the top (as the furniture has).
+    private static void DrawGoldLeafBorder(SpriteBatch b, Rectangle r)
+    {
+        Ui.Fill(b, r, new Color(82, 46, 18));
+        Ui.Fill(b, new Rectangle(r.X + 4, r.Y + 4, r.Width - 8, r.Height - 8), new Color(220, 168, 52));
+        Ui.Fill(b, new Rectangle(r.X + 8, r.Y + 8, r.Width - 16, 4), new Color(255, 238, 168));
+        Ui.Fill(b, new Rectangle(r.X + 16, r.Y + 16, r.Width - 32, r.Height - 32), new Color(244, 206, 96));
+        int cx = r.Center.X;
+        foreach (var (x, y, w, h) in new[] { (-4, 0, 8, 4), (-8, 4, 16, 4), (-4, 8, 8, 4) })
+            Ui.Fill(b, new Rectangle(cx + x, r.Y + 2 + y, w, h), new Color(255, 252, 226));
     }
 
     // Inventory slots; `order` gives a selected slot its number (or -1).

@@ -161,6 +161,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_booktest", "The finished portfolio (1.3): Faces of the Valley, the gold-leaf frame, the Summit page and scene, and Julian buying a painting. Then 'museart_booktest scene' to watch the Summit scene.", (_, args) => BookTest(monitor, args));
         DevTools.AddCommand(helper, "museart_animaltest", "Animals: your pet, horse and farm animals as subjects, and the record's Animals tab (1.3).", (_, _) => AnimalTest(monitor));
         DevTools.AddCommand(helper, "museart_creaturetest", "Creatures (monsters, Junimos), Krobus and the Wizard, and the far places (1.2).", (_, _) => CreatureTest(monitor));
         DevTools.AddCommand(helper, "museart_stalltest", "Sable's Night Market stall (1.2). Throwaway farm: 'museart_stalltest' goes to the market on Winter 15 at 6pm, then 'museart_stalltest check' a few seconds later.", (_, args) => StallTest(monitor, args));
@@ -1346,6 +1347,8 @@ internal static class DevGame
                 who.mailReceived.Remove(Portfolio.PageFlag(page));
                 who.mailForTomorrow.Remove(Portfolio.PageFlag(page) + "_Letter");
             }
+            who.mailReceived.Remove(Portfolio.BookFlag);
+            who.mailForTomorrow.Remove(Portfolio.BookFlag + "_Letter");
             foreach (var item in who.Items.Where(Portfolio.IsKeepable).ToList())
                 who.removeItemFromInventory(item);
         }
@@ -1358,7 +1361,7 @@ internal static class DevGame
         Reset();
         try
         {
-            Check(monitor, "the book has a slot for every page's slots", book.Count == Portfolio.SlotCount && Portfolio.SlotCount == 25, $"{book.Count}");
+            Check(monitor, "the book has a slot for every page's slots", book.Count == Portfolio.SlotCount && Portfolio.SlotCount == 31, $"{book.Count}");
 
             // Into a slot, kept; a better one swaps in; a worse one doesn't fit.
             var spring = Give("view:Town:spring", PaintingRules.Silver);
@@ -1464,6 +1467,135 @@ internal static class DevGame
             foreach (var (name, count) in kills)
                 who.stats.specificMonstersKilled[name] = count;
         }
+    }
+
+    // Finishing the portfolio (1.3, step 2).
+    private static void BookTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var book = Portfolio.Items;
+        if (args.FirstOrDefault() == "where")
+        {
+            monitor.Log($"After the scene: {who.currentLocation?.Name} {who.TilePoint}, health {who.health}, event {Game1.CurrentEvent?.id ?? "none"}, menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}", LogLevel.Info);
+            return;
+        }
+        if (args.FirstOrDefault() == "click")
+        {
+            // Clicks through the scene's dialogue, as a player would.
+            if (Game1.activeClickableMenu is DialogueBox box)
+            {
+                box.finishTyping();
+                box.receiveLeftClick(box.xPositionOnScreen + 10, box.yPositionOnScreen + 10);
+            }
+            return;
+        }
+        if (args.FirstOrDefault() == "scene")
+        {
+            Game1.activeClickableMenu?.exitThisMenu();
+            who.mailReceived.Add(Portfolio.BookFlag);
+            who.eventsSeen.Remove(SableEvents.SummitEventId);
+            // The Summit as players reach it, at Perfection. (Without it, the
+            // game plays Qi's scene, then knocks you out on every visit after,
+            // even the end of an event there.) Its own first-visit scene is
+            // marked seen.
+            Game1.player.team.farmPerfect.Value = true;
+            who.mailReceived.Add("Summit_event");
+            Game1.warpFarmer("Summit", 11, 13, 0);
+            DelayedAction.functionAfterDelay(() =>
+            {
+                Check(monitor, "the Summit scene is due after painting the Summit", SableEvents.SummitSceneDue(who, "view:Summit:spring"));
+                DelayedAction.functionAfterDelay(() => SableEvents.StartSummitScene(who), 1500);
+                DelayedAction.functionAfterDelay(() =>
+                    Check(monitor, "...and plays, with Sable", Game1.CurrentEvent?.id == SableEvents.SummitEventId && Game1.CurrentEvent.getActorByName("Sable") != null,
+                        Game1.CurrentEvent?.id ?? "no event"), 3000);
+            }, 2000);
+            return;
+        }
+        void Reset()
+        {
+            for (int i = 0; i < book.Count; i++) book[i] = null;
+            foreach (var page in Portfolio.Pages)
+            {
+                who.mailReceived.Remove(Portfolio.PageFlag(page));
+                who.mailForTomorrow.Remove(Portfolio.PageFlag(page) + "_Letter");
+            }
+            who.mailReceived.Remove(Portfolio.BookFlag);
+            who.mailForTomorrow.Remove(Portfolio.BookFlag + "_Letter");
+            foreach (var item in who.Items.Where(Portfolio.IsKeepable).ToList())
+                who.removeItemFromInventory(item);
+        }
+        SObject Give(string subject, int quality = PaintingRules.Silver)
+        {
+            var painting = DevTools.TestPainting(subject, quality);
+            who.addItemToInventory(painting);
+            return painting;
+        }
+        int Page(string id) => Array.FindIndex(Portfolio.Pages, p => p.Id == id);
+        Reset();
+        try
+        {
+            // Faces of the Valley: any one of a group fills its slot.
+            int faces = Page("faces"), first = Portfolio.FirstIndex(faces);
+            Check(monitor, "Shane fills the Saloon regulars", Portfolio.SlotFor(faces, Give("sitter:Shane")) == first);
+            Check(monitor, "Maru fills the family", Portfolio.SlotFor(faces, Give("sitter:Maru")) == first + 1);
+            Check(monitor, "Julian fills the visitor", Portfolio.SlotFor(faces, Give("sitter:" + Social.Julian.Name)) == first + 4);
+            Check(monitor, "Leah has no slot on Faces", Portfolio.SlotFor(faces, Give("sitter:Leah")) < 0);
+
+            // The Summit page stays hidden until the rest is finished.
+            int summit = Page("summit");
+            Check(monitor, "the Summit page is the closing one, hidden at first", Portfolio.Pages[summit].Closing && !Portfolio.IsShown(Portfolio.Pages[summit]));
+            foreach (string id in new[] { "seasons", "harvest", "fine-work", "far-places", "legends", "faces" })
+                for (int i = 0; i < Portfolio.Pages[Page(id)].Slots.Length; i++)
+                    book[Portfolio.FirstIndex(Page(id)) + i] = DevTools.TestPainting("(O)24", PaintingRules.Silver);
+            book[Portfolio.FirstIndex(faces) + 4] = null;
+            Portfolio.Place(who, faces, Give("sitter:" + Social.Julian.Name));
+            Check(monitor, "the last page finished finishes the book", Portfolio.BookFinished && who.mailForTomorrow.Contains(Portfolio.BookFlag + "_Letter"));
+            Check(monitor, "...and the Summit page shows", Portfolio.IsShown(Portfolio.Pages[summit]));
+            var mail = DataLoader.Mail(Game1.content);
+            Check(monitor, "Sable's letters are in the game's mail", mail.ContainsKey(Portfolio.BookFlag + "_Letter") && mail[Portfolio.BookFlag + "_Letter"].Contains(ArtItems.GoldLeafFrameItemId)
+                && mail.ContainsKey(Portfolio.PageFlag(Portfolio.Pages[faces]) + "_Letter"));
+            Check(monitor, "a Summit view goes on its page", Portfolio.SlotFor(summit, Give("view:Summit:fall")) == Portfolio.FirstIndex(summit));
+            Portfolio.Place(who, summit, Give("view:Summit:fall"));
+            Check(monitor, "...without a letter of its own", Portfolio.IsFinished(Portfolio.Pages[summit]) && !who.mailForTomorrow.Contains(Portfolio.PageFlag(Portfolio.Pages[summit]) + "_Letter"));
+
+            // The gold-leaf frame.
+            var framed = ArtHooks.Frame(Give("view:Town:spring"), ArtItems.GoldLeaf);
+            Check(monitor, "a painting framed in gold leaf hangs in the gold-leaf frame", framed.QualifiedItemId == "(F)" + ArtItems.GoldLeafSmallId && ArtItems.IsFramed(framed)
+                && ItemRegistry.Exists("(O)" + ArtItems.GoldLeafFrameItemId));
+
+            // Julian buys one painting a season, at twice the price.
+            Game1.dayOfMonth = Social.Julian.FirstVisitDay;
+            var julian = Social.Julian.Npc!;
+            julian.IsInvisible = false;
+            who.modData.Remove(ModEntry.Id + "/JulianBought");
+            if (!who.friendshipData.ContainsKey(Social.Julian.Name)) who.friendshipData.Add(Social.Julian.Name, new Friendship());
+            who.friendshipData[Social.Julian.Name].TalkedToToday = false;
+            julian.CurrentDialogue.Clear();
+            Check(monitor, "Julian doesn't offer before you've talked", !Social.JulianPurchase.Offers(julian, who));
+            who.friendshipData[Social.Julian.Name].TalkedToToday = true;
+            var sold = Give("(O)24", PaintingRules.Gold);
+            Check(monitor, "...and does after, with a painting in your bag", Social.JulianPurchase.Offers(julian, who));
+            int money = who.Money, expected = Social.JulianPurchase.OfferFor(sold);
+            int paid = Social.JulianPurchase.Buy(julian, who, sold);
+            Check(monitor, "he pays twice the shop price", paid == expected && who.Money == money + paid && paid == (int)Math.Round(sold.sellToStorePrice() * 2f) && !who.Items.Contains(sold), $"{paid}g");
+            Check(monitor, "...and says what he thinks of it", Game1.activeClickableMenu is DialogueBox);
+            (Game1.activeClickableMenu as DialogueBox)?.closeDialogue();
+            Give("(O)24", PaintingRules.Gold);
+            Check(monitor, "...once a season", !Social.JulianPurchase.Offers(julian, who));
+            Check(monitor, "a Masterpiece gets his best word", Social.JulianPurchase.Verdict(MasterOf(Give("(O)24", PaintingRules.Iridium))) == "julian.buy.masterpiece");
+        }
+        finally
+        {
+            Reset();
+            who.modData.Remove(ModEntry.Id + "/JulianBought");
+        }
+    }
+
+    private static SObject MasterOf(SObject painting)
+    {
+        painting.modData[PaintingData.MasterpieceKey] = "1";
+        return painting;
     }
 
     // Animals (1.3, step 1): pets, the horse and farm animals as subjects.

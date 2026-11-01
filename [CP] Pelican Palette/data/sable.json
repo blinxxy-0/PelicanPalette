@@ -180,7 +180,9 @@
         "blinxxy.MuseArt_Portfolio_harvest_Letter": "{{i18n:mail.portfolio-harvest}} %item id (BC)blinxxy.MuseArt_PigmentMill 1 %%[#]{{i18n:mail.portfolio-harvest.title}}",
         "blinxxy.MuseArt_Portfolio_fine-work_Letter": "{{i18n:mail.portfolio-fine-work}} %item id (O)blinxxy.MuseArt_Linen_Medium 2 %%[#]{{i18n:mail.portfolio-fine-work.title}}",
         "blinxxy.MuseArt_Portfolio_far-places_Letter": "{{i18n:mail.portfolio-far-places}} %item id (O)blinxxy.MuseArt_Linen_Large 2 %%[#]{{i18n:mail.portfolio-far-places.title}}",
-        "blinxxy.MuseArt_Portfolio_legends_Letter": "{{i18n:mail.portfolio-legends}} %item id (O)blinxxy.MuseArt_Palette_Iridium 1 %%[#]{{i18n:mail.portfolio-legends.title}}"
+        "blinxxy.MuseArt_Portfolio_legends_Letter": "{{i18n:mail.portfolio-legends}} %item id (O)blinxxy.MuseArt_Palette_Iridium 1 %%[#]{{i18n:mail.portfolio-legends.title}}",
+        "blinxxy.MuseArt_Portfolio_faces_Letter": "{{i18n:mail.portfolio-faces}} %item id (O)blinxxy.MuseArt_MoonlitFrame 3 %%[#]{{i18n:mail.portfolio-faces.title}}",
+        "blinxxy.MuseArt_PortfolioBook_Letter": "{{i18n:mail.portfolio-book}} %item id (O)blinxxy.MuseArt_GoldLeafFrame 1 %%[#]{{i18n:mail.portfolio-book.title}}"
       }
     },
     {

@@ -10,6 +10,8 @@ using SObject = StardewValley.Object;
 
 namespace ArtStudio.Painting;
 
+internal sealed record FrameStyle(string Id, string ItemId, string SmallId, string LargeId);
+
 // Everything the painter uses besides the paintings themselves: the easel,
 // canvases, brushes, picture frames, pigment jars (which teach a colour),
 // the Palette and paint tubes, the Pigment Mill, their crafting recipes,
@@ -31,6 +33,18 @@ internal static class ArtItems
     public const string MoonlitSmallId = ModEntry.Id + "_MoonlitPainting";
     public const string MoonlitLargeId = ModEntry.Id + "_MoonlitPaintingLarge";
     private const int MoonlitFrameSprite = 40;
+    // The gold-leaf frame (1.3): the finished portfolio's reward, from Sable.
+    public const string GoldLeafFrameItemId = ModEntry.Id + "_GoldLeafFrame";
+    public const string GoldLeafSmallId = ModEntry.Id + "_GoldLeafPainting";
+    public const string GoldLeafLargeId = ModEntry.Id + "_GoldLeafPaintingLarge";
+    private const int GoldLeafFrameSprite = 41;
+
+    // The frame styles, each its own Picture Frame item and the framed
+    // paintings it makes (small and medium canvases, and large).
+    public static readonly FrameStyle Plain = new("plain", FrameItemId, FramedSmallId, FramedLargeId);
+    public static readonly FrameStyle Moonlit = new("moonlit", MoonlitFrameItemId, MoonlitSmallId, MoonlitLargeId);
+    public static readonly FrameStyle GoldLeaf = new("gold-leaf", GoldLeafFrameItemId, GoldLeafSmallId, GoldLeafLargeId);
+    public static readonly FrameStyle[] FrameStyles = { Plain, Moonlit, GoldLeaf };
 
     public const string BigCraftablesTexture = "Mods/" + ModEntry.Id + "/BigCraftables";
     public const string FurnitureTexture = "Mods/" + ModEntry.Id + "/Furniture";
@@ -102,8 +116,8 @@ internal static class ArtItems
 
     public static bool IsOurs(Item? item) => item?.ItemId.StartsWith(ModEntry.Id + "_") == true;
     public static bool IsEasel(Item? item) => item?.QualifiedItemId == QualifiedEaselId;
-    public static bool IsFramed(Item? item) => item?.QualifiedItemId is "(F)" + FramedSmallId or "(F)" + FramedLargeId
-        or "(F)" + MoonlitSmallId or "(F)" + MoonlitLargeId;
+    public static bool IsFramed(Item? item) =>
+        item != null && FrameStyles.Any(s => item.QualifiedItemId == "(F)" + s.SmallId || item.QualifiedItemId == "(F)" + s.LargeId);
 
     public static BrushSpec? BrushFor(Item? item) =>
         item == null ? null : Brushes.All.FirstOrDefault(b => item.QualifiedItemId == "(O)" + BrushId(b));
@@ -132,6 +146,7 @@ internal static class ArtItems
 
         AddObject(objects, FrameItemId, I18n.Get("item.frame"), I18n.Get("item.frame.description"), 60, FrameSprite);
         AddObject(objects, MoonlitFrameItemId, I18n.Get("item.moonlit-frame"), I18n.Get("item.moonlit-frame.description"), 750, MoonlitFrameSprite);
+        AddObject(objects, GoldLeafFrameItemId, I18n.Get("item.gold-leaf-frame"), I18n.Get("item.gold-leaf-frame.description"), 2500, GoldLeafFrameSprite);
         // Palettes are tools: like a hoe or a rod, they can't be given away by accident.
         foreach (var tier in PaletteItem.Tiers)
         {
@@ -243,6 +258,8 @@ internal static class ArtItems
         furniture[FramedLargeId] = $"{FramedLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/2/{texture}/true";
         furniture[MoonlitSmallId] = $"{MoonlitSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/5/{texture}/true";
         furniture[MoonlitLargeId] = $"{MoonlitLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/7/{texture}/true";
+        furniture[GoldLeafSmallId] = $"{GoldLeafSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/10/{texture}/true";
+        furniture[GoldLeafLargeId] = $"{GoldLeafLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/12/{texture}/true";
     }
 
     // ingredients/unused/yield/big craftable/unlock condition/display name

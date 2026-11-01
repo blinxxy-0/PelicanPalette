@@ -41,6 +41,47 @@ internal static class SableEvents
         });
     }
 
+    // ---- The Summit (1.3) ----
+
+    // Painting the view from the Summit once the portfolio book is finished
+    // closes the book: Sable comes up the path with it, and you look through
+    // it together. Tender if you're married to Sable, warm and proud if not;
+    // Julian gets a mention once his story's done. The game walks it.
+    public const string SummitEventId = ModEntry.Id + "_SummitBook";
+
+    public static bool SummitSceneDue(Farmer who, string subject) =>
+        Views.IsView(subject) && Views.PlaceOf(subject) == "Summit" && Portfolio.BookFinished
+        && !who.eventsSeen.Contains(SummitEventId) && who.currentLocation?.Name == "Summit";
+
+    public static void StartSummitScene(Farmer who)
+    {
+        bool married = who.spouse == "Sable";
+        string Say(string key) => $"speak Sable \"{Quotable(I18n.Get(key))}\"";
+        var commands = new System.Collections.Generic.List<string>
+        {
+            "continue", "11 15", "farmer 11 13 0 Sable 13 24 0", "skippable",
+            "pause 1000",
+            // Up the path, round the bench, to stand beside you at the top.
+            "move Sable 0 -11 0", "move Sable -1 0 3", "faceDirection farmer 1", "pause 400",
+            Say(married ? "summit.arrive.married" : "summit.arrive"),
+            Say("summit.book"),
+            $"message \"{Quotable(I18n.Get("summit.pages"))}\"",
+            Say("summit.faces"),
+        };
+        if (who.eventsSeen.Contains(ModEntry.Id + "_Julian10h"))
+            commands.Add(Say("summit.julian"));
+        if (married)
+            commands.Add("emote Sable 20");
+        commands.Add(Say(married ? "summit.proud.married" : "summit.proud"));
+        commands.Add("faceDirection farmer 0");
+        commands.Add("faceDirection Sable 0");
+        commands.Add("pause 800");
+        commands.Add(Say("summit.last-page"));
+        commands.Add("pause 600");
+        commands.Add("end");
+        who.currentLocation.startEvent(new Event(string.Join("/", commands), null, SummitEventId));
+    }
+
     // (A painting's title could hold a double quote, which would end the event's quoted text.)
     private static string Quotable(string text) => text.Replace('"', '\'');
 

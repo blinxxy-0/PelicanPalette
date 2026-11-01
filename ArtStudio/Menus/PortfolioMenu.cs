@@ -44,7 +44,12 @@ internal sealed class PortfolioMenu : IClickableMenu
     }
 
     // The menu without taking the book (screenshots and layout checks).
-    internal static PortfolioMenu DevCreate(Farmer who, int page = 0) => new(who, readOnly: false) { _page = page };
+    internal static PortfolioMenu DevCreate(Farmer who, int page = 0)
+    {
+        var menu = new PortfolioMenu(who, readOnly: false) { _page = page };
+        menu.Layout();
+        return menu;
+    }
 
     // Let the book go when its menu closes.
     public static void ReleaseIfClosed()
@@ -69,9 +74,11 @@ internal sealed class PortfolioMenu : IClickableMenu
         yPositionOnScreen = (Game1.uiViewport.Height - height) / 2;
         initializeUpperRightCloseButton();
 
+        // A tab for each page shown (the Summit's only once the book is finished).
         _tabs.Clear();
-        int tabW = (width - 2 * Pad - 16 - (Portfolio.Pages.Length - 1) * 8) / Portfolio.Pages.Length;
-        for (int i = 0; i < Portfolio.Pages.Length; i++)
+        int shown = Portfolio.Pages.Count(Portfolio.IsShown);
+        int tabW = (width - 2 * Pad - 16 - (shown - 1) * 8) / shown;
+        for (int i = 0; i < shown; i++)
             _tabs.Add(new Rectangle(xPositionOnScreen + Pad + 8 + i * (tabW + 8), yPositionOnScreen + Pad, tabW, TabH));
 
         _slots.Clear();
@@ -144,7 +151,7 @@ internal sealed class PortfolioMenu : IClickableMenu
             DrawSlot(b, _slots[i], current.Slots[i], Portfolio.In(first + i), mouse);
 
         int rewardY = _slots[0].Bottom + 70;
-        Ui.TextCentered(b, I18n.Get("portfolio.reward", new { reward = I18n.Get("portfolio.page." + current.Id + ".reward") }),
+        Ui.TextCentered(b, current.Closing ? I18n.Get("portfolio.closing") : I18n.Get("portfolio.reward", new { reward = I18n.Get("portfolio.page." + current.Id + ".reward") }),
             xPositionOnScreen + width / 2, rewardY, Portfolio.IsFinished(current) ? new Color(120, 75, 0) : Game1.textColor * 0.75f, 0.85f);
 
         if (_inventory != null)
