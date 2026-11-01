@@ -83,21 +83,35 @@ internal static class DevGame
             }
         });
         DevTools.AddCommand(helper, "museart_npctest", "Checks Sable: data, sprites, gift tastes, and that every schedule entry finds its routes.", (_, _) => NpcTest(monitor));
-        DevTools.AddCommand(helper, "museart_where", "Logs where Sable is and what they're doing.", (_, _) =>
+        DevTools.AddCommand(helper, "museart_where", "Logs where Sable (or another villager) is and what they're doing. Usage: museart_where [JulianVane]", (_, args) =>
         {
-            var sable = Game1.getCharacterFromName("Sable");
+            var sable = Game1.getCharacterFromName(args.FirstOrDefault() ?? "Sable");
             if (sable == null) return;
-            monitor.Log($"{Game1.timeOfDay}: Sable in {sable.currentLocation?.Name} at {sable.TilePoint}, facing {sable.FacingDirection}, "
-                + $"{(sable.isMoving() ? "walking" : "still")}, schedule '{sable.ScheduleKey}'", LogLevel.Info);
+            monitor.Log($"{Game1.timeOfDay}: {sable.Name} in {sable.currentLocation?.Name} at {sable.TilePoint}, facing {sable.FacingDirection}, "
+                + $"{(sable.isMoving() ? "walking" : "still")}, schedule '{sable.ScheduleKey}', path {(sable.controller?.pathToEndPoint?.Count.ToString() ?? "none")}, "
+                + $"queued {sable.queuedSchedulePaths.Count}, tried {sable.lastAttemptedSchedule}, invisible {sable.IsInvisible}, "
+                + $"warps here: {string.Join(" ", sable.currentLocation?.warps.Select(w => $"{w.X},{w.Y}>{w.TargetName}") ?? Array.Empty<string>())}", LogLevel.Info);
         });
-        DevTools.AddCommand(helper, "museart_day", "Early morning only: makes today another day of the month and reloads Sable's schedule. Usage: museart_day 3", (_, args) =>
+        DevTools.AddCommand(helper, "museart_schedule", "Logs a villager's schedule legs and whether the first one's path can be found from where they stand. Usage: museart_schedule JulianVane", (_, args) =>
         {
-            var sable = Game1.getCharacterFromName("Sable");
+            if (Game1.getCharacterFromName(args.FirstOrDefault() ?? "Sable") is not { } npc || npc.Schedule == null) return;
+            foreach (var (time, leg) in npc.Schedule)
+                monitor.Log($"{time}: {leg.targetLocationName} {leg.targetTile} via {string.Join(">", leg.route ?? new System.Collections.Generic.Stack<Point>())}", LogLevel.Info);
+            var first = npc.Schedule.Values.First();
+            var controller = new StardewValley.Pathfinding.PathFindController(first.route, npc, npc.currentLocation);
+            monitor.Log($"From {npc.currentLocation?.Name} {npc.TilePoint}: first path {(controller.pathToEndPoint?.Count.ToString() ?? "not found")} steps; "
+                + $"standing tile passable {npc.currentLocation?.isTilePassable(npc.Tile)}", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_day", "Early morning only: makes today another day of the month and reloads Sable's (or another villager's) schedule from their home. Usage: museart_day 3 [JulianVane]", (_, args) =>
+        {
+            var sable = Game1.getCharacterFromName(args.ElementAtOrDefault(1) ?? "Sable");
             if (sable == null || args.Length == 0 || !int.TryParse(args[0], out int day)) return;
             Game1.dayOfMonth = day;
             Game1.warpCharacter(sable, sable.DefaultMap, sable.DefaultPosition / 64f);
             sable.TryLoadSchedule();
-            monitor.Log($"Now {Game1.shortDayNameFromDayOfSeason(day)} {day}; Sable's schedule '{sable.ScheduleKey}'.", LogLevel.Info);
+            if (sable.Name == Social.Julian.Name)
+                Social.Julian.StartVisit(day);          // (as the mod does on a visit morning)
+            monitor.Log($"Now {Game1.shortDayNameFromDayOfSeason(day)} {day}; {sable.Name}'s schedule '{sable.ScheduleKey}'.", LogLevel.Info);
         });
         DevTools.AddCommand(helper, "museart_festspot", "Finds the nearest free, walkable tile to a festival spot (with a festival id, counting other mods' extra villagers too). Usage: museart_festspot Town-Fair 19 64 [fall16]", (_, args) => FestSpot(monitor, args));
         DevTools.AddCommand(helper, "museart_festival", "Jumps a throwaway farm to a festival and walks in, then optionally starts its main event (main), or the Flower Dance with Sable (dance). Usage: museart_festival spring24 dance", (_, args) => Festival(monitor, args));
@@ -1636,6 +1650,7 @@ internal static class DevGame
         Check(monitor, "Sable has a word for his visit days", sableLines.ContainsKey("fall_23"));
 
         // Every visit day, leg by leg: from the bus, to each stop, and back.
+        const string home = ModEntry.Id + "_JulianHome";
         var raw = julian.getMasterScheduleRawData();
         foreach (string day in new[] { "22", "23", "24" })
         {
@@ -1655,13 +1670,39 @@ internal static class DevGame
             Check(monitor, $"day {day}: every stop is reachable and open, ending at the bus", ok && from == "BusStop" && problems == "", problems);
         }
 
+        // The morning of a visit, as the game has it: he wakes at home (chosen
+        // the night before), and the mod moves him to the bus door and routes
+        // his day from there.
+        int dayBefore = Game1.dayOfMonth;
+        var homeLocation = Game1.getLocationFromName(home);
+        try
+        {
+            Game1.dayOfMonth = 22;
+            if (homeLocation != null)
+                Game1.warpCharacter(julian, homeLocation, new Vector2(1, 1));
+            julian.TryLoadSchedule();
+            Social.Julian.StartVisit(22);
+            Check(monitor, "on the 22nd he wakes at home, and the mod starts his day at the bus", homeLocation != null && julian.currentLocation?.Name == "BusStop" && julian.ScheduleKey == "22"
+                && julian.Schedule?.Count > 0 && julian.Schedule.Values.First().route?.Count > 0,
+                $"{julian.currentLocation?.Name}, schedule {julian.ScheduleKey ?? "none"}, {julian.Schedule?.Count ?? 0} legs");
+        }
+        finally
+        {
+            Game1.dayOfMonth = dayBefore;
+            julian.TryLoadSchedule();
+        }
+
         // Out of sight before the morning bus, after the evening one, and between visits.
         int day0 = Game1.dayOfMonth;
         try
         {
             Game1.dayOfMonth = 22;
+            // (Away from the bus door, where standing after 11 means he's caught the evening bus.)
+            Game1.warpCharacter(julian, "Town", new Vector2(30, 60));
             Social.Julian.UpdateVisibility(900);
             bool beforeBus = julian.IsInvisible;
+            Social.Julian.UpdateVisibility(950);
+            bool busPullsIn = julian.IsInvisible;
             Social.Julian.UpdateVisibility(1300);
             bool midday = julian.IsInvisible;
             Social.Julian.UpdateVisibility(2100);
@@ -1669,7 +1710,8 @@ internal static class DevGame
             Game1.dayOfMonth = 10;
             Social.Julian.UpdateVisibility(1300);
             bool away = julian.IsInvisible;
-            Check(monitor, "he's seen only while he's visiting", beforeBus && !midday && night && away, $"9am {beforeBus}, 1pm {midday}, 9pm {night}, the 10th {away}");
+            Check(monitor, "he's seen only while he's visiting (from 9:50, as the bus pulls in)", beforeBus && !busPullsIn && !midday && night && away,
+                $"9am {beforeBus}, 9:50 {busPullsIn}, 1pm {midday}, 9pm {night}, the 10th {away}");
         }
         finally
         {

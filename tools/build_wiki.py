@@ -668,7 +668,7 @@ def julian():
 <br clear="right">
 
 ## Visits
-Julian is in the valley on the **22nd, 23rd and 24th** of every season. He gets off the morning bus at 10am and leaves on the evening one, once he's walked back to the bus stop after 6pm. His friendship doesn't fade while he's away.
+Julian is in the valley on the **22nd, 23rd and 24th** of every season. He gets off the morning bus just before 10am and leaves on the evening one, once he's walked back to the bus stop after 6pm. His friendship doesn't fade while he's away.
 
 | Day | 10am | 1pm | 4pm | 6pm |
 |---|---|---|---|---|

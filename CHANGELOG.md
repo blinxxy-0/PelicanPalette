@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- **Fixed: Julian never arrived.** On his visit days (the 22nd to the 24th) he stayed out of sight in "Zuzu City" all day, so he couldn't be found or met, and NPC Map Locations showed no head for him. He now gets off the bus at the bus stop as the bus pulls in, just before 10am, and goes about his day. A save with Julian already stuck on a visit day is fine from the next morning.
+
 ## 1.2.0
 
 - **The back room.** A door in the shop's back wall, marked "Artists only!" and with a lit window, leads to a back room, where you keep your work: the **portfolio book**, a Community Center for paintings (pages of slots, each asking for a particular painting, which stays there and shows in its slot; a better one can replace it later), and the **plan chest**, a big chest's worth of drawers for any paintings you want to keep. Both are shared by the whole farm. Finishing a page brings a letter from Sable with a reward. Pages so far: The Four Seasons, Harvest and Fine Work.

@@ -29,8 +29,10 @@
           "IntroductionsQuest": false,
           "FlowerDanceCanDance": false,
           "Home": [
-            // Visit days: he starts by the bus (hidden until it "arrives" at 10).
-            { "Id": "Visit", "Condition": "DAY_OF_MONTH 22 23 24", "Location": "BusStop", "Tile": { "X": 22, "Y": 11 }, "Direction": "down" },
+            // Always his home off the map ("Zuzu City"). On visit mornings the
+            // mod moves him to the bus door and routes his day from there
+            // (Social/Julian.cs): a home by the bus on visit days didn't work,
+            // since the game picks the home the night before, on the 21st.
             { "Id": "Default", "Location": "blinxxy.MuseArt_JulianHome", "Tile": { "X": 1, "Y": 1 }, "Direction": "down" }
           ]
         }

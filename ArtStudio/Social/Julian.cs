@@ -37,7 +37,30 @@ internal static class Julian
     private static void OnDayStarted(object? sender, DayStartedEventArgs e)
     {
         KeepFriendship(Game1.player, Game1.dayOfMonth);
+        StartVisit(Game1.dayOfMonth);
         UpdateVisibility(Game1.timeOfDay);
+    }
+
+    // A visit morning: he starts the day at the bus door, with his day's
+    // schedule routed from there. (The game puts him in his home off the map,
+    // chosen the night before, and nothing walks out of it.)
+    internal static void StartVisit(int today)
+    {
+        if (!Context.IsMainPlayer || !IsVisitDay(today) || Npc is not { } julian || julian.currentLocation?.Name == "BusStop") return;
+        Game1.warpCharacter(julian, "BusStop", new Microsoft.Xna.Framework.Vector2(BusTile.X, BusTile.Y));
+        // The game routes a schedule's first walk from the NPC's default home,
+        // so that's the bus door while it's read, then home again (where he
+        // goes back to at night).
+        string home = julian.DefaultMap;
+        var position = julian.DefaultPosition;
+        julian.DefaultMap = "BusStop";
+        julian.DefaultPosition = new Microsoft.Xna.Framework.Vector2(BusTile.X * 64, BusTile.Y * 64);
+        try { julian.TryLoadSchedule(); }
+        finally
+        {
+            julian.DefaultMap = home;
+            julian.DefaultPosition = position;
+        }
     }
 
     // Puts back friendship lost overnight after a day he wasn't in the valley.
@@ -64,6 +87,8 @@ internal static class Julian
         if (!Context.IsMainPlayer || Npc is not { } julian) return;
         bool visiting = IsVisitDay(Game1.dayOfMonth);
         bool gone = julian.currentLocation?.Name == "BusStop" && julian.TilePoint == BusTile && time > Arrives + 100;
-        julian.IsInvisible = !visiting || time < Arrives || time >= LeavesBy || gone;
+        // (Seen from ten minutes before the bus: the game skips the schedule of
+        // anyone invisible at the 10:00 tick, and his day starts at 10:00.)
+        julian.IsInvisible = !visiting || time < Utility.ModifyTime(Arrives, -10) || time >= LeavesBy || gone;
     }
 }
