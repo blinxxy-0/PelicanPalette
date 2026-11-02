@@ -6,8 +6,8 @@
   <tileset firstgid="65" name="z_blinxxy.MuseArt_ArtShopYard" tilewidth="16" tileheight="16" tilecount="6" columns="1">
     <image source="ArtShopYard.png" width="16" height="96" />
   </tileset>
-  <tileset firstgid="71" name="z_blinxxy.MuseArt_MargotRoom" tilewidth="16" tileheight="16" tilecount="120" columns="8">
-    <image source="MargotRoom.png" width="128" height="240" />
+  <tileset firstgid="71" name="z_blinxxy.MuseArt_MargotRoom" tilewidth="16" tileheight="16" tilecount="136" columns="8">
+    <image source="MargotRoom.png" width="128" height="272" />
   </tileset>
   <layer id="1" name="Back" width="4" height="4">
     <data encoding="csv">

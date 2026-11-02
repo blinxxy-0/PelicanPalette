@@ -36,6 +36,13 @@
       "Entries": {
         "blinxxy.MuseArt_Margot8h/Friendship MargotPell 2000/Time 800 1100/Weather sunny/SawEvent blinxxy.MuseArt_Margot6h": "continue/88 38/farmer 92 35 2 MargotPell 87 38 2/skippable/pause 600/move farmer 0 3 2/move farmer -3 0 3/pause 300/faceDirection MargotPell 1/speak MargotPell \"{{i18n:margot-event.margot8h.01}}\"/message \"{{i18n:margot-event.margot8h.02}}\"/move MargotPell 0 2 2/move farmer 0 2 2/move MargotPell 0 0 1/pause 400/message \"{{i18n:margot-event.margot8h.03}}\"/speak MargotPell \"{{i18n:margot-event.margot8h.04}}\"/speak MargotPell \"{{i18n:margot-event.margot8h.05}}\"/blinxxy.MuseArt_MargotErrand/speak MargotPell \"{{i18n:margot-event.margot8h.06}}\"/pause 300/end"
       }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Events/Saloon",
+      "Entries": {
+        "blinxxy.MuseArt_MargotJulian/DayOfMonth 22 23 24/Time 1700 1800/G PLAYER_HAS_MET Current JulianVane, PLAYER_HAS_MET Current MargotPell": "continue/17 21/farmer 20 21 3 JulianVane 16 22 1 MargotPell 21 23 0/skippable/pause 400/move MargotPell 0 -1 0/move MargotPell -4 0 3/pause 300/speak MargotPell \"{{i18n:margot-event.margotjulian.01}}\"/speak JulianVane \"{{i18n:margot-event.margotjulian.02}}\"/speak MargotPell \"{{i18n:margot-event.margotjulian.03}}\"/speak JulianVane \"{{i18n:margot-event.margotjulian.04}}\"/speak MargotPell \"{{i18n:margot-event.margotjulian.05}}\"/pause 400/speak JulianVane \"{{i18n:margot-event.margotjulian.06}}\"/speak MargotPell \"{{i18n:margot-event.margotjulian.07}}\"/speak JulianVane \"{{i18n:margot-event.margotjulian.08}}\"/pause 800/speak MargotPell \"{{i18n:margot-event.margotjulian.09}}\"/faceDirection MargotPell 1/faceDirection JulianVane 1/pause 300/speak JulianVane \"{{i18n:margot-event.margotjulian.10}}\"/quickQuestion  #{{i18n:margot-event.margotjulian.11}}#{{i18n:margot-event.margotjulian.12}}#{{i18n:margot-event.margotjulian.13}}(break)friendship MargotPell 30\\speak MargotPell \"{{i18n:margot-event.margotjulian.14}}\"\\speak JulianVane \"{{i18n:margot-event.margotjulian.15}}\"(break)friendship MargotPell 30\\friendship JulianVane 30\\pause 600\\speak JulianVane \"{{i18n:margot-event.margotjulian.16}}\"\\speak MargotPell \"{{i18n:margot-event.margotjulian.17}}\"(break)friendship JulianVane 30\\message \"{{i18n:margot-event.margotjulian.18}}\"/faceDirection MargotPell 3/pause 300/speak MargotPell \"{{i18n:margot-event.margotjulian.19}}\"/speak JulianVane \"{{i18n:margot-event.margotjulian.20}}\"/message \"{{i18n:margot-event.margotjulian.21}}\"/pause 300/end"
+      }
     }
   ]
 }

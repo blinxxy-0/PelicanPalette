@@ -142,10 +142,42 @@ The Painting Mastery claim (`restoration_mechanics.md` §1), with Margot.
 
 ---
 
+## Julian and Margot: "Between" (approved and built 2026-11-02)
+
+**Trigger:** you walk into the Saloon between 5pm and 6pm on one of Julian's visit days (the 22nd to the 24th), once you've met them both (Julian has no introduction scene, so meeting him is the condition). Julian is at his table; Margot has just come in. Once only. Built in tools/build_margot_events.py; their later lines are MargotEvents.BetweenLines, given the first time you come into the Saloon on each visit after it, for the next time you talk to them.
+
+**Scene:**
+- Margot stops at Julian's table, a plate of Gus's pie in one hand. `$7` "You're the critic."
+- Julian, not looking up from his notebook: `$u` "And you must be the restorer. Gus warned me."
+- Margot: `$a` "Conservator."
+- Julian: `$u` "Of course. The people who paint over other people's paintings."
+- Margot: `$a` "We don't paint *over*. We paint *between*. It's a hundred years of training, and you could fit what you know about it on a napkin."
+- Julian closes the notebook. `$7` "Then tell me, conservator. When you fill a gap in a dead man's painting, whose brushstroke is it?"
+- Margot: `$7` "His. If I've done it right, nobody can tell it was ever missing."
+- Julian: "So the best work you'll ever do, no one will ever see."
+- A pause. Margot: `$s` "...Yes."
+- They both turn to you. Julian: `$u` "Settle it, farmer. Is a restoration art?"
+- **Choice:**
+  - "It's art." → Margot `$h` "Thank you." Julian `$u` "Two against one. I'll be writing about this." (+Margot)
+  - "It's care. That's different, and just as good." → They both stop. Julian `$7` "...That's annoyingly well put." Margot `$l` "Write that down, Julian." (+both)
+  - "Ask me again after a drink." → Gus sets down two glasses without being asked. They clink them, grudgingly. (+Julian)
+- Margot sits down across from him. `$u` "I have notes on your review." Julian: `$u` "I have notes on your 'between'." They both look almost pleased.
+
+**After: their lines on his later visit days.** Talking to either of them at the Saloon on a visit day shows a little of it, warmer as the year goes on (one each visit, in order):
+
+- Margot:
+  1. `$a` "He called the mural by the Saloon 'enthusiastic'. I'm not speaking to him. I'm speaking near him."
+  2. `$7` "Julian thinks restorers should sign their work. In the corner, where nobody looks. ...It's not the worst idea he's had."
+  3. `$h` "I let him use my loupe. He held it like it might bite. He looked for an hour."
+- Julian:
+  1. `$u` "The conservator has opinions about my commas. Several opinions. Some about semicolons."
+  2. `$7` "She showed me a painting she'd restored. I couldn't find where. I looked for twenty minutes. I'm still annoyed."
+  3. `$l` "I've started a piece about the museum's new wing. Don't tell her. She'll want to edit it."
+
 ## Open questions
 
 1. ~~**Where the cottage goes.**~~ Decided (2026-11-01): between the main road and the river, south of Haley and Emily's house. A small gabled cottage (its back, a big window, faces the water; the door is at the right end by the cherry tree), with a bench by the river and a flowerpot by the door. Built (`tools/build_margot_cottage.py`), shown once Robin's scene sets `blinxxy.MuseArt_MargotCottageBuilt`. A frame-work yard beside it was tried and dropped (the strip is too narrow); its pieces are in her workshop indoors.
-2. **Julian and Margot.** The brief has them bickering at the Saloon on his visit days. That can be a short 0-heart scene (needs both met) or just paired lines on those days. Which?
+2. ~~**Julian and Margot.**~~ Decided (2026-11-02): a short scene, then paired lines on his later visit days ("Between", above; draft for approval).
 3. **Margot's old room after she moves.** Gus's guest room (decided). Should it be visitable then (it's open now), or closed off?
 
 ## Build order once approved

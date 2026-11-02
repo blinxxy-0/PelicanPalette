@@ -774,5 +774,11 @@
   "wing.closed": "A velvet rope, and a little sign: \"The Painting Wing. Opening soon.\"",
   "wing.card.missing": "{{set}}: a painting still missing. Restore it, and Gunther will hang it here.",
   "wing.card.hung": "{{title}}. {{set}}, artist unknown. Restored, and given to the museum.",
-  "museum.wing-open": "Have you been through the east doorway? The painting wing's open.#$b#Your restoration's hanging there, and there's a place kept for every one still out in the valley. Margot cried. Don't tell her I told you."
+  "museum.wing-open": "Have you been through the east doorway? The painting wing's open.#$b#Your restoration's hanging there, and there's a place kept for every one still out in the valley. Margot cried. Don't tell her I told you.",
+  "between.margot.1": "He called the mural by the Saloon 'enthusiastic'. I'm not speaking to him. I'm speaking near him.$a",
+  "between.margot.2": "Julian thinks restorers should sign their work. In the corner, where nobody looks. ...It's not the worst idea he's had.$7",
+  "between.margot.3": "I let him use my loupe. He held it like it might bite. He looked for an hour.$h",
+  "between.julian.1": "The conservator has opinions about my commas. Several opinions. Some about semicolons.$u",
+  "between.julian.2": "She showed me a painting she'd restored. I couldn't find where. I looked for twenty minutes. I'm still annoyed.$7",
+  "between.julian.3": "I've started a piece about the museum's new wing. Don't tell her. She'll want to edit it.$l"
 }

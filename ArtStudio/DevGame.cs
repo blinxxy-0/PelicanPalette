@@ -798,6 +798,41 @@ internal static class DevGame
             Check(monitor, $"her 8-heart line follows the 6-heart answer '{answer}'", line.Length > 20 && !line.Contains("margot."), line.Substring(0, Math.Min(40, line.Length)));
         }
         Check(monitor, "the 14-heart card names a painting", Social.MargotEvents.CardLine(who).Contains("Restored by Margot Pell"), Social.MargotEvents.CardLine(who));
+        // "Between", with Julian: the scene, then a line each on his next three visits.
+        var saloonEvents = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/Saloon");
+        Check(monitor, "Julian and Margot's Saloon scene is there, on his visit days, once you've met both",
+            saloonEvents.Keys.Any(k => k.StartsWith(Social.MargotEvents.BetweenEvent + "/") && k.Contains("DayOfMonth 22 23 24") && k.Contains("PLAYER_HAS_MET Current " + Social.Julian.Name)));
+        var saloon = Game1.RequireLocation("Saloon");
+        var julian = Game1.getCharacterFromName(Social.Julian.Name);
+        int day = Game1.dayOfMonth, year = Game1.year;
+        bool hadBetween = who.eventsSeen.Contains(Social.MargotEvents.BetweenEvent);
+        try
+        {
+            who.eventsSeen.Add(Social.MargotEvents.BetweenEvent);
+            Social.MargotEvents.DevResetBetween(who);
+            Game1.dayOfMonth = 22;
+            Social.MargotEvents.BetweenLines(who, saloon);                  // the scene's own visit: nothing
+            margot.CurrentDialogue.Clear(); julian?.CurrentDialogue.Clear();
+            Game1.year++;
+            Social.MargotEvents.BetweenLines(who, saloon);                  // the next visit: the first lines
+            string first = margot.CurrentDialogue.Count > 0 ? margot.CurrentDialogue.Peek().getCurrentDialogue() : "";
+            string his = julian != null && julian.CurrentDialogue.Count > 0 ? julian.CurrentDialogue.Peek().getCurrentDialogue() : "";
+            margot.CurrentDialogue.Clear(); julian?.CurrentDialogue.Clear();
+            Social.MargotEvents.BetweenLines(who, saloon);                  // the same day again: nothing more
+            bool once = margot.CurrentDialogue.Count == 0;
+            for (int i = 0; i < 3; i++) { Game1.year++; margot.CurrentDialogue.Clear(); Social.MargotEvents.BetweenLines(who, saloon); }
+            bool done = margot.CurrentDialogue.Count == 0 && Social.MargotEvents.BetweenVisit(who) > Social.MargotEvents.BetweenVisits;
+            Check(monitor, "...then on his next visits, a line each about the other, once a visit, three visits", first.Contains("speaking near him")
+                && (julian == null || his.Contains("commas")) && once && done, $"'{first}' / '{his}'");
+        }
+        finally
+        {
+            Game1.dayOfMonth = day;
+            Game1.year = year;
+            if (!hadBetween) who.eventsSeen.Remove(Social.MargotEvents.BetweenEvent);
+            Social.MargotEvents.DevResetBetween(who);
+            margot.CurrentDialogue.Clear(); julian?.CurrentDialogue.Clear();
+        }
         // Her 10-heart paintings, by your answer.
         string eachOther = ModEntry.Id + "_MargotEachOther", window = ModEntry.Id + "_MargotWindow";
         who.mailReceived.Remove(window);

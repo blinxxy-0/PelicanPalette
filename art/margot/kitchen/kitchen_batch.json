@@ -1,0 +1,32 @@
+{
+ "batch": "stardew-margot-kitchen",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, pixel scale and colours of this room's furniture: square-on front view, the top seen as a band above, wood ramps, dark coloured outlines",
+  "reference_usage": "camera and outline: square-on from the front, no side faces; keep this size and shape, filling it"
+ },
+ "jobs": {
+  "north_window": {
+   "image_size": {"width": 48, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/kitchen/window_guide.png",
+   "description": "Stardew Valley wall decoration, a big window set flat in an interior wall, square-on, alone on a transparent background, three tiles wide and two tall, one tile is 16 pixels, dark coloured (not black) outlines: a wide cottage window with a painted cream wooden frame and two large panes, clear soft blue daylight sky and a little green of trees through the glass, a thin pale curtain tied back at each side, a deep wooden sill"
+  },
+  "counter": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/kitchen/counter_guide.png",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, drawn square-on from the front with its top seen as a flat band above the front face, no side faces visible at all, one tile is 16 pixels, warm wood colours, dark coloured (not black) outlines: a small cottage kitchen counter, two tiles wide, a butcher block top with a copper kettle and a chopping board with bread on it, two small cupboard doors with brass knobs below"
+  },
+  "stove": {
+   "image_size": {"width": 16, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/kitchen/stove_guide.png",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, drawn square-on from the front, no side faces, one tile wide and two tall, one tile is 16 pixels, dark coloured (not black) outlines: a small black cast-iron cottage cookstove, a little saucepan on its top, a small oven door with a brass handle and a warm orange glow at its grate, no chimney pipe"
+  },
+  "jar_shelf": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/kitchen/shelf_guide.png",
+   "description": "Stardew Valley wall decoration, a wall shelf hung flat on a wall, square-on, alone on a transparent background, two tiles wide, one tile is 16 pixels, warm wood colours, dark coloured (not black) outlines: two short wooden kitchen shelves on brackets, with glass jars of jam, honey and dried beans, a little stack of plates and a teacup"
+  }
+ }
+}

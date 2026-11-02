@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ArtStudio.Painting;
 using StardewModdingAPI;
@@ -56,6 +57,8 @@ internal static class MargotEvents
         {
             if (e.NewLocation.Name == SaloonRoom)
                 PaperGuestRoom();
+            else if (e.NewLocation.Name == "Saloon")
+                BetweenLines(e.Player, e.NewLocation);
         };
     }
 
@@ -124,6 +127,41 @@ internal static class MargotEvents
         return items;
     }
 
+    // After "Between" (their scene at the Saloon): on each of Julian's
+    // visits after it, the first time you come into the Saloon, she and he
+    // each have that visit's line about the other, for the next time you
+    // talk to them (three visits, warming).
+    public const string BetweenEvent = ModEntry.Id + "_MargotJulian";
+    private const string BetweenKey = ModEntry.Id + "/BetweenVisits";    // "<visits since>|<the visit last counted>|<the day lines were given>"
+    public const int BetweenVisits = 3;
+
+    internal static int BetweenVisit(Farmer who) =>
+        who.modData.TryGetValue(BetweenKey, out string raw) && int.TryParse(raw.Split('|')[0], out int n) ? n : 0;
+
+    internal static void BetweenLines(Farmer who, GameLocation saloon)
+    {
+        if (!who.IsLocalPlayer || !who.eventsSeen.Contains(BetweenEvent) || !Julian.IsVisitDay(Game1.dayOfMonth)) return;
+        int visit = Game1.year * 4 + Game1.seasonIndex, today = Game1.Date.TotalDays;
+        string[] parts = who.modData.TryGetValue(BetweenKey, out string raw) ? raw.Split('|') : Array.Empty<string>();
+        int count = parts.Length == 3 && int.TryParse(parts[0], out int c) ? c : -1;
+        int counted = parts.Length == 3 && int.TryParse(parts[1], out int v) ? v : -1;
+        int given = parts.Length == 3 && int.TryParse(parts[2], out int g) ? g : -1;
+        // (The visit of the scene itself counts as none.)
+        if (count < 0) { who.modData[BetweenKey] = $"0|{visit}|{today}"; return; }
+        if (counted != visit) { count++; counted = visit; given = -1; }
+        if (given == today || count > BetweenVisits) { who.modData[BetweenKey] = $"{count}|{counted}|{given}"; return; }
+        // (To each of them wherever they are: Margot comes in an hour after him.)
+        foreach (var (npc, key) in new[] { (Game1.getCharacterFromName(Margot.Name), "between.margot."), (Game1.getCharacterFromName(Julian.Name), "between.julian.") })
+        {
+            if (npc == null) continue;
+            npc.CurrentDialogue.Push(new Dialogue(npc, null, I18n.Get(key + count)));
+        }
+        who.modData[BetweenKey] = $"{count}|{counted}|{today}";
+    }
+
+    // For the dev test: forget the visits since "Between".
+    internal static void DevResetBetween(Farmer who) => who.modData.Remove(BetweenKey);
+
     internal static string ErrandLine(Farmer who)
     {
         string key = who.mailReceived.Contains(ModEntry.Id + "_MargotTalk") ? "margot.errand.talk"
@@ -154,5 +192,6 @@ internal static class MargotEvents
         }
         Game1.MasterPlayer.modData.Remove(DueKey);
         Game1.getLocationFromName(SaloonRoom)?.modData.Remove(PaperedKey);
+        Game1.player.modData.Remove(BetweenKey);
     }
 }

@@ -73,6 +73,12 @@ SOURCES = {
     # painting half cleaned.
     "rug":      ("stardew-margot-spouse2", "rug", 1),
     "easel":    ("stardew-margot-spouse2", "conservation_easel", 3),
+    # Her cottage's kitchen and the big north window Robin promised
+    # (picked 2026-11-02).
+    "window":   ("stardew-margot-kitchen", "north_window", 12),
+    "counter":  ("stardew-margot-kitchen", "counter", 9),
+    "stove":    ("stardew-margot-kitchen", "stove", 17),
+    "shelf":    ("stardew-margot-kitchen", "jar_shelf", 44),
 }
 # The mod's wallpapers, in order (Wallpapers.png): her damask, then the
 # guest room's candidates.
@@ -92,17 +98,21 @@ ROOMS = {
         exit=(5, 9), warp="Saloon 36 8", lights=[(2, 4), (8, 4), (5, 7)], bed=(8, 2), wallpaper=0,
         pieces={"table": ((1, 2), 1), "chest": ((4, 3), 1), "crates": ((1, 6), 2), "trunk": ((8, 6), 1),
                 "map": ((3, 1), 0), "sketches": ((5, 1), 0), "poster": ((7, 1), 0)}),
-    # Her cottage in town, out to its door by the cherry tree: her corner
-    # (bed, restoration table, plan chest, trunk, the walls' map, sketches
-    # and poster) and her frame workshop along the left (the moulding rack,
-    # the frame workbench and the mitre-box sawhorse), the way to the door
-    # kept clear.
+    # Her cottage in town, out to its door by the cherry tree: what Robin
+    # promised in her 4-heart scene, a big north window (over her
+    # restoration table), a workroom and a little kitchen. Along the back
+    # wall her table under the window, the plan chest under the map of the
+    # valley, the kitchen (a counter with a kettle, a cookstove, a shelf of
+    # jars above) and her bed; her frame workshop along the left (the
+    # moulding rack, the frame workbench and the mitre-box sawhorse), her
+    # trunk, and the museum poster; the way to the door kept clear. (The
+    # window goes first so the table's lamp draws over it.)
     "MargotCottage": dict(
         cols=list(range(13)), rows=[0, 1, 2, 3, 4, 5, 6, 7, 12, 13],
         exit=(6, 9), warp="Town 21 97", lights=[(2, 4), (9, 4), (6, 7)], bed=(9, 2), wallpaper=0,
-        pieces={"table": ((1, 2), 1), "chest": ((3, 3), 1), "crates": ((6, 3), 1), "trunk": ((9, 6), 1),
-                "map": ((3, 1), 0), "sketches": ((6, 1), 0), "poster": ((8, 1), 0),
-                "rack": ((1, 6), 1), "bench": ((3, 6), 1), "mitre": ((7, 6), 1)}),
+        pieces={"window": ((1, 1), 0), "table": ((1, 2), 1), "chest": ((3, 3), 1), "map": ((4, 1), 0),
+                "counter": ((6, 3), 1), "stove": ((8, 3), 1), "shelf": ((6, 1), 0), "poster": ((8, 1), 0),
+                "trunk": ((9, 6), 1), "rack": ((1, 6), 1), "bench": ((3, 6), 1), "mitre": ((7, 6), 1)}),
     # Her Saloon room once she's moved to the cottage: Gus's guest room
     # (data/margot.json loads it in her room's place). Its walls are a new
     # wall area ("GuestWall"), so the game papers them afresh rather than
