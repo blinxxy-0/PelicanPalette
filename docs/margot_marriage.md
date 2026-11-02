@@ -1,4 +1,4 @@
-# Margot Pell: engagement and married life (draft, for approval; built)
+# Margot Pell: engagement and married life (approved as written 2026-11-02; built)
 
 The rest of her marriage is built (2026-11-01): the spouse room (her
 restoration table, plan chest, the valley map, a museum crate), the patio
