@@ -788,6 +788,23 @@ internal static class DevGame
             Check(monitor, $"her 8-heart line follows the 6-heart answer '{answer}'", line.Length > 20 && !line.Contains("margot."), line.Substring(0, Math.Min(40, line.Length)));
         }
         Check(monitor, "the 14-heart card names a painting", Social.MargotEvents.CardLine(who).Contains("Restored by Margot Pell"), Social.MargotEvents.CardLine(who));
+        // Her 10-heart paintings, by your answer.
+        string eachOther = ModEntry.Id + "_MargotEachOther", window = ModEntry.Id + "_MargotWindow";
+        who.mailReceived.Remove(window);
+        who.mailReceived.Add(eachOther);
+        var portraits = Social.MargotEvents.Paintings(who);
+        var hers = portraits.FirstOrDefault(ArtItems.IsFramed);
+        var herData = hers != null ? PaintingData.Read(hers) : null;
+        Check(monitor, "'paint each other': her portrait by you, and yours by her, painted from you",
+            portraits.Count == 2 && portraits[0].QualifiedItemId == "(F)" + ModEntry.Id + "_MargotByYou" && portraits[0].DisplayName == "Margot, by You"
+            && herData != null && herData.IsPortrait && herData.Painter == I18n.Get("margot.name") && herData.Stars == 4,
+            string.Join(", ", portraits.Select(p => p.DisplayName)) + $"; painter {herData?.Painter}, {herData?.Stars} stars");
+        who.mailReceived.Remove(eachOther);
+        who.mailReceived.Add(window);
+        var windows = Social.MargotEvents.Paintings(who);
+        Check(monitor, "'paint the window': the north window", windows.Count == 1 && windows[0].DisplayName == "North Window, by Margot and You",
+            string.Join(", ", windows.Select(p => p.DisplayName)));
+        who.mailReceived.Remove(window);
         // Her mastery test: offered with the bar full, passed at gold, and she
         // keeps the painting.
         bool hadMastery = who.mailReceived.Contains(OldPaintings.MasteryFlag);

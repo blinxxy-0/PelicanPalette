@@ -121,6 +121,8 @@ def events():
         ]),
         "globalFade 0.007", "pause 1500", "globalFadeToClear 0.007", "pause 600",
         "message " + q("The two canvases dry on the windowsill."),
+        # (What you painted, by your answer: MargotEvents.Paintings.)
+        "blinxxy.MuseArt_MargotPaintings",
         "pause 300", "end",
     )
 

@@ -1,0 +1,25 @@
+{
+ "batch": "stardew-margot-rewards",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/rewards/style_painting.png",
+  "style_usage": "the exact Stardew Valley style of this framed wall painting: square-on, a frame around a small painted picture, one tile is 16 pixels, dark coloured (not black) outlines"
+ },
+ "jobs": {
+  "margot_by_you": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/rewards/margot_ref.png",
+   "reference_usage": "the woman the painting shows: her auburn hair, her face, her green apron; painted loosely and a little clumsily by a beginner",
+   "description": "Stardew Valley wall decoration, a small framed painting hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, a plain light wooden frame, dark coloured (not black) outlines: a sweet amateur portrait of a smiling young woman with auburn hair tied back and a green apron, head and shoulders, painted with big uneven brush strokes and a slightly lopsided smile, a warm ochre background"
+  },
+  "you_by_margot": {
+   "image_size": {"width": 32, "height": 32},
+   "description": "Stardew Valley wall decoration, a small framed painting hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, a plain dark wooden frame, dark coloured (not black) outlines: a careful, slightly stiff first portrait of a young farmer in a straw hat and blue overalls, head and shoulders, looking out with a small smile, against a soft sage green background, painted like a conservator's first try, very neat"
+  },
+  "north_window": {
+   "image_size": {"width": 32, "height": 32},
+   "description": "Stardew Valley wall decoration, a small framed painting hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, a plain wooden frame, dark coloured (not black) outlines: a painting of a tall cottage window at night seen from inside, four panes, a deep blue night sky with stars and a crescent moon, a lit candle on the windowsill casting warm light, the left half painted neatly and the right half painted loosely"
+  }
+ }
+}

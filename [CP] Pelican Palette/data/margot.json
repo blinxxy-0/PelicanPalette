@@ -89,6 +89,19 @@
     // way the farmhouse's walls are papered): the sage damask is pattern 0,
     // then the guest room's.
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/Wallpapers", "FromFile": "assets/Wallpapers.png" },
+    // Her 10-heart paintings (tools/art/margot_items.py): what you paint
+    // together. ("You, by Margot" is painted from your own sprite in the
+    // game, ArtStudio/Painting/FarmerPortrait.cs.)
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/MargotItems", "FromFile": "assets/margot/items.png" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Furniture",
+      "Entries": {
+        // name/type/sheet size/bounding box/rotations/price/placement/display name/sprite index/texture/off limits for sale
+        "blinxxy.MuseArt_MargotByYou": "blinxxy.MuseArt_MargotByYou/painting/2 2/2 2/1/500/-1/{{i18n:margot.item.margot-by-you}}/0/Mods\\blinxxy.MuseArt\\MargotItems/true",
+        "blinxxy.MuseArt_NorthWindow": "blinxxy.MuseArt_NorthWindow/painting/2 2/2 2/1/500/-1/{{i18n:margot.item.north-window}}/2/Mods\\blinxxy.MuseArt\\MargotItems/true"
+      }
+    },
     {
       "Action": "EditData",
       "Target": "Data/AdditionalWallpaperFlooring",

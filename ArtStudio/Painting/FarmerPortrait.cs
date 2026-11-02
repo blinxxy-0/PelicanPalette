@@ -12,7 +12,8 @@ namespace ArtStudio.Painting;
 // look that day, from their own sprite (hair, skin, clothes, hat), painted in
 // every pigment, head and shoulders on the large canvas against a backdrop.
 // It's an ordinary painting underneath, so it frames, hangs and saves like
-// the player's own.
+// the player's own. Margot paints one too (her 10-heart event, "Let's paint
+// each other"): her first painting of her own, against moss green.
 internal static class FarmerPortrait
 {
     public const string SubjectPrefix = "portrait:";
@@ -22,18 +23,21 @@ internal static class FarmerPortrait
 
     public static string SitterName(string subject) => subject.Substring(SubjectPrefix.Length);
 
-    public static SObject Create(Farmer who)
+    public static SObject Create(Farmer who) =>
+        Create(who, Game1.getCharacterFromName("Sable")?.displayName ?? "Sable", "slate", 5, Price);
+
+    public static SObject Create(Farmer who, string painter, string backdrop, float stars, int price)
     {
         int size = PaintingRules.CanvasSize(CanvasKind.Large);
         var sprite = RenderFront(who);
         var cells = PixelCanvas.NewBlank(size);
         var all = Enumerable.Range(0, Palette.All.Length).ToArray();
 
-        // A plain slate backdrop with a band of umber below (a chair back).
-        byte slate = (byte)Palette.IndexOf("slate"), umber = (byte)Palette.IndexOf("umber");
+        // A plain backdrop with a band of umber below (a chair back).
+        byte back = (byte)Palette.IndexOf(backdrop), umber = (byte)Palette.IndexOf("umber");
         for (int x = 0; x < size; x++)
         for (int y = 0; y < size; y++)
-            cells[x, y] = y < size - 6 ? slate : umber;
+            cells[x, y] = y < size - 6 ? back : umber;
 
         // Head and shoulders at twice the sprite's size, centred.
         int top = Enumerable.Range(0, sprite.GetLength(1)).First(y => Enumerable.Range(0, 16).Any(x => sprite[x, y].A >= 128));
@@ -60,11 +64,11 @@ internal static class FarmerPortrait
             Cells = cells,
             Purity = new Purity[size, size],
             Subject = SubjectPrefix + who.Name,
-            Stars = 5,
-            Painter = Game1.getCharacterFromName("Sable")?.displayName ?? "Sable",
+            Stars = stars,
+            Painter = painter,
             Date = I18n.Get("painting.date", new { season = Utility.getSeasonNameFromNumber(Game1.seasonIndex), day = Game1.dayOfMonth, year = Game1.year }),
         };
-        return PaintingItems.Create(data, SObject.bestQuality, Price);
+        return PaintingItems.Create(data, stars >= 5 ? SObject.bestQuality : SObject.highQuality, price);
     }
 
     // The farmer's standing front view as 16 pixels wide (by 40 tall, with

@@ -123,6 +123,22 @@ internal static class DevMedia
             Game1.player.Position = new Vector2(int.Parse(args[0]), int.Parse(args[1])) * 64f);
         DevTools.AddCommand(helper, "museart_wallpaper", "Papers this room's walls with a wallpaper, to compare them. Usage: museart_wallpaper blinxxy.MuseArt_Wallpapers:2", (_, args) =>
             (Game1.currentLocation as StardewValley.Locations.DecoratableLocation)?.SetWallpaper(args[0], null));
+        DevTools.AddCommand(helper, "museart_hangmargot", "Clears this room's furniture and hangs what Margot's 10-heart event gives for an answer, at the tiles given. Usage: museart_hangmargot EachOther 1 1 4 1 (or Window 3 1)", (_, args) =>
+        {
+            var who = Game1.player;
+            string flag = ModEntry.Id + "_Margot" + args[0];
+            who.mailReceived.Add(flag);
+            var items = Social.MargotEvents.Paintings(who);
+            who.mailReceived.Remove(flag);
+            Game1.currentLocation.furniture.Clear();
+            int n = 1;
+            foreach (var item in items.OfType<StardewValley.Objects.Furniture>())
+            {
+                item.TileLocation = new Vector2(int.Parse(args[n]), int.Parse(args[n + 1]));
+                Game1.currentLocation.furniture.Add(item);
+                n += 2;
+            }
+        });
         DevTools.AddCommand(helper, "museart_seen", "Marks events as already seen. Usage: museart_seen blinxxy.MuseArt_SableIntro", (_, args) =>
         {
             foreach (string id in args)

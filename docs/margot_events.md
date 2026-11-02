@@ -97,7 +97,7 @@ Portrait codes in the lines: `$h` happy, `$s` sad, `$u` explaining (her own), `$
 - `$7` "Everything I've ever fixed was someone else's mind, changing." beat. "I want to make something that's mine. I'm terrified it'll be awful."
 - She sets a small blank canvas on the table, then a second one. `$l` "Will you paint with me? So if mine's awful, at least we'll both have one."
 - **Choice:**
-  - "Let's paint each other." → `$h` They paint each other, laughing at every stroke. (Reward: the two small portraits as furniture: "Margot, by You" and "You, by Margot".)
+  - "Let's paint each other." → `$h` They paint each other, laughing at every stroke. (Reward: the two portraits: "Margot, by You", wall decor, and "You, by Margot", a framed painting painted in the game from the farmer's own sprite as they look that night, like Sable's 10-heart portrait, on moss green and signed by her; decided 2026-11-01.)
   - "Let's paint the window." → `$7` They paint the north window at night, side by side. (Reward: "North Window, by Margot and You".)
 - The scene fades on the two canvases drying on the windowsill.
 

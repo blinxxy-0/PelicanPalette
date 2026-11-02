@@ -39,6 +39,13 @@ internal static class MargotEvents
         // 8 hearts: what she did about the museum's errand, by your 6-heart answer.
         Event.RegisterCommand(ModEntry.Id + "_MargotErrand", (ev, _, _) =>
             ev.ReplaceCurrentCommand($"speak {Margot.Name} \"{ErrandLine(Game1.player)}\""));
+        // 10 hearts: what you painted together, by your answer.
+        Event.RegisterCommand(ModEntry.Id + "_MargotPaintings", (ev, _, _) =>
+        {
+            foreach (var item in Paintings(Game1.player))
+                Game1.player.addItemByMenuIfNecessary(item);
+            ev.CurrentCommand++;
+        });
         // 14 hearts: the card under the painting you restored together.
         Event.RegisterCommand(ModEntry.Id + "_MargotCard", (ev, _, _) =>
             ev.ReplaceCurrentCommand($"message \"{CardLine(Game1.player)}\""));
@@ -98,6 +105,23 @@ internal static class MargotEvents
         if (room.modData.ContainsKey(PaperedKey)) return;
         room.SetWallpaper(GuestWallpaper, null);
         room.modData[PaperedKey] = "1";
+    }
+
+    // "Let's paint each other": your portrait of her, and hers of you,
+    // painted from you as you look that night (her first painting of her
+    // own: careful, gold). "Let's paint the window": the one you both painted.
+    internal static System.Collections.Generic.List<Item> Paintings(Farmer who)
+    {
+        var items = new System.Collections.Generic.List<Item>();
+        if (who.mailReceived.Contains(ModEntry.Id + "_MargotEachOther"))
+        {
+            items.Add(ItemRegistry.Create("(F)" + ModEntry.Id + "_MargotByYou"));
+            // (Signed as on her restorations.)
+            items.Add(ArtHooks.Frame(FarmerPortrait.Create(who, I18n.Get("margot.name"), "moss", 4, 1500)));
+        }
+        else if (who.mailReceived.Contains(ModEntry.Id + "_MargotWindow"))
+            items.Add(ItemRegistry.Create("(F)" + ModEntry.Id + "_NorthWindow"));
+        return items;
     }
 
     internal static string ErrandLine(Farmer who)
