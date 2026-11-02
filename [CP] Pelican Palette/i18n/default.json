@@ -223,6 +223,9 @@
   "mail.collection-12.title": "Margot's loupe",
   "item.loupe": "Margot's Loupe",
   "item.loupe.description": "Margot's jeweller's loupe, worn on a cord. Old paintings turn up more often while you wear it.",
+  "mail.collection-21": "All twenty-one. Every old painting that came back to the valley is restored and on our walls, and most of them by your hand.^Sable heard, and made you a Junimo of your own out of their empty tubes, like the one in the gallery. The note says: 'Every collection needs a guardian.'^Thank you, farmer. Truly.^   -Gunther",
+  "mail.collection-21.title": "The collection, complete",
+  "item.paint-tube-junimo": "Paint-Tube Junimo",
   "order.lewis.name": "Faces for the Town Hall",
   "order.lewis.text": "The town hall's walls are bare, and Lewis thinks portraits of the townsfolk would make it feel more like everyone's. He'd like three, by a local painter.",
   "order.lewis.objective": "Bring Lewis three portraits of villagers",
@@ -425,6 +428,7 @@
   "mail.margot-letter.title": "A visitor from the city",
   "mail.margot-letter": "Dear @,^^The painting you found has caused quite a stir. I wrote to the Museum of Art in Zuzu City, and they are sending a conservator to see it, and any others the valley turns up.^^Her name is Margot Pell. She arrives next week, and Gus has a room for her. I'm told she talks a great deal.^^   -Gunther",
   "location.margot-room": "Margot's Room",
+  "location.painting-wing": "The Painting Wing",
   "location.margot-cottage": "Margot's Cottage",
   "mail.margot-cottage.title": "Margot's cottage",
   "mail.margot-cottage": "Hi @,^^Margot's cottage is finished, down by the river south of the main road. She's already moved in, and she's already rearranged it twice.^^Drop by and say hello. Bring something to put on a shelf.^^   -Robin",
@@ -548,5 +552,6 @@
   "margot.marriage.winter_1": "Snow. Come and look. Blue in the shadows, gold where the sun is. Like an old master's.$l",
   "margot.engagement.bouquet": "Flowers. For me. I'm going to press one and keep it forever and you're not allowed to watch me do it.$l",
   "margot.engagement.0": "...Yes. Yes! Sorry. Yes.$6#$b#I'm going to need a new card for the museum.$h",
-  "margot.engagement.1": "I keep writing 'Margot Pell' on things and stopping halfway. Like I've forgotten how it ends.$l"
+  "margot.engagement.1": "I keep writing 'Margot Pell' on things and stopping halfway. Like I've forgotten how it ends.$l",
+  "item.wing-card": "Gallery Card"
 }

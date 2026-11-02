@@ -1,0 +1,52 @@
+// The museum's painting wing (1.3, docs/design/museum_wing.md): a gallery for
+// the 21 restored old paintings, off the museum's east wall. Its map is
+// tools/build_museum_wing.py; the game hangs what you've donated
+// (ArtStudio/Social/PaintingWing.cs).
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_PaintingWing", "FromFile": "assets/PaintingWing.tmx" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_PaintingWing": {
+          "DisplayName": "{{i18n:location.painting-wing}}",
+          "DefaultArrivalTile": { "X": 1, "Y": 26 },
+          // Decoratable, like Margot's rooms: the game papers its walls.
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_PaintingWing", "Type": "StardewValley.Locations.DecoratableLocation" }
+        }
+      }
+    },
+    // The doorway: an opening in the exhibit hall's east wall, at the foot of
+    // its east room (only these tiles change, so Stardew Valley Expanded's
+    // museum keeps its own). Until your first donation the game ropes it off
+    // (PaintingWing.cs).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/ArchaeologyHouse",
+      "MapTiles": [
+        { "Position": { "X": 49, "Y": 15 }, "Layer": "Back", "SetTilesheet": "untitled tile sheet", "SetIndex": 124 },
+        { "Position": { "X": 49, "Y": 16 }, "Layer": "Back", "SetTilesheet": "untitled tile sheet", "SetIndex": 124 },
+        { "Position": { "X": 49, "Y": 15 }, "Layer": "Buildings", "Remove": true },
+        { "Position": { "X": 49, "Y": 16 }, "Layer": "Buildings", "Remove": true },
+        { "Position": { "X": 49, "Y": 15 }, "Layer": "Front", "Remove": true },
+        { "Position": { "X": 49, "Y": 16 }, "Layer": "Front", "Remove": true },
+        // The wall's edge, capped above and below the opening, as at the
+        // passage between the library and the hall.
+        { "Position": { "X": 49, "Y": 17 }, "Layer": "Front", "SetTilesheet": "untitled tile sheet", "SetIndex": 163 }
+      ],
+      "TextOperations": [
+        { "Operation": "Append", "Target": [ "MapProperties", "Warp" ], "Value": "49 15 blinxxy.MuseArt_PaintingWing 1 26 49 16 blinxxy.MuseArt_PaintingWing 1 27", "Delimiter": " " }
+      ]
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Furniture",
+      "Entries": {
+        // A missing painting's card, and the doorway's rope (the game places both).
+        "blinxxy.MuseArt_WingCard": "blinxxy.MuseArt_WingCard/painting/1 1/1 1/1/0/-1/{{i18n:item.wing-card}}/10/Mods\\blinxxy.MuseArt\\Gallery/true",
+        "blinxxy.MuseArt_WingRope": "blinxxy.MuseArt_WingRope/decor/1 2/1 2/1/0/-1/{{i18n:item.velvet-rope}}/11/Mods\\blinxxy.MuseArt\\Gallery/true"
+      }
+    }
+  ]
+}

@@ -162,6 +162,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_wingtest", "The museum's painting wing (1.3): its 21 places, the roped doorway, and paintings and cards as they're donated. 'stage <n>' leaves it open with the first n donated (and the Junimo if 21), for screenshots.", (_, args) => WingTest(monitor, args));
         DevTools.AddCommand(helper, "museart_collectiontest", "Painting Mastery's bar and easel, and the museum's collection of restored paintings (1.3). 'view' opens the collection; 'frames' the framing screen with every style.", (_, args) => CollectionTest(monitor, args));
         DevTools.AddCommand(helper, "museart_oldtest", "Old paintings (1.3): the 21 pictures and their damage, finding them, and restoring one at the easel. With 'show', opens a restoration to look at.", (_, args) => OldTest(monitor, args));
         DevTools.AddCommand(helper, "museart_ordertest", "Special orders (1.3): the painting tags, the orders' data, and Lewis's portraits delivered.", (_, _) => OrderTest(monitor));
@@ -1811,6 +1812,21 @@ internal static class DevGame
             {
                 who.leftRing.Value = leftRing;
             }
+
+            // All 21: the paint-tube Junimo.
+            foreach (var old in OldPaintings.All.Where(p => !Social.MuseumCollection.IsDonated(p.Id)).ToList())
+            {
+                var painting = Restored(old);
+                who.addItemToInventory(painting);
+                Social.MuseumCollection.Donate(who, gunther, painting, old);
+                (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+                gunther.CurrentDialogue.Clear();
+            }
+            string whole = Social.MuseumCollection.RewardLetter("count-21");
+            var junimo = ItemRegistry.Create("(F)" + ModEntry.Id + "_PaintTubeJunimo");
+            Check(monitor, "the whole collection brings the paint-tube Junimo", Social.MuseumCollection.DonatedCount == OldPaintings.All.Length
+                && who.mailForTomorrow.Contains(whole) && mail[whole].Contains(ModEntry.Id + "_PaintTubeJunimo") && junimo is Furniture,
+                $"{Social.MuseumCollection.DonatedCount} donated, '{junimo.DisplayName}'");
         }
         finally
         {
@@ -1818,6 +1834,76 @@ internal static class DevGame
             ArtProgress.SetLevel(who, level);
             ArtProgress.SetMasteryXp(who, mxp);
         }
+    }
+
+    // The museum's painting wing (1.3, docs/design/museum_wing.md).
+    private static void WingTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;      // never on a real save
+        var who = Game1.player;
+        void Donated(int n)
+        {
+            foreach (var (p, i) in OldPaintings.All.Select((p, i) => (p, i)))
+            {
+                string flag = ModEntry.Id + "_Donated_" + p.Id;
+                if (i < n) { if (!who.mailReceived.Contains(flag)) who.mailReceived.Add(flag); }
+                else who.mailReceived.Remove(flag);
+            }
+            string letter = Social.MuseumCollection.RewardLetter("count-21");
+            who.mailReceived.Remove(letter);
+            if (n >= OldPaintings.All.Length) who.mailReceived.Add(letter);
+        }
+        var museum = Game1.RequireLocation(Social.PaintingWing.Museum);
+        var wing = Game1.RequireLocation(Social.PaintingWing.LocationName);
+        if (args.FirstOrDefault() == "stage")
+        {
+            Donated(int.Parse(args[1]));
+            who.mailReceived.Add(Social.PaintingWing.OpenFlag);
+            Social.PaintingWing.RopeDoorway(museum);
+            Social.PaintingWing.Hang(wing);
+            monitor.Log($"Staged: the wing open with {Social.MuseumCollection.DonatedCount} donated.", LogLevel.Info);
+            return;
+        }
+
+        var places = Social.PaintingWing.Places().ToList();
+        var paper = new[] { 1, 8, 15, 22 };
+        bool apart = places.SelectMany(p => Enumerable.Range(0, 3).SelectMany(dx => Enumerable.Range(0, 3).Select(dy => (p.Tile.X + dx, p.Tile.Y + dy)))).GroupBy(t => t).All(g => g.Count() == 1);
+        Check(monitor, "every one of the 21 has its own place on a wall, inside the room",
+            places.Count == 21 && places.Select(p => p.Painting.Id).Distinct().Count() == 21 && apart
+            && places.All(p => paper.Contains(p.Tile.Y) && p.Tile.X >= 1 && p.Tile.X + 2 <= 27), string.Join(" ", places.Select(p => $"{p.Painting.Id}@{p.Tile}")));
+
+        // Closed until the first donation: the rope across the doorway.
+        Donated(0);
+        who.mailReceived.Remove(Social.PaintingWing.OpenFlag);
+        Social.PaintingWing.RopeDoorway(museum);
+        bool roped = museum.furniture.Any(f => f.QualifiedItemId == "(F)" + ModEntry.Id + "_WingRope" && f.TileLocation == Social.PaintingWing.Doorway.ToVector2());
+        Check(monitor, "before any donation, the doorway is roped off", roped && !museum.furniture.First(f => f.QualifiedItemId.EndsWith("_WingRope")).canBeRemoved(who));
+        Social.PaintingWing.Hang(wing);
+        Check(monitor, "...and the wing has a card in each painting's place", wing.furniture.Count(f => f.QualifiedItemId.EndsWith("_WingCard")) == 21);
+
+        // The night after the first, it opens.
+        Donated(1);
+        Game1.player.mailReceived.Add(Social.PaintingWing.OpenFlag);
+        Social.PaintingWing.RopeDoorway(museum);
+        bool warp = museum.warps.Any(w => w.X == 49 && w.Y == 15 && w.TargetName == Social.PaintingWing.LocationName)
+            && wing.warps.Any(w => w.TargetName == Social.PaintingWing.Museum);
+        Check(monitor, "after the first donation the rope's gone and the doorway leads to the wing, and back", !museum.furniture.Any(f => f.QualifiedItemId.EndsWith("_WingRope")) && warp,
+            string.Join(", ", museum.warps.Where(w => w.X >= 48).Select(w => $"{w.X},{w.Y}->{w.TargetName}")));
+        Social.PaintingWing.Hang(wing);
+        var hung = wing.furniture.Where(ArtItems.IsFramed).ToList();
+        Check(monitor, "...where the donated painting hangs in its place, in its set's frame, and the rest are cards",
+            hung.Count == 1 && hung[0].TileLocation == places.First(p => p.Painting == OldPaintings.All[0]).Tile.ToVector2()
+            && hung[0].QualifiedItemId == "(F)" + Social.PaintingWing.FrameFor(OldPaintings.All[0].Set).LargeId
+            && wing.furniture.Count(f => f.QualifiedItemId.EndsWith("_WingCard")) == 20 && !hung[0].canBeRemoved(who));
+
+        Donated(21);
+        Social.PaintingWing.Hang(wing);
+        Check(monitor, "all 21 donated: every place filled, and the paint-tube Junimo", wing.furniture.Count(ArtItems.IsFramed) == 21
+            && !wing.furniture.Any(f => f.QualifiedItemId.EndsWith("_WingCard")) && wing.furniture.Any(f => f.QualifiedItemId.EndsWith("_PaintTubeJunimo")));
+        Donated(0);
+        who.mailReceived.Remove(Social.PaintingWing.OpenFlag);
+        Social.PaintingWing.RopeDoorway(museum);
+        Social.PaintingWing.Hang(wing);
     }
 
     // Old paintings and restoring them (1.3, step 5).

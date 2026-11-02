@@ -770,5 +770,8 @@
   "margot.service.ready": "{{title}}, as good as I can make it. Careful with the corners.$h",
   "margot.service.full": "Make some room in your bag first.$u",
   "margot.service.yourself": "You don't need me for that any more, conservator. Your easel's waiting.$h",
-  "margot.name": "Margot"
+  "margot.name": "Margot",
+  "wing.closed": "A velvet rope, and a little sign: \"The Painting Wing. Opening soon.\"",
+  "wing.card.missing": "{{set}}: a painting still missing. Restore it, and Gunther will hang it here.",
+  "wing.card.hung": "{{title}}. {{set}}, artist unknown. Restored, and given to the museum."
 }

@@ -173,7 +173,7 @@ def furnish(grid, slots, saloon, room):
 def write(path, grid, w, h, props, tilesets, tile_props=()):
     firsts = {sheet: first for _, first, sheet, _, _ in tilesets}
     lines = ['<?xml version="1.0" encoding="utf-8"?>',
-             f'<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="{w}" height="{h}" tilewidth="16" tileheight="16" infinite="0" nextlayerid="{len(LAYERS) + 2}" nextobjectid="{len(tile_props) + 1}">',
+             f'<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="{w}" height="{h}" tilewidth="16" tileheight="16" infinite="0" nextlayerid="{len(LAYERS) + 2}" nextobjectid="{len({(p[0], p[1]) for p in tile_props}) + 1}">',
              '  <properties>']
     for k, v in props.items():
         lines.append(f'    <property name="{k}" value={quoteattr(v)} />')
@@ -190,10 +190,14 @@ def write(path, grid, w, h, props, tilesets, tile_props=()):
         lines.append('    </data>')
         lines.append('  </layer>')
     if tile_props:
+        # One TileData object per tile, holding all of that tile's properties.
+        tiles = {}
+        for x, y, key, value in tile_props:
+            tiles.setdefault((x, y), []).append((key, value))
         lines.append(f'  <objectgroup id="{len(LAYERS) + 1}" name="Back">')
-        for n, (x, y, key, value) in enumerate(tile_props):
+        for n, ((x, y), props) in enumerate(tiles.items()):
             lines.append(f'    <object id="{n + 1}" name="TileData" x="{x * 16}" y="{y * 16}" width="16" height="16">')
-            lines.append(f'      <properties><property name="{key}" type="string" value="{value}" /></properties>')
+            lines.append('      <properties>' + "".join(f'<property name="{k}" type="string" value="{v}" />' for k, v in props) + '</properties>')
             lines.append('    </object>')
         lines.append('  </objectgroup>')
     lines.append('</map>')

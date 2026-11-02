@@ -38,6 +38,7 @@ public class ModEntry : Mod
         Social.Margot.Register(helper);
         Social.MargotEvents.Register(helper);
         Social.MargotMastery.Register(harmony, helper);
+        Social.PaintingWing.Register(harmony, helper);
         Social.JulianPurchase.Register(harmony);
         Social.FestivalPainting.Apply(harmony, helper);
         PaintingTags.Apply(harmony);

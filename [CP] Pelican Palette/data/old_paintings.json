@@ -21,7 +21,9 @@
         // Six donated: the living painting.
         "blinxxy.MuseArt_Collection_count-6": "{{i18n:mail.collection-6}} %item id (F)blinxxy.MuseArt_LivingPainting 1 %%[#]{{i18n:mail.collection-6.title}}",
         // Twelve: Margot's loupe.
-        "blinxxy.MuseArt_Collection_count-12": "{{i18n:mail.collection-12}} %item id (O)blinxxy.MuseArt_MargotsLoupe 1 %%[#]{{i18n:mail.collection-12.title}}"
+        "blinxxy.MuseArt_Collection_count-12": "{{i18n:mail.collection-12}} %item id (O)blinxxy.MuseArt_MargotsLoupe 1 %%[#]{{i18n:mail.collection-12.title}}",
+        // All 21: the paint-tube Junimo from Sable's gallery.
+        "blinxxy.MuseArt_Collection_count-21": "{{i18n:mail.collection-21}} %item id (F)blinxxy.MuseArt_PaintTubeJunimo 1 %%[#]{{i18n:mail.collection-21.title}}"
       }
     },
     // Margot's loupe: worn like a ring (a trinket needs Combat Mastery's slot,
@@ -57,7 +59,8 @@
         "blinxxy.MuseArt_VelvetRope": "blinxxy.MuseArt_VelvetRope/decor/2 2/2 1/1/500/-1/{{i18n:item.velvet-rope}}/0/Mods\\blinxxy.MuseArt\\Gallery/true",
         "blinxxy.MuseArt_GalleryBench": "blinxxy.MuseArt_GalleryBench/bench/2 2/2 1/1/750/-1/{{i18n:item.gallery-bench}}/2/Mods\\blinxxy.MuseArt\\Gallery/true",
         "blinxxy.MuseArt_PictureLight": "blinxxy.MuseArt_PictureLight/painting/2 1/2 1/1/500/-1/{{i18n:item.picture-light}}/4/Mods\\blinxxy.MuseArt\\Gallery/true",
-        "blinxxy.MuseArt_LivingPainting": "blinxxy.MuseArt_LivingPainting/painting/2 2/2 2/1/2000/-1/{{i18n:item.living-painting}}/0/Mods\\blinxxy.MuseArt\\LivingPainting/true"
+        "blinxxy.MuseArt_PaintTubeJunimo": "blinxxy.MuseArt_PaintTubeJunimo/decor/3 3/3 1/1/5000/-1/{{i18n:item.paint-tube-junimo}}/12/Mods\\blinxxy.MuseArt\\Gallery/true",
+        "blinxxy.MuseArt_LivingPainting":"blinxxy.MuseArt_LivingPainting/painting/2 2/2 2/1/2000/-1/{{i18n:item.living-painting}}/0/Mods\\blinxxy.MuseArt\\LivingPainting/true"
       }
     },
     {

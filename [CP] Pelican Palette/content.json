@@ -145,6 +145,8 @@
     { "Action": "Include", "FromFile": "data/old_paintings.json" },
     // Margot Pell, the conservator (1.3).
     { "Action": "Include", "FromFile": "data/margot.json" },
+    // The museum's painting wing (1.3, docs/design/museum_wing.md).
+    { "Action": "Include", "FromFile": "data/painting_wing.json" },
 
     // What the shop sells. Stock widens with the Painting skill. It also
     // buys paintings (at a premium; see the C# mod).
