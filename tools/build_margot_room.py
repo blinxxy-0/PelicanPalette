@@ -82,6 +82,10 @@ SOURCES = {
 }
 # The mod's wallpapers, in order (Wallpapers.png): her damask, then the
 # guest room's candidates.
+# Pieces lifted on the sheet by a few pixels: the trunk's art has blank
+# rows above it, so it would sit apart from the foot of the bed it stands
+# below (2026-11-02: the user asked for it tight to the bed's end).
+LIFT = {"trunk": 4}
 WALLPAPERS = [("stardew-margot-walls", "wall_damask", 4), ("stardew-margot-guest", "wall_stripe", 0),
               ("stardew-margot-guest", "wall_rosebud", 2), ("stardew-margot-guest", "wall_panel", 3)]
 SHEET_COLS = 8                        # MargotRoom.png is 128 wide
@@ -103,16 +107,18 @@ ROOMS = {
     # restoration table), a workroom and a little kitchen. Along the back
     # wall her table under the window, the plan chest under the map of the
     # valley, the kitchen (a counter with a kettle, a cookstove, a shelf of
-    # jars above) and her bed; her frame workshop along the left (the
-    # moulding rack, the frame workbench and the mitre-box sawhorse), her
-    # trunk, and the museum poster; the way to the door kept clear. (The
-    # window goes first so the table's lamp draws over it.)
+    # jars above) and her bed in the corner, a tile clear of the stove so
+    # she can get in, her trunk tight to its foot; her frame workshop along
+    # the bottom wall (the moulding rack, the frame workbench and the
+    # mitre-box sawhorse, their feet behind the wall's edge), and the museum
+    # poster; the way to the door kept clear. (The window goes first so the
+    # table's lamp draws over it.)
     "MargotCottage": dict(
         cols=list(range(13)), rows=[0, 1, 2, 3, 4, 5, 6, 7, 12, 13],
-        exit=(6, 9), warp="Town 21 97", lights=[(2, 4), (9, 4), (6, 7)], bed=(9, 2), wallpaper=0,
+        exit=(6, 9), warp="Town 21 97", lights=[(2, 4), (10, 4), (6, 7)], bed=(10, 2), wallpaper=0,
         pieces={"window": ((1, 1), 0), "table": ((1, 2), 1), "chest": ((3, 3), 1), "map": ((4, 1), 0),
                 "counter": ((6, 3), 1), "stove": ((8, 3), 1), "shelf": ((6, 1), 0), "poster": ((8, 1), 0),
-                "trunk": ((9, 6), 1), "rack": ((1, 6), 1), "bench": ((3, 6), 1), "mitre": ((7, 6), 1)}),
+                "trunk": ((10, 6), 1), "rack": ((1, 6), 1), "bench": ((3, 7), 1), "mitre": ((7, 7), 1)}),
     # Her Saloon room once she's moved to the cottage: Gus's guest room
     # (data/margot.json loads it in her room's place). Its walls are a new
     # wall area ("GuestWall"), so the game papers them afresh rather than
@@ -147,6 +153,10 @@ def pack(gen):
     for name, source in SOURCES.items():
         batch, job = source[0], "_".join(str(p) for p in source[1:])
         im = selout(Image.open(os.path.join(gen, batch, f"{job}.png")).convert("RGBA"))
+        if name in LIFT:
+            lifted = Image.new("RGBA", im.size, (0, 0, 0, 0))
+            lifted.alpha_composite(im.crop((0, LIFT[name], im.width, im.height)), (0, 0))
+            im = lifted
         images[name] = im
         cols, rows = im.width // 16, im.height // 16
         if x + cols > SHEET_COLS:
