@@ -767,6 +767,32 @@ internal static class DevGame
         }
         Game1.warpCharacter(margot, home, homeTile.ToVector2());
         margot.TryLoadSchedule();
+
+        // Her move (4 hearts): Robin's three days, the flag the night before,
+        // then the cottage is home.
+        Social.MargotEvents.DevReset();
+        Social.MargotEvents.Commission();
+        Social.MargotEvents.FinishBuilding();
+        Check(monitor, "the cottage isn't built the day it's commissioned", !Social.MargotEvents.CottageBuilt);
+        Game1.MasterPlayer.modData[ModEntry.Id + "/MargotCottageDue"] = (Game1.Date.TotalDays + 1).ToString();
+        Social.MargotEvents.FinishBuilding();
+        Check(monitor, "the night before it's done, it's built, and Robin writes", Social.MargotEvents.CottageBuilt
+            && who.mailForTomorrow.Contains(Social.MargotEvents.RobinLetter) && DataLoader.Mail(Game1.content).ContainsKey(Social.MargotEvents.RobinLetter));
+        Social.MargotEvents.MoveIn();
+        Check(monitor, "...and the cottage is her home", margot.DefaultMap == Social.MargotEvents.CottageHome, margot.DefaultMap);
+        foreach (string answer in new[] { "Report", "Talk", "NotMine" })
+        {
+            foreach (string a in new[] { "Report", "Talk", "NotMine" }) who.mailReceived.Remove(ModEntry.Id + "_Margot" + a);
+            who.mailReceived.Add(ModEntry.Id + "_Margot" + answer);
+            string line = Social.MargotEvents.ErrandLine(who);
+            Check(monitor, $"her 8-heart line follows the 6-heart answer '{answer}'", line.Length > 20 && !line.Contains("margot."), line.Substring(0, Math.Min(40, line.Length)));
+        }
+        Check(monitor, "the 14-heart card names a painting", Social.MargotEvents.CardLine(who).Contains("Restored by Margot Pell"), Social.MargotEvents.CardLine(who));
+        // Back as she was, at the Saloon.
+        Social.MargotEvents.DevReset();
+        margot.DefaultMap = home.Name;
+        margot.DefaultPosition = homeTile.ToVector2() * 64f;
+        Game1.warpCharacter(margot, home, homeTile.ToVector2());
     }
 
     private static void NpcTest(IMonitor monitor)
@@ -975,7 +1001,7 @@ internal static class DevGame
     // walkable on the map, and not under a prop or another character.
     // Where the mod's events are: Sable's, and Julian's (1.2).
     private static readonly string[] EventLocations =
-        { Shop.ArtShop.LocationName, "Forest", "JoshHouse", Shop.ArtShop.BackRoom, "ArchaeologyHouse", "BusStop", "Saloon" };
+        { Shop.ArtShop.LocationName, "Forest", "JoshHouse", Shop.ArtShop.BackRoom, "ArchaeologyHouse", "BusStop", "Saloon", "ScienceHouse", Social.MargotEvents.CottageHome };
 
     private static void EventPaths(IMonitor monitor)
     {

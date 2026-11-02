@@ -749,5 +749,10 @@
   "gallery.portfolio.best.gold": "'{{title}}.' Look at that light. The farmer's going to put us all out of work.$h",
   "gallery.portfolio.best.plain": "'{{title}}.' It's honest. You can tell they painted what they saw, not what they thought they should.",
   "gallery.portfolio.sketches.leah": "Sketches? These are the farmer's? Sable, you've been keeping secrets.$h",
-  "gallery.portfolio.sketches.sable": "They're not ready for the book yet. Neither was I, once.$u"
+  "gallery.portfolio.sketches.sable": "They're not ready for the book yet. Neither was I, once.$u",
+  "margot.errand.report": "I wrote to the museum. I told them the painting couldn't be recovered. It's true. It belongs where it is now.$7",
+  "margot.errand.talk": "I talked to Sable. They cried. I cried. Evelyn made us tea.$h#$b#I've told the museum it's staying.$u",
+  "margot.errand.evelyn": "It's hers, you know. Evelyn's. 'E.'$l",
+  "margot.errand.not-mine": "I decided it's not my business either. I've told the museum it's staying where it's loved.$u",
+  "margot.card": "The card reads: '{{title}}. Unknown artist, c. 1890. Restored by Margot Pell and {{farmer}}, year {{year}}.'"
 }

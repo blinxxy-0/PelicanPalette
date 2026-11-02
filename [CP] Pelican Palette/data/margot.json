@@ -184,12 +184,24 @@
       "Action": "EditData",
       "Target": "Data/mail",
       "Entries": {
-        "blinxxy.MuseArt_MargotLetter": "{{i18n:mail.margot-letter}}[#]{{i18n:mail.margot-letter.title}}"
+        "blinxxy.MuseArt_MargotLetter": "{{i18n:mail.margot-letter}}[#]{{i18n:mail.margot-letter.title}}",
+        // Robin, when the cottage is done (her 4-heart event, three days on).
+        "blinxxy.MuseArt_MargotCottageLetter": "{{i18n:mail.margot-cottage}}[#]{{i18n:mail.margot-cottage.title}}"
       }
     },
 
     // ---- A day in her life ----
-    { "Action": "Load", "Target": "Characters/schedules/MargotPell", "FromFile": "data/margot_schedule.json" },
-    { "Action": "Include", "FromFile": "data/margot_dialogue.json" }
+    // Her day; from her 4-heart move, home is the cottage.
+    {
+      "Action": "Load", "Target": "Characters/schedules/MargotPell", "FromFile": "data/margot_schedule.json",
+      "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": false }
+    },
+    {
+      "Action": "Load", "Target": "Characters/schedules/MargotPell", "FromFile": "data/margot_schedule_cottage.json",
+      "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
+    },
+    { "Action": "Include", "FromFile": "data/margot_dialogue.json" },
+    // Her heart events (tools/build_margot_events.py, from docs/margot_events.md).
+    { "Action": "Include", "FromFile": "data/margot_events.json" }
   ]
 }
