@@ -47,8 +47,15 @@ internal static class MargotMastery
     {
         try
         {
-            if (__instance.Name != Margot.Name || __instance.currentLocation?.Name != Location || !CanOffer(who)
-                || __instance.CurrentDialogue.Count > 0 || who.ActiveObject != null)
+            if (__instance.Name != Margot.Name || __instance.currentLocation?.Name != Location || __instance.CurrentDialogue.Count > 0)
+                return true;
+            // Her restoring for a fee comes first (a painting to hand her, or to collect).
+            if (MargotService.TryHandle(__instance, who))
+            {
+                __result = true;
+                return false;
+            }
+            if (!CanOffer(who) || who.ActiveObject != null)
                 return true;
             __result = true;
             who.currentLocation.createQuestionDialogue(I18n.Get("margot.test.offer"), new[]

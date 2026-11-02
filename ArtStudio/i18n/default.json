@@ -759,5 +759,16 @@
   "margot.test.yes": "I'm ready.",
   "margot.test.no": "Not today.",
   "margot.test.pass": "Congratulations, conservator. Now you can do it yourself, and I can stop doing your homework.$h",
-  "margot.test.fail": "Close. Rest your eyes. Come back tomorrow.$7"
+  "margot.test.fail": "Close. Rest your eyes. Come back tomorrow.$7",
+  "margot.service.offer": "Ooh, {{title}}. I can have it ready in three days, for {{fee}}g. Shall I?",
+  "margot.service.yes": "Please.",
+  "margot.service.no": "Not yet.",
+  "margot.service.taken": "Three days. Don't hover.#$b#Well. Hover a little.$h",
+  "margot.service.poor": "That's {{fee}}g, I'm afraid. The museum's very particular about receipts.$s",
+  "margot.service.busy": "One at a time! I'm still on {{title}}.$a",
+  "margot.service.waiting": "Not yet! Give me a little longer with {{title}}.$7",
+  "margot.service.ready": "{{title}}, as good as I can make it. Careful with the corners.$h",
+  "margot.service.full": "Make some room in your bag first.$u",
+  "margot.service.yourself": "You don't need me for that any more, conservator. Your easel's waiting.$h",
+  "margot.name": "Margot"
 }

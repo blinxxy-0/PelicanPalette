@@ -156,6 +156,11 @@ mastery flag, the Mastery Cave's sound and a rainbow sparkle, and the
 Master's Easel. Below gold, try again the next day. She keeps the painting
 either way, so the test never adds to your collection.
 
+Her fee service (`Social/MargotService.cs`): before Mastery, hold a
+damaged painting and talk to her at the museum; she takes it for the set's
+fee and hands it back three days later, at silver, "restored by Margot".
+One at a time; once you're a conservator she sends you to your own easel.
+
 **Still to make:** the Old Valley's gallery furniture, the living painting
 (6 donated), Margot's loupe (12) and the Junimo statue and museum wing
 (21). Their rewards are wired: each letter is sent as soon as it exists in

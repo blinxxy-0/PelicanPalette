@@ -832,6 +832,30 @@ internal static class DevGame
         Social.MargotMastery.DevReset(who);
         CloseDialogue();
 
+        // Her fee service (before Mastery): the set's fee, three days, silver.
+        Social.MargotService.DevReset(who);
+        var wreck = OldPaintings.All.First(p => p.Set == "wreck");
+        var damagedWreck = OldPaintings.CreateDamaged(wreck);
+        who.addItemToInventory(damagedWreck);
+        int money = who.Money;
+        who.Money = 100;
+        Check(monitor, "without the fee, she keeps nothing", !Social.MargotService.TakeIn(margot, who, damagedWreck, wreck) && Social.MargotService.Job(who) == null);
+        CloseDialogue();
+        who.Money = 1000;
+        Check(monitor, "she takes it for 800g (the wreck's fee)", Social.MargotService.TakeIn(margot, who, damagedWreck, wreck)
+            && who.Money == 200 && Social.MargotService.Job(who)?.Ready == Game1.Date.TotalDays + Social.MargotService.Days
+            && !who.Items.Any(i => i != null && OldPaintings.IsDamaged(i)));
+        CloseDialogue();
+        var restoredWreck = Social.MargotService.Restored(wreck);
+        Check(monitor, "...and gives it back restored, silver, titled, worth the set's silver value",
+            restoredWreck.Quality == PaintingRules.Silver && restoredWreck.DisplayName == OldPaintings.Title(wreck)
+            && restoredWreck.salePrice() > 0 && PaintingData.Read(restoredWreck)?.IsOld == true, $"{restoredWreck.DisplayName} q{restoredWreck.Quality}");
+        Check(monitor, "...when collected, and the job is done", Social.MargotService.HandBack(margot, who, wreck) && Social.MargotService.Job(who) == null);
+        CloseDialogue();
+        foreach (var item in who.Items.Where(i => i != null && PaintingData.Read(i)?.IsOld == true).ToList()) who.removeItemFromInventory(item);
+        who.Money = money;
+        Social.MargotService.DevReset(who);
+
         // Back as she was, at the Saloon.
         Social.MargotEvents.DevReset();
         margot.DefaultMap = home.Name;
