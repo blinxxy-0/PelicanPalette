@@ -963,8 +963,9 @@ internal static class DevGame
         {
             if (key.StartsWith("marriage")) continue;
             var parsed = sable.parseMasterSchedule(key, script);
-            string from = sable.currentLocation.Name;
-            var at = sable.TilePoint;
+            // (From home: an earlier test may have left Sable somewhere else.)
+            string from = sable.DefaultMap;
+            var at = (sable.DefaultPosition / 64).ToPoint();
             var problems = new System.Collections.Generic.List<string>();
             if (parsed.Count == 0 && !script.StartsWith("GOTO") && !script.StartsWith("NOT"))
                 problems.Add("nothing parsed");
@@ -2314,7 +2315,12 @@ internal static class DevGame
             Check(monitor, "Julian doesn't offer before you've talked", !Social.JulianPurchase.Offers(julian, who));
             who.friendshipData[Social.Julian.Name].TalkedToToday = true;
             var sold = Give("(O)24", PaintingRules.Gold);
+            // (He only offers to empty hands; an earlier test may have left
+            // something held.)
+            int hands = who.CurrentToolIndex;
+            who.CurrentToolIndex = Math.Max(0, who.Items.IndexOf(who.Items.FirstOrDefault(i => i is Tool)));
             Check(monitor, "...and does after, with a painting in your bag", Social.JulianPurchase.Offers(julian, who));
+            who.CurrentToolIndex = hands;
             int money = who.Money, expected = Social.JulianPurchase.OfferFor(sold);
             int paid = Social.JulianPurchase.Buy(julian, who, sold);
             Check(monitor, "he pays twice the shop price", paid == expected && who.Money == money + paid && paid == (int)Math.Round(sold.sellToStorePrice() * 2f) && !who.Items.Contains(sold), $"{paid}g");
