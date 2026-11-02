@@ -281,6 +281,10 @@ internal sealed partial class EaselMenu : IClickableMenu
     // The old painting being restored, if that's what this is (1.3).
     private OldPainting? Restoring => _subjectItems.Length == 1 ? OldPaintings.OfSubject(_subjectItems[0]) : null;
 
+    // A painting's just been finished (and judged): who, the painting, and
+    // the old painting if it was a restoration (Margot's test reads this).
+    public static event System.Action<Farmer, Item, OldPainting?>? PaintingFinished;
+
     // Creatures and animals (Studies).
     private static bool IsCreatureSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Studies.IsStudy(ids[0]);
 

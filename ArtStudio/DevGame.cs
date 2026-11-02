@@ -788,6 +788,50 @@ internal static class DevGame
             Check(monitor, $"her 8-heart line follows the 6-heart answer '{answer}'", line.Length > 20 && !line.Contains("margot."), line.Substring(0, Math.Min(40, line.Length)));
         }
         Check(monitor, "the 14-heart card names a painting", Social.MargotEvents.CardLine(who).Contains("Restored by Margot Pell"), Social.MargotEvents.CardLine(who));
+        // Her mastery test: offered with the bar full, passed at gold, and she
+        // keeps the painting.
+        bool hadMastery = who.mailReceived.Contains(OldPaintings.MasteryFlag);
+        int level = ArtProgress.Level(who), masteryXp = ArtProgress.MasteryXp(who);
+        who.mailReceived.Remove(OldPaintings.MasteryFlag);
+        Social.MargotMastery.DevReset(who);
+        ArtProgress.SetLevel(who, 9);
+        Check(monitor, "no test before Painting 10", !Social.MargotMastery.CanOffer(who));
+        ArtProgress.SetLevel(who, PaintingRules.MaxLevel);
+        ArtProgress.SetMasteryXp(who, ArtProgress.MasteryXpNeeded);
+        Check(monitor, "with the mastery bar full, she offers the test", Social.MargotMastery.CanOffer(who));
+        int easels = who.Items.CountId("(BC)" + ArtItems.MastersEaselId);
+        // Leaving the damage as it was: no mastery, and she keeps it.
+        var failed = Social.MargotMastery.StartTest(who);
+        failed.DevFinish(false);
+        Game1.delayedActions.ToList().ForEach(a => a.behavior?.Invoke());
+        Game1.delayedActions.Clear();
+        failed.DevKeep();
+        Game1.exitActiveMenu();
+        Social.MargotMastery.TakeBackTestPainting(who);
+        CloseDialogue();
+        Check(monitor, "below gold, no mastery, and she keeps the painting", !ArtProgress.HasMastery(who)
+            && !who.Items.Any(i => i != null && (OldPaintings.IsDamaged(i) || PaintingData.Read(i)?.IsOld == true)));
+        Check(monitor, "one try a day", !Social.MargotMastery.CanOffer(who));
+        Social.MargotMastery.DevReset(who);
+        var test = Social.MargotMastery.StartTest(who);
+        test.DevRestorePerfectly();
+        test.DevFinish(false);
+        Game1.delayedActions.ToList().ForEach(a => a.behavior?.Invoke());
+        Game1.delayedActions.Clear();
+        Check(monitor, "a gold restoration makes you a conservator, with the Master's Easel",
+            ArtProgress.HasMastery(who) && who.Items.CountId("(BC)" + ArtItems.MastersEaselId) == easels + 1);
+        test.DevKeep();
+        Game1.exitActiveMenu();
+        Social.MargotMastery.TakeBackTestPainting(who);
+        Check(monitor, "...and she keeps the painting", !who.Items.Any(i => i != null && (OldPaintings.IsDamaged(i) || PaintingData.Read(i)?.IsOld == true)));
+        Check(monitor, "once a conservator, she doesn't offer it again", !Social.MargotMastery.CanOffer(who));
+        foreach (var e in who.Items.Where(i => i?.QualifiedItemId == "(BC)" + ArtItems.MastersEaselId).ToList()) who.removeItemFromInventory(e);
+        if (!hadMastery) who.mailReceived.Remove(OldPaintings.MasteryFlag);
+        ArtProgress.SetLevel(who, level);
+        ArtProgress.SetMasteryXp(who, masteryXp);
+        Social.MargotMastery.DevReset(who);
+        CloseDialogue();
+
         // Back as she was, at the Saloon.
         Social.MargotEvents.DevReset();
         margot.DefaultMap = home.Name;

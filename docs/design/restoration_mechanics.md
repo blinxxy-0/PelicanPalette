@@ -149,6 +149,13 @@ Gunther: the collection view, and each finished set's frames by letter.
 The framing screen shows its style buttons in two rows once you have more
 than four.
 
+Margot's test restoration (step 6, `Social/MargotMastery.cs`): with the
+bar full, talk to her at the museum and she sets you one of her old
+paintings (one you haven't found). Gold or better certifies you: the
+mastery flag, the Mastery Cave's sound and a rainbow sparkle, and the
+Master's Easel. Below gold, try again the next day. She keeps the painting
+either way, so the test never adds to your collection.
+
 **Still to make:** the Old Valley's gallery furniture, the living painting
 (6 donated), Margot's loupe (12) and the Junimo statue and museum wing
 (21). Their rewards are wired: each letter is sent as soon as it exists in

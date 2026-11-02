@@ -141,6 +141,7 @@ internal sealed partial class EaselMenu
         _painting = PaintingItems.Create(data, _quality, price);
         if (Restoring is { } restored)
             OldPaintings.UseUp(_who, restored);
+        PaintingFinished?.Invoke(_who, _painting, Restoring);
         _resultTexture = PaintingRenderer.Build(size, cells, purity, CanvasColor, marks);
 
         _newLevel = ArtProgress.AddXp(_who, _xp);

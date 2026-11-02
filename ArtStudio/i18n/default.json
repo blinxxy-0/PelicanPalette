@@ -754,5 +754,10 @@
   "margot.errand.talk": "I talked to Sable. They cried. I cried. Evelyn made us tea.$h#$b#I've told the museum it's staying.$u",
   "margot.errand.evelyn": "It's hers, you know. Evelyn's. 'E.'$l",
   "margot.errand.not-mine": "I decided it's not my business either. I've told the museum it's staying where it's loved.$u",
-  "margot.card": "The card reads: '{{title}}. Unknown artist, c. 1890. Restored by Margot Pell and {{farmer}}, year {{year}}.'"
+  "margot.card": "The card reads: '{{title}}. Unknown artist, c. 1890. Restored by Margot Pell and {{farmer}}, year {{year}}.'",
+  "margot.test.offer": "Your hands have been busy. I can tell from here. Sit.$u#$b#Restore this one for me. Properly. Gold or better, and I'll sign the paper that says you're a conservator.$u",
+  "margot.test.yes": "I'm ready.",
+  "margot.test.no": "Not today.",
+  "margot.test.pass": "Congratulations, conservator. Now you can do it yourself, and I can stop doing your homework.$h",
+  "margot.test.fail": "Close. Rest your eyes. Come back tomorrow.$7"
 }
