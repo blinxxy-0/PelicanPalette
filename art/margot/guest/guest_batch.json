@@ -1,0 +1,65 @@
+{
+ "batch": "stardew-margot-guest",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, pixel scale and colours of this room's furniture: square-on front view, the top seen as a band above, wood ramps, dark coloured outlines",
+  "reference_usage": "camera and outline: the front face square-on with its top seen as a flat band above it, no side faces; keep this size and shape, bottom edge on the floor"
+ },
+ "jobs": {
+  "washstand": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/washstand_guide.png",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, drawn square-on from the front with its top seen as a flat band above the front face, no side faces visible at all, one tile is 16 pixels, warm wood colours, dark coloured (not black) outlines: an old inn's wooden washstand, two tiles wide, a white porcelain wash basin and a tall jug standing on top, a folded towel hanging over the front rail, one small cupboard door below"
+  },
+  "dresser": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/dresser_guide.png",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, drawn square-on from the front with its top seen as a flat band above the front face, no side faces visible at all, one tile is 16 pixels, warm wood colours, dark coloured (not black) outlines: a small wooden chest of drawers for a saloon guest room, two tiles wide, three drawers with round knobs, a lace runner on top with a small jar of wildflowers and a candle in a brass holder"
+  },
+  "armchair": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/armchair_guide.png",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, drawn square-on from the front, no side faces visible at all, one tile is 16 pixels, dark coloured (not black) outlines: a cosy upholstered armchair in faded burgundy facing straight out at the viewer with a knitted blanket over one arm, and beside it on the right a small round wooden side table with a teacup on it"
+  },
+  "coatstand": {
+   "image_size": {"width": 16, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/coatstand_guide.png",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front, one tile wide and two tall, one tile is 16 pixels, warm wood colours, dark coloured (not black) outlines: a wooden coat stand with curved hooks, a brown wool coat and a straw hat hanging on it"
+  },
+  "sampler": {
+   "image_size": {"width": 32, "height": 32},
+   "description": "Stardew Valley wall decoration, one object hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, dark coloured (not black) outlines: a framed cross-stitch sampler in a simple wood frame, cream linen with a little stitched house, two hearts and a border of red and green stitches"
+  },
+  "mirror": {
+   "image_size": {"width": 16, "height": 32},
+   "description": "Stardew Valley wall decoration, one object hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, dark coloured (not black) outlines: a small oval wall mirror in a carved wooden frame, pale blue glass with a white shine streak"
+  },
+  "valley_picture": {
+   "image_size": {"width": 32, "height": 32},
+   "description": "Stardew Valley wall decoration, one object hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, dark coloured (not black) outlines: a framed painting in a gold frame of a country town at dusk, a warm lit saloon window, rooftops and a purple mountain behind"
+  },
+  "wall_stripe": {
+   "image_size": {"width": 16, "height": 48},
+   "no_background": false,
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/style_wallpapers.png",
+   "style_usage": "the exact style of these Stardew Valley wallpaper tiles: flat simple repeating patterns, 16 pixels wide, a skirting band at the bottom",
+   "description": "one Stardew Valley wallpaper tile, 16 pixels wide and 48 tall, exactly like the reference wallpapers: a repeating pattern that tiles seamlessly side to side, the top 32 pixels wallpaper and the bottom 16 a skirting band, flat colours, no outlines around the edge: warm cream and dusty rose vertical stripes like an old inn, a dark wood skirting"
+  },
+  "wall_rosebud": {
+   "image_size": {"width": 16, "height": 48},
+   "no_background": false,
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/style_wallpapers.png",
+   "style_usage": "the exact style of these Stardew Valley wallpaper tiles: flat simple repeating patterns, 16 pixels wide, a skirting band at the bottom",
+   "description": "one Stardew Valley wallpaper tile, 16 pixels wide and 48 tall, exactly like the reference wallpapers: a repeating pattern that tiles seamlessly side to side, the top 32 pixels wallpaper and the bottom 16 a skirting band, flat colours, no outlines around the edge: soft butter yellow wallpaper with tiny red rosebuds and green leaves, a dark wood skirting"
+  },
+  "wall_panel": {
+   "image_size": {"width": 16, "height": 48},
+   "no_background": false,
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/guest/style_wallpapers.png",
+   "style_usage": "the exact style of these Stardew Valley wallpaper tiles: flat simple repeating patterns, 16 pixels wide, a skirting band at the bottom",
+   "description": "one Stardew Valley wallpaper tile, 16 pixels wide and 48 tall, exactly like the reference wallpapers: a repeating pattern that tiles seamlessly side to side, the top 32 pixels wallpaper and the bottom 16 a skirting band, flat colours, no outlines around the edge: deep red saloon wallpaper above warm wooden wainscot panelling, like a country saloon, a dark wood skirting"
+  }
+ }
+}

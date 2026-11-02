@@ -19,8 +19,14 @@ upstairs at the Saloon, like the steps down to Sebastian's room at Robin's
                        is the Saloon's spare bed.
   MargotRoom.png       those pieces, outlines recoloured (vanillafy.selout:
                        a darker shade of what they border, never black).
+  MargotGuestRoom.tmx  the same room once she has moved to her cottage:
+                       Gus's guest room, with its own pieces (PixelLab,
+                       art/margot/guest): a washstand, a chest of drawers,
+                       an armchair and side table, a coat stand, and on the
+                       walls a mirror, a painting of the town at dusk and a
+                       cross-stitch sampler; and its own wallpaper.
   Wallpapers.png       the mod's wallpapers, 256 wide as the game requires;
-                       the damask is pattern 0.
+                       the damask is pattern 0, then the guest room's.
 Reads maps written by the museart_export_map debug command (vanilla's
 Saloon, for the bed).
 Usage: build_margot_room.py <exports dir> <content pack assets dir> art/margot/room/picks
@@ -52,8 +58,19 @@ SOURCES = {
     "rack":     ("stardew-margot-yard", "moulding_rack_1"),
     "bench":    ("stardew-margot-yard", "workbench_3"),
     "mitre":    ("stardew-margot-yard", "mitre_0"),
+    # Gus's guest room, once she's moved out.
+    "washstand": ("stardew-margot-guest", "washstand", 12),
+    "dresser":  ("stardew-margot-guest", "dresser", 0),
+    "armchair": ("stardew-margot-guest", "armchair", 9),
+    "coatstand": ("stardew-margot-guest", "coatstand", 7),
+    "mirror":   ("stardew-margot-guest", "mirror", 1),
+    "picture":  ("stardew-margot-guest", "valley_picture", 11),
+    "sampler":  ("stardew-margot-guest", "sampler", 3),
 }
-WALLPAPER = ("stardew-margot-walls", "wall_damask", 4)
+# The mod's wallpapers, in order (Wallpapers.png): her damask, then the
+# guest room's candidates.
+WALLPAPERS = [("stardew-margot-walls", "wall_damask", 4), ("stardew-margot-guest", "wall_stripe", 0),
+              ("stardew-margot-guest", "wall_rosebud", 2), ("stardew-margot-guest", "wall_panel", 3)]
 SHEET_COLS = 8                        # MargotRoom.png is 128 wide
 # The Saloon's spare bed (its tiles in the Saloon, x 22-23, y 2-5).
 BED_FROM = (22, 2)
@@ -65,7 +82,7 @@ ROOMS = {
     # At the Saloon, down the storeroom steps.
     "MargotRoom": dict(
         cols=[0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12], rows=[0, 1, 2, 3, 4, 5, 6, 7, 12, 13],
-        exit=(5, 9), warp="Saloon 36 8", lights=[(2, 4), (8, 4), (5, 7)], bed=(8, 2),
+        exit=(5, 9), warp="Saloon 36 8", lights=[(2, 4), (8, 4), (5, 7)], bed=(8, 2), wallpaper=0,
         pieces={"table": ((1, 2), 1), "chest": ((4, 3), 1), "crates": ((1, 6), 2), "trunk": ((8, 6), 1),
                 "map": ((3, 1), 0), "sketches": ((5, 1), 0), "poster": ((7, 1), 0)}),
     # Her cottage in town, out to its door by the cherry tree: her corner
@@ -75,10 +92,19 @@ ROOMS = {
     # kept clear.
     "MargotCottage": dict(
         cols=list(range(13)), rows=[0, 1, 2, 3, 4, 5, 6, 7, 12, 13],
-        exit=(6, 9), warp="Town 21 97", lights=[(2, 4), (9, 4), (6, 7)], bed=(9, 2),
+        exit=(6, 9), warp="Town 21 97", lights=[(2, 4), (9, 4), (6, 7)], bed=(9, 2), wallpaper=0,
         pieces={"table": ((1, 2), 1), "chest": ((3, 3), 1), "crates": ((6, 3), 1), "trunk": ((9, 6), 1),
                 "map": ((3, 1), 0), "sketches": ((6, 1), 0), "poster": ((8, 1), 0),
                 "rack": ((1, 6), 1), "bench": ((3, 6), 1), "mitre": ((7, 6), 1)}),
+    # Her Saloon room once she's moved to the cottage: Gus's guest room
+    # (data/margot.json loads it in her room's place). Its walls are a new
+    # wall area ("GuestWall"), so the game papers them afresh rather than
+    # keeping her damask.
+    "MargotGuestRoom": dict(
+        cols=[0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12], rows=[0, 1, 2, 3, 4, 5, 6, 7, 12, 13],
+        exit=(5, 9), warp="Saloon 36 8", lights=[(2, 4), (8, 4), (5, 7)], bed=(8, 2), wallpaper=3, wall="GuestWall",
+        pieces={"washstand": ((1, 3), 1), "dresser": ((4, 3), 1), "armchair": ((1, 6), 1), "coatstand": ((9, 6), 1),
+                "mirror": ((1, 1), 0), "picture": ((4, 1), 0), "sampler": ((6, 1), 0)}),
 }
 
 
@@ -174,10 +200,10 @@ def main():
     sheet, slots = pack(gen)
     sheet.save(os.path.join(assets, ROOM_SHEET))
 
-    # The wallpaper sheet: the damask as pattern 0.
-    batch, job, n = WALLPAPER
+    # The wallpaper sheet, one pattern every 16 pixels.
     papers = Image.new("RGBA", (256, 48), (0, 0, 0, 0))
-    papers.alpha_composite(Image.open(os.path.join(gen, batch, f"{job}_{n}.png")).convert("RGBA"), (0, 0))
+    for i, (batch, job, n) in enumerate(WALLPAPERS):
+        papers.alpha_composite(Image.open(os.path.join(gen, batch, f"{job}_{n}.png")).convert("RGBA"), (i * 16, 0))
     papers.save(os.path.join(assets, "Wallpapers.png"))
 
     tilesets = [("indoor", 1, "townInterior", 512, 1088),
@@ -187,10 +213,11 @@ def main():
         grid = shell(shed, room)
         furnish(grid, slots, saloon, room)
         w, h = len(room["cols"]), len(room["rows"])
-        tile_props = [(x, WALL_ROW, "WallID", "Wall") for x in range(1, w - 1)]
+        wall = room.get("wall", "Wall")
+        tile_props = [(x, WALL_ROW, "WallID", wall) for x in range(1, w - 1)]
         tile_props += [(x, y, "FloorID", "Floor") for y in range(3, h - 1) for x in range(1, w - 1)]
         props = {
-            "WallIDs": "Wall blinxxy.MuseArt_Wallpapers:0",
+            "WallIDs": f"{wall} blinxxy.MuseArt_Wallpapers:{room['wallpaper']}",
             "FloorIDs": "Floor 0",
             "Warp": f"{room['exit'][0]} {room['exit'][1]} {room['warp']}",
             "Light": " ".join(f"{x} {y} {LIGHT_TEXTURE}" for x, y in room["lights"]),

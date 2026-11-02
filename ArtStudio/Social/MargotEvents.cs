@@ -18,6 +18,10 @@ internal static class MargotEvents
     public const string CottageHome = ModEntry.Id + "_MargotCottage";
     public const string RobinLetter = ModEntry.Id + "_MargotCottageLetter";
     private const string DueKey = ModEntry.Id + "/MargotCottageDue";
+    // Her Saloon room, which becomes Gus's guest room once she's moved out.
+    public const string SaloonRoom = ModEntry.Id + "_MargotRoom";
+    public const string GuestWallpaper = ModEntry.Id + "_Wallpapers:3";
+    private const string PaperedKey = ModEntry.Id + "/GuestRoomPapered";
     public const int BuildDays = 3;
     // Where she stands at home in the cottage.
     public static readonly Microsoft.Xna.Framework.Point CottageTile = new(7, 5);
@@ -41,6 +45,11 @@ internal static class MargotEvents
 
         helper.Events.GameLoop.DayEnding += (_, _) => FinishBuilding();
         helper.Events.GameLoop.DayStarted += (_, _) => MoveIn();
+        helper.Events.Player.Warped += (_, e) =>
+        {
+            if (e.NewLocation.Name == SaloonRoom)
+                PaperGuestRoom();
+        };
     }
 
     internal static void Commission()
@@ -79,6 +88,18 @@ internal static class MargotEvents
         margot.TryLoadSchedule();
     }
 
+    // The first time you walk into the guest room (data/margot.json lays it
+    // over hers once she's moved out), Gus has papered it; after that it
+    // keeps whatever's on its walls. (Not at day start: the map is re-laid
+    // after that, and its new walls would lose the paper.)
+    internal static void PaperGuestRoom()
+    {
+        if (!Context.IsMainPlayer || !CottageBuilt || Game1.getLocationFromName(SaloonRoom) is not StardewValley.Locations.DecoratableLocation room) return;
+        if (room.modData.ContainsKey(PaperedKey)) return;
+        room.SetWallpaper(GuestWallpaper, null);
+        room.modData[PaperedKey] = "1";
+    }
+
     internal static string ErrandLine(Farmer who)
     {
         string key = who.mailReceived.Contains(ModEntry.Id + "_MargotTalk") ? "margot.errand.talk"
@@ -108,5 +129,6 @@ internal static class MargotEvents
             who.mailForTomorrow.Remove(RobinLetter);
         }
         Game1.MasterPlayer.modData.Remove(DueKey);
+        Game1.getLocationFromName(SaloonRoom)?.modData.Remove(PaperedKey);
     }
 }

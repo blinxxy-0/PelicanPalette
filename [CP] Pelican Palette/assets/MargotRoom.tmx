@@ -12,8 +12,8 @@
   <tileset firstgid="2177" name="walls_and_floors" tilewidth="16" tileheight="16" tilecount="688" columns="16">
     <image source="walls_and_floors" width="256" height="688" />
   </tileset>
-  <tileset firstgid="2865" name="z_blinxxy.MuseArt_MargotRoom" tilewidth="16" tileheight="16" tilecount="64" columns="8">
-    <image source="MargotRoom.png" width="128" height="128" />
+  <tileset firstgid="2865" name="z_blinxxy.MuseArt_MargotRoom" tilewidth="16" tileheight="16" tilecount="96" columns="8">
+    <image source="MargotRoom.png" width="128" height="192" />
   </tileset>
   <layer id="1" name="Back" width="11" height="10">
     <data encoding="csv">

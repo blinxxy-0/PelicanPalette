@@ -1,7 +1,8 @@
 {
   // After her 4-heart move: the same days, home to her cottage by the river
-  // instead of her room at the Saloon (it's a shorter walk to the museum).
-  "default": "800 ArchaeologyHouse 18 13 2/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2",
-  "rain": "800 ArchaeologyHouse 18 13 2/2000 blinxxy.MuseArt_MargotCottage 7 5 2",
+  // instead of her room at the Saloon. It's a longer walk to the museum than
+  // from the Saloon, so she leaves at 7 to be there by 9.
+  "default": "700 ArchaeologyHouse 18 13 2/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2",
+  "rain": "700 ArchaeologyHouse 18 13 2/2000 blinxxy.MuseArt_MargotCottage 7 5 2",
   "Sun": "900 Beach 40 22 2/1500 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2"
 }

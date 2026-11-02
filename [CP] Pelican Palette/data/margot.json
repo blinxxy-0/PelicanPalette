@@ -76,14 +76,24 @@
     // arcade's wall, in vanilla and in Stardew Valley Expanded alike; only
     // the steps' own tiles change, so SVE's storeroom floor stays its own.
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_MargotRoom", "FromFile": "assets/MargotRoom.tmx" },
+    // Once she's moved to her cottage, Gus makes it his guest room: the
+    // whole room laid over hers (new furniture, and new walls the game
+    // papers afresh). An edit, not a second Load: the location is created
+    // before the flag can be read.
+    {
+      "Action": "EditMap", "Target": "Maps/blinxxy.MuseArt_MargotRoom", "FromFile": "assets/MargotGuestRoom.tmx",
+      "PatchMode": "Replace",
+      "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
+    },
     // The mod's wallpapers (a real wallpaper set, so it papers her room the
-    // way the farmhouse's walls are papered): the sage damask is pattern 0.
+    // way the farmhouse's walls are papered): the sage damask is pattern 0,
+    // then the guest room's.
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/Wallpapers", "FromFile": "assets/Wallpapers.png" },
     {
       "Action": "EditData",
       "Target": "Data/AdditionalWallpaperFlooring",
       "Entries": {
-        "blinxxy.MuseArt_Wallpapers": { "Id": "blinxxy.MuseArt_Wallpapers", "Texture": "Mods/blinxxy.MuseArt/Wallpapers", "IsFlooring": false, "Count": 1 }
+        "blinxxy.MuseArt_Wallpapers": { "Id": "blinxxy.MuseArt_Wallpapers", "Texture": "Mods/blinxxy.MuseArt/Wallpapers", "IsFlooring": false, "Count": 4 }
       }
     },
     {
