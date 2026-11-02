@@ -288,6 +288,15 @@ internal static class OldPaintings
 
     private static readonly Dictionary<string, Texture2D> Textures = new();
 
+    // The painting whole, as it hangs in the museum's painting wing.
+    public static Texture2D OriginalTexture(OldPainting painting)
+    {
+        if (OriginalTextures.TryGetValue(painting.Id, out var cached) && !cached.IsDisposed) return cached;
+        return OriginalTextures[painting.Id] = PaintingRenderer.Build(painting.Size, Original(painting), new Purity[painting.Size, painting.Size], new Color(214, 200, 170));
+    }
+
+    private static readonly Dictionary<string, Texture2D> OriginalTextures = new();
+
     public static void Draw(SpriteBatch b, OldPainting painting, Rectangle area, Color? multiply = null)
     {
         if (DamagedTexture(painting) is { } texture)

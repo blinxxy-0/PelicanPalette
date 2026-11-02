@@ -1855,6 +1855,19 @@ internal static class DevGame
         }
         var museum = Game1.RequireLocation(Social.PaintingWing.Museum);
         var wing = Game1.RequireLocation(Social.PaintingWing.LocationName);
+        bool IntoWing(int y) => museum.warps.Any(w => w.X == 49 && w.Y == y && w.TargetName == Social.PaintingWing.LocationName);
+        // (Run after sleeping with the wing open: museart_flag blinxxy.MuseArt_PaintingWingOpen.)
+        if (args.FirstOrDefault() == "warps")
+        {
+            var back = wing.warps.Where(w => w.TargetName == Social.PaintingWing.Museum).ToList();
+            Check(monitor, "once it's open, the doorway leads to the wing and back, arriving clear of the doorway on both sides",
+                Social.PaintingWing.IsOpen && IntoWing(15) && IntoWing(16)
+                && museum.warps.Where(w => w.X == 49).All(w => w.TargetX >= 3)
+                && back.Count == 2 && back.All(w => w.TargetX <= 47 && w.TargetY == 18),
+                string.Join(", ", museum.warps.Where(w => w.X == 49).Select(w => $"{w.X},{w.Y}->{w.TargetX},{w.TargetY}"))
+                + "; back " + string.Join(", ", back.Select(w => $"{w.TargetX},{w.TargetY}")));
+            return;
+        }
         if (args.FirstOrDefault() == "stage")
         {
             Donated(int.Parse(args[1]));
@@ -1865,41 +1878,65 @@ internal static class DevGame
             return;
         }
 
+        // Each place's footprint: a frame on the wall 3 square, a display 3
+        // wide standing 4 tall on its base row.
         var places = Social.PaintingWing.Places().ToList();
-        var paper = new[] { 1, 8, 15, 22 };
-        bool apart = places.SelectMany(p => Enumerable.Range(0, 3).SelectMany(dx => Enumerable.Range(0, 3).Select(dy => (p.Tile.X + dx, p.Tile.Y + dy)))).GroupBy(t => t).All(g => g.Count() == 1);
-        Check(monitor, "every one of the 21 has its own place on a wall, inside the room",
+        System.Collections.Generic.IEnumerable<(int, int)> Footprint((OldPainting Painting, Point Tile, bool OnWall) p) =>
+            Enumerable.Range(0, 3).SelectMany(dx => Enumerable.Range(p.OnWall ? 0 : -3, p.OnWall ? 3 : 4).Select(dy => (p.Tile.X + dx, p.Tile.Y + dy)));
+        bool apart = places.SelectMany(Footprint).GroupBy(t => t).All(g => g.Count() == 1);
+        Check(monitor, "every one of the 21 has its own place: the Old Valley on the wall, the rest on displays in the room",
             places.Count == 21 && places.Select(p => p.Painting.Id).Distinct().Count() == 21 && apart
-            && places.All(p => paper.Contains(p.Tile.Y) && p.Tile.X >= 1 && p.Tile.X + 2 <= 27), string.Join(" ", places.Select(p => $"{p.Painting.Id}@{p.Tile}")));
+            && places.All(p => p.OnWall == (p.Painting.Set == "valley") && (p.OnWall ? p.Tile.Y == Social.PaintingWing.WallRow : p.Tile.Y > 6 && p.Tile.Y < 25)
+                && p.Tile.X >= 1 && p.Tile.X + 2 <= 25), string.Join(" ", places.Select(p => $"{p.Painting.Id}@{p.Tile}")));
 
         // Closed until the first donation: the rope across the doorway.
         Donated(0);
         who.mailReceived.Remove(Social.PaintingWing.OpenFlag);
         Social.PaintingWing.RopeDoorway(museum);
         bool roped = museum.furniture.Any(f => f.QualifiedItemId == "(F)" + ModEntry.Id + "_WingRope" && f.TileLocation == Social.PaintingWing.Doorway.ToVector2());
-        Check(monitor, "before any donation, the doorway is roped off", roped && !museum.furniture.First(f => f.QualifiedItemId.EndsWith("_WingRope")).canBeRemoved(who));
+        Check(monitor, "before any donation, the doorway is roped off, and there's no way through", roped && !IntoWing(15) && !IntoWing(16)
+            && !museum.furniture.First(f => f.QualifiedItemId.EndsWith("_WingRope")).canBeRemoved(who));
         Social.PaintingWing.Hang(wing);
-        Check(monitor, "...and the wing has a card in each painting's place", wing.furniture.Count(f => f.QualifiedItemId.EndsWith("_WingCard")) == 21);
+        int Cards() => wing.furniture.Count(f => Social.PaintingWing.What(f)?.StartsWith("card:") == true);
+        Check(monitor, "...and the wing has a card in each painting's place, sixteen of them on displays",
+            Cards() == 21 && wing.furniture.Count(f => f.QualifiedItemId == Social.PaintingWing.DisplayId) == 16);
 
         // The night after the first, it opens.
         Donated(1);
         Game1.player.mailReceived.Add(Social.PaintingWing.OpenFlag);
         Social.PaintingWing.RopeDoorway(museum);
-        bool warp = museum.warps.Any(w => w.X == 49 && w.Y == 15 && w.TargetName == Social.PaintingWing.LocationName)
-            && wing.warps.Any(w => w.TargetName == Social.PaintingWing.Museum);
-        Check(monitor, "after the first donation the rope's gone and the doorway leads to the wing, and back", !museum.furniture.Any(f => f.QualifiedItemId.EndsWith("_WingRope")) && warp,
-            string.Join(", ", museum.warps.Where(w => w.X >= 48).Select(w => $"{w.X},{w.Y}->{w.TargetName}")));
+        Check(monitor, "after the first donation the rope comes down", !museum.furniture.Any(f => f.QualifiedItemId.EndsWith("_WingRope")));
         Social.PaintingWing.Hang(wing);
         var hung = wing.furniture.Where(ArtItems.IsFramed).ToList();
         Check(monitor, "...where the donated painting hangs in its place, in its set's frame, and the rest are cards",
             hung.Count == 1 && hung[0].TileLocation == places.First(p => p.Painting == OldPaintings.All[0]).Tile.ToVector2()
             && hung[0].QualifiedItemId == "(F)" + Social.PaintingWing.FrameFor(OldPaintings.All[0].Set).LargeId
-            && wing.furniture.Count(f => f.QualifiedItemId.EndsWith("_WingCard")) == 20 && !hung[0].canBeRemoved(who));
+            && Cards() == 20 && !hung[0].canBeRemoved(who));
+        // A painting from another set is on its display.
+        var wreck = OldPaintings.All.First(p => p.Set == "wreck");
+        who.mailReceived.Add(ModEntry.Id + "_Donated_" + wreck.Id);
+        Social.PaintingWing.Hang(wing);
+        var display = wing.furniture.FirstOrDefault(f => f.QualifiedItemId == Social.PaintingWing.DisplayId && Social.PaintingWing.What(f) == wreck.Id);
+        Check(monitor, "...and one from the Wreck stands on its display", display != null && display.TileLocation == places.First(p => p.Painting == wreck).Tile.ToVector2()
+            && Cards() == 19 && !display.canBeRemoved(who));
+
+        // Gunther tells you it's open, once.
+        var gunther = Game1.getCharacterFromName("Gunther");
+        who.mailReceived.Remove(Social.PaintingWing.ToldFlag);
+        gunther.CurrentDialogue.Clear();
+        gunther.checkAction(who, museum);
+        bool told = who.mailReceived.Contains(Social.PaintingWing.ToldFlag);
+        (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+        Game1.activeClickableMenu = null;
+        gunther.CurrentDialogue.Clear();
+        Check(monitor, "Gunther tells you the wing's open, the first time you talk to him", told);
+        who.mailReceived.Remove(Social.PaintingWing.ToldFlag);
 
         Donated(21);
         Social.PaintingWing.Hang(wing);
-        Check(monitor, "all 21 donated: every place filled, and the paint-tube Junimo", wing.furniture.Count(ArtItems.IsFramed) == 21
-            && !wing.furniture.Any(f => f.QualifiedItemId.EndsWith("_WingCard")) && wing.furniture.Any(f => f.QualifiedItemId.EndsWith("_PaintTubeJunimo")));
+        Check(monitor, "all 21 donated: every place filled, and the paint-tube Junimo", wing.furniture.Count(ArtItems.IsFramed) == 5
+            && Cards() == 0 && wing.furniture.Count(f => f.QualifiedItemId == Social.PaintingWing.DisplayId) == 16
+            && wing.furniture.Any(f => f.QualifiedItemId == Social.PaintingWing.JunimoId));
         Donated(0);
         who.mailReceived.Remove(Social.PaintingWing.OpenFlag);
         Social.PaintingWing.RopeDoorway(museum);

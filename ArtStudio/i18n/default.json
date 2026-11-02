@@ -773,5 +773,6 @@
   "margot.name": "Margot",
   "wing.closed": "A velvet rope, and a little sign: \"The Painting Wing. Opening soon.\"",
   "wing.card.missing": "{{set}}: a painting still missing. Restore it, and Gunther will hang it here.",
-  "wing.card.hung": "{{title}}. {{set}}, artist unknown. Restored, and given to the museum."
+  "wing.card.hung": "{{title}}. {{set}}, artist unknown. Restored, and given to the museum.",
+  "museum.wing-open": "Have you been through the east doorway? The painting wing's open.#$b#Your restoration's hanging there, and there's a place kept for every one still out in the valley. Margot cried. Don't tell her I told you."
 }

@@ -1,0 +1,17 @@
+{
+ "batch": "stardew-wing-rope",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/collection/picks/velvet_rope_1.png",
+  "style_usage": "exactly these brass posts and this red velvet rope, the same colours, pixel scale and outline",
+  "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/museum_wing/rope_v_guide.png",
+  "reference_usage": "layout: two short brass posts, one above the other (the far one higher up), the rope sagging between them out to the right; keep this exact layout, size and positions"
+ },
+ "jobs": {
+  "rope_vertical": {
+   "image_size": {"width": 16, "height": 48},
+   "description": "Stardew Valley furniture, alone on a transparent background, one tile is 16 pixels, dark coloured (not black) outlines: a museum velvet rope barrier running away from the viewer, two polished brass posts with round tops and round bases, one behind the other so the far post is higher up the image, a deep red velvet rope hanging between them in a soft curve"
+  }
+ }
+}

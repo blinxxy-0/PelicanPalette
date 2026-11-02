@@ -1,0 +1,20 @@
+{
+ "batch": "stardew-wing-display3",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true
+ },
+ "jobs": {
+  "marble_display": {
+   "image_size": {
+    "width": 72,
+    "height": 96
+   },
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/museum_wing/style_panel.png",
+   "style_usage": "the exact Stardew Valley style of this gallery display board: its pixel scale, its clean light colours and dark coloured outline",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/museum_wing/display_guide_72.png",
+   "reference_usage": "shape and size: the display is this grey shape, 48 pixels wide and 64 tall in the middle of the image: a board 48 pixels square on top, the pillar and base below; keep its exact size and place; the board's middle plain and empty for a painting",
+   "description": "Stardew Valley museum furniture, one object on a transparent background, square-on from the front, no side faces, one tile is 16 pixels, dark coloured (not black) outlines: a large gallery display of polished white marble, a big square flat white marble board three tiles wide with a thin grey-veined marble border, completely plain and empty in the middle, on a short round white marble pillar with a square marble base"
+  }
+ }
+}

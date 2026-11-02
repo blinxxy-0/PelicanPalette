@@ -1,13 +1,18 @@
 """The museum collection's furniture rewards (1.3, restoration_mechanics.md
-section 5), to [CP] Pelican Palette/assets/collection/gallery.png (96x80,
+section 5), to [CP] Pelican Palette/assets/collection/gallery.png (96x128,
 furniture sprite indexes on its 16-pixel grid, six to a row):
   - index 0, 32x32: the velvet rope, two brass posts and a red rope
   - index 2, 32x32: the gallery bench, green leather with brass studs
   - index 4, 32x16: the picture light, a brass lamp to hang over a painting
   - index 10, 16x16: a gallery card, for a painting's place in the museum's
     painting wing while it's still missing (drawn here: cream card, ink lines)
-  - index 11, 16x32: the wing's doorway roped off: one brass post (cut from
-    the velvet rope) with its rope looped up to the wall
+  - index 15, 48x64: the wing's white marble display, a board three tiles
+    wide on a pillar (PixelLab, picked 2026-11-02; the generator draws it no
+    wider than 32 pixels, so its board is widened here: the border and
+    corners kept, the plain middle extended, the pillar a little wider)
+  - index 30, 16x48: the wing's doorway roped off, seen end-on: two short
+    brass posts (cut from the velvet rope's), one behind the other, the
+    velvet sagging between them
   - index 12, 48x48: the paint-tube Junimo on its marble plinth, the
     centrepiece of Sable's gallery (art/shop_interior/gallery_junimo.png,
     the same art), for the whole collection donated
@@ -45,33 +50,84 @@ def card():
     return im
 
 
+def short_post(rope):
+    """The velvet rope's left post, without its rope, shortened (its round
+    top, a little shaft, its base) so two can stand one behind the other."""
+    post = rope.crop((1, 3, 9, 31))
+    px = post.load()
+    for x in range(post.width):
+        for y in range(post.height):
+            r, g, b, a = px[x, y]
+            if a and r > 100 and g < 80 and b < 90:
+                px[x, y] = (0, 0, 0, 0)
+    h = post.height
+    short = Image.new("RGBA", (post.width, 16))
+    short.alpha_composite(post.crop((0, 0, post.width, 6)), (0, 0))
+    short.alpha_composite(post.crop((0, 10, post.width, 14)), (0, 6))
+    short.alpha_composite(post.crop((0, h - 6, post.width, h)), (0, 10))
+    return short
+
+
+ROPE_LIGHT, ROPE_DARK = (151, 34, 49, 255), (114, 16, 37, 255)
+ROPE_CURVE = [(8, 17), (9, 17), (10, 18), (11, 19), (12, 21), (12, 22), (13, 23), (13, 24), (13, 25), (13, 26),
+              (13, 27), (12, 28), (12, 29), (11, 31), (10, 32), (9, 33), (8, 33)]
+
+
 def doorway_rope(rope):
-    """The left post of the velvet rope, standing at the foot of the
-    doorway, its rope looped up to the wall above."""
-    post = rope.crop((0, 0, 10, 32))
-    im = Image.new("RGBA", (16, 32), (0, 0, 0, 0))
-    im.alpha_composite(post, (0, 0))
-    red = [c for c in rope.getdata() if c[3] and c[0] > 120 and c[1] < 70 and c[2] < 80]
-    deep = min(red, key=sum) if red else (120, 30, 40, 255)
-    bright = max(red, key=sum) if red else (170, 50, 60, 255)
+    """Across a doorway in a side wall, seen end-on: the far post, the
+    velvet sagging out from its top to the near post's, the near post in
+    front. Their bases stand on the doorway's two rows."""
+    post = short_post(rope)
+    im = Image.new("RGBA", (16, 48), (0, 0, 0, 0))
+    im.alpha_composite(post, (3, 15))
     px = im.load()
-    # From the post's top (about 7, 5) up and right to the wall (15, 0).
-    for i, (x, y) in enumerate([(8, 6), (9, 6), (10, 5), (11, 4), (12, 3), (13, 2), (14, 1), (15, 0)]):
-        px[x, y] = bright
-        if y + 1 < 32:
-            px[x, y + 1] = deep
+    for x, y in ROPE_CURVE:
+        px[x, y] = ROPE_LIGHT
+        px[min(15, x + 1), y] = ROPE_DARK
+    im.alpha_composite(post, (3, 31))
     return im
+
+
+def stretch(im, axis, keep, to):
+    """Keeps `keep` pixels at each end along an axis and repeats the line in
+    the middle until it's `to` long."""
+    w, h = im.size
+    out = Image.new("RGBA", (to, h) if axis == 0 else (w, to))
+    if axis == 0:
+        out.alpha_composite(im.crop((0, 0, keep, h)), (0, 0))
+        for x in range(keep, to - keep):
+            out.alpha_composite(im.crop((w // 2, 0, w // 2 + 1, h)), (x, 0))
+        out.alpha_composite(im.crop((w - keep, 0, w, h)), (to - keep, 0))
+    else:
+        out.alpha_composite(im.crop((0, 0, w, keep)), (0, 0))
+        for y in range(keep, to - keep):
+            out.alpha_composite(im.crop((0, h // 2, w, h // 2 + 1)), (0, y))
+        out.alpha_composite(im.crop((0, h - keep, w, h)), (0, to - keep))
+    return out
+
+
+def display(pick):
+    """The marble display at three tiles wide: its 32x33 board widened to
+    48 square, its pillar to 40."""
+    src = pick.crop((8, 12, 40, 60))
+    board = stretch(stretch(src.crop((0, 0, 32, 33)), 0, 9, 48), 1, 9, 48)
+    pillar = stretch(src.crop((0, 33, 32, 48)), 0, 16, 40)
+    out = Image.new("RGBA", (48, 64), (0, 0, 0, 0))
+    out.alpha_composite(board, (0, 1))
+    out.alpha_composite(pillar, (4, 49))
+    return out
 
 
 def main():
     picks, out = sys.argv[1], sys.argv[2]
-    sheet = Image.new("RGBA", (96, 80), (0, 0, 0, 0))
+    sheet = Image.new("RGBA", (96, 128), (0, 0, 0, 0))
     for name, at in PIECES:
         sheet.alpha_composite(selout(Image.open(os.path.join(picks, name + ".png")).convert("RGBA")), at)
     sheet.alpha_composite(Image.open(JUNIMO).convert("RGBA"), (0, 32))
     sheet.alpha_composite(card(), (64, 16))
-    rope = selout(Image.open(os.path.join(picks, "velvet_rope_1.png")).convert("RGBA"))
-    sheet.alpha_composite(doorway_rope(rope), (80, 16))
+    rope = Image.open(os.path.join(picks, "velvet_rope_1.png")).convert("RGBA")
+    sheet.alpha_composite(selout(doorway_rope(rope)), (0, 80))
+    sheet.alpha_composite(selout(display(Image.open(os.path.join(picks, "marble_display_1.png")).convert("RGBA"))), (48, 32))
     sheet.save(out)
     print("wrote", out)
 

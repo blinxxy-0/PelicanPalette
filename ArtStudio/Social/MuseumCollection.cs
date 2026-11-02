@@ -74,6 +74,14 @@ internal static class MuseumCollection
                     }, (_, answer) => { if (answer == "yes") Donate(who, __instance, held, old); });
                 return false;
             }
+            // The first time you talk to him once the painting wing's open.
+            if (who.ActiveObject == null && PaintingWing.IsOpen && !who.mailReceived.Contains(PaintingWing.ToldFlag))
+            {
+                __result = true;
+                who.mailReceived.Add(PaintingWing.ToldFlag);
+                Say(__instance, I18n.Get("museum.wing-open"));
+                return false;
+            }
             if (who.ActiveObject == null && DonatedCount > 0
                 && who.friendshipData.TryGetValue(Curator, out var friendship) && friendship.TalkedToToday)
             {

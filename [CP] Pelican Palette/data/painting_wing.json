@@ -11,7 +11,7 @@
       "Entries": {
         "blinxxy.MuseArt_PaintingWing": {
           "DisplayName": "{{i18n:location.painting-wing}}",
-          "DefaultArrivalTile": { "X": 1, "Y": 26 },
+          "DefaultArrivalTile": { "X": 3, "Y": 24 },
           // Decoratable, like Margot's rooms: the game papers its walls.
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_PaintingWing", "Type": "StardewValley.Locations.DecoratableLocation" }
         }
@@ -34,10 +34,18 @@
         // The wall's edge, capped above and below the opening, as at the
         // passage between the library and the hall.
         { "Position": { "X": 49, "Y": 17 }, "Layer": "Front", "SetTilesheet": "untitled tile sheet", "SetIndex": 163 }
-      ],
-      "TextOperations": [
-        { "Operation": "Append", "Target": [ "MapProperties", "Warp" ], "Value": "49 15 blinxxy.MuseArt_PaintingWing 1 26 49 16 blinxxy.MuseArt_PaintingWing 1 27", "Delimiter": " " }
       ]
+    },
+    // The way through, only once the wing's open (the morning after your
+    // first donation, when the rope comes down): you come in a step inside,
+    // clear of the doorway.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/ArchaeologyHouse",
+      "TextOperations": [
+        { "Operation": "Append", "Target": [ "MapProperties", "Warp" ], "Value": "49 15 blinxxy.MuseArt_PaintingWing 3 24 49 16 blinxxy.MuseArt_PaintingWing 3 25", "Delimiter": " " }
+      ],
+      "When": { "HasFlag |contains=blinxxy.MuseArt_PaintingWingOpen": true }
     },
     {
       "Action": "EditData",
@@ -45,7 +53,10 @@
       "Entries": {
         // A missing painting's card, and the doorway's rope (the game places both).
         "blinxxy.MuseArt_WingCard": "blinxxy.MuseArt_WingCard/painting/1 1/1 1/1/0/-1/{{i18n:item.wing-card}}/10/Mods\\blinxxy.MuseArt\\Gallery/true",
-        "blinxxy.MuseArt_WingRope": "blinxxy.MuseArt_WingRope/decor/1 2/1 2/1/0/-1/{{i18n:item.velvet-rope}}/11/Mods\\blinxxy.MuseArt\\Gallery/true"
+        "blinxxy.MuseArt_WingRope": "blinxxy.MuseArt_WingRope/decor/1 3/1 2/1/0/-1/{{i18n:item.velvet-rope}}/30/Mods\\blinxxy.MuseArt\\Gallery/true",
+        // A white marble display for a painting, three tiles wide (the game
+        // draws the painting on its board).
+        "blinxxy.MuseArt_WingDisplay": "blinxxy.MuseArt_WingDisplay/decor/3 4/3 1/1/0/-1/{{i18n:item.wing-display}}/15/Mods\\blinxxy.MuseArt\\Gallery/true"
       }
     }
   ]

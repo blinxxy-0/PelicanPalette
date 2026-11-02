@@ -234,6 +234,25 @@
       "Action": "Load", "Target": "Characters/schedules/MargotPell", "FromFile": "data/margot_schedule_cottage.json",
       "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
     },
+    // Once the museum's painting wing is open (after your first donation),
+    // she spends Tuesday and Thursday afternoons in it, in front of the Old
+    // Valley's wall.
+    {
+      "Action": "EditData", "Target": "Characters/schedules/MargotPell",
+      "Entries": {
+        "Tue": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2300 blinxxy.MuseArt_MargotRoom 6 6 2",
+        "Thu": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2300 blinxxy.MuseArt_MargotRoom 6 6 2"
+      },
+      "When": { "HasFlag |contains=blinxxy.MuseArt_PaintingWingOpen": true, "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": false }
+    },
+    {
+      "Action": "EditData", "Target": "Characters/schedules/MargotPell",
+      "Entries": {
+        "Tue": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2",
+        "Thu": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2"
+      },
+      "When": { "HasFlag |contains=blinxxy.MuseArt_PaintingWingOpen": true, "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
+    },
     { "Action": "Include", "FromFile": "data/margot_dialogue.json" },
     // Her heart events (tools/build_margot_events.py, from docs/margot_events.md).
     { "Action": "Include", "FromFile": "data/margot_events.json" },

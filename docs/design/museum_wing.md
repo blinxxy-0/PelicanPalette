@@ -50,39 +50,50 @@ Only the doorway's tiles change in the museum (an overlay, as for Margot's
 storeroom steps); the wing is its own map. Checked with Stardew Valley
 Expanded as for her steps.
 
-## Layout (`art/museum_wing/wing_plan.png`)
+## Layout (changed 2026-11-02: marble displays)
 
-Every old painting hangs in the mod's large frame, 3 tiles square, and a
-Stardew room shows paintings only on walls that face you (side walls are a
-thin border). Twenty-one in a row would need about 84 tiles of wall, so the
-wing is a gallery with freestanding walls, as real galleries are:
+Every old painting's large frame is 3 tiles square, and a Stardew room shows
+paintings only on walls that face you, so 21 won't fit on walls. The first
+build stood freestanding gallery walls across the room; they read oddly
+(Stardew has no freestanding walls to borrow from), so the user chose the
+exhibition's display boards instead, made bigger:
 
-- **29 tiles wide, 28 deep.** You come in from the museum at the bottom
+- **27 tiles wide, 28 deep.** You come in from the museum at the bottom
   left (the hall's east-wall doorway leads into the wing's west side).
-- **The back wall:** the Old Valley's five.
-- **Three freestanding gallery walls** across the room, each with a
-  two-tile aisle at both ends: the Wreck's five, the Miners' five, and
-  Calico's four with the Dwarves' two.
-- **Benches** facing each wall, and the **paint-tube Junimo** in the open
-  space by the door.
+- **The back wall:** the Old Valley's five, framed in gold leaf.
+- **Three rows of white marble displays** across the open floor, one
+  painting each, three tiles wide (the painting about as big as in a wall
+  frame): the Wreck's five, the Miners' five, and Calico's four with the
+  Dwarves' two. A display waiting for its painting has a card on its board.
+- **Benches** below the back wall and by the door, and the **paint-tube
+  Junimo** by the door once it's come.
+- **Runners** (2026-11-02): the museum's own purple rug, stretched along the
+  back wall under the benches and in front of each row of displays.
 
 The doorway in the museum: an opening in the hall's east wall, two tiles
-tall, at the bottom of its east room (x 49, rows 15-16), with the wall's
-edge capped above and below like the passage between the library and the
-hall.
+tall, at the bottom of its east room (x 49, rows 15-16). There's no way through
+until the wing's open (the warp is added the morning after the first
+donation, when the rope comes down), and you arrive clear of the doorway on
+both sides: a step inside the wing, and on the open floor below the
+museum's display table. Roped off, it shows
+the velvet rope end-on: two short brass posts, one behind the other, the
+velvet sagging between them.
 
 ## Built (2026-11-02)
 
 `tools/build_museum_wing.py` (the map, from the Shed's own tiles, papered
-in the saloon red by default, its paper marked impassable so the gallery
-walls can only be walked up to), `data/painting_wing.json` (the location,
-the doorway's tiles and warps), `Social/PaintingWing.cs` (the rope, the
-paintings, cards, benches and Junimo; nothing there can be picked up;
-clicking a painting or card reads it), `museart_wingtest` (six checks, in
-vanilla and with Stardew Valley Expanded). The doorway opens the morning
-after the first donation; the rope is one brass post with its rope looped
-to the wall, cut from the velvet rope's art.
+in the saloon red by default), `data/painting_wing.json` (the location, the
+doorway's tiles and warps), `Social/PaintingWing.cs` (the rope, the framed
+Old Valley, the displays with their paintings drawn on the boards, cards,
+benches and Junimo; nothing there can be picked up; clicking a painting or
+card reads it), `tools/art/gallery_furniture.py` (the display, widened from
+its PixelLab pick, and the rope, made from the velvet rope's post),
+`museart_wingtest` (eight checks). The doorway opens the morning after the
+first donation.
 
 Changed from the plan: no empty plinth before the Junimo comes (it simply
-appears by the door once its letter has); Margot's afternoon visits and
-Gunther's line about the wing are still to do.
+appears by the door once its letter has).
+
+Once it's open, Margot spends Tuesday and Thursday afternoons (14:00 to
+17:00) in the wing, in front of the Old Valley's wall (data/margot.json),
+and the first time you talk to Gunther he tells you it's open.

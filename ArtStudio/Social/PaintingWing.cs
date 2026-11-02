@@ -5,6 +5,7 @@ using ArtStudio.Core;
 using ArtStudio.Painting;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -15,11 +16,12 @@ namespace ArtStudio.Social;
 
 // The museum's painting wing (1.3, docs/design/museum_wing.md): a gallery
 // off the exhibit hall's east wall (its map is tools/build_museum_wing.py).
-// Every one of the 21 old paintings has its place on its walls: the Old
-// Valley's along the back wall, then the Wreck's, the Miners', and Calico's
-// with the Dwarves' on the three freestanding walls. A painting you've
-// donated hangs there in its set's frame; one still missing is a card.
-// The paint-tube Junimo joins once its letter has come (all 21).
+// Every one of the 21 old paintings has its place: the Old Valley's five
+// framed along the back wall, and the rest each on a white marble display
+// in three rows across the floor (the Wreck's, the Miners', and Calico's
+// with the Dwarves'). A painting you've donated is there; one still missing
+// is a card (on the wall, or on its display's board). The paint-tube
+// Junimo joins once its letter has come (all 21).
 //
 // The doorway is roped off until the morning after your first donation.
 // Everything here is the museum's: none of it can be picked up.
@@ -27,35 +29,42 @@ internal static class PaintingWing
 {
     public const string LocationName = ModEntry.Id + "_PaintingWing";
     public const string OpenFlag = ModEntry.Id + "_PaintingWingOpen";
+    public const string ToldFlag = ModEntry.Id + "_PaintingWingTold";      // Gunther's told you it's open
     public const string Museum = "ArchaeologyHouse";
-    private const string WingKey = ModEntry.Id + "/PaintingWing";       // the place a piece belongs to
-    private const string CardId = "(F)" + ModEntry.Id + "_WingCard";
-    private const string RopeId = "(F)" + ModEntry.Id + "_WingRope";
+    private const string WingKey = ModEntry.Id + "/PaintingWing";       // what a piece is: a painting's id, "card:<id>", ...
+    public const string CardId = "(F)" + ModEntry.Id + "_WingCard";
+    public const string DisplayId = "(F)" + ModEntry.Id + "_WingDisplay";
+    public const string RopeId = "(F)" + ModEntry.Id + "_WingRope";
     private const string BenchId = "(F)" + ModEntry.Id + "_GalleryBench";
-    private const string JunimoId = "(F)" + ModEntry.Id + "_PaintTubeJunimo";
+    public const string JunimoId = "(F)" + ModEntry.Id + "_PaintTubeJunimo";
     public static readonly Point Doorway = new(49, 15);
-    private static readonly Point JunimoTile = new(13, 27);
-    private static readonly Point[] Benches = { new(7, 5), new(20, 5), new(7, 12), new(20, 12), new(7, 19), new(20, 19) };
+    private static readonly Point JunimoTile = new(12, 25);
+    private static readonly Point[] Benches = { new(6, 5), new(19, 5), new(6, 24), new(19, 24) };
+    private const int Width = 27;
+    // The display's board, in its sprite's pixels: where the painting goes.
+    private static readonly Rectangle Board = new(6, 7, 36, 36);
+    private static readonly Rectangle CardSprite = new(64, 16, 16, 16);
 
-    // Each wall's paper row, and the sets hung on it, centred, 3 tiles a
-    // painting with a tile between.
-    private static readonly (int Row, string[] Sets)[] Walls =
+    // The back wall's paper row, and each row of displays' base row, with
+    // the sets on it, centred: 3 tiles a place with a tile between.
+    public const int WallRow = 1;
+    private static readonly (int Row, bool OnWall, string[] Sets)[] Rows =
     {
-        (1, new[] { "valley" }), (8, new[] { "wreck" }), (15, new[] { "miners" }), (22, new[] { "calico", "dwarvish" }),
+        (WallRow, true, new[] { "valley" }),
+        (10, false, new[] { "wreck" }), (16, false, new[] { "miners" }), (22, false, new[] { "calico", "dwarvish" }),
     };
 
-    private const int Width = 29;
-
-    // Every painting's place: the top-left tile of its frame.
-    public static IEnumerable<(OldPainting Painting, Point Tile)> Places()
+    // Every painting's place: its frame's top-left tile on the wall, or its
+    // display's base (the display stands three tiles above it).
+    public static IEnumerable<(OldPainting Painting, Point Tile, bool OnWall)> Places()
     {
-        foreach (var (row, sets) in Walls)
+        foreach (var (row, onWall, sets) in Rows)
         {
             var paintings = OldPaintings.All.Where(p => sets.Contains(p.Set)).OrderBy(p => Array.IndexOf(sets, p.Set)).ToList();
             int x = (Width - (paintings.Count * 4 - 1)) / 2;
             foreach (var painting in paintings)
             {
-                yield return (painting, new Point(x, row));
+                yield return (painting, new Point(x, row), onWall);
                 x += 4;
             }
         }
@@ -69,6 +78,8 @@ internal static class PaintingWing
             prefix: new HarmonyMethod(typeof(PaintingWing), nameof(CanBeRemovedPrefix)));
         harmony.Patch(AccessTools.Method(typeof(Furniture), nameof(Furniture.checkForAction)),
             prefix: new HarmonyMethod(typeof(PaintingWing), nameof(CheckForActionPrefix)));
+        harmony.Patch(AccessTools.Method(typeof(Furniture), nameof(Furniture.draw), new[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
+            postfix: new HarmonyMethod(typeof(PaintingWing), nameof(DrawPostfix)));
         // The night after the first donation the flag is set, so the rope is
         // gone in the morning.
         helper.Events.GameLoop.DayEnding += (_, _) =>
@@ -108,9 +119,12 @@ internal static class PaintingWing
     {
         foreach (var piece in wing.furniture.Where(f => f.modData.ContainsKey(WingKey)).ToList())
             wing.furniture.Remove(piece);
-        foreach (var (painting, tile) in Places())
+        foreach (var (painting, tile, onWall) in Places())
         {
-            if (MuseumCollection.IsDonated(painting.Id))
+            bool donated = MuseumCollection.IsDonated(painting.Id);
+            if (!onWall)
+                wing.furniture.Add(Piece(DisplayId, tile, donated ? painting.Id : "card:" + painting.Id));
+            else if (donated)
             {
                 var framed = ArtHooks.Frame(Restoration(painting), FrameFor(painting.Set));
                 framed.TileLocation = tile.ToVector2();
@@ -134,6 +148,9 @@ internal static class PaintingWing
         return piece;
     }
 
+    // What a piece in the wing is.
+    public static string? What(Furniture piece) => piece.modData.TryGetValue(WingKey, out string what) ? what : null;
+
     // The painting as it was, whole.
     internal static StardewValley.Object Restoration(OldPainting painting)
     {
@@ -148,7 +165,7 @@ internal static class PaintingWing
         return PaintingItems.Create(data, PaintingRules.Iridium, OldPaintings.RestoredValue(painting, PaintingRules.Iridium));
     }
 
-    // Each set in its own frame; the Old Valley in gold leaf.
+    // The Old Valley's frame on the wall: gold leaf.
     internal static FrameStyle FrameFor(string set) => set switch
     {
         "wreck" => ArtItems.Driftwood,
@@ -157,6 +174,35 @@ internal static class PaintingWing
         "dwarvish" => ArtItems.Dwarvish,
         _ => ArtItems.GoldLeaf,
     };
+
+    // A display's painting (or card) on its board.
+    private static void DrawPostfix(Furniture __instance, SpriteBatch spriteBatch, int x, int y, float alpha, Netcode.NetVector2 ___drawPosition)
+    {
+        try
+        {
+            if (__instance.QualifiedItemId != DisplayId || __instance.isTemporarilyInvisible || What(__instance) is not { } what) return;
+            var source = __instance.sourceRect.Value;
+            Vector2 position = Furniture.isDrawingLocationFurniture
+                ? Game1.GlobalToLocal(Game1.viewport, ___drawPosition.Value)
+                : Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - (source.Height * 4 - __instance.boundingBox.Height)));
+            float depth = (__instance.boundingBox.Value.Bottom - 8) / 10000f + 0.00002f;
+            var board = new Rectangle((int)position.X + Board.X * 4, (int)position.Y + Board.Y * 4, Board.Width * 4, Board.Height * 4);
+            if (what.StartsWith("card:"))
+            {
+                var texture = Game1.content.Load<Texture2D>("Mods/" + ModEntry.Id + "/Gallery");
+                var card = new Rectangle(board.Center.X - 32, board.Center.Y - 32, 64, 64);
+                spriteBatch.Draw(texture, card, CardSprite, Color.White * alpha, 0f, Vector2.Zero, SpriteEffects.None, depth);
+            }
+            else if (OldPaintings.Get(what) is { } painting)
+            {
+                var art = OldPaintings.OriginalTexture(painting);
+                int cell = Math.Max(1, board.Width / art.Width), side = cell * art.Width;
+                var dest = new Rectangle(board.Center.X - side / 2, board.Center.Y - side / 2, side, side);
+                spriteBatch.Draw(art, dest, null, Color.White * alpha, 0f, Vector2.Zero, SpriteEffects.None, depth);
+            }
+        }
+        catch (Exception) { }
+    }
 
     private static bool CanBeRemovedPrefix(Furniture __instance, ref bool __result)
     {
@@ -170,7 +216,7 @@ internal static class PaintingWing
     {
         try
         {
-            if (!__instance.modData.TryGetValue(WingKey, out string what) || what is "bench" or "junimo") return true;
+            if (What(__instance) is not { } what || what is "bench" or "junimo") return true;
             __result = true;
             if (justCheckingForActivity) return false;
             if (what == "rope")
