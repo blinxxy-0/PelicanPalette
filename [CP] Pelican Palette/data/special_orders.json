@@ -110,7 +110,8 @@
             }
           ],
           "Rewards": [
-            { "Type": "Gems", "Data": { "Amount": "30" } }
+            { "Type": "Gems", "Data": { "Amount": "30" } },
+            { "Type": "Mail", "Data": { "MailReceived": "blinxxy.MuseArt_OrderQi_Reward" } }
           ]
         }
       }
@@ -122,7 +123,24 @@
         "blinxxy.MuseArt_OrderLewis_Reward": "{{i18n:mail.order-lewis}} %item id (O)blinxxy.MuseArt_PictureFrame 4 %%[#]{{i18n:mail.order-lewis.title}}",
         "blinxxy.MuseArt_OrderGus_Reward": "{{i18n:mail.order-gus}} %item id (O)blinxxy.MuseArt_Tube_ruby 3 %%[#]{{i18n:mail.order-gus.title}}",
         "blinxxy.MuseArt_OrderLeah_Reward": "{{i18n:mail.order-leah}} %item id (O)blinxxy.MuseArt_Brush_rigger 1 %%[#]{{i18n:mail.order-leah.title}}",
-        "blinxxy.MuseArt_OrderElliott_Reward": "{{i18n:mail.order-elliott}} %item id (O)blinxxy.MuseArt_MoonlitFrame 2 %%[#]{{i18n:mail.order-elliott.title}}"
+        "blinxxy.MuseArt_OrderElliott_Reward": "{{i18n:mail.order-elliott}} %item id (O)blinxxy.MuseArt_MoonlitFrame 2 %%[#]{{i18n:mail.order-elliott.title}}",
+        // Qi's: his own frame, legendary (1.3's frames).
+        "blinxxy.MuseArt_OrderQi_Reward": "{{i18n:mail.order-qi}} %item id (O)blinxxy.MuseArt_QiFrame 1 %%[#]{{i18n:mail.order-qi.title}}"
+      }
+    },
+    // Qi's gem shop sells the prismatic frame (legendary, 1.3's frames).
+    {
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "TargetField": [ "QiGemShop", "Items" ],
+      "Entries": {
+        "blinxxy.MuseArt_PrismaticFrame": {
+          "Id": "blinxxy.MuseArt_PrismaticFrame",
+          "ItemId": "(O)blinxxy.MuseArt_PrismaticFrame",
+          "TradeItemId": "(O)858",
+          "TradeItemAmount": 25,
+          "Price": 0
+        }
       }
     }
   ]

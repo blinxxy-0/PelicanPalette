@@ -146,13 +146,24 @@ internal sealed partial class EaselMenu
     private List<FrameStyle> OfferedStyles => ArtItems.FrameStyles.Where(s => s == ArtItems.Plain || StyleCount(s) > 0).ToList();
     private bool FrameStylesOffered => OfferedStyles.Count > 1;
 
-    // A button per style you have: in the canvas sizes' row, or with more
-    // than four (1.3's collection frames), two rows of half-height ones.
+    // The frame picker (1.3): a row of the frames you have, in the canvas
+    // sizes' row, each its icon and how many; hovering shows its rarity and
+    // what it does when it hangs.
+    private const int StyleCell = 46;
     private Rectangle StyleButton(int i, int count)
     {
-        if (count <= _canvasButtons.Length) return _canvasButtons[i];
         var first = _canvasButtons[0];
-        return new Rectangle(first.X + i % 4 * 182, first.Y + i / 4 * 30, 170, 26);
+        return new Rectangle(first.X + i * (StyleCell + 2), first.Y + (first.Height - StyleCell) / 2, StyleCell, StyleCell);
+    }
+    private readonly Dictionary<string, Item> _frameIcons = new();
+    private Item FrameIcon(FrameStyle style) =>
+        _frameIcons.TryGetValue(style.Id, out var icon) ? icon : _frameIcons[style.Id] = ItemRegistry.Create("(O)" + style.ItemId);
+
+    private string FrameHover(FrameStyle style)
+    {
+        var (rarity, trait) = Frames.Of(style);
+        return FrameIcon(style).DisplayName + " (" + I18n.Get("frames.rarity." + rarity.ToString().ToLowerInvariant()) + ")\n"
+            + I18n.Get("frames.trait." + trait.ToString().ToLowerInvariant()) + "\n" + I18n.Get("frames.have", new { frames = StyleCount(style) });
     }
     // The chosen style, if you have that frame; else plain, else the first you have.
     private FrameStyle UsingStyle => _frameStyle != null && StyleCount(_frameStyle) > 0 ? _frameStyle
@@ -197,7 +208,7 @@ internal sealed partial class EaselMenu
     private void ClickSetup(int x, int y)
     {
         if (_setupFraming && FrameStylesOffered)
-            for (int i = 0; i < OfferedStyles.Count && i < 8; i++)
+            for (int i = 0; i < OfferedStyles.Count; i++)
                 if (StyleButton(i, OfferedStyles.Count).Contains(x, y))
                 {
                     _frameStyle = OfferedStyles[i];
@@ -597,13 +608,22 @@ internal sealed partial class EaselMenu
         if (FrameStylesOffered)
         {
             var styles = OfferedStyles;
-            for (int i = 0; i < styles.Count && i < 8; i++)
+            for (int i = 0; i < styles.Count; i++)
             {
                 var style = styles[i];
-                var button = StyleButton(i, styles.Count);
-                Ui.Button(b, button, I18n.Get("setup.frame-style." + style.Id, new { frames = StyleCount(style) }), StyleCount(style) > 0, style == UsingStyle, button.Contains(mouse));
-                if (button.Contains(mouse) && style != ArtItems.Plain)
-                    _hoverText = I18n.Get("setup.frame-style." + style.Id + "-hover");
+                var cell = StyleButton(i, styles.Count);
+                // On an inventory slot, like the bag's; the chosen one outlined.
+                b.Draw(Game1.menuTexture, cell, Game1.getSourceRectForStandardTileSheet(Game1.menuTexture, 10), Color.White * (cell.Contains(mouse) ? 1f : 0.85f));
+                if (style == UsingStyle)
+                    foreach (var edge in new[] { new Rectangle(cell.X - 3, cell.Y - 3, cell.Width + 6, 3), new Rectangle(cell.X - 3, cell.Bottom, cell.Width + 6, 3),
+                                 new Rectangle(cell.X - 3, cell.Y, 3, cell.Height), new Rectangle(cell.Right, cell.Y, 3, cell.Height) })
+                        b.Draw(Game1.staminaRect, edge, new Color(214, 72, 32));
+                FrameIcon(style).drawInMenu(b, new Vector2(cell.Center.X - 32, cell.Center.Y - 32), 0.72f, StyleCount(style) > 0 ? 1f : 0.4f, 0.9f,
+                    StackDrawType.Hide, Color.White, false);
+                int count = StyleCount(style);
+                Utility.drawTinyDigits(count, b, new Vector2(cell.Right - Utility.getWidthOfTinyDigitString(count, 2f) - 3, cell.Bottom - 15), 2f, 1f, Color.White);
+                if (cell.Contains(mouse))
+                    _hoverText = FrameHover(style);
             }
         }
         else
@@ -659,6 +679,16 @@ internal sealed partial class EaselMenu
     {
         ["driftwood"] = (new(58, 56, 60), new(162, 156, 146), new(224, 220, 208), new(200, 236, 250)),
         ["iron"] = (new(30, 30, 38), new(108, 108, 120), new(176, 176, 188), new(230, 170, 110)),
+        // 1.3's other frames (tools/art/frame_styles.py's palettes).
+        ["pine"] = (new(110, 72, 40), new(226, 184, 118), new(250, 228, 182), new(160, 110, 60)),
+        ["oak"] = (new(64, 38, 22), new(172, 122, 66), new(220, 178, 116), new(104, 64, 34)),
+        ["birch"] = (new(150, 144, 132), new(236, 232, 220), new(252, 250, 244), new(70, 64, 58)),
+        ["white"] = (new(150, 150, 156), new(230, 230, 234), new(252, 252, 254), new(214, 214, 220)),
+        ["walnut"] = (new(36, 20, 14), new(112, 72, 44), new(164, 118, 76), new(214, 178, 96)),
+        ["red-lacquer"] = (new(70, 12, 16), new(186, 48, 44), new(232, 104, 84), new(236, 196, 84)),
+        ["rope"] = (new(96, 70, 40), new(196, 164, 112), new(236, 214, 170), new(136, 104, 64)),
+        ["prismatic"] = (new(90, 60, 140), new(90, 190, 220), new(250, 220, 120), new(240, 110, 160)),
+        ["qi"] = (new(40, 14, 58), new(132, 64, 170), new(200, 140, 230), new(236, 196, 84)),
         ["sandstone"] = (new(110, 66, 40), new(222, 178, 112), new(250, 232, 190), new(190, 250, 240)),
         ["dwarvish"] = (new(52, 34, 26), new(176, 122, 56), new(232, 192, 108), new(190, 250, 240)),
     };

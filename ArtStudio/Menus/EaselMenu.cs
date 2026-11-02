@@ -52,6 +52,8 @@ internal sealed partial class EaselMenu : IClickableMenu
     // view from it once the painter has looked (taken on first pick).
     private readonly GameLocation? _viewLocation;
     private readonly Vector2 _easelTile;
+    private readonly Frames.Studio _studio;
+    internal Frames.Studio DevStudio => _studio;
     private Views.Capture? _view;
 
     public EaselMenu(Farmer who, BrushSpec? brush = null, Vector2? easelTile = null)
@@ -60,6 +62,8 @@ internal sealed partial class EaselMenu : IClickableMenu
         _who = who;
         if (easelTile.HasValue)
             _easelTile = easelTile.Value;
+        // The framed paintings on this room's walls (1.3).
+        _studio = easelTile.HasValue ? Frames.For(who.currentLocation) : Frames.None;
         if (easelTile.HasValue && who.currentLocation is { } outdoors && Views.CanPaintHere(outdoors))
             _viewLocation = outdoors;
         _level = ArtProgress.Level(who);
@@ -106,7 +110,8 @@ internal sealed partial class EaselMenu : IClickableMenu
     private float LightMultiplier =>
         _rules.LightMultiplier * ModEntry.Config.LightTimeMultiplier
         * (Has(PaintingSkill.Instance.PleinAir) ? PaintingSkill.PleinAirLight : 1f)
-        * (AtMastersEasel ? ArtItems.MastersEaselLight : 1f);
+        * (AtMastersEasel ? ArtItems.MastersEaselLight : 1f)
+        * _studio.Light(Game1.timeOfDay);
 
     // Painting at the Master's Easel (1.3).
     private bool AtMastersEasel =>

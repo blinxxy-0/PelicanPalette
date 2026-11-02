@@ -572,6 +572,21 @@ internal static class DevTools
             Game1.player.removeItemFromInventory(painting);
             return m;
         });
+        // 1.3's frame picker with every style in the bag, a rare one chosen.
+        yield return ("setup_framing_all", () =>
+        {
+            if (Game1.player.MaxItems < 36) Game1.player.increaseBackpackSize(36 - Game1.player.MaxItems);
+            var painting = FinishedPainting(CanvasKind.Small, parsnip);
+            Game1.player.addItemToInventory(painting);
+            var items = Game1.player.Items;
+            for (int i = 0; i < ArtItems.FrameStyles.Length; i++)
+                items[items.Count - 1 - i] = ItemRegistry.Create("(O)" + ArtItems.FrameStyles[i].ItemId, 1 + i % 3);
+            var m = new EaselMenu(Game1.player);
+            m.DevFraming(painting);
+            m.DevFrameStyle(ArtItems.Sandstone);
+            Game1.player.removeItemFromInventory(painting);
+            return m;
+        });
     }
 
     private static void AtViewport(int w, int h, Action action)

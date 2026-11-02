@@ -331,7 +331,28 @@ internal static class ArtHooks
         string id = small ? style.SmallId : style.LargeId;
         var framed = ItemRegistry.Create<Furniture>("(F)" + id);
         data.WriteTo(framed);
+        // (Kept so the Framer's Bench can give the painting back as it was.)
+        framed.modData[FramedQualityKey] = painting.Quality.ToString();
+        framed.modData[FramedPriceKey] = painting.Price.ToString();
         return framed;
+    }
+
+    private const string FramedQualityKey = ModEntry.Id + "/FramedQuality", FramedPriceKey = ModEntry.Id + "/FramedPrice";
+
+    // Takes a framed painting out of its frame (the Framer's Bench, 1.3): the
+    // painting as it was, and the empty frame. A painting framed before 1.3
+    // kept neither its quality nor its price; they come back from its stars
+    // and the painting's own value.
+    public static (SObject Painting, SObject Frame)? Unframe(Item framed)
+    {
+        if (Frames.StyleOf(framed) is not { } style || PaintingData.Read(framed) is not { } data) return null;
+        int quality = framed.modData.TryGetValue(FramedQualityKey, out string q) && int.TryParse(q, out int qq) ? qq
+            : PaintingRules.Quality(data.Stars, 10);
+        int price = framed.modData.TryGetValue(FramedPriceKey, out string p) && int.TryParse(p, out int pp) ? pp
+            : data.IsOld && OldPaintings.OfSubject(data.Subject) is { } old ? OldPaintings.RestoredValue(old, quality)
+            : PaintingRules.Value(data.Size, data.Difficulty, 0, 0);
+        var painting = PaintingItems.Create(data, quality, price);
+        return (painting, ItemRegistry.Create<SObject>("(O)" + style.ItemId));
     }
 
     // ---- Brushes ----

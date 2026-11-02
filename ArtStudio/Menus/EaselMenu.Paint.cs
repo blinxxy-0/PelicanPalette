@@ -384,6 +384,11 @@ internal sealed partial class EaselMenu
         if (cells <= 0) return;
         _load -= cells;
         if (!UsesPaint || _palette == null) return;
+        // A Thrift frame in the room: now and then a cell's paint isn't used.
+        if (_studio.ThriftChance > 0f)
+            for (int i = cells; i > 0; i--)
+                if (_random.NextDouble() < _studio.ThriftChance)
+                    cells--;
         _paint[_selected] = Math.Max(0, _paint[_selected] - cells);
         PaletteItem.Write(_palette, _paint);
         if (_paint[_selected] == 0)
@@ -473,7 +478,8 @@ internal sealed partial class EaselMenu
 
         _nextSpark -= dt;
         if (_nextSpark > 0f) return;
-        _nextSpark = (7f + (float)_random.NextDouble() * 5f) * (Has(PaintingSkill.Instance.PleinAir) ? PaintingSkill.PleinAirSparkInterval : 1f);
+        _nextSpark = (7f + (float)_random.NextDouble() * 5f) * (Has(PaintingSkill.Instance.PleinAir) ? PaintingSkill.PleinAirSparkInterval : 1f)
+            * _studio.SparkInterval;
 
         var candidates = new List<Point>();
         int n = _canvas.Size;

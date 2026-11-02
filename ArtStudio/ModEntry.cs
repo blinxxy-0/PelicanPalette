@@ -51,6 +51,7 @@ public class ModEntry : Mod
         Social.NightMarketStall.Register(harmony, helper);
         Shop.Consignment.Apply(harmony, helper, Monitor);
         Varnish.Apply(harmony, helper, Monitor);
+        FramersBench.Apply(harmony, helper, Monitor);
         SableEvents.Register();
         NeutralLabels.Apply(harmony, Monitor);
         SableMarriage.Apply(harmony, helper, Monitor);

@@ -1,0 +1,17 @@
+{
+ "batch": "stardew-framers-bench",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/frames/style_machines.png",
+  "style_usage": "the exact Stardew Valley style of these crafted machines: one tile wide and two tall, square-on, warm wood, dark coloured outlines",
+  "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/frames/bench_guide.png",
+  "reference_usage": "shape: a small workbench, one tile wide and two tall, with an empty picture frame standing upright in a clamp on top; keep this size and layout"
+ },
+ "jobs": {
+  "framers_bench": {
+   "image_size": {"width": 16, "height": 32},
+   "description": "a Stardew Valley crafted machine, one object alone on a transparent background, one tile wide and two tall, square-on from the front, dark coloured (not black) outlines: a framer's bench, a small sturdy wooden workbench with a drawer, a little brass vice clamped on top holding an empty wooden picture frame upright, a few tacks and a tack hammer beside it"
+  }
+ }
+}

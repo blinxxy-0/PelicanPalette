@@ -184,6 +184,17 @@
             { "Id": "LinenMedium", "ItemId": "(O)blinxxy.MuseArt_Linen_Medium", "Price": 500, "Condition": "{{PaintingLevel}} 8" },
             { "Id": "LinenLarge", "ItemId": "(O)blinxxy.MuseArt_Linen_Large", "Price": 1000, "Condition": "{{PaintingLevel}} 8" },
             { "Id": "Frame", "ItemId": "(O)blinxxy.MuseArt_PictureFrame", "Price": 150 },
+            // More frames (1.3): each does something when it hangs in a room
+            // with an easel. The common ones always; the uncommon as Painting
+            // levels up. And the Framer's Bench, to take a frame off again.
+            { "Id": "FramePine", "ItemId": "(O)blinxxy.MuseArt_PineFrame", "Price": 400 },
+            { "Id": "FrameOak", "ItemId": "(O)blinxxy.MuseArt_OakFrame", "Price": 400 },
+            { "Id": "FrameBirch", "ItemId": "(O)blinxxy.MuseArt_BirchFrame", "Price": 400 },
+            { "Id": "FrameWhite", "ItemId": "(O)blinxxy.MuseArt_WhiteFrame", "Price": 400 },
+            { "Id": "FrameWalnut", "ItemId": "(O)blinxxy.MuseArt_WalnutFrame", "Price": 1200, "Condition": "{{PaintingLevel}} 3" },
+            { "Id": "FrameRedLacquer", "ItemId": "(O)blinxxy.MuseArt_RedLacquerFrame", "Price": 1200, "Condition": "{{PaintingLevel}} 5" },
+            { "Id": "FrameRope", "ItemId": "(O)blinxxy.MuseArt_RopeFrame", "Price": 1200, "Condition": "{{PaintingLevel}} 7" },
+            { "Id": "FramersBench", "ItemId": "(BC)blinxxy.MuseArt_FramersBench", "Price": 2500, "Condition": "{{PaintingLevel}} 4" },
 
             { "Id": "Sienna", "ItemId": "(O)blinxxy.MuseArt_Pigment_sienna", "Price": 120, "AvailableStock": 1, "AvailableStockLimit": "Player", "Condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current sienna" },
             { "Id": "Rose", "ItemId": "(O)blinxxy.MuseArt_Pigment_rose", "Price": 120, "AvailableStock": 1, "AvailableStockLimit": "Player", "Condition": "!blinxxy.MuseArt_KNOWS_PIGMENT Current rose" },

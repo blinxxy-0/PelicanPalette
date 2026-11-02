@@ -159,6 +159,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_trapdoortest", "Sable's room under the shop: the trapdoor's lock (2 hearts, or the key to the town), Sable's way down, and a trip down. Then 'museart_trapdoortest down', then 'check'.", (_, args) => TrapdoorTest(monitor, args));
         DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_frametest", "Frames (1.3): every style, what they do hung in a room with an easel, unframing, the Framer's Bench, and where they're sold. Run in the farmhouse.", (_, _) => FrameTest(monitor));
         DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
@@ -2588,6 +2589,11 @@ internal static class DevGame
         Check(monitor, "he's called Julian, he/him, and not marriageable", julian.displayName == "Julian" && julian.Gender == StardewValley.Gender.Male && !julian.datable.Value);
         Check(monitor, "his sprites are 64x128 and his portraits 128x256", julian.Sprite.Texture.Width == 64 && julian.Sprite.Texture.Height == 128 && julian.Portrait?.Width == 128 && julian.Portrait?.Height == 256);
         Check(monitor, "his home between visits exists", Game1.getLocationFromName("blinxxy.MuseArt_JulianHome") != null);
+        // His winter coat (1.3), outdoors in winter.
+        var winter = julian.GetData()?.Appearance?.FirstOrDefault(a => a.Id == "Winter");
+        Check(monitor, "he has a winter coat for outdoors, sprites and portraits the same size as his everyday ones", winter != null && !winter.Indoors && winter.Outdoors
+            && Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(winter.Sprite).Width == 64 && Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(winter.Sprite).Height == 128
+            && Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(winter.Portrait).Width == 128 && Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(winter.Portrait).Height == 256);
         Check(monitor, "he loves wine and hates Joja Cola", julian.getGiftTasteForThisItem(ItemRegistry.Create("(O)348")) == NPC.gift_taste_love && julian.getGiftTasteForThisItem(ItemRegistry.Create("(O)167")) == NPC.gift_taste_hate);
         var lines = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Characters/Dialogue/JulianVane");
         var sableLines = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Characters/Dialogue/Sable");
@@ -3121,6 +3127,103 @@ internal static class DevGame
             Check(monitor, "a cured painting goes back to the chest", back != null && cab.heldObject.Value == null);
             Check(monitor, "...with the gallery finish", back != null && Varnish.FinishOf(back) == "gallery", back == null ? "none" : Varnish.FinishOf(back) ?? "no finish");
         }
+    }
+
+    // Frames (1.3, docs/design/1.3_plan.md section 5).
+    private static void FrameTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        FreshStart(who);
+        var house = who.currentLocation;
+
+        // Every style: its frame, its framed paintings, its rarity and trait.
+        var objects = DataLoader.Objects(Game1.content);
+        var furniture = DataLoader.Furniture(Game1.content);
+        var missing = ArtItems.FrameStyles.Where(s => !objects.ContainsKey(s.ItemId) || !furniture.ContainsKey(s.SmallId) || !furniture.ContainsKey(s.LargeId)
+            || !Frames.Styles.ContainsKey(s.Id) || ItemRegistry.Create("(O)" + s.ItemId).DisplayName.Contains("Error")).Select(s => s.Id).ToList();
+        Check(monitor, "all 16 frame styles have a frame, framed paintings, a rarity and a trait",
+            ArtItems.FrameStyles.Length == 16 && missing.Count == 0, missing.Count > 0 ? string.Join(", ", missing) : "");
+
+        // A room's studio: the three strongest framed paintings count.
+        SObject Painting(int quality = PaintingRules.Gold)
+        {
+            var m = EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" });
+            m.DevPaintPartly(1f, 3);
+            m.DevFinish(false);
+            var p = m.DevPainting!;
+            p.Quality = quality;
+            return p;
+        }
+        foreach (var f in house.furniture.Where(ArtItems.IsFramed).ToList())
+            house.furniture.Remove(f);
+        Furniture Hang(FrameStyle style, int x)
+        {
+            var framed = ArtHooks.Frame(Painting(), style);
+            framed.TileLocation = new Vector2(x, 1);
+            house.furniture.Add(framed);
+            return framed;
+        }
+        Hang(ArtItems.MoreFrame("pine"), 1);                       // common Thrift (left out: the weakest)
+        Hang(ArtItems.MoreFrame("white"), 3);                      // common Light
+        Hang(ArtItems.Sandstone, 5);                               // rare Light
+        Hang(ArtItems.MoreFrame("walnut"), 7);                     // uncommon Learning
+        Hang(ArtItems.Dwarvish, 9);                                // epic Thrift
+        var studio = Frames.For(house);
+        Check(monitor, "the three strongest framed paintings in a room count, adding up by trait",
+            studio.Get(FrameTrait.Thrift) == 4 && studio.Get(FrameTrait.Light) == 3 && studio.Get(FrameTrait.Learning) == 2
+            && studio.Steps.Values.Sum() == 4 + 3 + 2, string.Join(", ", studio.Steps.Select(kv => $"{kv.Key} {kv.Value}")));
+
+        // At an easel in that room, the light is more.
+        var easelTile = who.Tile + new Vector2(1, 1);
+        float bare = new EaselMenu(who).DevLightMultiplier;
+        var atEasel = new EaselMenu(who, easelTile: easelTile);
+        Check(monitor, "...and an easel in the room has more light for it", atEasel.DevStudio.Get(FrameTrait.Light) == 3
+            && Math.Abs(atEasel.DevLightMultiplier / bare - (1f + 3 * Frames.LightStep)) < 0.001f, $"{bare:0.000} -> {atEasel.DevLightMultiplier:0.000}");
+        Game1.exitActiveMenu();
+        foreach (var f in house.furniture.Where(ArtItems.IsFramed).ToList())
+            house.furniture.Remove(f);
+
+        // Unframing gives back the painting as it was, and the frame.
+        var painting = Painting(PaintingRules.Gold);
+        int price = painting.Price;
+        var walnut = ArtHooks.Frame(painting, ArtItems.MoreFrame("walnut"));
+        var parts = ArtHooks.Unframe(walnut);
+        Check(monitor, "unframing gives back the painting, at its quality and price, and its frame", parts is { } u
+            && u.Painting.Quality == PaintingRules.Gold && u.Painting.Price == price && PaintingData.Read(u.Painting)?.Subject == PaintingData.Read(painting)?.Subject
+            && u.Frame.QualifiedItemId == "(O)" + ArtItems.MoreFrame("walnut").ItemId, $"{parts?.Painting.Quality} {parts?.Painting.Price}g, {parts?.Frame.QualifiedItemId}");
+
+        // The Framer's Bench: in tonight, out tomorrow, painting and frame.
+        var tile = who.Tile + new Vector2(2, 0);
+        house.objects.Remove(tile);
+        var bench = ItemRegistry.Create<SObject>(FramersBench.QualifiedBenchId);
+        Check(monitor, "the Framer's Bench can be placed", bench.placementAction(house, (int)tile.X * 64, (int)tile.Y * 64, who));
+        bench = house.objects[tile];
+        var framed = ArtHooks.Frame(Painting(), ArtItems.MoreFrame("rope"));
+        who.addItemToInventory(framed);
+        who.CurrentToolIndex = who.Items.IndexOf(framed);
+        house.checkAction(new xTile.Dimensions.Location((int)tile.X, (int)tile.Y), Game1.viewport, who);
+        Game1.exitActiveMenu();
+        Check(monitor, "...takes a framed painting", bench.heldObject.Value != null && !who.Items.Contains(framed) && !FramersBench.IsDone(bench));
+        FramersBench.DevAge(bench);
+        int frames = who.Items.CountId("(O)" + ArtItems.MoreFrame("rope").ItemId), paintings = who.Items.Count(PaintingItems.IsPainting);
+        Game1.player.CurrentToolIndex = 0;
+        house.checkAction(new xTile.Dimensions.Location((int)tile.X, (int)tile.Y), Game1.viewport, who);
+        Game1.exitActiveMenu();
+        Check(monitor, "...and the next morning gives back the painting and its frame", bench.heldObject.Value == null
+            && who.Items.CountId("(O)" + ArtItems.MoreFrame("rope").ItemId) == frames + 1 && who.Items.Count(PaintingItems.IsPainting) == paintings + 1);
+        house.objects.Remove(tile);
+
+        // Where they come from.
+        var shops = DataLoader.Shops(Game1.content);
+        var artShop = shops.Values.FirstOrDefault(s => s.Items?.Any(i => i.ItemId == "(O)" + ArtItems.FrameItemId) == true);
+        bool sold(string id) => artShop?.Items.Any(i => i.ItemId == "(O)" + ArtItems.MoreFrame(id).ItemId) == true;
+        Check(monitor, "Sable sells the common and uncommon frames, and the bench", artShop != null
+            && new[] { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope" }.All(sold)
+            && artShop.Items.Any(i => i.ItemId == FramersBench.QualifiedBenchId));
+        Check(monitor, "Qi's gem shop has the prismatic frame, and his order sends his own",
+            shops.TryGetValue("QiGemShop", out var qi) && qi.Items.Any(i => i.ItemId == "(O)" + ArtItems.MoreFrame("prismatic").ItemId)
+            && DataLoader.Mail(Game1.content).TryGetValue(ModEntry.Id + "_OrderQi_Reward", out string letter) && letter.Contains(ArtItems.MoreFrame("qi").ItemId));
     }
 
     private static void VarnishTest(IMonitor monitor)

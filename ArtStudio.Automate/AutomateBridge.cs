@@ -34,6 +34,8 @@ public static class AutomateBridge
         public Action<SObject> Clear { get; init; } = _ => { };
         public Func<Item, bool> IsInput { get; init; } = _ => false;
         public Func<Item, bool> IsFuel { get; init; } = _ => false;
+        // (The Framer's Bench takes no fuel; the cabinet takes a tin of varnish.)
+        public bool UsesFuel { get; init; } = true;
         public Action<SObject, Item> Start { get; init; } = (_, _) => { };
     }
 
@@ -43,7 +45,7 @@ public static class AutomateBridge
         var api = helper.ModRegistry.GetApi<IAutomateAPI>(AutomateId);
         if (api == null)
         {
-            monitor.Log("Automate is installed but its API isn't available; Varnishing Cabinets won't be automated.", LogLevel.Warn);
+            monitor.Log("Automate is installed but its API isn't available; the mod's machines won't be automated.", LogLevel.Warn);
             return false;
         }
         api.AddFactory(new Factory(machine));
@@ -98,12 +100,14 @@ public static class AutomateBridge
         public bool SetInput(IStorage input)
         {
             if (!_machine.IsEmpty(_obj)
-                || !input.TryGetIngredient(stack => _machine.IsInput(stack.Sample), 1, out var item)
-                || !input.TryGetIngredient(stack => _machine.IsFuel(stack.Sample), 1, out var fuel))
+                || !input.TryGetIngredient(stack => _machine.IsInput(stack.Sample), 1, out var item))
+                return false;
+            IConsumable? fuel = null;
+            if (_machine.UsesFuel && !input.TryGetIngredient(stack => _machine.IsFuel(stack.Sample), 1, out fuel))
                 return false;
             var taken = item.Take();
             if (taken == null) return false;
-            fuel.Reduce();
+            fuel?.Reduce();
             _machine.Start(_obj, taken);
             return true;
         }

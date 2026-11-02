@@ -1,0 +1,48 @@
+{
+ "batch": "stardew-julian-winter",
+ "common": {
+  "endpoint": "edit-image-pixen"
+ },
+ "jobs": {
+  "winter_walk_1": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/walk_base.png",
+   "description": "this sprite sheet of the same man walking in four directions, now dressed for a city winter: a long camel-brown wool overcoat over his clothes, the collar turned up, a dark charcoal scarf at the neck, black leather gloves; keep exactly the same poses, frames, hair, glasses, face and skin, same pixel-art style, colours and outline weight, transparent background",
+   "seed": 1
+  },
+  "winter_portrait_1": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/portrait_base.png",
+   "description": "the same man, same face, expression, hair, glasses and skin, now wearing a long camel-brown wool overcoat with the collar turned up and a dark charcoal scarf wrapped at the neck instead of his jacket; same pixel-art style, colours and outline weight",
+   "seed": 1
+  },
+  "winter_walk_2": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/walk_base.png",
+   "description": "this sprite sheet of the same man walking in four directions, now dressed for a city winter: a long camel-brown wool overcoat over his clothes, the collar turned up, a dark charcoal scarf at the neck, black leather gloves; keep exactly the same poses, frames, hair, glasses, face and skin, same pixel-art style, colours and outline weight, transparent background",
+   "seed": 2
+  },
+  "winter_portrait_2": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/portrait_base.png",
+   "description": "the same man, same face, expression, hair, glasses and skin, now wearing a long camel-brown wool overcoat with the collar turned up and a dark charcoal scarf wrapped at the neck instead of his jacket; same pixel-art style, colours and outline weight",
+   "seed": 2
+  },
+  "winter_walk_3": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/walk_base.png",
+   "description": "this sprite sheet of the same man walking in four directions, now dressed for a city winter: a long camel-brown wool overcoat over his clothes, the collar turned up, a dark charcoal scarf at the neck, black leather gloves; keep exactly the same poses, frames, hair, glasses, face and skin, same pixel-art style, colours and outline weight, transparent background",
+   "seed": 3
+  },
+  "winter_portrait_3": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/portrait_base.png",
+   "description": "the same man, same face, expression, hair, glasses and skin, now wearing a long camel-brown wool overcoat with the collar turned up and a dark charcoal scarf wrapped at the neck instead of his jacket; same pixel-art style, colours and outline weight",
+   "seed": 3
+  },
+  "winter_walk_4": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/walk_base.png",
+   "description": "this sprite sheet of the same man walking in four directions, now dressed for a city winter: a long camel-brown wool overcoat over his clothes, the collar turned up, a dark charcoal scarf at the neck, black leather gloves; keep exactly the same poses, frames, hair, glasses, face and skin, same pixel-art style, colours and outline weight, transparent background",
+   "seed": 4
+  },
+  "winter_portrait_4": {
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/julian/winter/portrait_base.png",
+   "description": "the same man, same face, expression, hair, glasses and skin, now wearing a long camel-brown wool overcoat with the collar turned up and a dark charcoal scarf wrapped at the neck instead of his jacket; same pixel-art style, colours and outline weight",
+   "seed": 4
+  }
+ }
+}

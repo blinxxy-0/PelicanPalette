@@ -44,6 +44,22 @@ internal static class AutomateIntegration
             bool added = (bool)bridge.GetMethod("Register")!.Invoke(null, new[] { helper, monitor, machine })!;
             if (added)
                 monitor.Log("Varnishing Cabinets work with Automate.", LogLevel.Trace);
+
+            // The Framer's Bench (1.3): a framed painting in, no fuel; out
+            // comes the painting, then its frame.
+            var bench = Activator.CreateInstance(machineType)!;
+            void SetBench(string name, object value) => machineType.GetProperty(name)!.SetValue(bench, value);
+            SetBench("TypeId", FramersBench.QualifiedBenchId);
+            SetBench("Is", (Func<SObject, bool>)FramersBench.IsBench);
+            SetBench("IsEmpty", (Func<SObject, bool>)(b => b.heldObject.Value == null));
+            SetBench("IsDone", (Func<SObject, bool>)FramersBench.IsDone);
+            SetBench("Output", (Func<SObject, Item?>)FramersBench.Peek);
+            SetBench("Clear", (Action<SObject>)FramersBench.Clear);
+            SetBench("IsInput", (Func<Item, bool>)FramersBench.IsInput);
+            SetBench("UsesFuel", false);
+            SetBench("Start", (Action<SObject, Item>)FramersBench.Start);
+            if ((bool)bridge.GetMethod("Register")!.Invoke(null, new[] { helper, monitor, bench })!)
+                monitor.Log("Framer's Benches work with Automate.", LogLevel.Trace);
         }
         catch (Exception ex)
         {

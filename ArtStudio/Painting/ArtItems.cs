@@ -50,12 +50,21 @@ internal static class ArtItems
     private static readonly string[] SetFrameIds = { "driftwood", "iron", "sandstone", "dwarvish" };
     private const int SetFrameSprite = 42, SetFrameFurniture = 15;
 
+    // And the rest (1.3, section 5 of the plan; tools/art/frame_styles.py):
+    // common, from Sable's shop; uncommon, as Painting levels up; legendary,
+    // Qi's. What each does when it hangs is in Frames.
+    private static readonly string[] MoreFrameIds = { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi" };
+    public static readonly FrameStyle[] MoreFrames = MoreFrameIds.Select(SetFrame).ToArray();
+    private const int MoreFrameSprite = 67, MoreFrameFurniture = 35;
+
     private static FrameStyle SetFrame(string id) =>
         new(id, $"{ModEntry.Id}_{Pascal(id)}Frame", $"{ModEntry.Id}_{Pascal(id)}Painting", $"{ModEntry.Id}_{Pascal(id)}PaintingLarge");
 
-    private static string Pascal(string id) => char.ToUpperInvariant(id[0]) + id.Substring(1);
+    private static string Pascal(string id) => string.Concat(id.Split('-').Select(w => char.ToUpperInvariant(w[0]) + w.Substring(1)));
 
-    public static readonly FrameStyle[] FrameStyles = { Plain, Moonlit, GoldLeaf, Driftwood, Iron, Sandstone, Dwarvish };
+    public static FrameStyle MoreFrame(string id) => MoreFrames.First(s => s.Id == id);
+
+    public static readonly FrameStyle[] FrameStyles = new[] { Plain, Moonlit, GoldLeaf, Driftwood, Iron, Sandstone, Dwarvish }.Concat(MoreFrames).ToArray();
 
     public const string BigCraftablesTexture = "Mods/" + ModEntry.Id + "/BigCraftables";
     public const string FurnitureTexture = "Mods/" + ModEntry.Id + "/Furniture";
@@ -169,6 +178,12 @@ internal static class ArtItems
             var style = FrameStyles.First(s => s.Id == SetFrameIds[n]);
             AddObject(objects, style.ItemId, I18n.Get("item.frame." + style.Id), I18n.Get("item.frame." + style.Id + ".description"), 1500, SetFrameSprite + n);
         }
+        for (int n = 0; n < MoreFrames.Length; n++)
+        {
+            var style = MoreFrames[n];
+            int price = Frames.Of(style).Rarity switch { FrameRarity.Common => 200, FrameRarity.Uncommon => 600, _ => 3000 };
+            AddObject(objects, style.ItemId, I18n.Get("item.frame." + style.Id), I18n.Get("item.frame." + style.Id + ".description"), price, MoreFrameSprite + n);
+        }
         // Palettes are tools: like a hoe or a rod, they can't be given away by accident.
         foreach (var tier in PaletteItem.Tiers)
         {
@@ -243,6 +258,17 @@ internal static class ArtItems
             CanBePlacedIndoors = true,
             CanBePlacedOutdoors = true,
         };
+        bigCraftables[FramersBench.BenchId] = new BigCraftableData
+        {
+            Name = FramersBench.BenchId,
+            DisplayName = I18n.Get("item.bench"),
+            Description = I18n.Get("item.bench.description"),
+            Price = 600,
+            Texture = BigCraftablesTexture,
+            SpriteIndex = FramersBench.BenchSprite,
+            CanBePlacedIndoors = true,
+            CanBePlacedOutdoors = true,
+        };
         bigCraftables[Varnish.CabinetId] = new BigCraftableData
         {
             Name = Varnish.CabinetId,
@@ -300,6 +326,13 @@ internal static class ArtItems
             furniture[style.SmallId] = $"{style.SmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/{small}/{texture}/true";
             furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
         }
+        for (int n = 0; n < MoreFrames.Length; n++)
+        {
+            var style = MoreFrames[n];
+            int small = MoreFrameFurniture + 5 * n;
+            furniture[style.SmallId] = $"{style.SmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/{small}/{texture}/true";
+            furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
+        }
     }
 
     // ingredients/unused/yield/big craftable/unlock condition/display name
@@ -326,6 +359,8 @@ internal static class ArtItems
         recipes[PaletteItem.Tiers[1].Id] = $"338 1 330 5 334 2/Home/{PaletteItem.Tiers[1].Id}/false/{AtLevel(5)}/{I18n.Get("item.palette.enamel")}";
         recipes[PaletteItem.Tiers[2].Id] = $"337 2 338 2/Home/{PaletteItem.Tiers[2].Id}/false/{AtLevel(9)}/{I18n.Get("item.palette.iridium")}";
         recipes[MillId] = $"390 30 334 2 388 10/Home/{MillId}/true/{AtLevel(1)}/{I18n.Get("item.mill")}";
+        // The Framer's Bench (1.3): wood, hardwood and a copper bar.
+        recipes[FramersBench.BenchId] = $"388 20 709 2 334 1/Home/{FramersBench.BenchId}/true/{AtLevel(FramersBench.UnlockLevel)}/{I18n.Get("item.bench")}";
 
         // Varnishing (Painting/Varnish.cs): oak resin and oil make two tins;
         // the cabinet is hardwood, resin and iron.

@@ -76,7 +76,7 @@ internal sealed partial class EaselMenu
             _score = PaintingRules.Score(_result.Stars, _level, _inspired, _allPure, inspiredBonus);
             _quality = PaintingRules.Quality(_score, _level);
             _xp = (int)Math.Round(PaintingRules.Xp(_result.Stars, _reference.Difficulty, size) * _rules.RewardMultiplier
-                * (IsLongSubject(_subjectItems) ? PaintingRules.PortraitXp : 1f));
+                * (IsLongSubject(_subjectItems) ? PaintingRules.PortraitXp : 1f) * _studio.Learning);
             if (SableCritiques)
                 (_critique, _critiquePortrait) = SableCritique(_result, painted);
             else
@@ -121,6 +121,8 @@ internal sealed partial class EaselMenu
             _milestone = Catalogue.Record(_who, subject, _quality);
             _tabRewards = RecordTabs.GrantRewards(_who);
         }
+        // A Value frame in the room.
+        price = (int)Math.Round(price * _studio.Value);
 
         var data = new PaintingData
         {

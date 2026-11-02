@@ -28,6 +28,11 @@
           "SocialTab": "UnknownUntilMet",
           "IntroductionsQuest": false,
           "FlowerDanceCanDance": false,
+          // A camel overcoat and a charcoal scarf outdoors on his winter
+          // visits (1.3; tools/art/build_julian_outfits.py).
+          "Appearance": [
+            { "Id": "Winter", "Season": "Winter", "Indoors": false, "Outdoors": true, "Portrait": "Portraits/JulianVane_Winter", "Sprite": "Characters/JulianVane_Winter" }
+          ],
           "Home": [
             // Always his home off the map ("Zuzu City"). On visit mornings the
             // mod moves him to the bus door and routes his day from there
@@ -40,6 +45,8 @@
     },
     { "Action": "Load", "Target": "Characters/JulianVane", "FromFile": "assets/julian/sprites.png" },
     { "Action": "Load", "Target": "Portraits/JulianVane", "FromFile": "assets/julian/portraits.png" },
+    { "Action": "Load", "Target": "Characters/JulianVane_Winter", "FromFile": "assets/julian/sprites_winter.png" },
+    { "Action": "Load", "Target": "Portraits/JulianVane_Winter", "FromFile": "assets/julian/portraits_winter.png" },
     {
       "Action": "EditData",
       "Target": "Mods/Bouhm.NPCMapLocations/NPCs",
