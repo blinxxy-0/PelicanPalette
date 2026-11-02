@@ -19,12 +19,15 @@ namespace ArtStudio.Painting;
 // and the Travelling Cart sometimes sells one (data/old_paintings.json).
 //
 // The first is guaranteed: from Painting level 3, the next artifact spot
-// or fishing treasure before you've found any brings one.
+// or fishing treasure before you've found any brings one. Wearing Margot's
+// loupe (twelve donated to the museum) makes each chance half as big again.
 internal static class OldPaintingFinds
 {
     public const float ArtifactChance = 0.015f, TreasureChance = 0.04f, CalicoCrateChance = 0.01f, TreasureRoomChance = 0.1f, VolcanoChance = 0.08f;
     public const int FirstFromLevel = 3;
     private const string FirstGivenFlag = ModEntry.Id + "_OldPaintingFirst";
+    public const string LoupeId = ModEntry.Id + "_MargotsLoupe";
+    public const float LoupeBoost = 1.5f;
 
     public static void Apply(Harmony harmony)
     {
@@ -45,6 +48,10 @@ internal static class OldPaintingFinds
     public static bool FirstDue(Farmer who) =>
         !who.mailReceived.Contains(FirstGivenFlag) && !OldPaintings.FoundAny(who) && ArtProgress.Level(who) >= FirstFromLevel;
 
+    // A find's chance for this farmer: the loupe, worn, raises it.
+    public static float Chance(Farmer? who, float chance) =>
+        who != null && who.isWearingRing(LoupeId) ? chance * LoupeBoost : chance;
+
     private static bool Roll(Farmer who, float chance)
     {
         if (FirstDue(who))
@@ -52,7 +59,7 @@ internal static class OldPaintingFinds
             who.mailReceived.Add(FirstGivenFlag);
             return true;
         }
-        return Game1.random.NextDouble() < chance;
+        return Game1.random.NextDouble() < Chance(who, chance);
     }
 
     private static Item New(string set) => ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor(set));
@@ -85,7 +92,7 @@ internal static class OldPaintingFinds
             if (__instance.Location is not MineShaft mine) return;
             bool cavern = mine.mineLevel > MineShaft.bottomOfMineLevel;
             float chance = cavern ? CalicoCrateChance : 0.004f + 0.004f * Math.Min(1f, mine.mineLevel / (float)MineShaft.bottomOfMineLevel);
-            if (Game1.random.NextDouble() < chance)
+            if (Game1.random.NextDouble() < Chance(who, chance))
                 Game1.createItemDebris(New(cavern ? "calico" : "miners"), __instance.TileLocation * 64f, -1, mine);
         }
         catch (Exception) { }
@@ -93,13 +100,13 @@ internal static class OldPaintingFinds
 
     private static void TreasureRoomPostfix(ref Item __result)
     {
-        if (Game1.random.NextDouble() < TreasureRoomChance)
+        if (Game1.random.NextDouble() < Chance(Game1.player, TreasureRoomChance))
             __result = New("calico");
     }
 
     private static void VolcanoPostfix(System.Collections.Generic.IList<Item> items)
     {
-        if (Game1.random.NextDouble() < VolcanoChance)
+        if (Game1.random.NextDouble() < Chance(Game1.player, VolcanoChance))
             items.Add(New("dwarvish"));
     }
 }

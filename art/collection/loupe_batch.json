@@ -1,0 +1,15 @@
+{
+ "batch": "stardew-margot-loupe",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/collection/style_rings.png",
+  "style_usage": "the exact style of these Stardew Valley inventory icons: 16 by 16 pixels, bold simple shapes, dark coloured outlines, a bright highlight"
+ },
+ "jobs": {
+  "loupe": {
+   "image_size": {"width": 16, "height": 16},
+   "description": "a Stardew Valley inventory icon, 16 by 16 pixels, one item alone on a transparent background, dark coloured (not black) outline: a jeweller's loupe, a small round brass magnifying eyepiece with a glinting pale blue glass lens, a short brass ring loop on top to wear it on a cord"
+  }
+ }
+}

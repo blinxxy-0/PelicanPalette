@@ -102,7 +102,7 @@ Her restorations come back **silver** quality: careful, but cautious.
 |---|---|
 | A whole set | That set's frame style: driftwood (Wreck), iron (Miners), sandstone (Calico), Dwarvish (Dwarvish); the Old Valley brings gallery furniture (a velvet rope, a bench, a picture light) |
 | 6 paintings | A **living painting**: an old painting whose picture moves a little |
-| 12 paintings | **Margot's loupe**, a trinket |
+| 12 paintings | **Margot's loupe**, worn as a ring: old paintings turn up half as often again |
 | All 21 | The **paint-tube Junimo statue** (furniture), and the museum's new **wing** for the collection |
 
 ## 6. Build order within step 5
@@ -161,8 +161,18 @@ damaged painting and talk to her at the museum; she takes it for the set's
 fee and hands it back three days later, at silver, "restored by Margot".
 One at a time; once you're a conservator she sends you to your own easel.
 
-**Still to make:** the Old Valley's gallery furniture, the living painting
-(6 donated), Margot's loupe (12) and the Junimo statue and museum wing
-(21). Their rewards are wired: each letter is sent as soon as it exists in
+The Old Valley's gallery furniture (`tools/art/gallery_furniture.py`): a
+velvet rope, a gallery bench (a seat) and a picture light to hang above a
+painting, each in its own letter from Gunther (a letter carries one item).
+The living painting (`tools/art/living_painting.py`,
+`Painting/LivingPainting.cs`): a mill on a river at dusk, in four frames the
+game steps through, the water shimmering and the window's lamp flickering.
+
+Margot's loupe (`tools/art/margot_loupe.py`; decided 2026-11-01): worn as
+a ring rather than a trinket (the trinket slot needs Combat Mastery, out of
+most painters' reach), and while it's on, every way of finding an old
+painting is half as likely again (`OldPaintingFinds.Chance`).
+
+**Still to make:** the Junimo statue and museum wing (21). Their rewards are wired: each letter is sent as soon as it exists in
 the game's mail, so adding one reaches players who already qualify.
 

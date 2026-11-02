@@ -1760,6 +1760,57 @@ internal static class DevGame
             Check(monitor, "...and not the Miners'", !who.mailForTomorrow.Contains(Social.MuseumCollection.RewardLetter("set-miners")));
             var framed = ArtHooks.Frame(DevTools.TestPainting("view:Beach:summer", PaintingRules.Gold), ArtItems.Driftwood);
             Check(monitor, "a painting framed in driftwood hangs in the driftwood frame", framed.QualifiedItemId == "(F)" + ArtItems.Driftwood.SmallId && ArtItems.IsFramed(framed));
+
+            // The Old Valley's four bring the gallery's furniture, a piece to a letter.
+            foreach (var old in OldPaintings.All.Where(p => p.Set == "valley"))
+            {
+                var painting = Restored(old);
+                who.addItemToInventory(painting);
+                Social.MuseumCollection.Donate(who, gunther, painting, old);
+                (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+                gunther.CurrentDialogue.Clear();
+            }
+            var mail = DataLoader.Mail(Game1.content);
+            var gallery = new[] { ("set-valley", "GalleryBench"), ("set-valley-rope", "VelvetRope"), ("set-valley-light", "PictureLight") };
+            Check(monitor, "the Old Valley complete brings the bench, the velvet rope and the picture light",
+                gallery.All(g => who.mailForTomorrow.Contains(Social.MuseumCollection.RewardLetter(g.Item1))
+                    && mail[Social.MuseumCollection.RewardLetter(g.Item1)].Contains("(F)" + ModEntry.Id + "_" + g.Item2)
+                    && ItemRegistry.Create("(F)" + ModEntry.Id + "_" + g.Item2) is Furniture f && !f.DisplayName.Contains("Error")),
+                string.Join(", ", gallery.Select(g => ItemRegistry.Create("(F)" + ModEntry.Id + "_" + g.Item2).DisplayName)));
+            // ...and with nine donated, past six: the living painting, whose
+            // picture steps through its four frames.
+            string living = Social.MuseumCollection.RewardLetter("count-6");
+            Check(monitor, "six donated bring the living painting", Social.MuseumCollection.DonatedCount >= 6
+                && who.mailForTomorrow.Contains(living) && mail[living].Contains(LivingPainting.QualifiedId));
+            Check(monitor, "...whose picture moves", Enumerable.Range(0, 8).Select(i => LivingPainting.Frame(i * 350.0)).Distinct().Count() == 4
+                && Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>("Mods/" + ModEntry.Id + "/LivingPainting").Width == 128);
+
+            // Twelve: Margot's loupe, a ring that makes old paintings likelier.
+            foreach (var old in OldPaintings.All.Where(p => !Social.MuseumCollection.IsDonated(p.Id)).Take(12 - Social.MuseumCollection.DonatedCount))
+            {
+                var painting = Restored(old);
+                who.addItemToInventory(painting);
+                Social.MuseumCollection.Donate(who, gunther, painting, old);
+                (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+                gunther.CurrentDialogue.Clear();
+            }
+            string loupeLetter = Social.MuseumCollection.RewardLetter("count-12");
+            var loupe = ItemRegistry.Create("(O)" + OldPaintingFinds.LoupeId);
+            Check(monitor, "twelve donated bring Margot's loupe, worn as a ring", Social.MuseumCollection.DonatedCount == 12
+                && who.mailForTomorrow.Contains(loupeLetter) && mail[loupeLetter].Contains(OldPaintingFinds.LoupeId) && loupe is StardewValley.Objects.Ring,
+                $"{Social.MuseumCollection.DonatedCount} donated, {loupe.GetType().Name} '{loupe.DisplayName}'");
+            var leftRing = who.leftRing.Value;
+            try
+            {
+                float without = OldPaintingFinds.Chance(who, OldPaintingFinds.TreasureChance);
+                who.leftRing.Value = loupe as StardewValley.Objects.Ring;
+                float with = OldPaintingFinds.Chance(who, OldPaintingFinds.TreasureChance);
+                Check(monitor, "...and wearing it, old paintings turn up half as often again", Math.Abs(with - without * OldPaintingFinds.LoupeBoost) < 0.0001f && with > without, $"{without:0.000} -> {with:0.000}");
+            }
+            finally
+            {
+                who.leftRing.Value = leftRing;
+            }
         }
         finally
         {

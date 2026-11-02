@@ -42,6 +42,7 @@ public class ModEntry : Mod
         Social.FestivalPainting.Apply(harmony, helper);
         PaintingTags.Apply(harmony);
         OldPaintings.Register(helper);
+        LivingPainting.Register(helper);
         OldPaintingFinds.Apply(harmony);
         Social.MuseumCollection.Apply(harmony);
         Social.PaintingOrders.Apply(harmony);

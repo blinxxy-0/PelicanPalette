@@ -1,0 +1,27 @@
+{
+ "batch": "stardew-gallery-furniture",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/collection/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, pixel scale and colours of this room's furniture: square-on front view, dark coloured outlines",
+  "reference_usage": "camera and outline: square-on from the front, no side faces; keep this size and shape"
+ },
+ "jobs": {
+  "velvet_rope": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/collection/rope_guide.png",
+   "description": "Stardew Valley furniture, one object alone on a transparent background, seen square-on from the front, one tile is 16 pixels, dark coloured (not black) outlines: a museum velvet rope barrier, two polished brass posts with round tops and heavy round bases, a deep red velvet rope hanging in a curve between them"
+  },
+  "gallery_bench": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/collection/bench_guide.png",
+   "description": "Stardew Valley furniture, one object alone on a transparent background, seen square-on from the front with its seat seen from slightly above, no side faces, one tile is 16 pixels, dark coloured (not black) outlines: a museum gallery bench, a long padded seat in deep green leather with brass studs along the edge, on dark polished wooden legs, no back"
+  },
+  "picture_light": {
+   "image_size": {"width": 32, "height": 16},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/collection/light_guide.png",
+   "description": "Stardew Valley wall decoration, one object hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, dark coloured (not black) outlines: a brass picture light, a long thin brass lamp hood on a short curved arm, the kind hung above a painting in a gallery, a soft warm glow under its hood"
+  }
+ }
+}

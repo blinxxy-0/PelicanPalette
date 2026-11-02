@@ -44,6 +44,10 @@ internal static class MuseumCollection
         OldPaintings.Sets.Select(set => ("set-" + set, (Func<bool>)(() => SetDone(set))))
             .Concat(new (string, Func<bool>)[]
             {
+                // (The Old Valley's gallery furniture comes in three letters,
+                // a letter carrying one item.)
+                ("set-valley-rope", () => SetDone("valley")),
+                ("set-valley-light", () => SetDone("valley")),
                 ("count-6", () => DonatedCount >= 6),
                 ("count-12", () => DonatedCount >= 12),
                 ("count-21", () => DonatedCount >= OldPaintings.All.Length),

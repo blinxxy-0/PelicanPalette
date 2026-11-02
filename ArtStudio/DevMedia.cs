@@ -131,6 +131,17 @@ internal static class DevMedia
                 monitor.Log($"y{y,3}: " + string.Concat(Enumerable.Range(x0, x1 - x0 + 1).Select(x =>
                     location.isTilePassable(new xTile.Dimensions.Location(x, y), Game1.viewport) && !location.IsTileOccupiedBy(new Vector2(x, y)) ? '.' : '#')), LogLevel.Info);
         });
+        DevTools.AddCommand(helper, "museart_placef", "Places furniture in this location at a tile, for staging shots ('clear' takes it all out first). Usage: museart_placef (F)blinxxy.MuseArt_GalleryBench 5 5", (_, args) =>
+        {
+            if (args[0] == "clear")
+            {
+                Game1.currentLocation.furniture.Clear();
+                return;
+            }
+            var furniture = ItemRegistry.Create<StardewValley.Objects.Furniture>(args[0]);
+            furniture.TileLocation = new Vector2(int.Parse(args[1]), int.Parse(args[2]));
+            Game1.currentLocation.furniture.Add(furniture);
+        });
         DevTools.AddCommand(helper, "museart_actors", "Lists the playing event's actors and where they stand.", (_, _) =>
             monitor.Log("Actors: " + string.Join(", ", Game1.CurrentEvent?.actors.Select(a => $"{a.Name} {a.TilePoint}") ?? Array.Empty<string>()), LogLevel.Info));
         DevTools.AddCommand(helper, "museart_hangmargot", "Clears this room's furniture and hangs what Margot's 10-heart event gives for an answer, at the tiles given. Usage: museart_hangmargot EachOther 1 1 4 1 (or Window 3 1)", (_, args) =>

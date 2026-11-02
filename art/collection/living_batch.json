@@ -1,0 +1,15 @@
+{
+ "batch": "stardew-living-painting",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/collection/style_painting.png",
+  "style_usage": "the exact Stardew Valley style of this framed wall painting: square-on, a frame around a small painted picture, one tile is 16 pixels, dark coloured (not black) outlines"
+ },
+ "jobs": {
+  "living_painting": {
+   "image_size": {"width": 32, "height": 32},
+   "description": "Stardew Valley wall decoration, a framed old oil painting hung flat on a wall, square-on, alone on a transparent background, one tile is 16 pixels, an ornate old gilt frame, dark coloured (not black) outlines: an old painting of a river at dusk, a little stone mill on the far bank with one warmly lit window, the river wide across the lower half with pale light glinting on the water, a willow on the near bank, a deep blue evening sky"
+  }
+ }
+}

@@ -12,7 +12,52 @@
         "blinxxy.MuseArt_Collection_set-wreck": "{{i18n:mail.collection-wreck}} %item id (O)blinxxy.MuseArt_DriftwoodFrame 2 %%[#]{{i18n:mail.collection-wreck.title}}",
         "blinxxy.MuseArt_Collection_set-miners": "{{i18n:mail.collection-miners}} %item id (O)blinxxy.MuseArt_IronFrame 2 %%[#]{{i18n:mail.collection-miners.title}}",
         "blinxxy.MuseArt_Collection_set-calico": "{{i18n:mail.collection-calico}} %item id (O)blinxxy.MuseArt_SandstoneFrame 2 %%[#]{{i18n:mail.collection-calico.title}}",
-        "blinxxy.MuseArt_Collection_set-dwarvish": "{{i18n:mail.collection-dwarvish}} %item id (O)blinxxy.MuseArt_DwarvishFrame 2 %%[#]{{i18n:mail.collection-dwarvish.title}}"
+        "blinxxy.MuseArt_Collection_set-dwarvish": "{{i18n:mail.collection-dwarvish}} %item id (O)blinxxy.MuseArt_DwarvishFrame 2 %%[#]{{i18n:mail.collection-dwarvish.title}}",
+        // The Old Valley: the gallery's furniture, one piece to a letter (a
+        // letter carries one item).
+        "blinxxy.MuseArt_Collection_set-valley": "{{i18n:mail.collection-valley}} %item id (F)blinxxy.MuseArt_GalleryBench 1 %%[#]{{i18n:mail.collection-valley.title}}",
+        "blinxxy.MuseArt_Collection_set-valley-rope": "{{i18n:mail.collection-valley-rope}} %item id (F)blinxxy.MuseArt_VelvetRope 1 %%[#]{{i18n:mail.collection-valley-rope.title}}",
+        "blinxxy.MuseArt_Collection_set-valley-light": "{{i18n:mail.collection-valley-light}} %item id (F)blinxxy.MuseArt_PictureLight 1 %%[#]{{i18n:mail.collection-valley-light.title}}",
+        // Six donated: the living painting.
+        "blinxxy.MuseArt_Collection_count-6": "{{i18n:mail.collection-6}} %item id (F)blinxxy.MuseArt_LivingPainting 1 %%[#]{{i18n:mail.collection-6.title}}",
+        // Twelve: Margot's loupe.
+        "blinxxy.MuseArt_Collection_count-12": "{{i18n:mail.collection-12}} %item id (O)blinxxy.MuseArt_MargotsLoupe 1 %%[#]{{i18n:mail.collection-12.title}}"
+      }
+    },
+    // Margot's loupe: worn like a ring (a trinket needs Combat Mastery's slot,
+    // out of most painters' reach), and while it's on, old paintings turn up
+    // half as often again (ArtStudio/Painting/OldPaintingFinds.cs).
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/Loupe", "FromFile": "assets/collection/loupe.png" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "blinxxy.MuseArt_MargotsLoupe": {
+          "Name": "blinxxy.MuseArt_MargotsLoupe",
+          "DisplayName": "{{i18n:item.loupe}}",
+          "Description": "{{i18n:item.loupe.description}}",
+          "Type": "Ring",
+          "Category": -96,
+          "Price": 1500,
+          "Texture": "Mods/blinxxy.MuseArt/Loupe",
+          "SpriteIndex": 0,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/Gallery", "FromFile": "assets/collection/gallery.png" },
+    // (Four frames side by side: ArtStudio/Painting/LivingPainting.cs steps through them.)
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/LivingPainting", "FromFile": "assets/collection/living.png" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Furniture",
+      "Entries": {
+        // name/type/sheet size/bounding box/rotations/price/placement/display name/sprite index/texture/off limits for sale
+        "blinxxy.MuseArt_VelvetRope": "blinxxy.MuseArt_VelvetRope/decor/2 2/2 1/1/500/-1/{{i18n:item.velvet-rope}}/0/Mods\\blinxxy.MuseArt\\Gallery/true",
+        "blinxxy.MuseArt_GalleryBench": "blinxxy.MuseArt_GalleryBench/bench/2 2/2 1/1/750/-1/{{i18n:item.gallery-bench}}/2/Mods\\blinxxy.MuseArt\\Gallery/true",
+        "blinxxy.MuseArt_PictureLight": "blinxxy.MuseArt_PictureLight/painting/2 1/2 1/1/500/-1/{{i18n:item.picture-light}}/4/Mods\\blinxxy.MuseArt\\Gallery/true",
+        "blinxxy.MuseArt_LivingPainting": "blinxxy.MuseArt_LivingPainting/painting/2 2/2 2/1/2000/-1/{{i18n:item.living-painting}}/0/Mods\\blinxxy.MuseArt\\LivingPainting/true"
       }
     },
     {
