@@ -1,0 +1,17 @@
+{
+ "batch": "stardew-margot-spouse",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, pixel scale and colours of this room's furniture: square-on front view, wood ramps, dark coloured outlines",
+  "reference_usage": "camera and outline: square-on from the front, no side faces; keep this size and shape, bottom edge on the ground"
+ },
+ "jobs": {
+  "drying_rack": {
+   "image_size": {"width": 32, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/spouse/rack_guide.png",
+   "description": "Stardew Valley furniture for a farmhouse patio, one object alone on a transparent background, drawn square-on from the front, no side faces visible at all, one tile is 16 pixels, warm wood colours, dark coloured (not black) outlines: a simple wooden drying rack, two tiles wide and two tall, three shelves, with small freshly painted canvases standing on the shelves: tiny flowers, a little landscape, a cat, a bowl of fruit, each painted in bright simple colours"
+  }
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "batch": "stardew-margot-spouse2",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, pixel scale and colours of this room's furniture and rug, wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "rug": {
+   "image_size": {"width": 48, "height": 32},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/spouse/rug_guide.png",
+   "reference_usage": "shape: a flat rectangular rug lying on the floor seen from above, filling this outline",
+   "description": "Stardew Valley interior rug, one flat rug alone on a transparent background, seen from above lying flat on the floor, three tiles wide and two tall, one tile is 16 pixels, dark coloured (not black) outline: an old faded woven rug in sage green, cream and soft brass gold, a border of little repeating leaves, slightly worn at one corner"
+  },
+  "conservation_easel": {
+   "image_size": {"width": 32, "height": 48},
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/spouse/easel_guide.png",
+   "reference_usage": "camera and outline: square-on from the front, no side faces; keep this size and shape, legs on the floor",
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, drawn square-on from the front, no side faces visible at all, one tile is 16 pixels, warm wood colours, dark coloured (not black) outlines: a sturdy wooden studio easel holding an old landscape painting being restored, the left half of the painting cleaned bright and the right half still dark and yellowed, a strip of paper tape along one edge"
+  }
+ }
+}

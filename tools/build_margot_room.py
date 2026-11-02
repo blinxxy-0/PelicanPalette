@@ -66,6 +66,13 @@ SOURCES = {
     "mirror":   ("stardew-margot-guest", "mirror", 1),
     "picture":  ("stardew-margot-guest", "valley_picture", 11),
     "sampler":  ("stardew-margot-guest", "sampler", 3),
+    # Married: the drying rack of her own small canvases, on the patio
+    # (tools/build_margot_spouse_areas.py).
+    "drying":   ("stardew-margot-spouse", "drying_rack", 13),
+    # ...and in her corner of the farmhouse, a rug and the easel with a
+    # painting half cleaned.
+    "rug":      ("stardew-margot-spouse2", "rug", 1),
+    "easel":    ("stardew-margot-spouse2", "conservation_easel", 3),
 }
 # The mod's wallpapers, in order (Wallpapers.png): her damask, then the
 # guest room's candidates.

@@ -33,6 +33,15 @@
           "FlowerDanceCanDance": true,
           "KissSpriteIndex": 28,
           "KissSpriteFacingRight": true,
+          // Married: her conservation corner in the farmhouse (her restoration
+          // table, where she stands), and on the patio an easel and a rack of
+          // her own small canvases (she paints there from behind: frames 32-34).
+          "SpouseRoom": { "MapAsset": "blinxxy.MuseArt_MargotSpouseRoom", "MapSourceRect": { "X": 0, "Y": 0, "Width": 6, "Height": 9 } },
+          "SpousePatio": {
+            "MapAsset": "blinxxy.MuseArt_MargotSpousePatio",
+            "MapSourceRect": { "X": 0, "Y": 0, "Width": 4, "Height": 4 },
+            "SpriteAnimationFrames": [ [ 32, 300 ], [ 32, 300 ], [ 33, 300 ], [ 33, 300 ], [ 32, 300 ], [ 33, 300 ], [ 34, 1500 ] ]
+          },
           // A coat and scarf outdoors in winter, linen on Ginger Island.
           "Appearance": [
             { "Id": "Winter", "Season": "Winter", "Indoors": false, "Outdoors": true, "Portrait": "Portraits/MargotPell_Winter", "Sprite": "Characters/MargotPell_Winter" },
@@ -76,6 +85,8 @@
     // arcade's wall, in vanilla and in Stardew Valley Expanded alike; only
     // the steps' own tiles change, so SVE's storeroom floor stays its own.
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_MargotRoom", "FromFile": "assets/MargotRoom.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_MargotSpouseRoom", "FromFile": "assets/MargotSpouseRoom.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_MargotSpousePatio", "FromFile": "assets/MargotSpousePatio.tmx" },
     // Once she's moved to her cottage, Gus makes it his guest room: the
     // whole room laid over hers (new furniture, and new walls the game
     // papers afresh). An edit, not a second Load: the location is created
@@ -225,6 +236,10 @@
     },
     { "Action": "Include", "FromFile": "data/margot_dialogue.json" },
     // Her heart events (tools/build_margot_events.py, from docs/margot_events.md).
-    { "Action": "Include", "FromFile": "data/margot_events.json" }
+    { "Action": "Include", "FromFile": "data/margot_events.json" },
+    // Her wedding (tools/build_margot_wedding.py).
+    { "Action": "Include", "FromFile": "data/margot_wedding.json" },
+    // Her engagement and married lines (tools/build_margot_marriage.py).
+    { "Action": "Include", "FromFile": "data/margot_marriage.json" }
   ]
 }

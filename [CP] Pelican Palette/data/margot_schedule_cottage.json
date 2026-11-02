@@ -4,5 +4,15 @@
   // from the Saloon, so she leaves at 7 to be there by 9.
   "default": "700 ArchaeologyHouse 18 13 2/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2",
   "rain": "700 ArchaeologyHouse 18 13 2/2000 blinxxy.MuseArt_MargotCottage 7 5 2",
-  "Sun": "900 Beach 40 22 2/1500 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2"
+  "Sun": "900 Beach 40 22 2/1500 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2",
+  // Married (docs/margot_marriage.md): she keeps her museum hours, Monday to
+  // Saturday, from the farm (married villagers start the day at the farm),
+  // and on Sundays sketches at the river bend from her 8-hearts event.
+  "marriage_Mon": "730 ArchaeologyHouse 18 13 2/1700 bed",
+  "marriage_Tue": "730 ArchaeologyHouse 18 13 2/1700 bed",
+  "marriage_Wed": "730 ArchaeologyHouse 18 13 2/1700 bed",
+  "marriage_Thu": "730 ArchaeologyHouse 18 13 2/1700 bed",
+  "marriage_Fri": "730 ArchaeologyHouse 18 13 2/1700 bed",
+  "marriage_Sat": "730 ArchaeologyHouse 18 13 2/1700 bed",
+  "marriage_Sun": "900 Forest 87 38 2/1500 bed"
 }

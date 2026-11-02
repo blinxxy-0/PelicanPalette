@@ -194,7 +194,7 @@ internal static class DevGame
             monitor.Log($"Portrait: '{painting.DisplayName}', framed as '{framed.DisplayName}': {framed.getDescription().Replace("\n", " ")}", LogLevel.Info);
         });
         DevTools.AddCommand(helper, "museart_marry", "Throwaway farm only: marries the farmer to Sable (house upgraded), lays out the spouse room and patio, and puts Sable in their room. 'patio' puts them at the patio instead.", (_, args) => Marry(monitor, args));
-        DevTools.AddCommand(helper, "museart_wedding", "Throwaway farm only: plays the wedding to Sable (as on the wedding morning).", (_, _) => Wedding(monitor));
+        DevTools.AddCommand(helper, "museart_wedding", "Throwaway farm only: plays the wedding to Sable (as on the wedding morning); 'npc:MargotPell' to someone else.", (_, args) => Wedding(monitor, args));
         DevTools.AddCommand(helper, "museart_export_weddings", "Writes Data/Weddings to the exports folder as JSON.", (_, _) =>
         {
             string dir = System.IO.Path.Combine(helper.DirectoryPath, "exports");
@@ -734,12 +734,18 @@ internal static class DevGame
         // Every schedule entry is walkable, and she's at the museum by 9.
         var home = margot.currentLocation;
         var homeTile = margot.TilePoint;
+        // (Married, the game starts her day at the Bus Stop (10, 23), as for
+        // any spouse going out, and her day's one stop is before bed.)
         foreach (var (key, script) in margot.getMasterScheduleRawData())
         {
             var problems = new System.Collections.Generic.List<string>();
-            string from = margot.DefaultMap;
-            var at = (margot.DefaultPosition / 64).ToPoint();
-            foreach (var stop in margot.parseMasterSchedule(key, script).OrderBy(p => p.Key).Select(p => p.Value))
+            bool married = key.StartsWith("marriage");
+            string from = married ? "BusStop" : margot.DefaultMap;
+            var at = married ? new Point(10, 23) : (margot.DefaultPosition / 64).ToPoint();
+            var stops = married
+                ? new[] { script.Split('/')[0].Split(' ') }.Select(f => (time: int.Parse(f[0]), targetLocationName: f[1], targetTile: new Point(int.Parse(f[2]), int.Parse(f[3]))))
+                : margot.parseMasterSchedule(key, script).OrderBy(p => p.Key).Select(p => (time: p.Key, p.Value.targetLocationName, p.Value.targetTile));
+            foreach (var stop in stops)
             {
                 int tiles = 0;
                 var locations = from == stop.targetLocationName ? new[] { from }
@@ -758,7 +764,10 @@ internal static class DevGame
                 if (stop.targetLocationName == "ArchaeologyHouse")
                 {
                     int arrives = Utility.ModifyTime(stop.time, WalkMinutes(tiles));
-                    Check(monitor, $"schedule '{key}': at the museum by 9", arrives <= 900, $"leaves {stop.time}, {tiles} tiles, there at {arrives}");
+                    // (Married, it's a long walk from the farm: she stays for
+                    // breakfast and is there mid-morning.)
+                    int by = married ? 1030 : 900;
+                    Check(monitor, $"schedule '{key}': at the museum by {by}", arrives <= by, $"leaves {stop.time}, {tiles} tiles, there at {arrives}");
                 }
                 from = stop.targetLocationName;
                 at = stop.targetTile;
@@ -805,6 +814,15 @@ internal static class DevGame
         Check(monitor, "'paint the window': the north window", windows.Count == 1 && windows[0].DisplayName == "North Window, by Margot and You",
             string.Join(", ", windows.Select(p => p.DisplayName)));
         who.mailReceived.Remove(window);
+        // Engaged and married: her bouquet and pendant answers, and her married lines.
+        var engagement = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/EngagementDialogue");
+        Check(monitor, "she answers the bouquet and the pendant", dialogue.ContainsKey("AcceptBouquet")
+            && engagement.TryGetValue(Social.Margot.Name + "0", out string? yes) && yes.Contains("new card")
+            && engagement.ContainsKey(Social.Margot.Name + "1"), dialogue.TryGetValue("AcceptBouquet", out string? bouquet) ? bouquet : "no bouquet line");
+        var marriage = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Characters/Dialogue/MarriageDialogue" + Social.Margot.Name);
+        Check(monitor, "she has her married lines, her room's and her patio's among them",
+            marriage.Count >= 50 && marriage.ContainsKey("spouseRoom_" + Social.Margot.Name) && marriage.ContainsKey("patio_" + Social.Margot.Name)
+            && marriage.Values.All(v => !v.Contains("{{") && v.Length > 10), $"{marriage.Count} lines");
         // Her mastery test: offered with the bar full, passed at gold, and she
         // keeps the painting.
         bool hadMastery = who.mailReceived.Contains(OldPaintings.MasteryFlag);
@@ -3184,6 +3202,9 @@ internal static class DevGame
         AddAll("Characters/Dialogue/JulianVane", Social.Julian.Name);
         AddAll("Characters/Dialogue/rainy", "Sable", k => k == "Sable");
         AddAll("Data/EngagementDialogue", "Sable", k => k.StartsWith("Sable"));
+        AddAll("Characters/Dialogue/" + Social.Margot.Name, Social.Margot.Name);
+        AddAll("Characters/Dialogue/MarriageDialogue" + Social.Margot.Name, Social.Margot.Name);
+        AddAll("Data/EngagementDialogue", Social.Margot.Name, k => k.StartsWith(Social.Margot.Name));
         foreach (string festival in new[] { "spring13", "spring24", "summer11", "summer28", "fall16", "fall27", "winter8", "winter25" })
             AddAll("Data/Festivals/" + festival, "Sable", k => k == "Sable");
         // What's on the yard easel (each of the six, not just today's), and
@@ -3285,23 +3306,24 @@ internal static class DevGame
         if (args.FirstOrDefault() == "patio")
         {
             sable.setUpForOutdoorPatioActivity();
-            monitor.Log($"Sable is on the patio at {sable.TilePoint} (spot {Game1.getFarm().spousePatioSpot}).", LogLevel.Info);
+            monitor.Log($"{name} is on the patio at {sable.TilePoint} (spot {Game1.getFarm().spousePatioSpot}).", LogLevel.Info);
         }
         else
         {
             var spot = house.GetSpouseRoomSpot();
             Game1.warpCharacter(sable, house, spot.ToVector2());
-            monitor.Log($"Married. Sable is in the spouse room at {spot}.", LogLevel.Info);
+            monitor.Log($"Married. {name} is in the spouse room at {spot}.", LogLevel.Info);
         }
     }
 
-    private static void Wedding(IMonitor monitor)
+    private static void Wedding(IMonitor monitor, string[] args)
     {
         if (!Context.IsWorldReady || Constants.CurrentSavePath != null) return;      // never on a real save
         var who = Game1.player;
+        string name = args.FirstOrDefault(a => a.StartsWith("npc:"))?.Substring(4) ?? "Sable";
         // On the morning of the wedding the game has already switched you from engaged to married.
-        who.friendshipData["Sable"] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
-        who.spouse = "Sable";
+        who.friendshipData[name] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
+        who.spouse = name;
         who.HouseUpgradeLevel = Math.Max(1, who.HouseUpgradeLevel);   // as the pendant requires
         var wedding = Utility.getWeddingEvent(who);
         if (wedding == null)

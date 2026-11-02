@@ -123,6 +123,16 @@ internal static class DevMedia
             Game1.player.Position = new Vector2(int.Parse(args[0]), int.Parse(args[1])) * 64f);
         DevTools.AddCommand(helper, "museart_wallpaper", "Papers this room's walls with a wallpaper, to compare them. Usage: museart_wallpaper blinxxy.MuseArt_Wallpapers:2", (_, args) =>
             (Game1.currentLocation as StardewValley.Locations.DecoratableLocation)?.SetWallpaper(args[0], null));
+        DevTools.AddCommand(helper, "museart_passable", "Logs which tiles of this location the farmer can walk on ('.') or not ('#'), row by row. Usage: museart_passable 28 0 35 9", (_, args) =>
+        {
+            int x0 = int.Parse(args[0]), y0 = int.Parse(args[1]), x1 = int.Parse(args[2]), y1 = int.Parse(args[3]);
+            var location = Game1.currentLocation;
+            for (int y = y0; y <= y1; y++)
+                monitor.Log($"y{y,3}: " + string.Concat(Enumerable.Range(x0, x1 - x0 + 1).Select(x =>
+                    location.isTilePassable(new xTile.Dimensions.Location(x, y), Game1.viewport) && !location.IsTileOccupiedBy(new Vector2(x, y)) ? '.' : '#')), LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_actors", "Lists the playing event's actors and where they stand.", (_, _) =>
+            monitor.Log("Actors: " + string.Join(", ", Game1.CurrentEvent?.actors.Select(a => $"{a.Name} {a.TilePoint}") ?? Array.Empty<string>()), LogLevel.Info));
         DevTools.AddCommand(helper, "museart_hangmargot", "Clears this room's furniture and hangs what Margot's 10-heart event gives for an answer, at the tiles given. Usage: museart_hangmargot EachOther 1 1 4 1 (or Window 3 1)", (_, args) =>
         {
             var who = Game1.player;
