@@ -116,7 +116,11 @@
       "Target": "Maps/Forest",
       "FromFile": "assets/ArtShopExteriorPatch.tmx",
       "ToArea": { "X": 76, "Y": 27, "Width": 13, "Height": 12 },
-      "PatchMode": "Overlay"
+      "PatchMode": "Overlay",
+      // Last, after other mods' forest edits: Alec Revisited's house patch
+      // (Forest 70-83, 19-31, a Replace) and its SVE patch otherwise paint
+      // over the shop's roof and left side (2026-11-03, reported on Nexus).
+      "Priority": "Late"
     },
 
     // Sable's stall at the Night Market (1.2): their skiff below the bridge

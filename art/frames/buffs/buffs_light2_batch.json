@@ -1,0 +1,18 @@
+{
+ "batch": "frame-buffs-light2",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "image_size": {
+   "width": 16,
+   "height": 16
+  },
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/frames/buffs/style_buffs.png",
+  "style_usage": "the exact style of these Stardew Valley buff icons: 16 by 16 pixel rounded tiles with a darker coloured border, flat coloured backgrounds and one bold symbol each"
+ },
+ "jobs": {
+  "light": {
+   "description": "a Stardew Valley buff icon, exactly 16 by 16 pixels, filling the whole square: a rounded square tile with a darker coloured border (not black), a flat coloured background, and one bold simple symbol in the middle with a bright highlight, like the game's own buff icons: a bright golden yellow sun with short rays and a white highlight, on a light sky blue tile"
+  }
+ }
+}

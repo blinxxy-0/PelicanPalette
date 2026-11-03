@@ -1,7 +1,7 @@
 ## Canvases
 | | Canvas | Cells | Unlocks | Techniques | Recipe | Art shop |
 |---|---|---|---|---|---|---|
-| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Small.png" width="32"> | **Small Canvas** | 20x20 | Start | Flat colour | <img src="images/icons/O-771.png" width="24"> Fiber (5)<br><img src="images/icons/O-388.png" width="24"> Wood (2) | 25g |
+| <img src="images/icons/O-blinxxy.MuseArt_Canvas_Small.png" width="32"> | **Small Canvas** | 20x20 | Start | Plain paint | <img src="images/icons/O-771.png" width="24"> Fiber (5)<br><img src="images/icons/O-388.png" width="24"> Wood (2) | 25g |
 | <img src="images/icons/O-blinxxy.MuseArt_Canvas_Medium.png" width="32"> | **Medium Canvas** | 28x28 | Level 4 | Glazing | <img src="images/icons/O-428.png" width="24"> Cloth (1)<br><img src="images/icons/O-388.png" width="24"> Wood (5) | 80g |
 | <img src="images/icons/O-blinxxy.MuseArt_Canvas_Large.png" width="32"> | **Large Canvas** | 36x36 | Level 7 | Glazing and highlights | <img src="images/icons/O-428.png" width="24"> Cloth (2)<br><img src="images/icons/O-709.png" width="24"> Hardwood (3) | 200g |
 | <img src="images/icons/O-blinxxy.MuseArt_Linen_Medium.png" width="32"> | **Linen Canvas (Medium)** | 28x28 | Level 8 | As medium, and Masterpieces | <img src="images/icons/O-428.png" width="24"> Cloth (2)<br><img src="images/icons/O-709.png" width="24"> Hardwood (2) | 500g |
@@ -36,7 +36,7 @@ A few of the brightest spots (the shine on a gem, the light in an eye) take a **
 ### How techniques are scored
 On a canvas with glazes or highlights, the results add a **Technique** rating: how many of them you put in the right places, and how few in the wrong ones (a cell out is forgiven). A painting with no techniques at all loses about a star. See [Quality and Masterpieces](Quality-and-Masterpieces).
 
-On **Relaxed**, references are flat colour, but from a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as on Normal.
+With **Simple pictures** on (above the reference on the easel, or in the config; any difficulty), references are plain paint only, but from a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as on Normal.
 
 ## Linen
 From Painting level 8, linen canvases (medium and large) paint like any other. They're the only canvas a **Masterpiece** can be painted on; see [Quality and Masterpieces](Quality-and-Masterpieces). On the setup screen, the **Linen** button next to the canvas sizes switches to linen.

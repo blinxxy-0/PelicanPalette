@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -68,9 +71,29 @@ internal static class Frames
         public float ThriftChance => Get(FrameTrait.Thrift) * ThriftStep;
         public float Learning => 1f + Get(FrameTrait.Learning) * LearningStep;
         public float Value => 1f + Get(FrameTrait.Value) * ValueStep;
+
+        // Each trait the room gives, as a percentage, in the traits' order.
+        public IEnumerable<(FrameTrait Trait, float Percent)> Bonuses() =>
+            Enum.GetValues<FrameTrait>().Where(t => Get(t) > 0).Select(t => (t, Get(t) * Step(t) * 100f));
     }
 
+    public static float Step(FrameTrait trait) => trait switch
+    {
+        FrameTrait.Light => LightStep,
+        FrameTrait.Night => NightStep,
+        FrameTrait.Sparks => SparksStep,
+        FrameTrait.Thrift => ThriftStep,
+        FrameTrait.Learning => LearningStep,
+        _ => ValueStep,
+    };
+
     public static readonly Studio None = new();
+
+    // Each trait's icon, like the game's buff icons (tools/art/frame_buffs.py),
+    // in FrameTrait's order.
+    public static Texture2D? Icons { get; private set; }
+    public static void LoadIcons(IModHelper helper) => Icons = helper.ModContent.Load<Texture2D>("assets/frame_buffs.png");
+    public static Rectangle IconSource(FrameTrait trait) => new((int)trait * 16, 0, 16, 16);
 
     // The room's framed paintings: the three strongest, by rarity.
     public static Studio For(GameLocation? location)

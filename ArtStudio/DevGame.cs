@@ -21,10 +21,12 @@ namespace ArtStudio;
 internal static class DevGame
 {
     private static IModHelper _helper = null!;
+    private static IMonitor _log = null!;
 
     public static void Register(IModHelper helper, IMonitor monitor)
     {
         _helper = helper;
+        _log = monitor;
         // SpaceCore loads skill XP from the save folder, which a never-saved
         // farm doesn't have; give it an empty XP table instead, right after
         // its own save-loaded handler gives up (and before the day starts).
@@ -2699,15 +2701,15 @@ internal static class DevGame
 
         // References: flat on a small canvas, glazed on a medium one, highlights on a large one.
         string[] subjects = { "(O)254", "(O)276", "(O)72", "(O)66", "(O)613", "(O)400", "(O)252", "(O)268" };
-        Reference Ref(string id, CanvasKind k, Difficulty d = Difficulty.Normal) =>
-            ReferenceBuilder.StillLife(new[] { id }, Size(k), all, PaintingRules.TechniquesFor(Size(k), d == Difficulty.Relaxed));
+        Reference Ref(string id, CanvasKind k, bool simple = false) =>
+            ReferenceBuilder.StillLife(new[] { id }, Size(k), all, PaintingRules.TechniquesFor(Size(k), simple));
         int glazedMedium = subjects.Count(id => Technique.Count(Ref(id, CanvasKind.Medium).Marks, Mark.Glaze) > 0);
         int highlightedLarge = subjects.Count(id => Technique.Count(Ref(id, CanvasKind.Large).Marks, Mark.Highlight) > 0);
         Check(monitor, "a small canvas is flat colour", subjects.All(id => !Ref(id, CanvasKind.Small).UsesTechniques));
         Check(monitor, "medium references have glazes", glazedMedium >= subjects.Length / 2, $"{glazedMedium} of {subjects.Length}");
         Check(monitor, "only large ones have highlights", highlightedLarge > 0 && subjects.All(id => Technique.Count(Ref(id, CanvasKind.Medium).Marks, Mark.Highlight) == 0),
             $"{highlightedLarge} of {subjects.Length} large");
-        Check(monitor, "relaxed paints flat", subjects.All(id => !Ref(id, CanvasKind.Large, Difficulty.Relaxed).UsesTechniques));
+        Check(monitor, "simple pictures are flat", subjects.All(id => !Ref(id, CanvasKind.Large, simple: true).UsesTechniques));
         foreach (string id in subjects.Take(4))
         {
             var r = Ref(id, CanvasKind.Large);
@@ -2757,28 +2759,35 @@ internal static class DevGame
         bare.DevFinish(false);
         Check(monitor, "with the glazes left out, it doesn't", bare.DevPainting != null && PaintingData.GlazedOf(bare.DevPainting) == false);
 
-        // Relaxed (1.1.5): flat references, but the Glaze tool from a medium
-        // canvas, and a glazed commission's reference asks for its glazes.
+        // Relaxed keeps the whole picture (1.3).
         ModEntry.Config.Difficulty = Difficulty.Relaxed;
         Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+        Check(monitor, "relaxed: glazes and highlights, as on Normal",
+            EaselMenu.StartStillLife(who, CanvasKind.Large, new[] { "(O)254" }).DevReference!.UsesTechniques);
+
+        // Simple pictures (Relaxed's until 1.3, 1.1.5): flat references, but
+        // the Glaze tool from a medium canvas, and a glazed commission's
+        // reference asks for its glazes.
+        ModEntry.Config.SimplePictures = true;
         var relaxedMedium = EaselMenu.StartStillLife(who, CanvasKind.Medium, new[] { "(O)254" });
         var relaxedLarge = EaselMenu.StartStillLife(who, CanvasKind.Large, new[] { "(O)254" });
-        Check(monitor, "relaxed: flat references", !relaxedMedium.DevReference!.UsesTechniques && !relaxedLarge.DevReference!.UsesTechniques);
-        Check(monitor, "relaxed: the Glaze tool from a medium canvas, no highlights",
+        Check(monitor, "simple: flat references", !relaxedMedium.DevReference!.UsesTechniques && !relaxedLarge.DevReference!.UsesTechniques);
+        Check(monitor, "simple: the Glaze tool from a medium canvas, no highlights",
             relaxedMedium.DevToolAvailable(PaintTool.Glaze) && !relaxedLarge.DevToolAvailable(PaintTool.Highlight)
             && !EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" }).DevToolAvailable(PaintTool.Glaze));
         relaxedMedium.DevPaintPartly(1f, 3);
         relaxedMedium.DevFinish(false);
-        Check(monitor, "relaxed: a flat painting isn't a glazed one", relaxedMedium.DevPainting != null && PaintingData.GlazedOf(relaxedMedium.DevPainting) == false);
+        Check(monitor, "simple: a flat painting isn't a glazed one", relaxedMedium.DevPainting != null && PaintingData.GlazedOf(relaxedMedium.DevPainting) == false);
         Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission> {
             new() { Npc = "Pierre", ItemId = "(O)254", MinQuality = PaintingRules.Silver, Reward = 100, ExpiresOn = Game1.Date.TotalDays + 5, Accepted = true, Requirement = Shop.Commissions.Glazed } });
         var forPierre = EaselMenu.StartStillLife(who, CanvasKind.Large, new[] { "(O)254" });
-        Check(monitor, "relaxed: a glazed commission asks for glazes, not highlights",
+        Check(monitor, "simple: a glazed commission asks for glazes, not highlights",
             Technique.Count(forPierre.DevReference!.Marks, Mark.Glaze) > 0 && Technique.Count(forPierre.DevReference.Marks, Mark.Highlight) == 0);
         forPierre.DevPaintPartly(1f, 3);
         forPierre.DevFinish(false);
-        Check(monitor, "relaxed: glazed to it, it's a glazed painting", forPierre.DevPainting != null && PaintingData.GlazedOf(forPierre.DevPainting) == true);
+        Check(monitor, "simple: glazed to it, it's a glazed painting", forPierre.DevPainting != null && PaintingData.GlazedOf(forPierre.DevPainting) == true);
         Shop.Commissions.Save(who, new System.Collections.Generic.List<Shop.Commission>());
+        ModEntry.Config.SimplePictures = false;
         ModEntry.Config.Difficulty = Difficulty.Normal;
 
         // Masterpieces: only on linen, only when everything's right.
@@ -2943,7 +2952,7 @@ internal static class DevGame
         if (!Context.IsWorldReady) return;
         if (args.FirstOrDefault() == "restore")
         {
-            if (_modeBefore is Difficulty before) { ModEntry.Config.Difficulty = before; ModEntry.SaveConfig(); }
+            if (_modeBefore is Difficulty before) { ModEntry.Config.Difficulty = before; ModEntry.Config.SimplePictures = false; ModEntry.SaveConfig(); }
             Game1.exitActiveMenu();
             return;
         }
@@ -2969,6 +2978,40 @@ internal static class DevGame
         Check(monitor, "...which the painting about to begin uses", menu.DevTimed);
         string saved = System.IO.File.ReadAllText(System.IO.Path.Combine(_helper.DirectoryPath, "config.json"));
         Check(monitor, "...and it's saved", saved.Contains("\"Difficulty\": \"Normal\""));
+
+        // Simple pictures (1.3): Relaxed keeps the whole picture, and the
+        // toggle under the mode flattens it in any mode.
+        ModEntry.Config.Difficulty = Difficulty.Relaxed;
+        ModEntry.Config.SimplePictures = false;
+        int levelWas = ArtProgress.Level(Game1.player);
+        ArtProgress.SetLevel(Game1.player, 10);
+        menu = new EaselMenu(Game1.player);
+        menu.DevSetCanvas(CanvasKind.Large);
+        menu.DevSetup("(O)254");
+        Game1.activeClickableMenu = menu;
+        Draw();
+        Check(monitor, "Relaxed keeps glazes and highlights", menu.DevPreview?.UsesTechniques == true);
+        var simple = menu.DevSimpleButton;
+        Check(monitor, "the simple pictures toggle is there", simple != Rectangle.Empty);
+        menu.receiveLeftClick(simple.Center.X, simple.Center.Y);
+        Check(monitor, "clicking it turns simple pictures on", ModEntry.Config.SimplePictures);
+        Check(monitor, "...and the reference goes flat", menu.DevPreview is { UsesTechniques: false });
+        saved = System.IO.File.ReadAllText(System.IO.Path.Combine(_helper.DirectoryPath, "config.json"));
+        Check(monitor, "...and it's saved", saved.Contains("\"SimplePictures\": true"));
+        ModEntry.Config.Difficulty = Difficulty.Hard;
+        menu = new EaselMenu(Game1.player);
+        menu.DevSetCanvas(CanvasKind.Large);
+        menu.DevSetup("(O)254");
+        Check(monitor, "...in any mode", menu.DevPreview is { UsesTechniques: false });
+        Check(monitor, "the toggle knows it changes a large melon, even while on", menu.DevSimpleChanges);
+        menu = new EaselMenu(Game1.player);
+        menu.DevSetCanvas(CanvasKind.Small);
+        menu.DevSetup("(O)254");
+        Check(monitor, "...and that a small canvas looks the same either way", !menu.DevSimpleChanges);
+        ModEntry.Config.SimplePictures = false;
+        ModEntry.SaveConfig();
+        ArtProgress.SetLevel(Game1.player, levelWas);
+
         // Back to Relaxed for the screenshot, hovering the button.
         ModEntry.Config.Difficulty = Difficulty.Relaxed;
         menu = new EaselMenu(Game1.player);
@@ -3180,6 +3223,10 @@ internal static class DevGame
         var atEasel = new EaselMenu(who, easelTile: easelTile);
         Check(monitor, "...and an easel in the room has more light for it", atEasel.DevStudio.Get(FrameTrait.Light) == 3
             && Math.Abs(atEasel.DevLightMultiplier / bare - (1f + 3 * Frames.LightStep)) < 0.001f, $"{bare:0.000} -> {atEasel.DevLightMultiplier:0.000}");
+        var bonuses = atEasel.DevStudio.Bonuses().ToList();
+        Check(monitor, "the setup screen can say what the room gives, in percent",
+            bonuses.Count == 3 && bonuses.Any(f => f.Trait == FrameTrait.Thrift && Math.Abs(f.Percent - 6f) < 0.01f) && bonuses.Any(f => f.Trait == FrameTrait.Light && Math.Abs(f.Percent - 6f) < 0.01f),
+            string.Join(", ", bonuses.Select(f => $"{f.Trait} {f.Percent:0.#}%")));
         Game1.exitActiveMenu();
         foreach (var f in house.furniture.Where(ArtItems.IsFramed).ToList())
             house.furniture.Remove(f);
@@ -3684,6 +3731,63 @@ internal static class DevGame
                 break;
             case "board":
                 Game1.activeClickableMenu = new Shop.CommissionBoardMenu(Game1.player);
+                break;
+            case "studio":
+                // The setup screen at an easel in a room with framed paintings
+                // hung (museart_menu studio [none] [full] [all] [subject]): its frame bonus line;
+                // "all" befriends everyone and kills every monster, for the busiest screen.
+                {
+                    var room = Game1.currentLocation;
+                    foreach (var f in room.furniture.Where(ArtItems.IsFramed).ToList())
+                        room.furniture.Remove(f);
+                    if (args.ElementAtOrDefault(1) != "none")
+                        foreach (var (style, x) in args.Contains("b")
+                                     ? new[] { (ArtItems.FrameStyles.First(f => f.Id == "driftwood"), 3), (ArtItems.FrameStyles.First(f => f.Id == "gold-leaf"), 6), (ArtItems.Moonlit, 9) }
+                                     : new[] { (ArtItems.Sandstone, 3), (ArtItems.MoreFrame("walnut"), 6), (ArtItems.Dwarvish, 9) })
+                        {
+                            var m = EaselMenu.StartStillLife(Game1.player, CanvasKind.Small, new[] { "(O)254" });
+                            m.DevPaintPartly(1f, 3);
+                            m.DevFinish(false);
+                            var framed = ArtHooks.Frame(m.DevPainting!, style);
+                            framed.TileLocation = new Vector2(x, 1);
+                            room.furniture.Add(framed);
+                        }
+                    if (args.Contains("full"))
+                    {
+                        // A full bag of things to paint, for the busiest layout.
+                        if (Game1.player.MaxItems < 36) Game1.player.increaseBackpackSize(36 - Game1.player.MaxItems);
+                        foreach (int id in new[] { 24, 188, 190, 192, 248, 250, 252, 254, 256, 258, 260, 262, 264, 266, 268, 270, 272, 274, 276, 278, 280, 282, 284, 300, 304, 398, 400, 410, 412, 414, 416, 418, 421, 613, 634, 635 })
+                            Game1.player.addItemToInventory(ItemRegistry.Create("(O)" + id));
+                    }
+                    if (args.Contains("all"))
+                    {
+                        // Everything at once: every villager a friend, every monster killed.
+                        foreach (var npc in Utility.getAllCharacters().Where(c => c.CanSocialize))
+                            Game1.player.friendshipData[npc.Name] = new Friendship(2500);
+                        foreach (var creature in Creatures.All)
+                            Game1.player.stats.specificMonstersKilled[creature.Name] = 1;
+                    }
+                    var at = new EaselMenu(Game1.player, easelTile: Game1.player.Tile + new Vector2(1, 1));
+                    at.DevSetup(args.FirstOrDefault(a => a.Contains(':') || a.StartsWith("(")) ?? "(O)254");
+                    if (args.Contains("page2")) { at.DevNextPage(false); at.DevNextPage(true); }
+                    if (args.Contains("hover")) at.DevHoverAt(at.DevStudioIcon(0));
+                    _log.Log($"Staged: {at.DevGridSlots} in the grid, {at.DevSitterSlots} sitters, pages {at.DevPages}.", LogLevel.Info);
+                    Game1.activeClickableMenu = at;
+                }
+                break;
+            case "setup":
+                // The easel's setup screen with a subject and canvas, in a mode,
+                // simple pictures on or off, with every pigment and level 10:
+                // museart_menu setup creature:Ghost Large Relaxed simple
+                // ("starter": only a new player's pigments, as a fresh test farm has.)
+                ArtProgress.SetLevel(Game1.player, 10);
+                ArtProgress.SetOwned(Game1.player, args.Contains("starter") ? Array.Empty<int>() : Enumerable.Range(0, Palette.All.Length));
+                ModEntry.Config.Difficulty = Enum.Parse<Difficulty>(args.ElementAtOrDefault(3) ?? "Relaxed");
+                ModEntry.Config.SimplePictures = args.Contains("simple");
+                var staged = new EaselMenu(Game1.player);
+                staged.DevSetCanvas(Enum.Parse<CanvasKind>(args.ElementAtOrDefault(2) ?? "Large"));
+                staged.DevSetup(args[1]);
+                Game1.activeClickableMenu = staged;
                 break;
             case "portrait":
                 // The easel with a friend picked to sit (museart_menu portrait Abigail).

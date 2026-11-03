@@ -52,6 +52,7 @@ public class ModEntry : Mod
         Shop.Consignment.Apply(harmony, helper, Monitor);
         Varnish.Apply(harmony, helper, Monitor);
         FramersBench.Apply(harmony, helper, Monitor);
+        Frames.LoadIcons(helper);
         SableEvents.Register();
         NeutralLabels.Apply(harmony, Monitor);
         SableMarriage.Apply(harmony, helper, Monitor);
@@ -119,6 +120,11 @@ public class ModEntry : Mod
             () => I18n.Get("config.light.description"),
             min: 0.5f, max: 3f, interval: 0.1f,
             formatValue: v => $"{v:0.0}x");
+        gmcm.AddBoolOption(ModManifest,
+            () => Config.SimplePictures,
+            value => Config.SimplePictures = value,
+            () => I18n.Get("config.simple"),
+            () => I18n.Get("config.simple.description"));
         gmcm.AddSectionTitle(ModManifest, () => I18n.Get("config.section.gifts"));
         gmcm.AddBoolOption(ModManifest,
             () => Config.ArtLoversLikeAnyPainting,

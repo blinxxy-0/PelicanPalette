@@ -53,6 +53,7 @@ internal sealed partial class EaselMenu : IClickableMenu
     private readonly GameLocation? _viewLocation;
     private readonly Vector2 _easelTile;
     private readonly Frames.Studio _studio;
+    private readonly bool _atPlacedEasel;     // (a placed easel: the room's frames count)
     internal Frames.Studio DevStudio => _studio;
     private Views.Capture? _view;
 
@@ -63,6 +64,7 @@ internal sealed partial class EaselMenu : IClickableMenu
         if (easelTile.HasValue)
             _easelTile = easelTile.Value;
         // The framed paintings on this room's walls (1.3).
+        _atPlacedEasel = easelTile.HasValue;
         _studio = easelTile.HasValue ? Frames.For(who.currentLocation) : Frames.None;
         if (easelTile.HasValue && who.currentLocation is { } outdoors && Views.CanPaintHere(outdoors))
             _viewLocation = outdoors;
@@ -296,19 +298,23 @@ internal sealed partial class EaselMenu : IClickableMenu
     // Portraits and views fill the canvas: they take an hour longer.
     private static bool IsLongSubject(IReadOnlyList<string> ids) => IsSitterSubject(ids) || IsViewSubject(ids);
 
-    private Reference? BuildReference(IReadOnlyList<string> ids, int size) =>
-        ids.Count == 0 ? null
-        : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned, TechniquesFor(ids, size))
-        : IsCreatureSubject(ids) ? Studies.Reference(ids[0], size, _owned, TechniquesFor(ids, size))
-        : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned, TechniquesFor(ids, size)) : null)
-        : ReferenceBuilder.StillLife(ids, size, _owned, TechniquesFor(ids, size));
+    // (simple: as with simple pictures on or off, whatever the setting.)
+    private Reference? BuildReference(IReadOnlyList<string> ids, int size, bool? simple = null)
+    {
+        var techniques = TechniquesFor(ids, size, simple);
+        return ids.Count == 0 ? null
+            : IsSitterSubject(ids) ? Sitters.Portrait(Sitters.NpcOf(ids[0]), size, _owned, techniques)
+            : IsCreatureSubject(ids) ? Studies.Reference(ids[0], size, _owned, techniques)
+            : IsViewSubject(ids) ? (_view != null ? Views.Reference(_view, size, _owned, techniques) : null)
+            : ReferenceBuilder.StillLife(ids, size, _owned, techniques);
+    }
 
-    private static bool Relaxed => ModEntry.Config.Difficulty == Difficulty.Relaxed;
+    private static bool Simple => ModEntry.Config.SimplePictures;
 
-    // Glazing from a medium canvas, highlights on a large one; on Relaxed,
-    // glazes only for a glazed commission.
-    private Techniques TechniquesFor(IReadOnlyList<string> ids, int size) =>
-        PaintingRules.TechniquesFor(size, Relaxed, HasGlazedCommission(ids));
+    // Glazing from a medium canvas, highlights on a large one; with simple
+    // pictures, glazes only for a glazed commission.
+    private Techniques TechniquesFor(IReadOnlyList<string> ids, int size, bool? simple = null) =>
+        PaintingRules.TechniquesFor(size, simple ?? Simple, HasGlazedCommission(ids));
 
     // Someone's waiting on a glazed painting of this subject.
     private bool HasGlazedCommission(IReadOnlyList<string> ids) =>

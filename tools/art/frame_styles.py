@@ -60,8 +60,16 @@ def touch(tile, kind, dark):
         for x, y in corners:
             px[x, y] = dark + (255,)
     elif kind == "bark":
-        for i, (x, y) in enumerate(frame):
-            if (x * 7 + y * 3) % 11 == 0:
+        # Birch bark's short dark dashes, running along each side of the frame.
+        def edge(x, y):
+            return any(not (0 <= x + dx < w and 0 <= y + dy < h) or px[x + dx, y + dy][3] == 0
+                       for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+        for x, y in frame:
+            if edge(x, y):
+                continue
+            along = x if min(y, h - 1 - y) <= min(x, w - 1 - x) else y
+            across = y if along == x else x
+            if (along + 2 * across) % 5 in (0, 1) and (along * 3 + across) % 7 < 3:
                 px[x, y] = (70, 64, 58, 255)
     elif kind == "studs":
         for x, y in corners:
@@ -119,7 +127,7 @@ def main():
             furniture.paste(touch(tile, kind, palette[0]), (ox + dx, 0))
         x, y = at(8)
         icon = recolour(items.crop((x, y, x + 16, y + 16)).copy(), palette, keep_inside=False)
-        if kind in ("rainbow", "diamond", "gold", "studs"):
+        if kind:
             icon = touch(icon, kind, palette[0])
         tx, ty = at(FIRST_ITEM + n)
         items.paste((0, 0, 0, 0), (tx, ty, tx + 16, ty + 16))

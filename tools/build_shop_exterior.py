@@ -28,6 +28,7 @@ PATCH_X, PATCH_Y, W, H = 76, 27, 13, 12     # Forest tiles 76-88, 27-38
 HOUSE_X, HOUSE_Y = 2, 0                       # building's top-left within the patch
 HOUSE = 7
 WALL_ROWS = (4, 5, 6)                         # rows of the building sheet that are walls
+MIN_WALL_DRAWN = 0.25                         # less of a wall tile drawn than this, and it doesn't block
 DOOR_COLS = (5,)                              # columns of its door (bottom row)
 DOOR_ACTION = "LockedDoorWarp 9 13 blinxxy.MuseArt_ArtShop 900 2000"
 YARD_Y = 1                                    # the yard's rows, below the patch's top row (the roof's)
@@ -74,9 +75,15 @@ def main():
     # The house.
     for y in range(HOUSE):
         for x in range(HOUSE):
-            if house.crop((x * 16, y * 16, x * 16 + 16, y * 16 + 16)).getbbox() is None:
+            tile = house.crop((x * 16, y * 16, x * 16 + 16, y * 16 + 16))
+            if tile.getbbox() is None:
                 continue
-            put("Buildings" if y in WALL_ROWS else "Front", HOUSE_X + x, HOUSE_Y + y, HOUSE_FIRST + y * HOUSE + x)
+            # A wall-row tile that's barely drawn (the tip of the eave, west of
+            # the wall) goes on Front: on Buildings it was an invisible wall
+            # beside the house (2026-11-03).
+            drawn = sum(1 for px in tile.get_flattened_data() if px[3]) / 256
+            wall = y in WALL_ROWS and drawn >= MIN_WALL_DRAWN
+            put("Buildings" if wall else "Front", HOUSE_X + x, HOUSE_Y + y, HOUSE_FIRST + y * HOUSE + x)
     door_y = HOUSE_Y + HOUSE - 1
     for c in DOOR_COLS:
         actions.append(("Buildings", HOUSE_X + c, door_y, DOOR_ACTION))

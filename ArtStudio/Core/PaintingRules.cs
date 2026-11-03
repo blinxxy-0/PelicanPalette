@@ -55,20 +55,21 @@ public static class PaintingRules
     };
 
     // Techniques grow with the canvas (Core/Technique.cs): a medium canvas
-    // adds glazing, a large one highlights too. Relaxed paints flat, except
-    // that a painting for a glazed commission asks for its glazes (1.1.5).
-    public static Techniques TechniquesFor(int canvasSize, bool relaxed, bool glazedCommission = false)
+    // adds glazing, a large one highlights too. Simple pictures (a setting
+    // of its own from 1.3; Relaxed until then) are flat, except that a
+    // painting for a glazed commission asks for its glazes (1.1.5).
+    public static Techniques TechniquesFor(int canvasSize, bool simple, bool glazedCommission = false)
     {
         var techniques = canvasSize >= CanvasSize(CanvasKind.Large) ? Techniques.Glaze | Techniques.Highlight
             : canvasSize >= CanvasSize(CanvasKind.Medium) ? Techniques.Glaze
             : Techniques.None;
-        return relaxed ? techniques & (glazedCommission ? Techniques.Glaze : Techniques.None) : techniques;
+        return simple ? techniques & (glazedCommission ? Techniques.Glaze : Techniques.None) : techniques;
     }
 
-    // The technique tools on the easel. Relaxed has the Glaze tool from a
-    // medium canvas too (1.1.5), to glaze where you like on a flat painting.
-    public static Techniques ToolsFor(int canvasSize, bool relaxed) =>
-        TechniquesFor(canvasSize, relaxed, glazedCommission: true);
+    // The technique tools on the easel. Simple pictures keep the Glaze tool
+    // from a medium canvas (1.1.5), to glaze where you like on a flat painting.
+    public static Techniques ToolsFor(int canvasSize, bool simple) =>
+        TechniquesFor(canvasSize, simple, glazedCommission: true);
 
     // A glazed commission takes a painting whose reference asked for glazes,
     // with its glazes (and highlights) at least half in place (1.1.5; it

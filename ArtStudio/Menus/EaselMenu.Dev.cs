@@ -44,6 +44,20 @@ internal sealed partial class EaselMenu
 
     // The setup screen's mode button (empty while a warning shows instead).
     public Microsoft.Xna.Framework.Rectangle DevModeButton => _modeButton;
+    public Microsoft.Xna.Framework.Rectangle DevSimpleButton => _simpleButton;
+    internal bool DevSimpleChanges => _simpleChanges;
+    // The middle of the i'th frame bonus icon, as DrawStudio places them.
+    internal Microsoft.Xna.Framework.Point DevStudioIcon(int i) =>
+        new(_originalButton.X + (int)Ui.TextWidth(I18n.Get("setup.studio")) + 14 + i * 56 + 24, _studioY + 24);
+    internal (int Grid, int Sitters) DevPages => (_gridPages, _sitterPages);
+    internal int DevSitterSlots => _sitterSlots.Count;
+    internal int DevGridSlots => _itemSlots.Count + _creatureSlots.Count;
+    // Clicks the next-page arrow of the grid or the sitters' row.
+    internal void DevNextPage(bool sitters)
+    {
+        var next = sitters ? _sitterNext : _gridNext;
+        receiveLeftClick(next.Center.X, next.Center.Y);
+    }
     public bool DevTimed => _rules.LightTimer;
 
     // Points the mouse at a cell of the canvas, or of the reference.

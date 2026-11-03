@@ -1,0 +1,33 @@
+{
+ "batch": "frame-buffs",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "image_size": {
+   "width": 16,
+   "height": 16
+  },
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/frames/buffs/style_buffs.png",
+  "style_usage": "the exact style of these Stardew Valley buff icons: 16 by 16 pixel rounded tiles with a darker coloured border, flat coloured backgrounds and one bold symbol each"
+ },
+ "jobs": {
+  "light": {
+   "description": "a Stardew Valley buff icon, exactly 16 by 16 pixels, filling the whole square: a rounded square tile with a darker coloured border (not black), a flat coloured background, and one bold simple symbol in the middle with a bright highlight, like the game's own buff icons: a bright warm yellow sun with short rays, on a pale gold tile"
+  },
+  "night": {
+   "description": "a Stardew Valley buff icon, exactly 16 by 16 pixels, filling the whole square: a rounded square tile with a darker coloured border (not black), a flat coloured background, and one bold simple symbol in the middle with a bright highlight, like the game's own buff icons: a pale cream crescent moon with two tiny stars, on a deep blue tile"
+  },
+  "sparks": {
+   "description": "a Stardew Valley buff icon, exactly 16 by 16 pixels, filling the whole square: a rounded square tile with a darker coloured border (not black), a flat coloured background, and one bold simple symbol in the middle with a bright highlight, like the game's own buff icons: a big golden four-pointed sparkle star with a small one beside it, on a violet purple tile"
+  },
+  "thrift": {
+   "description": "a Stardew Valley buff icon, exactly 16 by 16 pixels, filling the whole square: a rounded square tile with a darker coloured border (not black), a flat coloured background, and one bold simple symbol in the middle with a bright highlight, like the game's own buff icons: a squeezed paint tube with one drop of red paint, on a soft green tile"
+  },
+  "learning": {
+   "description": "a Stardew Valley buff icon, exactly 16 by 16 pixels, filling the whole square: a rounded square tile with a darker coloured border (not black), a flat coloured background, and one bold simple symbol in the middle with a bright highlight, like the game's own buff icons: an open book with a small golden star above it, on a teal tile"
+  },
+  "value": {
+   "description": "a Stardew Valley buff icon, exactly 16 by 16 pixels, filling the whole square: a rounded square tile with a darker coloured border (not black), a flat coloured background, and one bold simple symbol in the middle with a bright highlight, like the game's own buff icons: a small stack of gold coins, on a warm orange tile"
+  }
+ }
+}

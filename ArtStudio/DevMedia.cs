@@ -66,6 +66,15 @@ internal static class DevMedia
             }
             _monitor.Log($"Saved {names.Count + 1} sheets.", LogLevel.Info);
         });
+        DevTools.AddCommand(helper, "museart_export", "Saves any game texture to media/export_<name>.png. Usage: museart_export TileSheets/BuffsIcons", (_, args) =>
+        {
+            var texture = Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(args[0]);
+            string path = Path.Combine(_helper.DirectoryPath, "media", "export_" + args[0].Replace('/', '_') + ".png");
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            using var stream = File.Create(path);
+            texture.SaveAsPng(stream, texture.Width, texture.Height);
+            _monitor.Log($"Saved {path} ({texture.Width}x{texture.Height}).", LogLevel.Info);
+        });
         DevTools.AddCommand(helper, "museart_signtext", "Renders a heading in the game's bold font to media/sign_<slug>.png. Usage: museart_signtext Features", (_, args) => SignText(string.Join(" ", args)));
         DevTools.AddCommand(helper, "museart_updatecard", "Renders the 1.2 update card's parchment, lines and in-game icons to media/update_card.png (tools/art/update_card.py adds the sky, title and portraits).", (_, _) => UpdateCard());
         DevTools.AddCommand(helper, "museart_wikidata", "Writes media/wikidata.json and media/icons/ for the wiki.", (_, _) => WikiData());
@@ -130,6 +139,22 @@ internal static class DevMedia
             for (int y = y0; y <= y1; y++)
                 monitor.Log($"y{y,3}: " + string.Concat(Enumerable.Range(x0, x1 - x0 + 1).Select(x =>
                     location.isTilePassable(new xTile.Dimensions.Location(x, y), Game1.viewport) && !location.IsTileOccupiedBy(new Vector2(x, y)) ? '.' : '#')), LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_tile", "Logs what's on each layer of a tile in this location, and what's standing on it. Usage: museart_tile 78 31", (_, args) =>
+        {
+            int x = int.Parse(args[0]), y = int.Parse(args[1]);
+            var location = Game1.currentLocation;
+            foreach (var layer in location.map.Layers)
+            {
+                var tile = layer.Tiles[x, y];
+                if (tile != null)
+                    monitor.Log($"({x},{y}) {layer.Id}: {tile.TileSheet.Id} {tile.TileIndex} {string.Join(" ", tile.Properties.Select(p => p.Key + "=" + p.Value))} {string.Join(" ", tile.TileIndexProperties.Select(p => p.Key + "=" + p.Value))}", LogLevel.Info);
+            }
+            var at = new Vector2(x, y);
+            if (location.objects.TryGetValue(at, out var obj)) monitor.Log($"({x},{y}) object: {obj.QualifiedItemId}", LogLevel.Info);
+            if (location.terrainFeatures.TryGetValue(at, out var feature)) monitor.Log($"({x},{y}) terrain: {feature.GetType().Name}", LogLevel.Info);
+            foreach (var clump in location.resourceClumps.Where(c => c.occupiesTile(x, y))) monitor.Log($"({x},{y}) clump: {clump.parentSheetIndex.Value}", LogLevel.Info);
+            foreach (var bush in location.largeTerrainFeatures.Where(f => f.getBoundingBox().Intersects(new Rectangle(x * 64, y * 64, 64, 64)))) monitor.Log($"({x},{y}) large: {bush.GetType().Name}", LogLevel.Info);
         });
         DevTools.AddCommand(helper, "museart_placef", "Places furniture in this location at a tile, for staging shots ('clear' takes it all out first). Usage: museart_placef (F)blinxxy.MuseArt_GalleryBench 5 5", (_, args) =>
         {

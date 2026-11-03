@@ -32,6 +32,14 @@ internal sealed partial class EaselMenu
     private readonly List<(Rectangle Rect, Item Item)> _itemSlots = new();
     private readonly List<(Rectangle Rect, string Npc)> _sitterSlots = new();
     private int _sitterLabelY;
+    // Pages, when there's more to paint than fits (1.3: with many friends,
+    // monsters, animals and a full bag at once, the rest had been left off).
+    private int _gridPage, _sitterPage, _gridPages = 1, _sitterPages = 1;
+    private Rectangle _gridPrev, _gridNext, _sitterPrev, _sitterNext;
+    // The strip above the bottom buttons for the room's frame bonuses.
+    private const int StudioStrip = 56;
+    private int _studioY;
+    private List<string> _allSitters = new();     // every page's, for the row's label
 
     private static bool IsSitterSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Sitters.IsSitter(ids[0]);
     private bool SetupPortrait => IsSitterSubject(_setupItems);
@@ -101,32 +109,100 @@ internal sealed partial class EaselMenu
         }
         var creatures = _setupStudy != null ? Studies.Available(_who, _setupStudy) : new List<string>();
         _creatureSlots.Clear();
-        int itemsBottom = sitters.Count > 0 ? rowY - 12 - 40 - SlotSize - 8 : rowY - 12;
-        int n = 0;
-        if (_setupCreatures && !_setupFraming)
-            foreach (string subject in creatures)
-            {
-                var rect = new Rectangle(gridX + n % cols * (SlotSize + SlotGap), gridY + n / cols * (SlotSize + SlotGap), SlotSize, SlotSize);
-                if (rect.Bottom > itemsBottom) break;
-                _creatureSlots.Add((rect, subject));
-                n++;
-            }
-        foreach (var item in _setupCreatures && !_setupFraming ? Enumerable.Empty<Item>() : Game1.player.Items)
+
+        // From the bottom up: the buttons, the frame strip (at a placed easel),
+        // the sitters' row, and the grid in what's left, a page at a time.
+        int bottom = rowY - 12;
+        bool strip = _atPlacedEasel && !_setupFraming;
+        if (strip)
         {
-            if (item == null) continue;
-            bool wanted = _setupFraming
-                ? PaintingItems.IsPainting(item) && PaintingData.Read(item) != null
-                : ReferenceBuilder.CanPaint(item) && !_itemSlots.Any(s => s.Item.QualifiedItemId == item.QualifiedItemId);
-            if (!wanted) continue;
-            var rect = new Rectangle(gridX + n % cols * (SlotSize + SlotGap), gridY + n / cols * (SlotSize + SlotGap), SlotSize, SlotSize);
-            if (rect.Bottom > itemsBottom) break;
-            _itemSlots.Add((rect, item));
-            n++;
+            bottom -= StudioStrip;
+            _studioY = bottom + 8;
         }
-        int rows = n == 0 ? 1 : (n + cols - 1) / cols;
+        int itemsBottom = sitters.Count > 0 ? bottom - 40 - SlotSize - 8 : bottom;
+        int rowsFit = Math.Max(1, (itemsBottom - gridY + SlotGap) / (SlotSize + SlotGap));
+        int perPage = rowsFit * cols;
+        Rectangle Cell(int i) => new(gridX + i % cols * (SlotSize + SlotGap), gridY + i / cols * (SlotSize + SlotGap), SlotSize, SlotSize);
+
+        bool showCreatures = _setupCreatures && !_setupFraming;
+        var items = new List<Item>();
+        if (!showCreatures)
+            foreach (var item in Game1.player.Items)
+            {
+                if (item == null) continue;
+                bool wanted = _setupFraming
+                    ? PaintingItems.IsPainting(item) && PaintingData.Read(item) != null
+                    : ReferenceBuilder.CanPaint(item) && !items.Any(i => i.QualifiedItemId == item.QualifiedItemId);
+                if (wanted) items.Add(item);
+            }
+        int total = showCreatures ? creatures.Count : items.Count;
+        _gridPages = Math.Max(1, (total + perPage - 1) / perPage);
+        _gridPage = Math.Clamp(_gridPage, 0, _gridPages - 1);
+        int first = _gridPage * perPage, n = 0;
+        for (int i = first; i < Math.Min(total, first + perPage); i++, n++)
+        {
+            if (showCreatures) _creatureSlots.Add((Cell(n), creatures[i]));
+            else _itemSlots.Add((Cell(n), items[i]));
+        }
+        int gridRight = gridX + cols * (SlotSize + SlotGap) - SlotGap;
+        (_gridPrev, _gridNext) = PageArrows(gridRight, _canvasButtons[0].Bottom + 14, _gridPages);
+
+        int rows = _gridPages > 1 ? rowsFit : n == 0 ? 1 : (n + cols - 1) / cols;
         _sitterLabelY = gridY + rows * (SlotSize + SlotGap) + 4;
-        for (int i = 0; i < sitters.Count && i < cols; i++)
-            _sitterSlots.Add((new Rectangle(gridX + i * (SlotSize + SlotGap), _sitterLabelY + 36, SlotSize, SlotSize), sitters[i]));
+        _allSitters = sitters;
+        _sitterPages = Math.Max(1, (sitters.Count + cols - 1) / cols);
+        _sitterPage = Math.Clamp(_sitterPage, 0, _sitterPages - 1);
+        for (int i = _sitterPage * cols, k = 0; i < sitters.Count && k < cols; i++, k++)
+            _sitterSlots.Add((new Rectangle(gridX + k * (SlotSize + SlotGap), _sitterLabelY + 36, SlotSize, SlotSize), sitters[i]));
+        (_sitterPrev, _sitterNext) = PageArrows(gridRight, _sitterLabelY - 4, _sitterPages);
+    }
+
+    // The game's small arrows, at the right end of a label's line, when
+    // there's more than one page.
+    private static (Rectangle Prev, Rectangle Next) PageArrows(int right, int y, int pages) =>
+        pages <= 1 ? (Rectangle.Empty, Rectangle.Empty)
+            : (new Rectangle(right - 36 - 64 - 36, y, 36, 33), new Rectangle(right - 36, y, 36, 33));
+
+    private void DrawPageArrows(SpriteBatch b, Rectangle prev, Rectangle next, int page, int pages, Point mouse)
+    {
+        if (pages <= 1) return;
+        b.Draw(Game1.mouseCursors, prev, new Rectangle(352, 495, 12, 11), Color.White * (page > 0 ? (prev.Contains(mouse) ? 1f : 0.85f) : 0.3f));
+        b.Draw(Game1.mouseCursors, next, new Rectangle(365, 495, 12, 11), Color.White * (page < pages - 1 ? (next.Contains(mouse) ? 1f : 0.85f) : 0.3f));
+        string text = $"{page + 1}/{pages}";
+        Ui.Text(b, text, new Vector2((prev.Right + next.X) / 2f - Ui.TextWidth(text) / 2, prev.Y), Game1.textColor * 0.8f);
+    }
+
+    // The wheel turns the page of whichever row the mouse is over.
+    public override void receiveScrollWheelAction(int direction)
+    {
+        base.receiveScrollWheelAction(direction);
+        if (_stage != EaselStage.Setup) return;
+        int d = direction > 0 ? -1 : 1;
+        bool grid = Game1.getMouseY() < _sitterLabelY || _sitterPages <= 1;
+        ref int page = ref grid ? ref _gridPage : ref _sitterPage;
+        int pages = grid ? _gridPages : _sitterPages;
+        if (pages <= 1 || page + d < 0 || page + d >= pages) return;
+        page += d;
+        Game1.playSound("shwip");
+        LayoutSetup();
+    }
+
+    // Turns a page if an arrow was clicked.
+    private bool ClickPage(int x, int y)
+    {
+        int Turn(ref int page, int pages, Rectangle prev, Rectangle next)
+        {
+            if (prev.Contains(x, y) && page > 0) return -1;
+            if (next.Contains(x, y) && page < pages - 1) return 1;
+            return 0;
+        }
+        int d = Turn(ref _gridPage, _gridPages, _gridPrev, _gridNext);
+        if (d != 0) _gridPage += d;
+        else if ((d = Turn(ref _sitterPage, _sitterPages, _sitterPrev, _sitterNext)) != 0) _sitterPage += d;
+        else return false;
+        Game1.playSound("shwip");
+        LayoutSetup();
+        return true;
     }
 
     private bool CanvasUnlocked(CanvasKind kind) => _level >= PaintingRules.CanvasUnlockLevel(kind);
@@ -199,7 +275,13 @@ internal sealed partial class EaselMenu
             : SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas) ? null
             : CreatureTooSmall ? null
             : BuildReference(_setupItems, size);
+        // Whether simple pictures would change this one: only a picture
+        // with glazes or highlights to take out (none on a small canvas).
+        _simpleChanges = _setupPreview != null && !SetupRestoring
+            && (ModEntry.Config.SimplePictures ? BuildReference(_setupItems, size, simple: false) : _setupPreview)?.UsesTechniques == true;
     }
+
+    private bool _simpleChanges;
 
     private void UpdateSetup()
     {
@@ -231,6 +313,8 @@ internal sealed partial class EaselMenu
                 RefreshPreview();
                 return;
             }
+
+        if (ClickPage(x, y)) return;
 
         foreach (var (rect, subject) in _creatureSlots)
         {
@@ -290,6 +374,7 @@ internal sealed partial class EaselMenu
             if (IsStudySlot(npc))
             {
                 _setupStudy = _setupStudy == npc ? null : npc;
+                _gridPage = 0;
                 Game1.playSound("shwip");
                 LayoutSetup();
                 return;
@@ -336,12 +421,15 @@ internal sealed partial class EaselMenu
         {
             _setupFraming = !_setupFraming;
             _setupPainting = null;
+            _gridPage = _sitterPage = 0;
             Game1.playSound("smallSelect");
             LayoutSetup();
             RefreshPreview();
         }
         else if (_modeButton.Contains(x, y))
             CycleMode();
+        else if (_simpleButton.Contains(x, y))
+            ToggleSimple();
         else if (_beginButton.Contains(x, y))
         {
             if (_setupFraming)
@@ -375,7 +463,16 @@ internal sealed partial class EaselMenu
 
     private bool NeedsPalette => UsesPaint && _palette == null;
 
-    private Rectangle _modeButton;
+    private Rectangle _modeButton, _simpleButton;
+
+    // Simple pictures on or off; saved, and the reference redrawn.
+    private void ToggleSimple()
+    {
+        ModEntry.Config.SimplePictures = !ModEntry.Config.SimplePictures;
+        ModEntry.SaveConfig();
+        Game1.playSound("smallSelect");
+        RefreshPreview();
+    }
 
     // "Leah commissioned a painting of this (gold)", saying when it's to be glazed.
     private static string CommissionedText(Shop.Commission wantedBy) =>
@@ -489,6 +586,8 @@ internal sealed partial class EaselMenu
             DrawFraming(b, left, mouse);
         else
             DrawStillLifeChoice(b, left, mouse);
+        DrawPageArrows(b, _gridPrev, _gridNext, _gridPage, _gridPages, mouse);
+        DrawPageArrows(b, _sitterPrev, _sitterNext, _sitterPage, _sitterPages, mouse);
 
         // The bottom row: free canvas, brush, framing.
         Ui.Button(b, _originalButton, I18n.Get("paint.title.free"), !_setupFraming, _setupOriginal, _originalButton.Contains(mouse));
@@ -548,6 +647,7 @@ internal sealed partial class EaselMenu
         DrawSlots(b, mouse, slot => _setupItems.IndexOf(slot.QualifiedItemId), max > 1);
         DrawCreatures(b, mouse);
         DrawSitters(b, left, mouse);
+        DrawStudio(b, mouse);
 
         // Preview of what you'll be copying.
         Ui.Paper(b, new Rectangle(_previewArea.X - 20, _previewArea.Y - 20, _previewArea.Width + 40, _previewArea.Height + 40));
@@ -598,8 +698,57 @@ internal sealed partial class EaselMenu
         Ui.Text(b, footer, footerAt, warn ? new Color(150, 70, 50) : Game1.textColor * (modeHover ? 1f : 0.8f));
         if (modeHover)
             _hoverText = Game1.parseText(I18n.Get("setup.mode-hover." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()), Game1.smallFont, 520);
+
+        // Below it, simple pictures (1.3: flat colour was Relaxed's until
+        // players asked for the clock to go without the picture going too).
+        string simple = I18n.Get(ModEntry.Config.SimplePictures ? "setup.simple.on" : "setup.simple.off");
+        // (Above the reference it changes: under the mode there's no room.)
+        var simpleAt = new Vector2(_previewArea.Center.X - Ui.TextWidth(simple) / 2, _previewArea.Y - 58);
+        _simpleButton = _setupFraming ? Rectangle.Empty
+            : new Rectangle((int)simpleAt.X - 4, (int)simpleAt.Y - 2, (int)Ui.TextWidth(simple) + 8, 32);
+        if (_simpleButton != Rectangle.Empty)
+        {
+            bool simpleHover = _simpleButton.Contains(mouse);
+            // Greyed when this picture looks the same either way.
+            float shade = _simpleChanges ? 1f : 0.55f;
+            if (simpleHover)
+                Ui.Fill(b, _simpleButton, Color.White * 0.35f);
+            Ui.Fill(b, new Rectangle((int)simpleAt.X, _simpleButton.Bottom - 4, (int)Ui.TextWidth(simple), 2), Game1.textColor * (simpleHover ? 0.8f : 0.35f) * shade);
+            Ui.Text(b, simple, simpleAt, Game1.textColor * (simpleHover ? 1f : 0.8f) * shade);
+            if (simpleHover)
+                _hoverText = Game1.parseText(I18n.Get("setup.simple-hover") + (_setupPreview != null && !_simpleChanges
+                    ? "\n\n" + I18n.Get(_setupCanvas == CanvasKind.Small ? "setup.simple-same-small" : "setup.simple-same") : ""), Game1.smallFont, 520);
+        }
         if (!HasCanvas && _beginButton.Contains(mouse))
             _hoverText = _setupCanvas == CanvasKind.Small ? I18n.Get("setup.craft-small") : I18n.Get("setup.craft-big");
+    }
+
+    // What the framed paintings in this room give the painting (1.3: players
+    // couldn't tell what frames did): an icon for each bonus, like the
+    // game's buff icons, in the strip above the bottom buttons. Hovering one
+    // says what it does; with none hung, a line says how to get them.
+    private void DrawStudio(SpriteBatch b, Point mouse)
+    {
+        if (!_atPlacedEasel || _setupFraming) return;
+        var bonuses = _studio.Bonuses().ToList();
+        int x = _originalButton.X, y = _studioY;
+        if (bonuses.Count == 0 || Frames.Icons == null)
+        {
+            Ui.Text(b, I18n.Get("setup.studio.none"), new Vector2(x, y + 10), Game1.textColor * 0.6f);
+            return;
+        }
+        Ui.Text(b, I18n.Get("setup.studio"), new Vector2(x, y + 10), Game1.textColor * 0.75f);
+        x += (int)Ui.TextWidth(I18n.Get("setup.studio")) + 14;
+        const int Icon = 48;     // 3x, as the game draws its buff icons
+        foreach (var (trait, percent) in bonuses)
+        {
+            var rect = new Rectangle(x, y, Icon, Icon);
+            b.Draw(Frames.Icons, rect, Frames.IconSource(trait), Color.White);
+            if (rect.Contains(mouse))
+                _hoverText = Game1.parseText(I18n.Get("setup.studio." + trait.ToString().ToLowerInvariant(), new { percent = percent.ToString("0.#") })
+                    + "\n" + I18n.Get("setup.studio-why"), Game1.smallFont, 520);
+            x += Icon + 8;
+        }
     }
 
     private void DrawFraming(SpriteBatch b, int left, Point mouse)
@@ -721,8 +870,8 @@ internal sealed partial class EaselMenu
     private void DrawSitters(SpriteBatch b, int left, Point mouse)
     {
         if (_sitterSlots.Count == 0) return;
-        bool creatures = _sitterSlots.Any(s => IsStudySlot(s.Npc));
-        int friends = _sitterSlots.Count(s => s.Npc != ViewSlot && !IsStudySlot(s.Npc));
+        bool creatures = _allSitters.Any(IsStudySlot);
+        int friends = _allSitters.Count(s => s != ViewSlot && !IsStudySlot(s));
         bool viewOnly = friends == 0 && !creatures && _viewLocation != null;
         Ui.Text(b, I18n.Get(creatures ? "setup.pick-more" : viewOnly ? "setup.pick-view" : _viewLocation != null ? "setup.pick-view-or-portrait" : "setup.pick-portrait"), new Vector2(left, _sitterLabelY));
         foreach (var (rect, npc) in _sitterSlots)
