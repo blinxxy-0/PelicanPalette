@@ -1,0 +1,110 @@
+{
+ "batch": "vale_buildings_v2",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_usage": "Stardew Valley building pixel art: palette, outline weight, how the roofs are shaded in rows of tiles or shingles with light ridges, dark gable edges and deep shadow under the eaves, and the high top-down front camera where the roof fills over half the building",
+  "reference_usage": "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+ },
+ "jobs": {
+  "vale_house_s1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vale_house_guide.png",
+   "description": "The Vale House, a two-storey country inn and tea room in Stardew Valley pixel art: a big plum-purple tiled roof in rows with light ridge highlights and darker lower rows, two small dormer windows, a brick chimney, deep shadow under the eaves; warm cream plaster walls with dark timber beams, upstairs windows with flower boxes, a covered wooden porch over a wide front door, an inn sign hanging from a bracket with a painted purple thistle, two lanterns, potted heather by the steps. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 176,
+    "height": 176
+   }
+  },
+  "vale_house_s2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vale_house_guide.png",
+   "description": "The Vale House, a two-storey country inn and tea room in Stardew Valley pixel art: a big plum-purple tiled roof in rows with light ridge highlights and darker lower rows, two small dormer windows, a brick chimney, deep shadow under the eaves; warm cream plaster walls with dark timber beams, upstairs windows with flower boxes, a covered wooden porch over a wide front door, an inn sign hanging from a bracket with a painted purple thistle, two lanterns, potted heather by the steps. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 2,
+   "image_size": {
+    "width": 176,
+    "height": 176
+   }
+  },
+  "vale_house_s3": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vale_house_guide.png",
+   "description": "The Vale House, a two-storey country inn and tea room in Stardew Valley pixel art: a big plum-purple tiled roof in rows with light ridge highlights and darker lower rows, two small dormer windows, a brick chimney, deep shadow under the eaves; warm cream plaster walls with dark timber beams, upstairs windows with flower boxes, a covered wooden porch over a wide front door, an inn sign hanging from a bracket with a painted purple thistle, two lanterns, potted heather by the steps. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 3,
+   "image_size": {
+    "width": 176,
+    "height": 176
+   }
+  },
+  "exhibition_hall_s1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/exhibition_hall_guide.png",
+   "description": "An old village exhibition hall in Stardew Valley pixel art, a little weathered but handsome: a long slate-blue tiled roof shaded in planes, a central triangular stone pediment with a small round window, four white columns at the entrance porch, tall arched windows either side, pale cream stone walls with gilded gold trim along the cornice, a wide double door, ivy creeping up one corner. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 224,
+    "height": 176
+   }
+  },
+  "exhibition_hall_s2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/exhibition_hall_guide.png",
+   "description": "An old village exhibition hall in Stardew Valley pixel art, a little weathered but handsome: a long slate-blue tiled roof shaded in planes, a central triangular stone pediment with a small round window, four white columns at the entrance porch, tall arched windows either side, pale cream stone walls with gilded gold trim along the cornice, a wide double door, ivy creeping up one corner. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 2,
+   "image_size": {
+    "width": 224,
+    "height": 176
+   }
+  },
+  "exhibition_hall_s3": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/exhibition_hall_guide.png",
+   "description": "An old village exhibition hall in Stardew Valley pixel art, a little weathered but handsome: a long slate-blue tiled roof shaded in planes, a central triangular stone pediment with a small round window, four white columns at the entrance porch, tall arched windows either side, pale cream stone walls with gilded gold trim along the cornice, a wide double door, ivy creeping up one corner. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 3,
+   "image_size": {
+    "width": 224,
+    "height": 176
+   }
+  },
+  "atelier_s1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/atelier_guide.png",
+   "description": "A famous painter's cottage studio in Stardew Valley pixel art: an indigo-blue shingle roof in rows with light ridges, a large slanted glass skylight of many panes set into the roof, a small stone chimney, deep shadow under the eaves; warm ochre plaster walls, a wide many-paned studio window, a weathered wooden door, a few canvases leaning by the door, an overgrown potted plant. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 144,
+    "height": 176
+   }
+  },
+  "pottery_s1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/pottery_guide.png",
+   "description": "A country potter's workshop in Stardew Valley pixel art: a terracotta clay-tile roof in rows with light ridges, a tall round red-brick kiln chimney on the right side, grey fieldstone walls, an open-fronted workshop bay with wooden shelves of bowls, jugs and vases, a small wooden door and window on the left, stacked firewood, a few pots drying outside. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 144,
+    "height": 160
+   }
+  },
+  "fern_cottage_s1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A gardener's small cottage in Stardew Valley pixel art: a golden straw thatched roof with a few wildflowers growing in it, cream walls, a round-topped green door, flower boxes under the windows; attached on the right, a small glass seedhouse that is a little version of the farm's greenhouse in the second reference: copper-orange frames, glass panes, a steep glass gable and an arched fanlight over its door, green seedlings visible inside. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 160,
+    "height": 144
+   },
+   "reference_images": [
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/fern_cottage_guide.png",
+     "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+    ],
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vanilla_greenhouse_ref.png",
+     "the game's own greenhouse: copy its design, frames, glass and colours for the small seedhouse on the cottage's right; draw it much smaller, as in the first reference"
+    ]
+   ]
+  }
+ }
+}

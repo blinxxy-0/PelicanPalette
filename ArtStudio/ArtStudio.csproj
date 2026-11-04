@@ -23,6 +23,13 @@
     <ContentPacks Include="..\[CP] Pelican Palette" Version="$(Version)" />
   </ItemGroup>
 
+  <!-- The Gilded Vale (1.4) is in development: its pack deploys to the dev Mods folder
+       in Debug builds only, and is never in a Release build or zip (the user,
+       2026-11-04: not in any release until they say so). -->
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ContentPacks Include="..\[CP] Gilded Vale (dev)" Version="0.1.0" />
+  </ItemGroup>
+
   <!-- The Automate support DLL (ArtStudio.Automate): built first, then copied
        beside ArtStudio.dll, which must not reference it (SMAPI would then
        need Automate to load the mod). -->

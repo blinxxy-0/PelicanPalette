@@ -70,6 +70,18 @@ internal static class DevGame
         {
             Game1.season = Enum.Parse<Season>(args[0], ignoreCase: true);
             Game1.setGraphicsForSeason();
+            // Trees only pick their seasonal sprite overnight; redo it now, or a switched
+            // winter shows summer trees (the user, 2026-11-04).
+            // A tree keeps its own season (Tree.localSeason, set by the protected setSeason()
+            // overnight), so set that before reloading its texture.
+            var setSeason = typeof(StardewValley.TerrainFeatures.Tree).GetMethod("setSeason",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (Game1.currentLocation != null)
+                foreach (var tree in Game1.currentLocation.terrainFeatures.Values.OfType<StardewValley.TerrainFeatures.Tree>())
+                {
+                    setSeason?.Invoke(tree, null);
+                    tree.resetTexture();
+                }
             monitor.Log($"Season is now {Game1.season}.", LogLevel.Info);
         });
         DevTools.AddCommand(helper, "museart_export_data", "Writes string-dictionary game data (schedules, dialogue) to the mod's exports folder as JSON. Usage: museart_export_data Characters/schedules/Leah ...", (_, args) =>

@@ -1,0 +1,151 @@
+# The Gilded Vale: the map (DRAFT, for approval)
+
+1.4, step 1 of the build order. Decided so far (2026-11-03): terraced, with a river down to a lake; reached by Pam's bus. Everything else here is a proposal.
+
+**The sketch:** `art/gilded_vale/layout_v1.png` (drawn by `tools/art/vale_layout.py`, in tile coordinates). It's a schematic for positions, not map art.
+
+## At a glance
+- **Size:** 96 by 76 tiles. About half of Pelican Town (130 by 110), a little bigger than the Beach (104 by 50). Every place is under a minute's walk from the bus.
+- **Shape:** a bowl. Three terraces step down from the bus stop in the north to a lake in the south, and the far side of the lake rises again to the overlook. Woods all round the edge.
+- **One way in:** the bus, like the Desert. No road on to anywhere else (room for one later).
+- **Interiors:** seven (section 5).
+
+## 1. The terraces, north to south
+
+### The upper terrace: arriving, and the homes of people who work
+
+| Place | Tiles (x, y) | Notes |
+|---|---|---|
+| **The bus** | 8 to 17, 2 to 5 | Pam's bus, parked at the end of the road from the west, as in the Desert |
+| **The Vale's sign** | 24, 8 | Old and hand-painted; repainted after Lupini's 8-heart event |
+| **The Vale House** | 26 to 38, 11 to 20 | Bea's inn: the first building you reach. A tea garden in front, tables out from spring to fall |
+| **The pottery** | 46 to 56, 12 to 20 | Tobin's. The kiln chimney smokes on firing days. Its clay pit is on the riverbank below it (57, 25) |
+| **The upper bridge** | 64, 17 | Over the river, to Lupini's side |
+| **Lupini's atelier** | 75 to 86, 16 to 24 | On the bluff by the waterfall, looking south over the whole Vale. A small, overgrown garden |
+| **The Painter's clearing** | 3 to 8, 14 to 22 | Up a path into the western woods. The hidden easel (a discovery) |
+
+### The middle terrace: the Vale's heart
+
+| Place | Tiles | Notes |
+|---|---|---|
+| **The stairs down** | 30, 29 and 72, 31 | One from the Vale House, one from Lupini's side |
+| **The Exhibition Hall** | 39 to 54, 31 to 38 | Built against the cliff, facing the plaza. Closed and dusty until Lupini's 8-heart event |
+| **The plaza** | 36 to 56, 38 to 48 | Paved and round, benches, lamps, the noticeboard by the Hall's door |
+| **The old tree** | 38 to 43, 39 to 44 | The Vale's landmark (section 3) |
+| **The fountain** | 48 to 51, 42 to 45 | Small and old, still running |
+| **Fern's cottage and seedhouse** | 10 to 24, 32 to 37 | Against the cliff, looking over the sculpture garden |
+| **The sculpture garden** | 6 to 30, 37 to 49 | Overgrown statues among hedges and flowers; seasonal (section 4) |
+| **The middle bridge** | 60, 42 | Plaza to the Old Studios |
+| **The Old Studios** | 68 to 88, 34 to 39 | New: a row of three empty artists' studios, boarded up. A weathered sign by them lists who worked there. One opens for Lupini's 6-heart event, and stays open |
+
+### The lower terrace: music, water, and the view
+
+| Place | Tiles | Notes |
+|---|---|---|
+| **The amphitheatre** | 29 to 45, 49 to 59 | Built into the cliff: the stone seats **are** the drop between the terraces, stepping down to a stage. Overgrown until Emmett's 6-heart event |
+| **Emmett's cottage** | 18 to 26, 54 to 60 | Beside the amphitheatre |
+| **The wildflower meadow** | 6 to 28, 61 to 72 | Fern's. Forage, bees, the 2-heart event |
+| **The riverside walk** | 53, 50 to 66, 56 | Stairs down from the plaza, along the river to the lake |
+| **The lake** | 54 to 80, 55 to 71 | Fishing; the lower bridge over the inlet (64, 56) |
+| **The overlook** | 76 to 91, 56 to 73 | A bluff across the lake, as high as the upper terrace, up stairs at (82, 58). A bench at the edge, facing north over the lake, the terraces and the waterfall. Lupini's 10-heart event at dawn |
+
+## 2. The river
+
+- **Where it runs:** a **waterfall** in the north-east, into a pool below Lupini's atelier. Then south-west past the pottery, down a **cascade** over each cliff, and into the lake.
+- **Bridges:** three, one on each terrace. They're the only ways across, so the river splits the Vale into a west side (the inn, Fern, the amphitheatre) and an east side (Lupini, the Old Studios, the overlook).
+- **Fishing:** the river and the lake use the game's own river and lake fish. Fish of the Vale's own could come later.
+- **To check:** which waterfall and cascade tiles the game has (the Mountain's lake, the Forest's river). The waterfall may need a small animated piece of our own.
+
+## 3. The old tree (new idea, for approval)
+
+The plaza's landmark is a huge old tree whose leaves turn **gold in fall**. That's where the Vale's name comes from: the artists who settled there called it the Gilded Vale after it.
+- **Seasons:** blossom in spring, deep green in summer, gold in fall, bare and snowy in winter. A custom tree, four versions.
+- **On Fall 7,** the Open House is held under it, at its most golden.
+- **A paintable view** in every season.
+
+## 4. Seasons
+
+- **The ground, paths, cliffs, water and woods** come from the game's own outdoor tilesheets, so they change with the seasons by themselves (the concept sheet asks for strong seasons).
+- **Our own pieces need four versions:** the old tree; the sculpture garden's statues (flowers in spring, vines in summer, leaves in fall, snow in winter, as the sheet describes); snow on the roofs in winter.
+- **Lamps** on the paths and in the plaza light at dusk.
+
+## 5. Interiors (seven)
+
+| Interior | Size | Notes |
+|---|---|---|
+| **The Vale House** | Like the Saloon | The tea room and bar downstairs; Bea's rooms and guest rooms upstairs (you can stay the night) |
+| **The pottery** | Like the Blacksmith | The workshop and kiln at the front, Tobin's rooms behind |
+| **Lupini's atelier** | Like Leah's cottage | One big room, a north window, his nine canon paintings on the walls |
+| **The Exhibition Hall** | Like the Community Center's main room | Dust sheets before Lupini's 8-heart event; then the Vale's gallery, with displays that change |
+| **Fern's cottage** | Like Leah's | With the seedhouse as a glass room on one side |
+| **Emmett's cottage** | Small | One room: instruments, maps, a bed |
+| **One of the Old Studios** | Small | Empty, an easel and the unfinished painting (Lupini's 6-heart event); the backward painting |
+
+All of them decoratable rooms, built the way Margot's were: straight walls, the game's wallpaper and flooring.
+
+## 6. Getting there
+
+- **The ticket:** at the Bus Stop's ticket machine, a question: the Desert or the Vale. **500g**, the same as the Desert (to decide).
+- **When it opens:** after the bus is repaired, with a letter from Lupini after the Night Market (1.4 plan, section 2).
+- **Arriving:** the bus drives in from the west and stops at the road's end, as in the Desert's arrival. Going home: talk to Pam at the bus.
+- **With Central Station installed:** the Vale is a destination there instead, and our ticket question isn't shown.
+
+## 7. Views to paint
+
+The overlook (the whole Vale), the plaza and the old tree, the amphitheatre, the sculpture garden, the lake, the waterfall, and the spot from Lupini's 4-heart event once you've seen it. They go into the painting record, and a portfolio page of their own, **The Vale** (to decide).
+
+## 8. Where the discoveries go
+
+The concept sheet's hidden things (its section 7), placed:
+
+| Discovery | Where |
+|---|---|
+| A hidden easel overlooking the Vale | The Painter's clearing |
+| A painting hung backward | The open Old Studio |
+| A weathered sign listing former studios | By the Old Studios |
+| A sculpture almost hidden by plants | The sculpture garden's south-west corner, behind a hedge |
+| A sketch tucked in a desk | The Vale House attic (Bea's 4-heart event) |
+| A bench that gives Lupini a special line | The overlook |
+| A mural that changes with the story | The Exhibition Hall's west wall: faded, then repainted after Lupini's 8-heart event |
+| An abandoned exhibition room | The Hall's back room, before it reopens |
+| The old painters' guide to the viewpoints | The Vale House noticeboard |
+
+## 9. Building it (proposed 2026-11-03)
+
+**How the terrain is painted, and every rule for it: `docs/terrain_painting.md`.** Read it before changing the Vale's ground, water, cliffs or stairs.
+
+**No new ground tilesets.** The ground, paths, cliffs, water, waterfalls, trees, bushes and fences all come from the game's own sheets (`outdoorsTileSheet`, `outdoorsTileSheet2`, `Waterfalls`, `town`, `paths`, each in four seasons). That's most of the map, it matches the game's palette exactly, and the seasons come for free. A PixelLab tileset would look a little off next to the farmer and lose the seasons.
+
+**New art only where the Vale is itself:**
+
+| Piece | How |
+|---|---|
+| **Signature buildings:** the Vale House, the Exhibition Hall, Lupini's atelier, the pottery, Fern's cottage and glass seedhouse | PixelLab, the art shop's way: a vanilla building cropped from the game's maps as the style reference (Pro Flash `style_image`, or map-object inpainting on a crop of the Town for buildings up to 192px), 3 or 4 candidates each, then our refining pass (shingles, eaves, outlines as a darker shade of their neighbour) and a mockup in a vanilla scene at 3x |
+| **Smaller buildings:** Emmett's cottage, the Old Studios | First try: built from the game's own house pieces on the `town` sheet, recoloured, so they cost nothing. PixelLab if they look copied |
+| **The old tree** | One PixelLab render, then three recolours for the other seasons (Pixen edit keeps the shape) |
+| **Statues, amphitheatre seats, the bus shelter, the sign** | Small: PixelLab objects, or drawn by script from vanilla stone tiles (like the shop's wall bins) |
+
+**Progress (2026-11-03):**
+- **The greybox is built** (`tools/build_vale.py` → `[CP] Gilded Vale (dev)/assets/GildedVale.tmx` (a Debug-only content pack, never released), location `blinxxy.MuseArt_GildedVale`; in a dev game, `museart_warp blinxxy.MuseArt_GildedVale 20 7`). It stamps the vanilla Town's own cliffs, stairs, river, waterfalls and bridges, so the seasons change by themselves (shots: `art/gilded_vale/greybox_seasons.png`). Every area is reachable from the bus, checked with `museart_route` in segments. Simplified for now: the river runs straight down x 56 to 64, the cliffs are straight, the lake has no banks, and there's no overlook bluff or amphitheatre yet.
+- **The building guides** (`tools/art/vale_building_guides.py`) were redone after the user's review: front gables like the game's own houses, about 60% roof (`art/gilded_vale/buildings/guides_vs_vanilla.png`). Fern's seedhouse follows the farm's greenhouse (the user: use the game's own one as the reference). First candidates: `batch_v2.json`.
+
+**The order:**
+1. **Greybox** (no art, no generations): `tools/build_vale.py` writes the TMX from vanilla tiles, with plain boxes for the buildings. A debug warp in, then walk it in-game in all four seasons: terraces, stairs, bridges, distances.
+2. **Building sizes** from the greybox, measured against vanilla (a house in town is about 8 to 10 tiles wide).
+3. **Exteriors,** one at a time, candidates shown before choosing.
+4. **Props and the tree.**
+5. **Interiors,** from the game's interior tiles, as Margot's were.
+6. **The bus route** and the dressing pass.
+
+**Cost:** a Pro Flash building is 5 to 9 generations a candidate; four candidates for each of six buildings is about 150 to 200 generations. 3,569 were left on 2026-11-03 (resets 2026-11-26).
+- **The rules:** vanilla palette and sizes; no props on walls or straddling edges; yard props well inside their plots; walls block along their whole face.
+- **Checking:** the map shot (`museart_menu mapshot`) at each step, in all four seasons.
+
+## 10. Open questions
+
+1. **The layout:** as sketched, or move things?
+2. **The old tree** as the Vale's landmark and the origin of its name?
+3. **The Old Studios** (new): a row of three empty studios, one of them open, as the seventh interior?
+4. **The amphitheatre built into the cliff,** its seats as the drop between terraces?
+5. **The ticket:** 500g, like the Desert?
+6. **A Vale portfolio page?**

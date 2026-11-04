@@ -1,0 +1,14 @@
+{
+  "Name": "[CP] Gilded Vale (in development)",
+  "Author": "blinxxy",
+  "Version": "0.1.0",
+  "Description": "Pelican Palette 1.4's Gilded Vale, in development. Debug builds only: never bundled in a release (ArtStudio.csproj).",
+  "UniqueID": "blinxxy.MuseArt.GildedValeDev",
+  "ContentPackFor": {
+    "UniqueID": "Pathoschild.ContentPatcher",
+    "MinimumVersion": "2.9.0"
+  },
+  "Dependencies": [
+    { "UniqueID": "blinxxy.MuseArt.CP" }
+  ]
+}

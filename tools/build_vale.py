@@ -1,0 +1,917 @@
+"""Builds the Gilded Vale's GREYBOX (1.4, docs/design/gilded_vale_map.md):
+the whole map from the game's own tiles, with plain boxes for the buildings,
+so the terraces, stairs, bridges and distances can be walked before any art.
+
+Pieces are stamped from the vanilla Town map (all its tile layers but Paths),
+so they're the game's own cliffs, stairs, river, waterfall and bridges, and
+change with the seasons (its tilesheets are the spring_ ones, which the game
+swaps for the season outdoors):
+
+  CLIFF      Town x 24-33, y 43-48: the ledge north of Pierre's (lip, face, foot)
+  STAIRS     Town x 19-22, y 42-50: the stone stairs down that ledge
+  RIVER      Town x 89-97, y 15-28: the river below the town's waterfall
+  FALLS      Town x 91-97, y 0-6: the waterfall into its pool
+  STONE_BR   Town x 69-78, y 51-57: the stone bridge by the clinic road
+  LOG_BR     Town x 89-97, y 12-14: the log footbridge under the waterfall
+
+Simplified from the sketch for now: the river runs straight down x 56-64,
+the cliffs are straight, and the lake has no banks. Trees go on the Paths
+layer (the game plants them on load).
+
+The five signature buildings are the user's picks (2026-11-04) from
+art/gilded_vale/buildings/vale_buildings_v2 (PICKS below), outlines softened
+(vanillafy.selout), packed onto GildedValeBuildings.png. Each sits with its
+base on the given row: its bottom SOLID rows are walls (Buildings), the rest
+roof (Front2, over the farmer and over any cliff behind it, as Pierre's roof
+hangs over the ledge behind his shop). The rest are still plain boxes.
+
+Usage: build_vale.py <Town.tmx export> "[CP] Gilded Vale (dev)/assets" [vanilla exports dir, default: the Town export's folder]
+"""
+import collections, os, random, re, sys
+from PIL import Image
+import xml.etree.ElementTree as ET
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from render_tmx import layer_data
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "art"))
+from vanillafy import selout
+
+PICKS_DIR = "art/gilded_vale/buildings/vale_buildings_v2"
+SHEET = "GildedValeBuildings.png"
+SHEET_COLS = 16
+# name: (pick, left tile x, bottom tile y, solid rows)
+PICKS = {
+    "vale_house": ("vale_house_s3_0", 23, 19, 3),
+    "pottery": ("pottery_s3_3", 43, 18, 3),
+    "atelier": ("atelier_s1_0", 70, 23, 3),
+    "hall": ("exhibition_hall_s3_0", 38, 39, 3),
+    "fern": ("fern_cottage_s2_0", 9, 38, 3),
+}
+
+W, H = 96, 76
+LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
+STAMP_LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "AlwaysFront"]
+
+CLIFF = (24, 43, 10, 6)
+STAIRS = (19, 42, 4, 9)
+RIVER = (89, 15, 9, 14)
+FALLS = (91, 0, 7, 7)        # (from x 91: Town has a fence in the first two columns)
+STONE_BR = (69, 51, 10, 7)
+LOG_BR = (89, 12, 9, 3)
+
+# Ground tiles, by gid in Town's tilesets (the three commonest grasses in Town,
+# its sandy path, open water, and a plank of Pierre's front wall for the boxes).
+GRASS, GRASS_MID = 176, 352
+DIRT, WATER, WALL = 228, 1230, 2630
+
+RIVER_X = 56                 # the river's left edge where it falls over the cliffs (the falls are 9 wide)
+TOP_FALLS_X = 78             # the waterfall it comes in by, in the north-east
+CLIFF_A, CLIFF_B = 28, 48    # top rows of the two cliffs (6 tall)
+TREE_GIDS = None             # set from the Paths tileset: oak, maple, pine
+
+
+def load_town(path):
+    root = ET.parse(path).getroot()
+    layers = {}
+    for layer in root.findall("layer"):
+        w = int(layer.get("width"))
+        data = layer_data(layer.find("data"))
+        layers[layer.get("name")] = [data[i * w:(i + 1) * w] for i in range(len(data) // w)]
+    text = open(path, encoding="utf-8").read()
+    tilesets = re.findall(r"  <tileset .*?</tileset>", text, re.S)
+    tilesets = [re.sub(r'source="Maps\\', 'source="', t) for t in tilesets]
+    paths_first = int(re.search(r'<tileset firstgid="(\d+)" name="Paths"', text).group(1))
+    return layers, tilesets, paths_first
+
+
+def main():
+    town_path, assets = sys.argv[1], sys.argv[2]
+    town, tilesets, paths_first = load_town(town_path)
+    g = {l: [[0] * W for _ in range(H)] for l in LAYERS}
+
+    def tget(layer, x, y):
+        return town.get(layer, [[0]])[y][x] if layer in town else 0
+
+    def stamp(src, x, y, layers=STAMP_LAYERS, clip=None):
+        sx, sy, sw, sh = src
+        for j in range(sh):
+            for i in range(sw):
+                tx, ty = x + i, y + j
+                if not (0 <= tx < W and 0 <= ty < H) or (clip and not clip(tx, ty)):
+                    continue
+                for l in layers:
+                    v = tget(l, sx + i, sy + j)
+                    if l == "Back" or v:
+                        g[l][ty][tx] = v
+                    elif l != "Back":
+                        g[l][ty][tx] = 0
+
+    def fill(layer, x0, y0, x1, y1, gid):
+        for y in range(max(0, y0), min(H, y1)):
+            for x in range(max(0, x0), min(W, x1)):
+                g[layer][y][x] = gid
+
+    grass, dirt, water, wall = GRASS, DIRT, WATER, WALL
+    paint_ground(g, sys.argv[3] if len(sys.argv) > 3 else os.path.dirname(town_path))
+
+    # The two cliffs, right across, then the stairs cut through them.
+    crnd = random.Random(3)
+    for top in (CLIFF_A, CLIFF_B):
+        cliff(g, top, crnd, keep_water=True)
+    # The stairs are PixelLab art (tools/art/vale_stairs.py), laid with the buildings
+    # in place_buildings(); VALE_NO_STAIRS leaves the cliff unbroken, for rendering
+    # the bare cliff that art is painted into.
+
+    # Waterfalls over each cliff and the bridges: only the pieces' own tiles (the
+    # falling water and its foam, the rock behind it; the bridge's deck, rails and
+    # posts), never the Town ground they were cut from (the user, 2026-11-04).
+    for top in (CLIFF_A, CLIFF_B):
+        waterfall(g, tget, RIVER_X + 2, top)
+    stone_bridge(g, tget, 39)        # the plaza to the Old Studios (the lower east side is reached by its own stairs)
+    log_bridge(g, 22)
+    log_bridge(g, 54)        # planks across the pool under the lower falls (the user's idea, 2026-11-04): hides the
+                             # right-angle joins where the lake's top bank meets the river, and links the lower terrace
+    bank_depth(g)            # the depth row of the straight banks (turns are paint_shores')
+
+    # Buildings: plain solid boxes on their footprints (the roofs come with the art).
+    boxes = {
+        "bus": (10, 2, 8, 3),
+        "studios_1": (68, 36, 5, 3), "studios_2": (75, 36, 5, 3), "studios_3": (82, 36, 5, 3),
+        "emmett": (16, 56, 6, 3),
+    }
+    for x, y, w, h in boxes.values():
+        fill("Buildings", x, y, x + w, y + h, wall)
+
+    place_buildings(g, assets)
+
+    # Woods all round, on the Paths layer: oak (9), maple (10), pine (11).
+    rnd = random.Random(1)
+    def tree_ok(x, y):
+        return GROUND.get((g["Back"][y][x], g["Buildings"][y][x]), ("?",) * 4) in (("G",) * 4, ("D",) * 4) and not g["Buildings"][y][x] and g["Back"][y][x] != water
+    for y in range(H):
+        for x in range(W):
+            edge = x < 5 or x > 90 or y < 2 or y > 72
+            if edge and (x + y) % 2 == 0 and tree_ok(x, y) and not (y in (5, 6, 7, 8) and x < 10):
+                g["Paths"][y][x] = paths_first + rnd.choice((9, 10, 11))
+
+    props = {"Outdoors": "T", "Spring_Objects": "T", "Summer_Objects": "T", "Fall_Objects": "T", "Winter_Objects": "T",
+             "BrookSounds": f"{RIVER_X + 4} 3 0"}
+    write(os.path.join(assets, "GildedVale.tmx"), g, props, tilesets)
+
+
+# The Town ledge's cliff, as a rule rather than a block (learned from Town x 23-46,
+# y 43-48, 2026-11-04): the face alternates between two columns; the top edge is
+# almost always one piece; three face pieces are rarer variants of their neighbours;
+# the three rows under the face are the ground's shading.
+CLIFF_LIP = ((103, 0.9), (308, 0.1))
+CLIFF_FACE = ((468, 493, 518, 543), (469, 494, 519, 544))            # by column parity, rows 1-4
+CLIFF_FACE_VARIANT = {468: 447, 494: 448, 518: 449}                  # an odd stone here and there
+CLIFF_SHADE = ((327,), (356, 355), (406, 405, 404))                  # Back, rows 3-5
+
+
+def is_water(g, x, y):
+    return "W" in GROUND.get((g["Back"][y][x], g["Buildings"][y][x]), ())
+
+
+def cliff(g, top, rnd, keep_water=False):
+    """A cliff right across the map, its top edge on row top (6 rows: edge, three face
+    rows over the shading, two rows of shading below). Where the river runs under
+    it, the water below the face stays (the waterfall's pool)."""
+    for x in range(W):
+        river = keep_water and GROUND.get((g["Back"][top + 5][x], g["Buildings"][top + 5][x])) == ("W",) * 4
+        r = rnd.random()
+        beside_stairs = any(sx - 2 <= x <= sx + 5 and st == top for sx, st in STAIR_SPOTS)
+        g["Buildings"][top][x] = CLIFF_LIP[0][0] if r < CLIFF_LIP[0][1] or beside_stairs else CLIFF_LIP[1][0]
+        if not river:
+            g["Back"][top][x] = GRASS      # the edge piece is see-through at the top: grass behind it, never shore
+        for k, gid in enumerate(CLIFF_FACE[x % 2]):
+            if gid in CLIFF_FACE_VARIANT and rnd.random() < 0.08:
+                gid = CLIFF_FACE_VARIANT[gid]
+            g["Buildings"][top + 1 + k][x] = gid
+            g["Front"][top + 1 + k][x] = 0
+        if river:
+            continue
+        for k, opts in enumerate(CLIFF_SHADE):
+            if keep_water and is_water(g, x, top + 3 + k):
+                continue                      # the riverbank stays the riverbank
+            if any(sx + 1 <= x <= sx + 2 and st == top for sx, st in STAIR_SPOTS) and k == 2:
+                continue                      # under the flight's last steps
+            g["Back"][top + 3 + k][x] = opts[0]          # the main piece only: its variants go plain white in winter
+        g["Back"][top + 1][x] = g["Back"][top + 2][x] = GRASS
+
+
+SHADOWS = range(5464, 5939)
+WATERFALLS = range(5939, 6839)
+OUTDOORS2 = range(4344, 5464)
+TOWN_SHEET = range(2040, 4344)
+STAIR_SPOTS = ((30, 28), (78, 28), (50, 48), (84, 48))   # left column and cliff top of each flight (CLIFF_A 28, CLIFF_B 48)
+STAIRS_PICK = "art/gilded_vale/stairs/stairs_s2_0.png"    # the flight, 4 x 9 tiles from the row above the cliff's edge
+
+STAIR_TREAD_SWAP = {2810: 2808}         # a grey, worn tread that showed as a dark spot; its plain neighbour
+LOG_DECK = (780, 781, 782, 783)          # the log footbridge: left end, middle, middle, right end
+# Banks that run straight repeat one piece along their whole length, so each is the
+# piece that joins itself seamlessly (compared side by side, 2026-11-04). The east
+# bank's commonest piece is a wedge that repeated as a sawtooth (the user's
+# screenshot); this is the mirror of the west bank's (5177, 284).
+SHORE_PIN = {("W", "S", "W", "S"): (5178, 285), ("S", "W", "S", "W"): (5177, 284)}
+LILY_PADS = set(range(1294, 1298)) | set(range(1319, 1323))   # shore overlays with a lily pad (they lined up along banks)
+
+
+def waterfall(g, tget, x, top):
+    """The Town waterfall (Town x 91-97, y 0-6) over one of our cliffs, its top edge on
+    our cliff's top row: the falling water and foam (Waterfalls sheet, Front and
+    AlwaysFront) and the wet rock behind it (outdoors sheet 2, Buildings). Our own
+    cliff stays either side; the face row the pool covers is cleared."""
+    sx, sy, sw, sh = FALLS
+    for j in range(sh):
+        for i in range(sw):
+            tx, ty = x + i, top + j
+            for layer in ("Front", "AlwaysFront"):
+                v = tget(layer, sx + i, sy + j)
+                if v in WATERFALLS:
+                    g[layer][ty][tx] = v
+            v = tget("Buildings", sx + i, sy + j)
+            if v in OUTDOORS2 or (j == 0 and v == 126):     # 126: the water spilling over the edge
+                g["Buildings"][ty][tx] = v
+    for i in range(2, 6):
+        g["Buildings"][top + 4][x + i] = 0          # the pool, where our face's last row was
+
+
+def stairs(g, tget, x, top):
+    """The Town's stone stairs down a cliff (Town x 19-22), fitted to our cliff, whose
+    edge is the same height both sides (Town's ledge is a row lower left of its stairs
+    than right of them, so each side is lined up with its own ledge):
+      treads    Town x 20-21, rows 43-51 -> our rows top..top+8 (Back)
+      left wall Town x 19, rows 44-48 -> top..top+4, and its cap (row 43) on top-1
+      right wall Town x 22, rows 43-47 -> top..top+4
+      and the cliff columns either side end as the game ends them: Town x 18 rows
+      44-48 on our x-1, Town x 23 rows 43-47 on our x+4.
+    The stairs' outer edge tiles (Town x 19 and 22 on Back) are left out: they're the
+    town sheet's and go blank white in winter (the user's screenshots, 2026-11-04)."""
+    for ty in range(top - 1, top + 6):
+        for tx in range(x, x + 4):
+            g["Buildings"][ty][tx] = g["Front"][ty][tx] = 0       # our cliff, where the stairs cut it
+    for k in range(9):                                           # treads
+        for i in (1, 2):
+            v = tget("Back", 19 + i, 43 + k)
+            if v in TOWN_SHEET or v in OUTDOORS2:
+                g["Back"][top + k][x + i] = STAIR_TREAD_SWAP.get(v, v)
+    for k in range(5):
+        g["Buildings"][top + k][x] = tget("Buildings", 19, 44 + k)          # left wall
+        g["Buildings"][top + k][x + 3] = tget("Buildings", 22, 43 + k)      # right wall
+        g["Buildings"][top + k][x - 1] = tget("Buildings", 18, 44 + k)      # the cliff's end, left
+        g["Buildings"][top + k][x + 4] = tget("Buildings", 23, 43 + k)      # and right
+    g["Buildings"][top - 1][x] = tget("Buildings", 19, 43)                # the left wall's cap
+    g["Front"][top - 1][x] = tget("Front", 19, 43)
+
+
+def stone_bridge(g, tget, y):
+    """The Town's stone bridge (Town x 70-77, y 52-56: the town sheet's deck, rails and
+    the posts in the water), its deck on rows y + 1 and y + 2. Narrowed from 8 columns
+    to 6 (its ends, its middle post, and one arch column each side) so it spans our
+    river (water x 60-63) bank to bank, x 59-64."""
+    sx, sy = STONE_BR[0] + 1, STONE_BR[1] + 1
+    cols = (0, 1, 3, 4, 6, 7)
+    for j in range(5):
+        for i, src in enumerate(cols):
+            tx = RIVER_X + 3 + i
+            if j < 4:
+                g["Buildings"][y + j][tx] = g["Front"][y + j][tx] = 0   # no shore pieces over the deck and rails (the bank below keeps its own)
+            for layer in ("Back", "Buildings", "Front"):
+                if layer == "Back" and j not in (1, 2):
+                    continue                  # the posts stand in the town sheet's own water, a different blue in winter
+                v = tget(layer, sx + src, sy + j)
+                if v in TOWN_SHEET:
+                    g[layer][y + j][tx] = v
+
+
+def log_bridge(g, y):
+    """The log footbridge across the river on row y, from bank to bank."""
+    xs = [x for x in range(RIVER_X - 4, RIVER_X + 14) if is_water(g, x, y)]
+    if not xs:
+        return
+    x0, x1 = xs[0] - 1, xs[-1] + 1
+    for x in range(x0, x1 + 1):
+        g["Buildings"][y][x] = LOG_DECK[0] if x == x0 else LOG_DECK[3] if x == x1 else LOG_DECK[1 + (x - x0) % 2]
+        if x0 < x < x1:
+            g["Back"][y][x] = WATER      # plain water under the deck, as in Town (some shore tiles aren't walkable)
+
+
+SHORE_V = []                 # the corner terrain, kept for finding shore corners (tools/art/vale_shore.py)
+GROUND = {}                  # (Back, Buildings) stack -> corner pattern, for every stack the painter can lay
+
+
+def paint_ground(g, exports):
+    """The ground painted the way the game's maps are: terrain is set on the corners
+    of the tile grid (G grass, D dark grass, S dirt and sand, W water) and each tile
+    is a vanilla tile whose four corners match (tools/vale_terrain.py). Paths are
+    ragged strokes, the river meanders, water always has a sand rim (the game never
+    puts grass straight against water), and the darker grass is soft patches kept
+    away from the paths, as in the Forest."""
+    from vale_terrain import Table
+    table = Table(exports)
+    GROUND.update(table.corners)
+    rnd = random.Random(11)
+    V = [["G"] * (W + 1) for _ in range(H + 1)]
+
+    def noise(scale, seed):
+        r = random.Random(seed)
+        gw, gh = W // scale + 3, H // scale + 3
+        grid = [[r.random() for _ in range(gw)] for _ in range(gh)]
+
+        def at(x, y):
+            fx, fy = x / scale, y / scale
+            x0, y0 = int(fx), int(fy)
+            tx, ty = fx - x0, fy - y0
+            tx, ty = tx * tx * (3 - 2 * tx), ty * ty * (3 - 2 * ty)
+            a = grid[y0][x0] * (1 - tx) + grid[y0][x0 + 1] * tx
+            b = grid[y0 + 1][x0] * (1 - tx) + grid[y0 + 1][x0 + 1] * tx
+            return a * (1 - ty) + b * ty
+        return at
+
+    wobble = noise(3, 5)
+
+    def dist_seg(px, py, ax, ay, bx, by):
+        dx, dy = bx - ax, by - ay
+        t = 0 if dx == dy == 0 else max(0, min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)))
+        return ((px - ax - t * dx) ** 2 + (py - ay - t * dy) ** 2) ** 0.5
+
+    def stroke(points, radius, cls, rag=0.35):
+        xs, ys = [p[0] for p in points], [p[1] for p in points]
+        for y in range(max(0, int(min(ys) - radius - 2)), min(H + 1, int(max(ys) + radius + 3))):
+            for x in range(max(0, int(min(xs) - radius - 2)), min(W + 1, int(max(xs) + radius + 3))):
+                d = min(dist_seg(x, y, *a, *b) for a, b in zip(points, points[1:]))
+                if d <= radius + (wobble(x, y) - 0.5) * 2 * rag:
+                    V[y][x] = cls
+
+    def area(x0, y0, x1, y1, cls, rag=0.5):
+        for y in range(max(0, y0 - 2), min(H + 1, y1 + 3)):
+            for x in range(max(0, x0 - 2), min(W + 1, x1 + 3)):
+                ex, ey = max(x0 - x, 0, x - x1), max(y0 - y, 0, y - y1)
+                if (ex * ex + ey * ey) ** 0.5 <= 0.5 + (wobble(x, y) - 0.5) * 2 * rag:
+                    V[y][x] = cls
+
+    def around(x, y, r):
+        return [(i, j) for j in range(max(0, y - r), min(H + 1, y + r + 1)) for i in range(max(0, x - r), min(W + 1, x + r + 1))]
+
+    # Water. The game draws diagonal banks only on the north side of water (land above
+    # it); a bank that faces south runs straight east-west (the corner pieces a
+    # south-facing staircase needs barely exist, and showed as notches and reeds in a
+    # row). So the river comes in from under the woods, runs straight with square
+    # bends, and the lake has a rounded top and a flat south shore, like the Forest pond.
+    def water_rect(x0, y0, x1, y1):
+        for y in range(max(0, y0), min(H + 1, y1 + 1)):
+            for x in range(max(0, x0), min(W + 1, x1 + 1)):
+                V[y][x] = "W"
+    water_rect(80, 0, 84, 12)          # in from the north-east, under the woods
+    water_rect(60, 8, 84, 12)          # west along the upper terrace, above Lupini's
+    water_rect(60, 8, 64, 60)          # down the terraces at the falls' width (water x 60-63)
+
+    def round_corner(cx, cy, r, dx, dy, cls):
+        """Cut the square corner at vertex (cx, cy) on a clean 45-degree diagonal (one
+        step per row: the rhythm the game's diagonal bank pieces are drawn for; an arc
+        stepped unevenly and broke into lumps): the triangle of the r x r square
+        reaching (dx, dy) from it, nearest the corner, becomes cls."""
+        for j in range(r + 1):
+            for i in range(r + 1):
+                x, y = cx + dx * i, cy + dy * j
+                if 0 <= x <= W and 0 <= y <= H and i + j < r:
+                    V[y][x] = cls
+
+    # Only corners where land is above the water can be rounded (the game has the
+    # pieces for those shores); corners facing south stay square.
+    round_corner(60, 8, 4, 1, 1, "G")       # the river's outer corner where it turns south
+    round_corner(80, 8, 4, -1, -1, "W")     # the inner bend below where it comes in
+    round_corner(60, 58, 3, -1, -1, "W")    # where the river opens into the lake
+    round_corner(64, 58, 3, 1, -1, "W")
+
+    # The lake: a rounded-square dome, long flat runs with short rounded corners (a
+    # 45-degree curve came out as a staircase of one-tile steps), widening down to a
+    # flat south shore, like the Forest pond.
+    # (Now: a rectangle whose top corners are cut on a clean 45-degree diagonal, five
+    # steps long, then long straight banks; the bottom corners stay square, as south-
+    # facing corners must.)
+    LX0, LX1, LY0, LY1, CUT = 50, 82, 57, 71, 5
+    # The sides jog in and out a tile every few rows, as the game's vertical banks do
+    # (the Town river, the Forest's): a ruler-straight side has no step for the game's
+    # rocky pieces to sit on.
+    # The jogs only ever step outward going down (the water widening), so every step
+    # faces north: a step facing south has no piece in the game (it came out as
+    # fragments at the bottom-left).
+    def jogs(seed, steps=2):
+        r, out, off = random.Random(seed), {}, steps
+        first = LY0 + CUT
+        rows = LY1 - first + 1
+        # steps at least four rows apart: a one-row run between two steps read as a jag
+        options = [c for c in __import__("itertools").combinations(range(3, rows - 2), steps)
+                   if all(b - a >= 5 for a, b in zip(c, c[1:])) and c[-1] + 1 < rows - 2]
+        cuts = list(r.choice(options)) if options else [rows // 2]
+        for y in range(LY0, LY1 + 1):
+            # each jog is a short 45-degree diagonal, out a tile on two rows running, as the
+            # Town river's are: a single step dropping straight again was a right angle
+            out[y] = sum(min(2, max(0, y - (first + c) + 1)) for c in cuts)
+        return out
+    left, right = jogs(41), jogs(43)
+    for y in range(LY0, LY1 + 1):
+        for x in range(LX0 - 4, LX1 + 5):
+            inside = (y - LY0) + (x - LX0) >= CUT and (y - LY0) + (LX1 - x) >= CUT and LX0 <= x <= LX1
+            widened = y - LY0 >= CUT and LX0 - left[y] <= x <= LX1 + right[y]
+            if inside or widened:
+                V[y][x] = "W"
+
+    # A sand rim round all water.
+    rim = [(x, y) for y in range(H + 1) for x in range(W + 1)
+           if V[y][x] != "W" and any(V[j][i] == "W" for i, j in around(x, y, 1))]
+    for x, y in rim:
+        V[y][x] = "S"
+
+    # Smooth the water's outline where it would need a shoreline corner the game
+    # barely uses (fewer than 15 uses: they showed as hard notches), then regrow the rim.
+    def strength(pat):
+        c = table.by_pattern.get(pat)
+        return c[0][1] if c else 0
+    # One pass only (repeating it spread the water across the map), and never on the
+    # river's measured stretch down the terraces, which must keep the falls' width.
+    flips = []
+    for y in range(H):
+        for x in range(W):
+            if 57 <= x <= 66 and 6 <= y <= 60:
+                continue
+            corners = [(x, y), (x + 1, y), (x, y + 1), (x + 1, y + 1)]
+            pat = tuple(V[j][i] for i, j in corners)
+            if set(pat) != {"S", "W"} or strength(pat) >= 15:
+                continue
+            n = pat.count("W")
+            flips += [((i, j), "W" if n == 3 else "S") for (i, j), c in zip(corners, pat) if (n == 3) != (c == "W")]
+    for (i, j), c in flips:
+        V[j][i] = c
+    for y in range(H + 1):
+        for x in range(W + 1):
+            if V[y][x] in "GD" and any(V[j][i] == "W" for i, j in around(x, y, 1)):
+                V[y][x] = "S"
+
+    # The sand rim wanders between one and two tiles wide, as the game's do: at a
+    # steady one tile the grass met it in a dead-straight edge (the user, 2026-11-04).
+    rim_width = noise(3, 31)
+    widen = [(x, y) for y in range(H + 1) for x in range(W + 1)
+             if V[y][x] in "GD" and rim_width(x, y) > 0.45
+             and any(V[j][i] == "W" for i, j in around(x, y, 2))]
+    for x, y in widen:
+        V[y][x] = "S"
+    # Room for the banks' depth row (bank_depth): two tiles of sand above every north
+    # bank, and beside every side bank.
+    deepen = []
+    for y in range(1, H):
+        for x in range(1, W):
+            if V[y][x] == "S" and V[y + 1][x] == "W":
+                deepen += [(x, y - 1), (x, y - 2)]
+            if V[y][x] == "S" and V[y][x + 1] == "W":
+                deepen += [(x - 1, y), (x - 2, y)]
+            if V[y][x] == "S" and V[y][x - 1] == "W":
+                deepen += [(x + 1, y), (x + 2, y)]
+    for x, y in deepen:
+        if 0 <= x <= W and 0 <= y <= H and V[y][x] in "GD":
+            V[y][x] = "S"
+
+    # Paths: ragged strokes of dirt.
+    for pts, r in (
+        ([(0, 7), (12, 7), (22, 6.5), (36, 6.5), (54, 7), (57, 13), (57, 21)], 1.6),   # the road, along to the upper bridge (clear of the inn's roof)
+        ([(21, 8), (21, 20.5), (32, 21.5), (32, 26)], 1.1),                            # round the inn to its door and the stairs
+        ([(47, 19.5), (57, 19.5)], 1.0),                                                 # the pottery's door across to the bridge path
+        ([(65, 22), (69, 24.5), (80, 24.5), (80, 26)], 1.1),                         # Lupini's side: the atelier, its stairs
+        ([(32, 35.4), (32, 41.5), (36, 41.5)], 1.2),                                   # stairs to the plaza
+        ([(56, 42), (65, 42), (82, 41.5)], 1.2),                                         # the middle bridge, to the Old Studios
+        ([(80, 35.4), (80, 41.5)], 1.0),                                             # Lupini's stairs down to the Old Studios
+        ([(82, 41.5), (86, 44), (86, 46)], 1.0),                                   # and on to the east stairs
+        ([(31.5, 41.5), (13, 40), (13, 38.6)], 1.0),                                                 # to Fern's door and the sculpture garden
+        ([(46, 44), (52, 45.5), (52, 46)], 1.0),                                                   # the plaza to the top of the lower stairs
+        ([(52, 55.4), (52, 56), (44, 57), (38, 57.5), (22, 58.5)], 1.1),                           # from their foot to the amphitheatre and Emmett's
+        ([(86, 55.4), (86.5, 64)], 1.0),                                                 # the east stairs down to the overlook
+        ([(10, 7), (6.5, 14), (6.5, 20)], 0.9),                                          # the Painter's clearing
+    ):
+        stroke(pts, r, "S")
+    area(36, 40, 55, 45, "S")                                                            # the plaza, clear of the cliff
+    # Each flight's approaches: the stairs' width, centred on them, stopping just short
+    # of the steps with a ragged end like any path's (the user, 2026-11-04).
+    for sx, top in STAIR_SPOTS:
+        stroke([(sx + 2, top - 4), (sx + 2, top - 2)], 1.5, "S")        # ending just short of the top step, ragged
+        stroke([(sx + 2, top + 7.4), (sx + 2, top + 9)], 1.5, "S")      # and starting just past the bottom one
+
+    # Darker grass: soft patches, kept two tiles from dirt and water.
+    dark = noise(7, 21)
+    for y in range(H + 1):
+        for x in range(W + 1):
+            near_cliff = any(top - 2 <= y <= top + 9 for top in (CLIFF_A, CLIFF_B))   # plain grass round cliffs and their shadow
+            if V[y][x] == "G" and dark(x, y) >= 0.6 and not near_cliff and not any(V[j][i] in "SW" for i, j in around(x, y, 2)):
+                V[y][x] = "D"
+
+    # No lone corners: a single corner of one terrain inside another (a tuft of grass
+    # in the road, a speck of dirt in the grass) becomes its surroundings.
+    for _ in range(2):
+        for y in range(1, H):
+            for x in range(1, W):
+                n = {V[y - 1][x], V[y + 1][x], V[y][x - 1], V[y][x + 1]}
+                if len(n) == 1 and V[y][x] not in n and "W" not in n | {V[y][x]}:
+                    V[y][x] = n.pop()
+
+    # No checkerboard diagonals: the game has no tile for them.
+    for _ in range(3):
+        for y in range(H):
+            for x in range(W):
+                tl, tr, bl, br = V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1]
+                if tl == br and tr == bl and tl != tr:
+                    keep = "W" if "W" in (tl, tr) else ("S" if "S" in (tl, tr) else "G")
+                    V[y][x] = V[y][x + 1] = V[y + 1][x] = V[y + 1][x + 1] = keep
+
+    misses = collections.Counter()
+    for y in range(H):
+        for x in range(W):
+            pat = (V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1])
+            plain = len(set(pat)) == 1
+            # Plain ground keeps to its main tile (grass with its tufts), so it
+            # doesn't speckle; edges vary among the game's common pieces.
+            if plain:
+                bare = [c for c in table.by_pattern.get(pat, []) if c[0][1] == 0][:2 if pat == ("G",) * 4 else 1]
+                stack = bare[0][0] if len(bare) == 1 or rnd.random() < bare[0][1] / (bare[0][1] + bare[1][1]) else bare[1][0]
+            elif pat in SHORE_PIN:
+                stack = SHORE_PIN[pat]
+            elif "W" in pat:
+                # Shores: the plain version where the game has one (the commonest east
+                # bank carries a lily pad, which lined up in a row), else its overlay.
+                cands = [c for c in table.by_pattern.get(pat, []) if c[0][1] not in LILY_PADS] or table.by_pattern.get(pat, [])
+                bare = [c for c in cands if c[0][1] == 0]
+                stack = (bare[0][0] if bare and bare[0][1] >= cands[0][1] * 0.25 else cands[0][0]) if cands else None
+                if not cands or cands[0][1] < 5:
+                    stack = None     # too rare: its few examples are rocks and reeds; use the nearest common shore
+            else:
+                # Each kind of edge is always the game's main piece for it, so neighbouring
+                # edges are the same shade (variants beside each other showed hard seams).
+                bare = [c for c in table.by_pattern.get(pat, []) if c[0][1] == 0]
+                stack = bare[0][0] if bare else table.pick(pat, rnd, top=1)
+            if stack is None:
+                misses[pat] += 1
+                best = min((q for q in table.by_pattern if set(q) <= set(pat) and table.by_pattern[q][0][1] >= 5),
+                           key=lambda q: sum(a != b for a, b in zip(q, pat)), default=("G",) * 4)
+                stack = table.pick(best, rnd, top=1)
+            g["Back"][y][x], g["Buildings"][y][x] = stack
+    if misses:
+        print("patterns with no vanilla tile (nearest used):", dict(misses.most_common(8)))
+    # (fit_edges(), choosing edges by their vanilla neighbours, was tried and made the
+    # banks worse: the game's curved corners are one-off arrangements, never reused.)
+    paint_shores(g, V, table)
+    vertical_banks(g, V, table)
+    SHORE_V.clear()
+    SHORE_V.extend(V)
+
+
+WATER_BACKS = {1229, 1230, 1243, 1244, 1245, 1246, 1247, 1248, 1249, 1250, 1272, 1273, 1274, 1275, 1280}   # the water tiles the depth pieces are laid over
+SHORE_DECOR = set(range(1290, 1326))
+MOUNTAIN_DIRT = {609, 610, 611, 709, 710, 711, 809, 810, 811}   # bank tops drawn for the Mountain's darker dirt, not our sand
+
+# The game's vertical banks are a five-tile cycle, read off the Town river and the
+# Forest's shores (2026-11-04): together the five draw one continuous wavy rocky edge.
+# One piece repeated stacked into separate "pillars" (the user's close-ups).
+LEFT_LAND_CYCLE = ((1230, 5242), (1230, 5258), (5211, 5274), (5227, 234), (1230, 234))     # land left, water right
+RIGHT_LAND_CYCLE = ((1230, 5290), (1230, 5306), (5210, 5322), (5226, 236), (1230, 236))    # water left, land right
+
+
+# A run's ends, as the game has them (same rivers): the tile above a run is a cap that
+# leads the wave in; a run that ends where the bank steps outward finishes on the
+# side bank's plain end piece.
+LEFT_LAND_CAP, RIGHT_LAND_CAP = (5180, 234), (1271, 236)
+LEFT_LAND_END, RIGHT_LAND_END = (5177, 284), (5178, 285)
+
+
+def vertical_banks(g, V, table):
+    """Every vertical run of bank tiles, laid as the game lays them: its cap above,
+    the step recipe below if the bank steps outward there, and in between the run of
+    cycle pieces chosen (by dynamic programming) as the sequence the game itself stacks
+    most often, from the cap down to whatever is below. The game skips cycle pieces to
+    land on the right one: the piece before an end piece is always the cycle's fourth
+    (counting blindly left the wrong piece over the end, and a right angle in the
+    water, the user's marks, 2026-11-04)."""
+    import math
+    pat = lambda x, y: (V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1]) if 0 <= x < W and 0 <= y < H else None
+    at = lambda x, y: (g["Back"][y][x], g["Buildings"][y][x])
+    sand = lambda cx, cy: pat(cx, cy) == ("S", "S", "S", "S")
+    sides = ((("S", "W", "S", "W"), LEFT_LAND_CYCLE, LEFT_LAND_CAP, LEFT_LAND_END, ("S", "S", "S", "W")),
+             (("W", "S", "W", "S"), RIGHT_LAND_CYCLE, RIGHT_LAND_CAP, RIGHT_LAND_END, ("S", "S", "W", "S")))
+
+    def link(a, b):
+        k = table.down[(a, b)]
+        return math.log(1 + k) if k else -6.0
+
+    for x in range(W):
+        for key, cycle, cap, end, cap_pat in sides:
+            y = 0
+            while y < H:
+                if pat(x, y) != key:
+                    y += 1
+                    continue
+                top = y
+                while y < H and pat(x, y) == key:
+                    y += 1
+                n = y - top
+                if pat(x, top - 1) == cap_pat:
+                    g["Back"][top - 1][x], g["Buildings"][top - 1][x] = cap
+                below = pat(x, y)
+                step = False
+                # The step recipe (the Town river x 89, the Forest x 3), with the land side's
+                # depth pieces carrying the rock's top over the sand.
+                if key == ("S", "W", "S", "W") and below == ("S", "W", "W", "W"):
+                    step = True
+                    g["Back"][y][x], g["Buildings"][y][x] = (1267, 0)
+                    if pat(x - 1, y) == ("S", "S", "S", "W"):
+                        g["Back"][y][x - 1], g["Buildings"][y][x - 1] = (5192, 284)
+                    if sand(x - 1, y - 1):
+                        g["Back"][y - 1][x - 1], g["Buildings"][y - 1][x - 1] = (1244, 184)
+                    if sand(x - 2, y):
+                        g["Back"][y][x - 2], g["Buildings"][y][x - 2] = (1244, 184)
+                if key == ("W", "S", "W", "S") and below == ("W", "S", "W", "W"):
+                    step = True
+                    g["Back"][y][x], g["Buildings"][y][x] = (1268, 0)
+                    if pat(x + 1, y) == ("S", "S", "W", "S"):
+                        g["Back"][y][x + 1], g["Buildings"][y][x + 1] = (5195, 285)
+                    if sand(x + 1, y - 1):
+                        g["Back"][y - 1][x + 1], g["Buildings"][y - 1][x + 1] = (1246, 186)
+                # The run itself: the best-joined sequence from above to below.
+                above_st = at(x, top - 1) if top else None
+                below_st = at(x, y) if y < H else None
+                cands = list(cycle)                    # the end piece only ever goes last, before a step
+                cands_last = ([end, (1243, 285)] if key[0] == "W" else [end]) if step else cands
+                best = {c: ((link(above_st, c) if above_st else 0.0), [c]) for c in cands} if n > 1 else                        {c: ((link(above_st, c) if above_st else 0.0), [c]) for c in cands_last}
+                for i in range(1, n):
+                    pool = cands_last if i == n - 1 else cands
+                    nxt = {}
+                    for c in pool:
+                        sc, path = max(((s0 + link(p, c), pth) for p, (s0, pth) in best.items()), key=lambda t: t[0])
+                        nxt[c] = (sc, path + [c])
+                    best = nxt
+                if below_st:
+                    best = {c: (sc + link(c, below_st), pth) for c, (sc, pth) in best.items()}
+                _, path = max(best.values(), key=lambda t: t[0])
+                for i, c in enumerate(path):
+                    g["Back"][top + i][x], g["Buildings"][top + i][x] = c
+
+
+def paint_shores(g, V, table):
+    """Every cell near water, chosen by its neighbourhood (Table.by_context): the stacks
+    the game uses where the terrain round a cell is the same as here, so straight
+    banks get their two-deep pieces and diagonal steps the game's diagonal ones.
+    Raster order; among the game's choices for a context, the one it most often puts
+    beside what's already left of and above it, so alternating pieces alternate.
+    Plain water stays plain (its decorations are left out)."""
+    import math
+    stats = collections.Counter()
+    for y in range(H):
+        for x in range(W):
+            win = {(i, j): V[min(H, max(0, y - 1 + j))][min(W, max(0, x - 1 + i))] for i in range(4) for j in range(4)}
+            if "W" not in win.values():
+                continue
+            inner = {win[k] for k in table.INNER}
+            if inner == {"W"} and "W" == min(win.values()) == max(win.values()):
+                continue                                    # open water
+            # Straight runs keep their matched pieces (SHORE_PIN, and bank_depth's depth
+            # row): by context they came out in broken segments. Context is for turns.
+            wl = {k: v == "W" for k, v in win.items()}           # water or land: grass beyond the sand isn't a turn
+            rows_same = all(len({wl[(i, j)] for i in range(4)}) == 1 for j in range(4))
+            cols_same = all(len({wl[(i, j)] for j in range(4)}) == 1 for i in range(4))
+            if rows_same or cols_same:
+                continue
+            if tuple(win[k] for k in table.INNER) in SHORE_PIN:
+                continue          # a vertical bank's own tile keeps its straight piece (its run-start variants drew sharp lips)
+            found, lvl = table.by_context(win)
+            if not found or lvl != 0:
+                # Only an exact match for the whole neighbourhood: the looser levels
+                # guessed at corners the game never draws (lumps at the south corners).
+                stats["kept"] += 1
+                continue
+            cands = {c: n for c, n in found.items()
+                     if c[0] not in SHORE_DECOR and c[1] not in SHORE_DECOR and c[1] not in LILY_PADS}
+            if not cands:
+                stats["kept"] += 1
+                continue                 # nothing but lily pads and reeds there: keep the plain piece
+            left = (g["Back"][y][x - 1], g["Buildings"][y][x - 1]) if x else None
+            up = (g["Back"][y - 1][x], g["Buildings"][y - 1][x]) if y else None
+            if "W" not in inner:
+                # plain land beside a bank: only the bank's own overlay pieces (its depth
+                # row), never another map's ground (the Mountain's brown dirt, footprints)
+                cands = {c: n for c, n in cands.items() if c[1] and c[0] in WATER_BACKS and c[1] not in MOUNTAIN_DIRT}
+                if not cands:
+                    continue
+            if inner == {"W"}:
+                # water beside a bank: the plain water unless the game draws something there
+                plain = [c for c in cands if c[1] == 0]
+                if plain and sum(cands[c] for c in plain) >= 0.5 * sum(cands.values()):
+                    cands = {c: cands[c] for c in plain}
+
+            def score(c):
+                s = math.log(1 + cands[c])
+                if left:
+                    s += 1.5 * math.log(1 + table.right[(left, c)])
+                if up:
+                    s += 1.5 * math.log(1 + table.down[(up, c)])
+                return s
+            g["Back"][y][x], g["Buildings"][y][x] = max(cands, key=score)
+            stats[lvl] += 1
+    print("shore cells by context level (0 = full 3x3):", dict(stats))
+
+
+def fit_edges(g, V, table, passes=4):
+    """Re-pick every edge cell (not plain ground) for its neighbours: of the game's
+    stacks with that cell's corners, the one the game most often puts beside the
+    stacks now left, right, above and below it. This is what turns a run of one-tile
+    steps into the game's own curved, diagonal bank, and keeps every edge joined to
+    the next (2026-11-04)."""
+    import math
+    cell = lambda x, y: (g["Back"][y][x], g["Buildings"][y][x]) if 0 <= x < W and 0 <= y < H else None
+    edges = [(x, y) for y in range(H) for x in range(W)
+             if len({V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1]}) > 1]
+    for _ in range(passes):
+        changed = 0
+        for x, y in edges:
+            pat = (V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1])
+            if pat in SHORE_PIN:
+                continue
+            cands = [c for c, n in table.by_pattern.get(pat, []) if n >= 2 and c[1] not in LILY_PADS]
+            if len(cands) < 2:
+                continue
+            l, r, u, d = cell(x - 1, y), cell(x + 1, y), cell(x, y - 1), cell(x, y + 1)
+
+            def score(c):
+                s = 0.0
+                for n, pair, counts in ((l, (l, c), table.right), (r, (c, r), table.right),
+                                        (u, (u, c), table.down), (d, (c, d), table.down)):
+                    if n is not None:
+                        k = counts[pair]
+                        s += math.log(1 + k) if k else -3.0      # never seen side by side: a seam
+                return s + 0.25 * math.log(table.use[c])
+            best = max(cands, key=score)
+            if best != cell(x, y):
+                g["Back"][y][x], g["Buildings"][y][x] = best
+                changed += 1
+        if not changed:
+            break
+
+
+# The game's banks are two tiles deep: beside the rocky bank tile sits a second
+# piece, laid over the land, that carries the bank's rocky top and its scalloped,
+# indented edge against the sand (the Mountain pond; the user, 2026-11-04: "the
+# land immediately before water isn't one ruler-straight line, it has depth").
+# Learned from what the vanilla maps put beside each bank piece.
+NORTH_BANK, WEST_BANK, EAST_BANK = (1270, 0), (5177, 284), (5178, 285)
+NORTH_DEPTH = ((1245, 185), (1245, 212))     # above a north bank, alternating
+WEST_DEPTH = (1244, 184)                     # left of a bank with land on its left
+EAST_DEPTH = (1246, 186)                     # right of a bank with land on its right
+NO_DEPTH_ROWS = set(range(20, 25)) | set(range(38, 45)) | {54}   # the bridges' rows: their approaches stay walkable
+
+
+def bank_depth(g):
+    plain_sand = lambda x, y: 0 <= x < W and 0 <= y < H and GROUND.get((g["Back"][y][x], g["Buildings"][y][x])) == ("S",) * 4         and not g["Front"][y][x] and not g["AlwaysFront"][y][x] and y not in NO_DEPTH_ROWS
+    at = lambda x, y: (g["Back"][y][x], g["Buildings"][y][x])
+    for y in range(H):
+        for x in range(W):
+            c = at(x, y)
+            if c == NORTH_BANK and plain_sand(x, y - 1):
+                g["Back"][y - 1][x], g["Buildings"][y - 1][x] = NORTH_DEPTH[x % 2]
+            # (No depth column on vertical banks: the game's run thin, and get their rocky
+            # lumps only where the bank jogs a step, from paint_shores. A lump on every
+            # tile read as a row of beads, the user's circles, 2026-11-04.)
+
+
+def stairs_art():
+    """The picked flight, with its grass, path and the cliff rock round it left out
+    (they're the painted ground's and our cliff's, so the seasons change them; the
+    rock stayed olive against the winter cliff): only its grey stone is kept."""
+    im = Image.open(STAIRS_PICK).convert("RGBA")
+    px = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            r, g, b, a = px[x, y]
+            grass = g > r + 12 and g > b + 12
+            path = r > 170 and r > g + 25 and g > b + 40
+            # the cliff's rock round the walls (olive and brown) is ours, in its season's colours
+            rock = b < r * 0.3            # measured: the rock's blue is under a fifth of its red, the stone's about two thirds
+            if grass or path or rock:
+                px[x, y] = (0, 0, 0, 0)
+    # stray outline pixels left on their own once the grass round them is gone
+    lone = [(x, y) for y in range(im.height) for x in range(im.width) if px[x, y][3]
+            and sum(1 for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                    if 0 <= x + dx < im.width and 0 <= y + dy < im.height and px[x + dx, y + dy][3]) <= 1]
+    for x, y in lone:
+        px[x, y] = (0, 0, 0, 0)
+    # Seat the flight: its bottom step on the cliff's foot (the bottom of the face's
+    # last row, 6 rows into the piece, which starts the row above the edge), so the
+    # path below runs straight off it; its top then meets the path in the edge row.
+    # (Placed as painted it stood a tile high: on the grass above, short of the foot.)
+    alpha = im.getchannel("A")
+    filled = [y for y in range(im.height) if sum(1 for x in range(im.width) if alpha.getpixel((x, y))) > 10]
+    foot = filled[-1] + 1                       # the last row of real content (a stray pixel or two can sit lower)
+    seated = Image.new("RGBA", im.size)
+    seated.alpha_composite(im.crop((0, 0, im.width, foot)), (0, 6 * 16 - foot))
+    # Like the game's own stairs, the lowest steps carry on over the shadow band at the
+    # cliff's foot, so the path starts below it: the last tile of steps, once more.
+    steps = seated.crop((0, 5 * 16, im.width, 6 * 16))
+    seated.alpha_composite(steps, (0, 6 * 16))
+    return seated
+
+
+def lay_stairs(g, im, sx, sy, x, top):
+    """One flight: its treads (the middle two columns) on Back2, under the farmer and
+    walkable, with our cliff cleared from under them; its side walls (the outer
+    columns) on Buildings2, over our cliff, which stays solid there."""
+    cols, rows = im.width // 16, im.height // 16
+    for j in range(rows):
+        ty = top - 1 + j
+        for i in range(cols):
+            tile = im.crop((i * 16, j * 16, i * 16 + 16, j * 16 + 16))
+            tx = x + i
+            if i in (1, 2) and top - 1 <= ty <= top + 6:
+                g["Buildings"][ty][tx] = g["Front"][ty][tx] = 0
+            if tile.getbbox() is None:
+                continue
+            gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
+            g["Back2" if i in (1, 2) else "Buildings2"][ty][tx] = gid
+
+
+def place_buildings(g, assets):
+    """The picked buildings: cropped to their art, padded to whole tiles (bottom and
+    centre kept), outlines softened, packed on SHEET, then laid on the map."""
+    pieces = []
+    if not os.environ.get("VALE_NO_STAIRS"):
+        pieces.append(("stairs", stairs_art(), None, None, None))
+    for name, (pick, left, bottom, solid) in PICKS.items():
+        im = Image.open(os.path.join(PICKS_DIR, pick + ".png")).convert("RGBA")
+        im = im.crop(im.getbbox())
+        im = Image.eval(im, lambda v: v)  # copy
+        a = im.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
+        im.putalpha(a)
+        cols, rows = -(-im.width // 16), -(-im.height // 16)
+        tile = Image.new("RGBA", (cols * 16, rows * 16))
+        tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
+        pieces.append((name, selout(tile), left, bottom, solid))
+    slots, x, y, row_h = [], 0, 0, 0
+    for _, im, *_ in pieces:
+        cols, rows = im.width // 16, im.height // 16
+        if x + cols > SHEET_COLS:
+            x, y, row_h = 0, y + row_h, 0
+        slots.append((x, y))
+        x += cols
+        row_h = max(row_h, rows)
+    sheet = Image.new("RGBA", (SHEET_COLS * 16, (y + row_h) * 16))
+    for (_, im, *_), (sx, sy) in zip(pieces, slots):
+        sheet.alpha_composite(im, (sx * 16, sy * 16))
+    sheet.save(os.path.join(assets, SHEET))
+    for (name, im, left, bottom, solid), (sx, sy) in zip(pieces, slots):
+        cols, rows = im.width // 16, im.height // 16
+        if name == "stairs":
+            for x, top in STAIR_SPOTS:
+                lay_stairs(g, im, sx, sy, x, top)
+            continue
+        top = bottom - rows + 1
+        for j in range(rows):
+            for i in range(cols):
+                t = im.crop((i * 16, j * 16, i * 16 + 16, j * 16 + 16))
+                if t.getbbox() is None:
+                    continue
+                gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
+                tx, ty = left + i, top + j
+                if j >= rows - solid:
+                    g["Buildings"][ty][tx] = gid
+                    g["Front"][ty][tx] = 0
+                else:
+                    g["Front2"][ty][tx] = gid
+        print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {top}-{bottom}")
+    global BUILD_SHEET_H
+    BUILD_SHEET_H = sheet.height
+
+
+BUILD_FIRST = 20000
+BUILD_SHEET_H = 0
+
+
+def write(path, g, props, tilesets):
+    out = ['<?xml version="1.0" encoding="utf-8"?>',
+           f'<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="{W}" height="{H}" '
+           f'tilewidth="16" tileheight="16" infinite="0" nextlayerid="{len(LAYERS) + 1}" nextobjectid="1">',
+           '  <properties>']
+    out += [f'    <property name="{k}" type="string" value="{v}" />' for k, v in props.items()]
+    out.append('  </properties>')
+    out += tilesets
+    out.append(f'  <tileset firstgid="{BUILD_FIRST}" name="z_blinxxy.MuseArt_GildedValeBuildings" tilewidth="16" tileheight="16" '
+               f'tilecount="{SHEET_COLS * BUILD_SHEET_H // 16}" columns="{SHEET_COLS}">')
+    out.append(f'    <image source="{SHEET}" width="{SHEET_COLS * 16}" height="{BUILD_SHEET_H}" />')
+    out.append('  </tileset>')
+    for i, layer in enumerate(LAYERS):
+        out.append(f'  <layer id="{i + 1}" name="{layer}" width="{W}" height="{H}">')
+        out.append('    <data encoding="csv">')
+        out.append(",\n".join(",".join(str(v) for v in row) for row in g[layer]))
+        out.append('    </data>')
+        out.append('  </layer>')
+    out.append('</map>')
+    open(path, "w", encoding="utf-8").write("\n".join(out))
+    print("wrote", path)
+
+
+if __name__ == "__main__":
+    main()

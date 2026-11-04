@@ -1,0 +1,25 @@
+{
+  "Format": "2.9.0",
+  "Changes": [
+    // The Gilded Vale (1.4), in development: the map built by tools/build_vale.py
+    // (painted terrain, the five buildings, PixelLab stairs; other buildings still
+    // boxes). No way in yet but `museart_warp blinxxy.MuseArt_GildedVale 20 7`.
+    // This pack is deployed by Debug builds only and never released (ArtStudio.csproj).
+    {
+      "Action": "Load",
+      "Target": "Maps/blinxxy.MuseArt_GildedVale",
+      "FromFile": "assets/GildedVale.tmx"
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_GildedVale": {
+          "DisplayName": "{{i18n:location.gilded-vale}}",
+          "DefaultArrivalTile": { "X": 20, "Y": 7 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_GildedVale" }
+        }
+      }
+    }
+  ]
+}
