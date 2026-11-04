@@ -12,7 +12,7 @@ namespace ArtStudio.Painting;
 // colour, holding a number of tubes' worth (TubeCells each) set by its tier
 // (2026-10-25: Wooden 3, Enamel 6, Iridium 10; half as much again from the
 // 15-subject milestone). A new Palette comes filled with the starter
-// colours. Relaxed difficulty paints for free and needs no Palette.
+// colours. Simplified paints for free and needs no Palette (Relaxed did until 1.3).
 //
 // Tubes go straight into the best Palette in your bag the moment they reach
 // it, for colours you know, while there's room for the whole tube; the rest
@@ -41,7 +41,8 @@ internal static class PaletteItem
     public const float BigWells = 1.5f;
     private static readonly int MostCells = (int)(Tiers[^1].Tubes * TubeCells * BigWells);
 
-    public static bool Required => ModEntry.Config.Difficulty != Difficulty.Relaxed;
+    public static bool Required => RequiredFor(ModEntry.Config.Difficulty);
+    public static bool RequiredFor(Difficulty mode) => !Difficulties.FreePaint(mode);
 
     public static Tier? TierOf(Item? item) => item == null ? null : Tiers.FirstOrDefault(t => item.QualifiedItemId == "(O)" + t.Id);
 

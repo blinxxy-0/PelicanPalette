@@ -75,7 +75,7 @@ internal sealed partial class EaselMenu
             float inspiredBonus = Has(PaintingSkill.Instance.Visionary) ? PaintingSkill.VisionaryInspiredBonus : PaintingRules.InspiredBonus;
             _score = PaintingRules.Score(_result.Stars, _level, _inspired, _allPure, inspiredBonus);
             _quality = PaintingRules.Quality(_score, _level);
-            _xp = (int)Math.Round(PaintingRules.Xp(_result.Stars, _reference.Difficulty, size) * _rules.RewardMultiplier
+            _xp = (int)Math.Round(PaintingRules.Xp(_result.Stars, _reference.Difficulty, size) * _rules.XpMultiplier
                 * (IsLongSubject(_subjectItems) ? PaintingRules.PortraitXp : 1f) * _studio.Learning);
             if (SableCritiques)
                 (_critique, _critiquePortrait) = SableCritique(_result, painted);
@@ -99,7 +99,7 @@ internal sealed partial class EaselMenu
             : _subjectItems.Length == 0 ? 0
             : _subjectItems.Max(id => ItemRegistry.Create(id).salePrice());
         int price = _reference != null
-            ? (int)Math.Round(PaintingRules.Value(size, _reference.Difficulty, subjectPrice, _level) * _rules.RewardMultiplier * (IsLongSubject(_subjectItems) ? PaintingRules.PortraitValue : 1f))
+            ? (int)Math.Round(PaintingRules.Value(size, _reference.Difficulty, subjectPrice, _level) * _rules.PriceMultiplier * (IsLongSubject(_subjectItems) ? PaintingRules.PortraitValue : 1f))
             : PaintingRules.OriginalValue(size);
         if (Has(PaintingSkill.Instance.Gallerist))
             price = (int)Math.Round(price * PaintingSkill.GalleristPrice);

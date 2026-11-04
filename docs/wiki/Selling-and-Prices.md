@@ -28,18 +28,22 @@ And these multiply it:
 | The 3rd or 4th this week | 0.85x |
 | The 5th or later this week | 0.7x |
 | Varnish | up to 1.3x ([Varnishing](Varnishing)) |
+| The mode you painted it on | Simplified 0.5x, Relaxed 0.85x, Normal 1x, Hard 3x |
+| A Value frame in the room | up to 1.12x ([Frames](Frames)) |
 
 The **novelty** price stops one easy subject being farmed all week. The weekly count resets every Monday, so no subject is ever used up for good. The results screen tells you when a painting is worth more for being new, or less for being familiar. See [Painting Record](Painting-Record).
 
 ## What it earns, roughly
-Net gold per in-game hour of painting (sale price minus canvas and paint, divided by the hours a painting takes), from the mod's own economy check:
+Net gold per in-game hour of painting (sale price minus canvas and paint, divided by the hours a painting takes), from the mod's own economy check, by mode:
 
-| Painting | Per hour |
-|---|---|
-| A first parsnip (level 1, small, sold to Pierre) | about 140g |
-| A still life (level 3, small, silver, at the art shop) | about 200g |
-| A pair (level 5, medium, gold, Gallerist) | about 370g |
-| A portrait (level 6, medium, gold) | about 530g |
-| A trio (level 9, large, iridium) | about 820g |
-| A view or portrait (level 9-10, large, iridium) | about 1,200g |
-| A new friend's Masterpiece, varnished and consigned | about 3,300g |
+| Painting | Simplified | Relaxed | Normal | Hard |
+|---|---|---|---|---|
+| A first parsnip (level 1, small, sold to Pierre) | about 60g | about 110g | about 140g | about 490g |
+| A still life (level 3, small, silver, at the art shop) | about 90g | about 160g | about 200g | about 670g |
+| A pair (level 5, medium, gold, Gallerist) | about 170g | about 300g | about 370g | about 1,200g |
+| A portrait (level 6, medium, gold) | about 260g | about 440g | about 530g | about 1,700g |
+| A trio (level 9, large, iridium) | about 390g | about 680g | about 820g | about 2,600g |
+| A view or portrait (level 9-10, large, iridium) | about 610g | about 1,000g | about 1,200g | about 3,900g |
+| A new friend's Masterpiece, varnished and consigned | about 1,500g | about 2,800g | about 3,300g | about 10,500g |
+
+That last painting sells for about 7,200g on Simplified, 12,200g on Relaxed, 14,400g on Normal and 43,200g on Hard (more with a Value frame in the room).

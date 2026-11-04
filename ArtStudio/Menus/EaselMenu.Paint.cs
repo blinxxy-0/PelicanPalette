@@ -153,7 +153,7 @@ internal sealed partial class EaselMenu
 
         _timed = !IsOriginal && _rules.LightTimer;
         _lightTotal = _lightLeft = _timed
-            ? PaintingRules.LightSeconds(size, _reference!.Difficulty, _level, LightMultiplier) * (Restoring != null ? RestoreLight : 1f)
+            ? PaintingRules.LightSeconds(_reference!, _level, LightMultiplier, !_rules.PauseLightWhileMixing) * (Restoring != null ? RestoreLight : 1f)
             : float.PositiveInfinity;
         _nextSpark = 5f + (float)_random.NextDouble() * 4f;
         _stage = EaselStage.Painting;

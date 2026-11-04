@@ -40,7 +40,9 @@ internal static class Economy
             new Case("  ...and varnished to a gallery finish", 10, CanvasKind.Large, 100, PaintingRules.PortraitSubjectPrice, 900, PaintingRules.Iridium, Long: true, Gallerist: true, Renown: true, TimesBefore: 0, Masterpiece: true, Finish: "gallery", CanvasCost: 1000, Sale: "consign", Extras: 60),
         };
 
-        Console.WriteLine($"{"Painting",-52} {"hours",5} {"sells",7} {"costs",6} {"per hour",9}");
+        // (On Normal; the modes below scale what a painting is worth, 1.3.)
+        var rows = new List<(string Name, int Hours, float Price, float FixedCost, float Paint)>();
+        Console.WriteLine($"{"Painting (Normal)",-52} {"hours",5} {"sells",7} {"costs",6} {"per hour",9}");
         foreach (var c in cases)
         {
             int size = PaintingRules.CanvasSize(c.Kind);
@@ -56,7 +58,21 @@ internal static class Economy
             float costs = c.CanvasCost + c.Cells * PaintPerCell + c.Extras;
             int hours = Hours(c);
             Console.WriteLine($"{c.Name,-52} {hours,5} {price,7:0} {costs,6:0} {(price - costs) / hours,9:0}");
+            rows.Add((c.Name, hours, price, c.CanvasCost + c.Extras, c.Cells * PaintPerCell));
         }
+
+        // By mode (1.3): what each sells for, and earns an hour after its
+        // costs (Simplified spends no paint, only the canvas).
+        Console.WriteLine();
+        var modes = Difficulties.Order;
+        Console.WriteLine($"{"By mode: sells (per hour)",-52} " + string.Join(" ", modes.Select(m => $"{m,16}")));
+        foreach (var (name, hours, price, fixedCost, paint) in rows)
+            Console.WriteLine($"{name,-52} " + string.Join(" ", modes.Select(m =>
+            {
+                float sells = price * DifficultySettings.For(m).PriceMultiplier;
+                float costs = fixedCost + (Difficulties.FreePaint(m) ? 0f : paint);
+                return $"{sells,7:0} ({(sells - costs) / hours,6:0})";
+            })));
 
         Console.WriteLine();
         foreach (var (what, perHour) in Benchmarks)

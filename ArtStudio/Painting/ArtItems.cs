@@ -308,29 +308,34 @@ internal static class ArtItems
         };
     }
 
+    // Small paintings hang at 1x1 (1.3): each style's 1x1 frame is drawn in
+    // the sheet's fourth row, under its 2x2 one (tools/art/frame_1x1.py), so
+    // its sprite is 240 on (80 tiles a row, three rows).
+    public const int SmallFrameRow = 240;
+
     // Name/type/tilesheet size/bounding box/rotations/price/placement/display name/sprite/texture/off-limits/tags
     public static void AddFurniture(IDictionary<string, string> furniture)
     {
         // Furniture data is '/'-delimited, so the texture path uses backslashes.
         string texture = FurnitureTexture.Replace('/', '\\');
-        furniture[FramedSmallId] = $"{FramedSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/0/{texture}/true";
+        furniture[FramedSmallId] = $"{FramedSmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{0 + SmallFrameRow}/{texture}/true";
         furniture[FramedLargeId] = $"{FramedLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/2/{texture}/true";
-        furniture[MoonlitSmallId] = $"{MoonlitSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/5/{texture}/true";
+        furniture[MoonlitSmallId] = $"{MoonlitSmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{5 + SmallFrameRow}/{texture}/true";
         furniture[MoonlitLargeId] = $"{MoonlitLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/7/{texture}/true";
-        furniture[GoldLeafSmallId] = $"{GoldLeafSmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/10/{texture}/true";
+        furniture[GoldLeafSmallId] = $"{GoldLeafSmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{10 + SmallFrameRow}/{texture}/true";
         furniture[GoldLeafLargeId] = $"{GoldLeafLargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/12/{texture}/true";
         for (int n = 0; n < SetFrameIds.Length; n++)
         {
             var style = FrameStyles.First(s => s.Id == SetFrameIds[n]);
             int small = SetFrameFurniture + 5 * n;
-            furniture[style.SmallId] = $"{style.SmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/{small}/{texture}/true";
+            furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{small + SmallFrameRow}/{texture}/true";
             furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
         }
         for (int n = 0; n < MoreFrames.Length; n++)
         {
             var style = MoreFrames[n];
             int small = MoreFrameFurniture + 5 * n;
-            furniture[style.SmallId] = $"{style.SmallId}/painting/2 2/2 2/1/250/-1/{I18n.Get("item.framed")}/{small}/{texture}/true";
+            furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{small + SmallFrameRow}/{texture}/true";
             furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
         }
     }

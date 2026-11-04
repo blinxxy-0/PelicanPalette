@@ -213,7 +213,6 @@ Right-click a placed **Easel** to paint. A session has three screens: **Setup**,
 - **Frame a painting:** puts one of your paintings in a frame, to hang as furniture. See {link("Frames")}.
 - **More to paint than fits:** the items and the row of friends, views and studies turn pages, with the arrows at the end of each row's label (or the mouse wheel).
 - **Frames in this room:** at an easel you've placed, icons above the bottom buttons show what the room's framed paintings give the painting. Hover one to see how much. See {link("Frames")}.
-- **Simple pictures:** above the preview, a toggle for references in plain paint only. See {link("Canvases and Techniques")}.
 - **Warnings:** under Begin, the screen tells you if you're out of canvases, if it's too late in the day (a painting can't run past 2am), or if your Palette is low on a colour the subject needs.
 
 ## Painting
@@ -227,7 +226,7 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 
 **Painting.** Left-click or drag to paint with what's on the brush. A load covers a number of cells, set by your brush and level. Right-click scrapes paint off.
 
-**The light.** A bar at the top runs down while you work.
+**The light.** A bar at the top runs down while you work. How long it lasts depends on how much there is to paint: every colour area's edge, every fill, every glaze and highlight. So a busy portrait gets far more light than a parsnip, and every painting asks about the same pace (a little quicker on Hard). Your Painting level, the Master's Easel and Light frames add more.
 - When it's gone, the painting is finished as it stands.
 - Finish early and the light that's left becomes bonus experience.
 - The light pauses while you mix, except on Hard.
@@ -238,13 +237,13 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 - Catch three and the painting is **Inspired**, which raises its quality.
 - Very rarely, a spark teaches you a rare pigment.
 
-**Paint.** Every cell you paint uses one cell of paint from your Palette (except on Relaxed). See {link("Pigments and Paint")}.
+**Paint.** Every cell you paint uses one cell of paint from your Palette (except on Simplified). See {link("Pigments and Paint")}.
 
 **Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on. Under the reference, the colour that cell wants is named with its palette key (for example "Snow (6)"), so look-alike colours like Cream and Snow can't be mixed up.
 
 **Zooming.** From a medium canvas, the **mouse wheel** over the canvas (or the reference) zooms in, up to 3x, towards the cell under the mouse. The reference zooms with it and always shows the same part of the picture. While zoomed, the **arrow keys** move round, scroll bars in the canvas's frame show where you are, and the wheel back out shows the whole picture again.
 
-**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all, and the same picture as Normal. The choice is saved, and is the same setting as in the config.
+**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Simplified, Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** is Normal with no time limit; **Simplified** also makes paint free and the picture plain. The choice is saved, and is the same setting as in the config.
 
 ### Tools
 | Tool | Key | Unlocks | What it does |
@@ -337,10 +336,10 @@ A few of the brightest spots (the shine on a gem, the light in an eye) take a **
 ### How techniques are scored
 On a canvas with glazes or highlights, the results add a **Technique** rating: how many of them you put in the right places, and how few in the wrong ones (a cell out is forgiven). A painting with no techniques at all loses about a star. See {link("Quality and Masterpieces")}.
 
-### Simple pictures
-With **Simple pictures** on (above the reference on the easel's setup screen, or in the {link("Configuration")}; any difficulty), references are plain paint only: no glazes or highlights to copy. Easier, and worth a little less. From a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as usual.
+### Simplified mode
+In **Simplified** mode (one of the four on the easel's setup screen, or in the {link("Configuration")}), references are plain paint only: no glazes or highlights to copy. It's the easiest mode: no light meter, and free paint that never dries. Paintings are worth half as much. If you'd like the free paint but the whole picture, turn off **Simplified mode removes glazes and highlights** in the {link("Configuration")}. From a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as usual.
 
-The toggle greys out when it wouldn't change the picture you've picked: always on a small canvas (it has no glazes or highlights), and on a bigger one for a subject with none anyway. A small painting is still shaded, with your pigments.
+A small canvas has no glazes or highlights in any mode; a small painting is still shaded, with your pigments.
 
 ## Linen
 From Painting level 8, linen canvases (medium and large) paint like any other. They're the only canvas a **Masterpiece** can be painted on; see {link("Quality and Masterpieces")}. On the setup screen, the **Linen** button next to the canvas sizes switches to linen.
@@ -442,7 +441,7 @@ The more colours you know, the closer your references get to the real thing. Tha
 - **The Palette.** It holds paint for each colour, in tubes' worth (a tube is 100 cells). A new Palette comes with the starter colours.
 - **Spending.** Every cell you paint uses one cell of paint. The setup screen warns you if you're short of a colour.
 - **Tubes go straight in.** When a tube reaches your bag, bought, milled or picked up, it goes into your Palette at once, if you know the colour and there's room for the whole tube. Anything that doesn't fit stays in your bag.
-- **Relaxed** difficulty paints for free and needs no Palette.
+- **Simplified** paints for free and needs no Palette.
 
 ## Palettes
 {palette_table()}
@@ -568,21 +567,25 @@ And these multiply it:
 | The 3rd or 4th this week | {nov[3]["value"]}x |
 | The 5th or later this week | {nov[5]["value"]}x |
 | Varnish | up to {m["finishes"][-1]["Value"]}x ({link("Varnishing")}) |
+| The mode you painted it on | Simplified 0.5x, Relaxed 0.85x, Normal 1x, Hard 3x |
+| A Value frame in the room | up to 1.12x ({link("Frames")}) |
 
 The **novelty** price stops one easy subject being farmed all week. The weekly count resets every Monday, so no subject is ever used up for good. The results screen tells you when a painting is worth more for being new, or less for being familiar. See {link("Painting Record")}.
 
 ## What it earns, roughly
-Net gold per in-game hour of painting (sale price minus canvas and paint, divided by the hours a painting takes), from the mod's own economy check:
+Net gold per in-game hour of painting (sale price minus canvas and paint, divided by the hours a painting takes), from the mod's own economy check, by mode:
 
-| Painting | Per hour |
-|---|---|
-| A first parsnip (level 1, small, sold to Pierre) | about 140g |
-| A still life (level 3, small, silver, at the art shop) | about 200g |
-| A pair (level 5, medium, gold, Gallerist) | about 370g |
-| A portrait (level 6, medium, gold) | about 530g |
-| A trio (level 9, large, iridium) | about 820g |
-| A view or portrait (level 9-10, large, iridium) | about 1,200g |
-| A new friend's Masterpiece, varnished and consigned | about 3,300g |
+| Painting | Simplified | Relaxed | Normal | Hard |
+|---|---|---|---|---|
+| A first parsnip (level 1, small, sold to Pierre) | about 60g | about 110g | about 140g | about 490g |
+| A still life (level 3, small, silver, at the art shop) | about 90g | about 160g | about 200g | about 670g |
+| A pair (level 5, medium, gold, Gallerist) | about 170g | about 300g | about 370g | about 1,200g |
+| A portrait (level 6, medium, gold) | about 260g | about 440g | about 530g | about 1,700g |
+| A trio (level 9, large, iridium) | about 390g | about 680g | about 820g | about 2,600g |
+| A view or portrait (level 9-10, large, iridium) | about 610g | about 1,000g | about 1,200g | about 3,900g |
+| A new friend's Masterpiece, varnished and consigned | about 1,500g | about 2,800g | about 3,300g | about 10,500g |
+
+That last painting sells for about 7,200g on Simplified, 12,200g on Relaxed, 14,400g on Normal and 43,200g on Hard (more with a Value frame in the room).
 """)
 
 
@@ -805,7 +808,7 @@ From medium canvases (Painting level 4), friends at 4 hearts or more sometimes a
 ## Asking for more
 Later on, some requests want more than the subject:
 - **Varnished:** from Painting level 7, about one in four asks for a varnished painting (any finish, satin or better). They pay 30% more, and you have 14 days to deliver, time for the varnish to cure. See {link("Varnishing")}.
-- **Glazed:** once medium canvases are open to you, about one in five asks for a glazed painting: one painted to a reference with glazes, with at least half of them (and any highlights) in the right places. A single stray glaze doesn't count. They pay 25% more, and on Relaxed the reference for that subject shows its glazes. See {link("Canvases and Techniques")}.
+- **Glazed:** once medium canvases are open to you, about one in five asks for a glazed painting: one painted to a reference with glazes, with at least half of them (and any highlights) in the right places. A single stray glaze doesn't count. They pay 25% more, and on Simplified the reference for that subject still shows its glazes. See {link("Canvases and Techniques")}.
 
 The board shows what's wanted beside the quality, and if you hand over a painting without it, the villager tells you what's missing.
 
@@ -1087,9 +1090,9 @@ Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewval
 
 | Setting | Default | What it does |
 |---|---|---|
-| `Difficulty` | `Normal` | **Relaxed:** no light meter, no paint needed, and each colour only needs mixing once. The picture is the same as on Normal.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings pay 20% more.<br>Also on the easel's setup screen, under Begin. |
+| `Difficulty` | `Normal` | **Simplified:** the easiest: no light meter, free paint that never dries, and references in plain paint only (no glazes or highlights to copy); paintings are worth half as much.<br>**Relaxed:** Normal with no clock: no light meter, and sparks wait for you. Paint comes from your Palette and dries, and the picture is the same as on Normal; paintings are worth 85% as much.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings are worth three times as much, and you earn 20% more XP.<br>Also on the easel's setup screen, under Begin. |
 | `LightTimeMultiplier` | `1.0` | Gives you more (or less) light per painting, on top of the difficulty (0.5x to 3x). |
-| `SimplePictures` | `false` | References in plain paint only, with no glazes or highlights to copy, in any difficulty (a glazed commission still asks for its glazes, and the Glaze tool is there from a medium canvas). Easier, and worth a little less. Also on the easel's setup screen, above the reference. |
+| `SimplifiedPlainPictures` | `true` | Whether Simplified mode takes glazes and highlights out of the picture. Turn it off for Simplified's free paint and wide mixing band with the whole picture to copy. |
 | `ArtLoversLikeAnyPainting` | `true` | Whether art lovers like even a normal-quality painting. |
 """)
 
@@ -1410,7 +1413,7 @@ def frames():
             for f in sorted(DATA["frames"], key=lambda f: f["steps"])]
     st = DATA["frameSteps"]
     page("Frames", item_infobox("Framer's Bench") + f"""
-Put a painting in a frame and it hangs on a wall as furniture. On the easel's setup screen, **Frame a painting** shows every frame you have; pick one, then the painting. Hovering a frame shows its rarity and what it does.
+Put a painting in a frame and it hangs on a wall as furniture: a small painting takes one tile (its picture fitted to the frame), a medium one 2x2 and a large one 3x3. On the easel's setup screen, **Frame a painting** shows every frame you have; pick one, then the painting. Hovering a frame shows its rarity and what it does.
 
 ## What a frame does
 A framed painting hung in a room **inspires the easels in that room**: paintings made there get its frame's bonus. Build a studio.

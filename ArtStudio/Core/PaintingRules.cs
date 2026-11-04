@@ -55,8 +55,8 @@ public static class PaintingRules
     };
 
     // Techniques grow with the canvas (Core/Technique.cs): a medium canvas
-    // adds glazing, a large one highlights too. Simple pictures (a setting
-    // of its own from 1.3; Relaxed until then) are flat, except that a
+    // adds glazing, a large one highlights too. Simplified mode (1.3; Relaxed's
+    // until then) is plain paint only, except that a
     // painting for a glazed commission asks for its glazes (1.1.5).
     public static Techniques TechniquesFor(int canvasSize, bool simple, bool glazedCommission = false)
     {
@@ -66,7 +66,7 @@ public static class PaintingRules
         return simple ? techniques & (glazedCommission ? Techniques.Glaze : Techniques.None) : techniques;
     }
 
-    // The technique tools on the easel. Simple pictures keep the Glaze tool
+    // The technique tools on the easel. Simplified keeps the Glaze tool
     // from a medium canvas (1.1.5), to glaze where you like on a flat painting.
     public static Techniques ToolsFor(int canvasSize, bool simple) =>
         TechniquesFor(canvasSize, simple, glazedCommission: true);
@@ -107,18 +107,15 @@ public static class PaintingRules
 
     // ---- Light ----
 
-    // Seconds of daylight for a session. Bigger and harder subjects get more
-    // time, and each level adds a little.
-    public static float LightSeconds(int canvasSize, int difficulty, int level, float multiplier)
-    {
-        float baseSeconds = canvasSize switch
-        {
-            <= 20 => 90f,
-            <= 28 => 140f,
-            _ => 200f,
-        };
-        return baseSeconds * (0.85f + difficulty / 200f) * (1f + 0.03f * level) * multiplier;
-    }
+    // The light a painting gets (1.3): a start, then the same time for every
+    // click its picture needs (Reference.Work), so an easy painting asks the
+    // same pace as a hard one; where the light runs while you remix (Hard),
+    // time for that too. Levels, the Master's Easel and frames add on top.
+    public const float LightStart = 30f, LightPerClick = 0.7f, RemixPerCell = 0.12f;
+
+    public static float LightSeconds(Reference reference, int level, float multiplier, bool remixesCost = false) =>
+        (LightStart + LightPerClick * reference.Work + (remixesCost ? RemixPerCell * reference.SubjectCells : 0f))
+        * (1f + 0.03f * level) * multiplier;
 
     public const float SparkLightBonus = 5f;
     public const int SparksForInspired = 3;

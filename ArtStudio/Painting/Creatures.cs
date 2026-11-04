@@ -183,7 +183,16 @@ internal static class Creatures
         var pixels = new Color[source.Width * source.Height];
         texture.GetData(0, source, pixels, 0, pixels.Length);
         for (int i = 0; i < pixels.Length; i++)
-            if (pixels[i].A < minAlpha) pixels[i] = Color.Transparent;
+        {
+            var p = pixels[i];
+            if (p.A < minAlpha) pixels[i] = Color.Transparent;
+            // The game keeps a see-through pixel's colour already multiplied
+            // by its alpha, so a ghost's pale mint read as dull grey-green and
+            // its reference came out in Stone and Slate (1.3, from players).
+            // What's painted is how it looks over the canvas.
+            else if (p.A < 255)
+                pixels[i] = ReferenceBuilder.OverCanvas(p);
+        }
         int w = source.Width, h = source.Height;
         if (shrink && Math.Max(w, h) > canvasSize - 2)
             (pixels, w, h) = Shrunk(pixels, w, h, canvasSize - 2);

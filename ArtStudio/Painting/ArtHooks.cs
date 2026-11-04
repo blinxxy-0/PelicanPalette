@@ -208,8 +208,33 @@ internal static class ArtHooks
     private static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
     {
         ArtProgress.MigrateLegacyXp(Game1.player);
+        if (RefreshSmallFrames() is int n and > 0)
+            _monitor.Log($"Rehung {n} small framed painting(s) at 1x1.", LogLevel.Info);
         foreach (string recipe in ArtItems.StarterRecipes)
             Game1.player.craftingRecipes.TryAdd(recipe, 0);
+    }
+
+    // Small framed paintings hang at 1x1 from 1.3; those placed before keep
+    // their old 2x2 sprite and footprint, so the host swaps each for a fresh
+    // copy in the same place (its painting and frame carried over).
+    internal static int RefreshSmallFrames()
+    {
+        if (!Context.IsMainPlayer) return 0;
+        int refreshed = 0;
+        Utility.ForEachLocation(location =>
+        {
+            foreach (var old in location.furniture.Where(f => ArtItems.IsFramed(f) && f.sourceRect.Value.Width > 16
+                         && ItemRegistry.GetDataOrErrorItem(f.QualifiedItemId).GetSourceRect().Width <= 16).ToList())
+            {
+                var fresh = (Furniture)old.getOne();
+                fresh.TileLocation = old.TileLocation;
+                location.furniture.Remove(old);
+                location.furniture.Add(fresh);
+                refreshed++;
+            }
+            return true;
+        });
+        return refreshed;
     }
 
     // ---- Gifts ----
@@ -291,6 +316,12 @@ internal static class ArtHooks
             ? Game1.GlobalToLocal(Game1.viewport, ___drawPosition.Value)
             : Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - (source.Height * 4 - __instance.boundingBox.Height)));
         float depth = (__instance.boundingBox.Value.Bottom - 48) / 10000f;
+        if (source.Width <= 16)
+        {
+            // A small painting at 1x1 (1.3): a 1-pixel frame round a 14x14 picture.
+            PaintingRenderer.DrawSmallFramed(spriteBatch, __instance, new Rectangle((int)position.X + 4, (int)position.Y + 4, 56, 56), Color.White * alpha, depth + 0.00001f);
+            return;
+        }
         var inner = new Rectangle((int)position.X + FrameBorder * 4, (int)position.Y + FrameBorder * 4,
             (source.Width - 2 * FrameBorder) * 4, (source.Height - 2 * FrameBorder) * 4);
         PaintingRenderer.DrawArt(spriteBatch, __instance, inner, Color.White * alpha, depth + 0.00001f);
@@ -301,6 +332,12 @@ internal static class ArtHooks
         if (!ArtItems.IsFramed(__instance)) return;
         var source = ItemRegistry.GetDataOrErrorItem(__instance.QualifiedItemId).GetSourceRect();
         float scale = GetScaleSize(__instance) * scaleSize;
+        if (source.Width <= 16)
+        {
+            float side = PaintingRenderer.SmallFrameInside * scale;
+            PaintingRenderer.DrawSmallFramed(spriteBatch, __instance, new Rectangle((int)(location.X + 32 - side / 2), (int)(location.Y + 32 - side / 2), (int)side, (int)side), color * transparency, layerDepth + 0.00001f);
+            return;
+        }
         float w = (source.Width - 2 * FrameBorder) * scale, h = (source.Height - 2 * FrameBorder) * scale;
         var inner = new Rectangle((int)(location.X + 32 - w / 2), (int)(location.Y + 32 - h / 2), (int)w, (int)h);
         PaintingRenderer.DrawArt(spriteBatch, __instance, inner, color * transparency, layerDepth + 0.00001f);

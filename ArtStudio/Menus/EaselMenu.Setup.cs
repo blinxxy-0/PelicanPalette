@@ -283,13 +283,7 @@ internal sealed partial class EaselMenu
             : SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas) ? null
             : CreatureTooSmall ? null
             : BuildReference(_setupItems, size);
-        // Whether simple pictures would change this one: only a picture
-        // with glazes or highlights to take out (none on a small canvas).
-        _simpleChanges = _setupPreview != null && !SetupRestoring
-            && (ModEntry.Config.SimplePictures ? BuildReference(_setupItems, size, simple: false) : _setupPreview)?.UsesTechniques == true;
     }
-
-    private bool _simpleChanges;
 
     private void UpdateSetup()
     {
@@ -436,8 +430,6 @@ internal sealed partial class EaselMenu
         }
         else if (_modeButton.Contains(x, y))
             CycleMode();
-        else if (_simpleButton.Contains(x, y))
-            ToggleSimple();
         else if (_beginButton.Contains(x, y))
         {
             if (_setupFraming)
@@ -471,26 +463,19 @@ internal sealed partial class EaselMenu
 
     private bool NeedsPalette => UsesPaint && _palette == null;
 
-    private Rectangle _modeButton, _simpleButton;
+    private Rectangle _modeButton;
 
-    // Simple pictures on or off; saved, and the reference redrawn.
-    private void ToggleSimple()
-    {
-        ModEntry.Config.SimplePictures = !ModEntry.Config.SimplePictures;
-        ModEntry.SaveConfig();
-        Game1.playSound("smallSelect");
-        RefreshPreview();
-    }
 
     // "Leah commissioned a painting of this (gold)", saying when it's to be glazed.
     private static string CommissionedText(Shop.Commission wantedBy) =>
         I18n.Get(wantedBy.Requirement == Shop.Commissions.Glazed ? "setup.commissioned.glazed" : "setup.commissioned",
             new { npc = wantedBy.NpcName, quality = Shop.Commissions.QualityText(wantedBy.MinQuality) });
 
-    // Relaxed, Normal, Hard, and round again; saved, and used from this painting on.
+    // Simplified, Relaxed, Normal, Hard, and round again; saved, and used from this painting on.
     private void CycleMode()
     {
-        ModEntry.Config.Difficulty = (Difficulty)(((int)ModEntry.Config.Difficulty + 1) % 3);
+        int at = Array.IndexOf(Difficulties.Order, ModEntry.Config.Difficulty);
+        ModEntry.Config.Difficulty = Difficulties.Order[(at + 1) % Difficulties.Order.Length];
         ModEntry.SaveConfig();
         _rules = DifficultySettings.For(ModEntry.Config.Difficulty);
         LoadPalette();
@@ -664,7 +649,7 @@ internal sealed partial class EaselMenu
         if (_setupPreview != null)
         {
             DrawCells(b, _setupPreview.Cells, null, _previewArea, new Color(243, 236, 220), false, _setupPreview.Marks);
-            float light = PaintingRules.LightSeconds(canvasSize, _setupPreview.Difficulty, _level, LightMultiplier);
+            float light = PaintingRules.LightSeconds(_setupPreview, _level, LightMultiplier, !_rules.PauseLightWhileMixing);
             Ui.Text(b, I18n.Get("setup.preview", new { difficulty = _setupPreview.Difficulty, pigments = _setupPreview.PigmentsUsed.Count }), info);
             Ui.Text(b, _rules.LightTimer ? I18n.Get("setup.light", new { seconds = light.ToString("0") }) : I18n.Get("setup.no-time-limit"), info + new Vector2(0, 28), Game1.textColor * 0.75f);
         }
@@ -705,28 +690,9 @@ internal sealed partial class EaselMenu
         }
         Ui.Text(b, footer, footerAt, warn ? new Color(150, 70, 50) : Game1.textColor * (modeHover ? 1f : 0.8f));
         if (modeHover)
-            _hoverText = Game1.parseText(I18n.Get("setup.mode-hover." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()), Game1.smallFont, 520);
+            _hoverText = Game1.parseText(I18n.Get("setup.mode-hover." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()
+                + (ModEntry.Config.Difficulty == Difficulty.Simplified && !ModEntry.Config.SimplifiedPlainPictures ? "-full" : "")), Game1.smallFont, 520);
 
-        // Below it, simple pictures (1.3: flat colour was Relaxed's until
-        // players asked for the clock to go without the picture going too).
-        string simple = I18n.Get(ModEntry.Config.SimplePictures ? "setup.simple.on" : "setup.simple.off");
-        // (Above the reference it changes: under the mode there's no room.)
-        var simpleAt = new Vector2(_previewArea.Center.X - Ui.TextWidth(simple) / 2, _previewArea.Y - 58);
-        _simpleButton = _setupFraming ? Rectangle.Empty
-            : new Rectangle((int)simpleAt.X - 4, (int)simpleAt.Y - 2, (int)Ui.TextWidth(simple) + 8, 32);
-        if (_simpleButton != Rectangle.Empty)
-        {
-            bool simpleHover = _simpleButton.Contains(mouse);
-            // Greyed when this picture looks the same either way.
-            float shade = _simpleChanges ? 1f : 0.55f;
-            if (simpleHover)
-                Ui.Fill(b, _simpleButton, Color.White * 0.35f);
-            Ui.Fill(b, new Rectangle((int)simpleAt.X, _simpleButton.Bottom - 4, (int)Ui.TextWidth(simple), 2), Game1.textColor * (simpleHover ? 0.8f : 0.35f) * shade);
-            Ui.Text(b, simple, simpleAt, Game1.textColor * (simpleHover ? 1f : 0.8f) * shade);
-            if (simpleHover)
-                _hoverText = Game1.parseText(I18n.Get("setup.simple-hover") + (_setupPreview != null && !_simpleChanges
-                    ? "\n\n" + I18n.Get(_setupCanvas == CanvasKind.Small ? "setup.simple-same-small" : "setup.simple-same") : ""), Game1.smallFont, 520);
-        }
         if (!HasCanvas && _beginButton.Contains(mouse))
             _hoverText = _setupCanvas == CanvasKind.Small ? I18n.Get("setup.craft-small") : I18n.Get("setup.craft-big");
     }

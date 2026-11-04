@@ -43,6 +43,55 @@ internal static class PaintingRenderer
         return texture;
     }
 
+    // A small painting as it hangs at 1x1 (1.3): its painted cells with the
+    // bare canvas round them cut away, and shrunk to fit SmallFrameInside if
+    // it's bigger (a cell to a pixel, so it stays crisp), centred on the mat.
+    public const int SmallFrameInside = 14;
+    private static readonly Dictionary<string, Texture2D> SmallCache = new();
+
+    public static Texture2D? SmallFrameTextureFor(Item item)
+    {
+        string? raw = PaintingData.RawCells(item);
+        if (raw == null) return null;
+        if (SmallCache.TryGetValue(raw, out var cached) && !cached.IsDisposed)
+            return cached;
+        if (!PaintingData.TryDecodeCells(raw, out int size, out var cells, out var purity, out var marks))
+            return null;
+        int x0 = size, y0 = size, x1 = -1, y1 = -1;
+        for (int x = 0; x < size; x++)
+        for (int y = 0; y < size; y++)
+            if (cells[x, y] != PixelCanvas.Blank)
+                (x0, y0, x1, y1) = (System.Math.Min(x0, x), System.Math.Min(y0, y), System.Math.Max(x1, x), System.Math.Max(y1, y));
+        if (x1 < 0) (x0, y0, x1, y1) = (0, 0, size - 1, size - 1);
+        int w = x1 - x0 + 1, h = y1 - y0 + 1, side = SmallFrameInside;
+        float k = System.Math.Min(1f, side / (float)System.Math.Max(w, h));
+        int dw = System.Math.Max(1, (int)System.MathF.Round(w * k)), dh = System.Math.Max(1, (int)System.MathF.Round(h * k));
+        int ox = (side - dw) / 2, oy = (side - dh) / 2;
+        var data = new Color[side * side];
+        for (int i = 0; i < data.Length; i++) data[i] = MatColor;
+        for (int dx = 0; dx < dw; dx++)
+        for (int dy = 0; dy < dh; dy++)
+        {
+            int sx = x0 + System.Math.Min(w - 1, (int)((dx + 0.5f) / k)), sy = y0 + System.Math.Min(h - 1, (int)((dy + 0.5f) / k));
+            if (cells[sx, sy] != PixelCanvas.Blank)
+                data[(oy + dy) * side + ox + dx] = CellColor(cells[sx, sy], purity[sx, sy], marks?[sx, sy] ?? Mark.None);
+        }
+        var texture = new Texture2D(Game1.graphics.GraphicsDevice, side, side);
+        texture.SetData(data);
+        SmallCache[raw] = texture;
+        return texture;
+    }
+
+    // Draws a 1x1-framed painting's picture into the frame's 14x14 inside.
+    public static void DrawSmallFramed(SpriteBatch b, Item item, Rectangle inside, Color tint, float layerDepth)
+    {
+        b.Draw(Game1.staminaRect, inside, null, MatColor * (tint.A / 255f), 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+        if (SmallFrameTextureFor(item) is not { } art) return;
+        b.Draw(art, inside, null, tint, 0f, Vector2.Zero, SpriteEffects.None, layerDepth + 0.000001f);
+        if (Varnish.FinishOf(item) is string finish)
+            DrawSheen(b, inside, finish, tint, layerDepth + 0.000002f);
+    }
+
     public static Texture2D Build(int size, byte[,] cells, Purity[,] purity, Color blank, Mark[,]? marks = null)
     {
         var data = new Color[size * size];

@@ -15,7 +15,7 @@ From medium canvases (Painting level 4), friends at 4 hearts or more sometimes a
 ## Asking for more
 Later on, some requests want more than the subject:
 - **Varnished:** from Painting level 7, about one in four asks for a varnished painting (any finish, satin or better). They pay 30% more, and you have 14 days to deliver, time for the varnish to cure. See [Varnishing](Varnishing).
-- **Glazed:** once medium canvases are open to you, about one in five asks for a glazed painting: one painted to a reference with glazes, with at least half of them (and any highlights) in the right places. A single stray glaze doesn't count. They pay 25% more, and on Relaxed the reference for that subject shows its glazes. See [Canvases and Techniques](Canvases-and-Techniques).
+- **Glazed:** once medium canvases are open to you, about one in five asks for a glazed painting: one painted to a reference with glazes, with at least half of them (and any highlights) in the right places. A single stray glaze doesn't count. They pay 25% more, and on Simplified the reference for that subject still shows its glazes. See [Canvases and Techniques](Canvases-and-Techniques).
 
 The board shows what's wanted beside the quality, and if you hand over a painting without it, the villager tells you what's missing.
 

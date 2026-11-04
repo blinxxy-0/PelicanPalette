@@ -44,8 +44,8 @@ internal sealed partial class EaselMenu
 
     // The setup screen's mode button (empty while a warning shows instead).
     public Microsoft.Xna.Framework.Rectangle DevModeButton => _modeButton;
-    public Microsoft.Xna.Framework.Rectangle DevSimpleButton => _simpleButton;
-    internal bool DevSimpleChanges => _simpleChanges;
+    // As a click on the mode (which a warning, say for a Palette on Hard, can hide).
+    internal void DevCycleMode() => CycleMode();
     // The middle of the i'th frame bonus icon, as DrawStudio places them.
     internal Microsoft.Xna.Framework.Point DevStudioIcon(int i) =>
         new(_originalButton.X + (int)Ui.TextWidth(I18n.Get("setup.studio")) + 14 + i * 56 + 24, _studioY + 24);

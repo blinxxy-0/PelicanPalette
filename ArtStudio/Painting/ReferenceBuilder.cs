@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ArtStudio.Core;
 using Microsoft.Xna.Framework;
@@ -21,8 +22,29 @@ internal static class ReferenceBuilder
             return false;
         if (ArtItems.IsOurs(item))
             return false;
-        var rect = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId).GetSourceRect();
-        return rect.Width == SpriteSize && rect.Height == SpriteSize;
+        var data = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId);
+        var rect = data.GetSourceRect();
+        return rect.Width == SpriteSize && rect.Height == SpriteSize && !ShowsError(data);
+    }
+
+    // An item whose art is missing draws the game's red "no" sign instead
+    // (1.3, seen by players: a Supply Crate), and that's not a subject.
+    private static bool ShowsError(ParsedItemData data)
+    {
+        if (data.IsErrorItem) return true;
+        var error = ItemRegistry.GetDataOrErrorItem("(O)" + ModEntry.Id + "_NoSuchItem");     // (the error item itself)
+        return data.GetTexture() == error.GetTexture() && data.GetSourceRect() == error.GetSourceRect();
+    }
+
+    // A see-through pixel as it looks drawn on the canvas (1.3). The game
+    // stores its colour already multiplied by its alpha, which had made a
+    // ghost's pale mint dull grey-green; over the canvas's cream it's pale
+    // again, while a faint shadow at an edge stays faint.
+    private static readonly Color Canvas = new(243, 236, 220);
+    public static Color OverCanvas(Color p)
+    {
+        float clear = 1f - p.A / 255f;
+        return new Color(Math.Min(255, (int)(p.R + Canvas.R * clear)), Math.Min(255, (int)(p.G + Canvas.G * clear)), Math.Min(255, (int)(p.B + Canvas.B * clear)), 255);
     }
 
     public static byte[,] Subject(string qualifiedItemId, IReadOnlyList<int> owned) =>
@@ -49,6 +71,8 @@ internal static class ReferenceBuilder
                 cells[x, y] = PixelCanvas.Blank;
                 continue;
             }
+            if (p.A < 255)
+                p = OverCanvas(p);
             (cells[x, y], marks[x, y]) = Technique.Nearest(p.R, p.G, p.B, owned, allowed);
         }
         Technique.Limit(cells, marks, owned);

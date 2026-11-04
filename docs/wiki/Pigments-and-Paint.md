@@ -13,7 +13,7 @@ The more colours you know, the closer your references get to the real thing. Tha
 - **The Palette.** It holds paint for each colour, in tubes' worth (a tube is 100 cells). A new Palette comes with the starter colours.
 - **Spending.** Every cell you paint uses one cell of paint. The setup screen warns you if you're short of a colour.
 - **Tubes go straight in.** When a tube reaches your bag, bought, milled or picked up, it goes into your Palette at once, if you know the colour and there's room for the whole tube. Anything that doesn't fit stays in your bag.
-- **Relaxed** difficulty paints for free and needs no Palette.
+- **Simplified** paints for free and needs no Palette.
 
 ## Palettes
 | | Palette | Each colour holds | Recipe | Unlocks | Art shop |

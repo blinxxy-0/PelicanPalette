@@ -77,6 +77,8 @@ internal static class DevMedia
         });
         DevTools.AddCommand(helper, "museart_signtext", "Renders a heading in the game's bold font to media/sign_<slug>.png. Usage: museart_signtext Features", (_, args) => SignText(string.Join(" ", args)));
         DevTools.AddCommand(helper, "museart_updatecard", "Renders the update card's parchment, lines and in-game icons to media/update_card.png (tools/art/update_card.py adds the sky, title and portraits).", (_, _) => UpdateCard());
+        DevTools.AddCommand(helper, "museart_spriteaudit", "Every paintable item, creature and animal (1.3): which have see-through pixels and how much their true colours change the picture, and which small paintings are bigger than 16x16.", (_, _) => SpriteAudit());
+        DevTools.AddCommand(helper, "museart_feasible", "How much work a large painting is against its light in each mode: cells, colours, regions, glazes, mixes and the clicks a second it asks (1.3). Run in a game, outdoors for the view.", (_, _) => Feasible());
         DevTools.AddCommand(helper, "museart_wikidata", "Writes media/wikidata.json and media/icons/ for the wiki.", (_, _) => WikiData());
         // Staging a shot.
         DevTools.AddCommand(helper, "museart_zoom", "Sets the game's zoom. Usage: museart_zoom 1.5", (_, args) =>
@@ -310,7 +312,7 @@ internal static class DevMedia
         ("-Easels at three more festivals", new[] { "(O)746" }),
         ("-Five special orders", new[] { "(O)858" }),
         ("-Julian buys a painting a season", new[] { "npc:JulianVane" }),
-        ("-Wheel zoom, and Relaxed keeps the picture", Array.Empty<string>()),
+        ("-Wheel zoom, and a Simplified mode", Array.Empty<string>()),
     };
 
     public const int CardWidth = 1200, CardTop = 250, CardLine = 72;
@@ -408,6 +410,131 @@ internal static class DevMedia
             list.Add(new { id, name = Name(id), count = int.Parse(parts[i + 1]) });
         }
         return list;
+    }
+
+    // ---- How hard the hardest paintings are (1.3) ----
+
+    // For large portraits and the view at Painting level 10 with every pigment:
+    // the work a careful player does (each region's edge painted cell by
+    // cell, its inside filled once; on Hard, a remix every load; every glaze
+    // and highlight its own click) against the light each mode gives, at the
+    // Master's Easel. Mixing takes about 4 seconds a colour.
+    private static void SpriteAudit()
+    {
+        if (!Context.IsWorldReady) return;
+        var owned = Enumerable.Range(0, Palette.All.Length).ToList();
+        // Each sprite's pixels, from the item, creature or animal.
+        var sprites = new List<(string Kind, string Name, Color[] Pixels, int W, int H)>();
+        void Add(string kind, string name, Texture2D texture, Rectangle rect)
+        {
+            rect = Rectangle.Intersect(rect, texture.Bounds);
+            if (rect.Width <= 0 || rect.Height <= 0) return;
+            var px = new Color[rect.Width * rect.Height];
+            texture.GetData(0, rect, px, 0, px.Length);
+            sprites.Add((kind, name, px, rect.Width, rect.Height));
+        }
+        foreach (string id in Game1.objectData.Keys.Select(k => "(O)" + k))
+        {
+            if (!ReferenceBuilder.CanPaint(ItemRegistry.Create(id))) continue;
+            var data = ItemRegistry.GetDataOrErrorItem(id);
+            Add("item", $"{data.DisplayName} [{id}]", data.GetTexture(), data.GetSourceRect());
+        }
+        foreach (var c in Creatures.All)
+            if (Creatures.Frame(c.Name) is { } f) Add("creature", c.Name, f.Texture, f.Source);
+        foreach (string type in Animals.AllTypes())
+            if (Animals.Frame(type) is { } f) Add("animal", type, f.Texture, f.Source);
+
+        // 1. See-through pixels: how many sprites, and how much they change.
+        int affected = 0;
+        var changes = new List<(string Kind, string Name, int Pixels, int Changed, double Lighter)>();
+        foreach (var (kind, name, px, w, h) in sprites)
+        {
+            int see = 0, changed = 0; double lighter = 0;
+            foreach (var p in px)
+            {
+                if (p.A < 128 || p.A == 255) continue;
+                see++;
+                int before = Palette.Nearest(p.R, p.G, p.B, owned);
+                var t = ReferenceBuilder.OverCanvas(p);
+                int after = Palette.Nearest(t.R, t.G, t.B, owned);
+                if (before != after) changed++;
+                lighter += (0.299 * (t.R - p.R) + 0.587 * (t.G - p.G) + 0.114 * (t.B - p.B));
+            }
+            if (see == 0) continue;
+            affected++;
+            changes.Add((kind, name, see, changed, lighter / see));
+        }
+        _monitor.Log($"See-through pixels: {affected} of {sprites.Count} sprites ({string.Join(", ", sprites.GroupBy(s => s.Kind).Select(g => $"{g.Count()} {g.Key}s"))})", LogLevel.Info);
+        foreach (var g in changes.GroupBy(c => c.Kind))
+            _monitor.Log($"  {g.Key}s: {g.Count()} with see-through pixels; {g.Count(c => c.Changed > 0)} now painted differently", LogLevel.Info);
+        foreach (var c in changes.OrderByDescending(c => c.Changed).Take(25))
+            _monitor.Log($"  {c.Kind} {c.Name}: {c.Pixels} see-through pixels, {c.Changed} change pigment, {c.Lighter:0} lighter on average", LogLevel.Info);
+
+        // 1b. Sprites that look like the game's red error sign.
+        var errorData = ItemRegistry.GetDataOrErrorItem("(O)" + ModEntry.Id + "_NoSuchItem");
+        var er = errorData.GetSourceRect();
+        var errorPx = new Color[er.Width * er.Height];
+        errorData.GetTexture().GetData(0, er, errorPx, 0, errorPx.Length);
+        var lookAlikes = sprites.Where(s => s.Pixels.Length == errorPx.Length && s.Pixels.Zip(errorPx).Count(t => t.First == t.Second) > errorPx.Length * 0.9)
+            .Select(s => s.Name).ToList();
+        _monitor.Log($"Error-sign look-alikes: {lookAlikes.Count}{(lookAlikes.Count > 0 ? ": " + string.Join(", ", lookAlikes.Take(40)) : "")}", LogLevel.Info);
+
+        // 2. Small paintings bigger than 16x16 (painted cells only).
+        int small = PaintingRules.CanvasSize(CanvasKind.Small), over = 0, total = 0;
+        var big = new List<string>();
+        foreach (var (kind, name, px, w, h) in sprites)
+        {
+            if (kind != "item" && (w > small - 2 || h > small - 2)) continue;     // (only those a small canvas takes)
+            int x0 = w, x1 = -1, y0 = h, y1 = -1;
+            for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
+                if (px[y * w + x].A >= 128)
+                    (x0, x1, y0, y1) = (Math.Min(x0, x), Math.Max(x1, x), Math.Min(y0, y), Math.Max(y1, y));
+            if (x1 < 0) continue;
+            total++;
+            int bw = x1 - x0 + 1, bh = y1 - y0 + 1;
+            if (bw > 16 || bh > 16) { over++; big.Add($"{kind} {name} {bw}x{bh}"); }
+        }
+        _monitor.Log($"Small paintings: {total} subjects a small canvas takes; {over} bigger than 16x16 (views, which fill the canvas, aside){(big.Count > 0 ? ": " + string.Join(", ", big) : "")}", LogLevel.Info);
+    }
+
+    private static void Feasible()
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        ArtProgress.SetLevel(who, 10);
+        ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length));
+        var owned = ArtProgress.OwnedPigments(who);
+        var rng = new Random(7);
+        var items = Game1.objectData.Keys.Select(id => "(O)" + id).Where(id => ReferenceBuilder.CanPaint(ItemRegistry.Create(id))).ToList();
+        const float MixSeconds = 4f;
+        foreach (var kind in new[] { CanvasKind.Small, CanvasKind.Medium, CanvasKind.Large })
+        {
+            int size = PaintingRules.CanvasSize(kind);
+            var allowed = PaintingRules.TechniquesFor(size, false);
+            var refs = new List<Reference>();
+            for (int i = 0; i < 25; i++)
+                refs.Add(ReferenceBuilder.StillLife(items.OrderBy(_ => rng.Next()).Take(ReferenceBuilder.MaxItems(size)).ToArray(), size, owned, allowed));
+            if (kind != CanvasKind.Small)
+                foreach (string npc in new[] { "Abigail", "Emily", "Lewis", "Wizard", "Sable", "Haley", "Clint" })
+                    if (Sitters.PortraitTexture(npc) != null) refs.Add(Sitters.Portrait(npc, size, owned, allowed));
+            int load = PaintingRules.LoadSize(10, Brushes.All.First(b => b.Id == "iridium").Load, Purity.Pure);
+            foreach (var mode in new[] { Difficulty.Normal, Difficulty.Hard })
+            {
+                var rules = DifficultySettings.For(mode);
+                var paces = refs.Select(r =>
+                {
+                    float light = PaintingRules.LightSeconds(r, 10, rules.LightMultiplier, !rules.PauseLightWhileMixing);
+                    int mixes = r.PigmentsUsed.Count + (rules.PaintLoads ? r.SubjectCells / load : 0);
+                    float left = light - (rules.PauseLightWhileMixing ? 0f : MixSeconds * mixes);
+                    return (Pace: left > 0 ? r.Work / left : 99f, r.Difficulty, Light: light);
+                }).OrderBy(t => t.Pace).ToList();
+                var easy = paces.Where(t => t.Difficulty < 40).Select(t => t.Pace).ToList();
+                var hard = paces.Where(t => t.Difficulty >= 70).Select(t => t.Pace).ToList();
+                string Avg(List<float> v) => v.Count == 0 ? "-" : $"{v.Average():0.00}";
+                _monitor.Log($"{kind}, {mode}: {paces.Count} paintings, light {paces.Min(t => t.Light):0}-{paces.Max(t => t.Light):0}s; clicks a second {paces[0].Pace:0.00} to {paces[^1].Pace:0.00} (median {paces[paces.Count / 2].Pace:0.00}); easy (under 40) {Avg(easy)}, hard (70+) {Avg(hard)}", LogLevel.Info);
+            }
+        }
     }
 
     private static void WikiData()

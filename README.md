@@ -43,13 +43,13 @@ A painting takes part of your day: about 1 hour for a small canvas, 2 for medium
 - **Tubes go straight into your Palette** when you buy or pick them up, for colours you know, as long as there's room for the whole tube. The rest stay in your bag. The setup screen warns you if you're low on a colour the subject needs.
 - **Set a Palette down** and it becomes storage for paint, like a chest that only takes tubes. Right-click it to take tubes out or put them in, and hit it with any tool to pick it up, paint and all. You need it in your bag to paint.
 - **Where tubes come from:** Sable sells tubes of every colour you know. A **Pigment Mill** (unlocked at Painting level 1, or bought from Sable) grinds tubes overnight from clay, coal, stone, flowers, berries, minerals and gems. Milling something new can teach you a colour.
-- **Relaxed difficulty** paints for free and doesn't need a Palette.
+- **Simplified** paints for free and doesn't need a Palette.
 
 The painting's quality depends on how closely you copied the picture and on your Painting level.
 
 **Portraits.** Once you have medium canvases (Painting level 4), friends at 4 or more hearts will sit for a portrait: pick their face under the items on the easel. A portrait takes an hour longer than a still life and sells for more. The sitter always loves being given theirs. Friends at 4+ hearts can also post portrait requests on the commission board.
 
-**Techniques grow with the canvas.** A small canvas is plain paint, shaded with your pigments. From medium canvases, some cells of the reference are **glazed**, a darker wash over a colour (the shaded side of a pumpkin): paint the colour, then go over it with the **Glaze** tool. Large canvases add **highlights**, a few bright spots of thick paint (the shine on a gem) put on with the **Highlight** tool. Do these last: painting next to a highlight smears it. With either tool in hand, dots show which cells want one. The results add a **Technique** rating, and leaving the techniques out costs about a star. Turn on **Simple pictures** (above the reference on the easel, any difficulty) for flat colour throughout.
+**Techniques grow with the canvas.** A small canvas is plain paint, shaded with your pigments. From medium canvases, some cells of the reference are **glazed**, a darker wash over a colour (the shaded side of a pumpkin): paint the colour, then go over it with the **Glaze** tool. Large canvases add **highlights**, a few bright spots of thick paint (the shine on a gem) put on with the **Highlight** tool. Do these last: painting next to a highlight smears it. With either tool in hand, dots show which cells want one. The results add a **Technique** rating, and leaving the techniques out costs about a star. **Simplified** mode leaves them out: plain paint throughout.
 
 **Masterpieces.** From Painting level 8 you can make (or buy) **linen canvases**, in medium and large. A painting on linen that's iridium quality with five stars, Inspired, and with its glazes and highlights in place becomes a **Masterpiece**. It's marked with a gold star, sells for half as much again as iridium, and makes a gift that brings more friendship. The game still counts it as iridium quality.
 
@@ -85,7 +85,7 @@ Change these with Generic Mod Config Menu, or in `PelicanPalette/PelicanPalette/
 
 | Setting | Default | What it does |
 |---|---|---|
-| `Difficulty` | `Normal` | `Relaxed`: no light meter, and each color only needs mixing once. `Normal`: mixed colors dry after a while. `Hard`: paint runs out, the light never pauses and sparks fade fast, but paintings pay 20% more. |
+| `Difficulty` | `Normal` | `Simplified`: no light meter, free paint that never dries, plain-paint pictures. `Relaxed`: Normal with no light meter. `Normal`: mixed colors dry after a while. `Hard`: paint runs out, the light never pauses and sparks fade fast, but paintings are worth three times as much. Simplified's are worth half, Relaxed's 85%. |
 | `LightTimeMultiplier` | `1.0` | Gives you more (or less) light per painting, on top of the difficulty (0.5x to 3x). |
 | `ArtLoversLikeAnyPainting` | `true` | Whether art lovers like even a normal-quality painting. |
 

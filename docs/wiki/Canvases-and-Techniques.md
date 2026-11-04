@@ -36,10 +36,10 @@ A few of the brightest spots (the shine on a gem, the light in an eye) take a **
 ### How techniques are scored
 On a canvas with glazes or highlights, the results add a **Technique** rating: how many of them you put in the right places, and how few in the wrong ones (a cell out is forgiven). A painting with no techniques at all loses about a star. See [Quality and Masterpieces](Quality-and-Masterpieces).
 
-### Simple pictures
-With **Simple pictures** on (above the reference on the easel's setup screen, or in the [Configuration](Configuration); any difficulty), references are plain paint only: no glazes or highlights to copy. Easier, and worth a little less. From a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as usual.
+### Simplified mode
+In **Simplified** mode (one of the four on the easel's setup screen, or in the [Configuration](Configuration)), references are plain paint only: no glazes or highlights to copy. It's the easiest mode: no light meter, and free paint that never dries. Paintings are worth half as much. If you'd like the free paint but the whole picture, turn off **Simplified mode removes glazes and highlights** in the [Configuration](Configuration). From a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as usual.
 
-The toggle greys out when it wouldn't change the picture you've picked: always on a small canvas (it has no glazes or highlights), and on a bigger one for a subject with none anyway. A small painting is still shaded, with your pigments.
+A small canvas has no glazes or highlights in any mode; a small painting is still shaded, with your pigments.
 
 ## Linen
 From Painting level 8, linen canvases (medium and large) paint like any other. They're the only canvas a **Masterpiece** can be painted on; see [Quality and Masterpieces](Quality-and-Masterpieces). On the setup screen, the **Linen** button next to the canvas sizes switches to linen.

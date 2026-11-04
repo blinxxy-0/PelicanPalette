@@ -22,6 +22,12 @@ public sealed class Reference
 
     public bool UsesTechniques { get; }
 
+    // The clicks a careful painter needs (1.3): each cell on the edge of a
+    // colour area painted by hand, one Fill for each area's inside, and each
+    // glaze and highlight. The light is set from it, so every painting asks
+    // the same pace, easy or hard.
+    public int Work { get; }
+
     public Reference(byte[,] cells, Mark[,]? marks = null)
     {
         Cells = cells;
@@ -43,6 +49,7 @@ public sealed class Reference
             if (y + 1 < Size && cells[x, y + 1] != c) edges++;
         }
         PigmentsUsed = new List<int>(used);
+        Work = CountWork(cells, marked);
 
         int hardestPigment = 0;
         foreach (int p in used)
@@ -79,5 +86,35 @@ public sealed class Reference
             }
         }
         return new Reference(cells, marks);
+    }
+
+    private static int CountWork(byte[,] cells, int marked)
+    {
+        int n = cells.GetLength(0), edgeCells = 0, regions = 0;
+        var seen = new bool[n, n];
+        var stack = new Stack<(int X, int Y)>();
+        for (int x = 0; x < n; x++)
+        for (int y = 0; y < n; y++)
+        {
+            byte c = cells[x, y];
+            if (c == PixelCanvas.Blank) continue;
+            bool Same(int ax, int ay) => ax >= 0 && ay >= 0 && ax < n && ay < n && cells[ax, ay] == c;
+            if (!(Same(x - 1, y) && Same(x + 1, y) && Same(x, y - 1) && Same(x, y + 1))) edgeCells++;
+            if (seen[x, y]) continue;
+            regions++;
+            seen[x, y] = true;
+            stack.Push((x, y));
+            while (stack.Count > 0)
+            {
+                var (px, py) = stack.Pop();
+                foreach (var (qx, qy) in new[] { (px + 1, py), (px - 1, py), (px, py + 1), (px, py - 1) })
+                    if (qx >= 0 && qy >= 0 && qx < n && qy < n && !seen[qx, qy] && cells[qx, qy] == c)
+                    {
+                        seen[qx, qy] = true;
+                        stack.Push((qx, qy));
+                    }
+            }
+        }
+        return edgeCells + regions + marked;
     }
 }

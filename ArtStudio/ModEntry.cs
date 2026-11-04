@@ -102,7 +102,7 @@ public class ModEntry : Mod
         var gmcm = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
         if (gmcm == null) return;
 
-        var difficulties = Enum.GetNames(typeof(Difficulty));
+        var difficulties = Difficulties.Order.Select(d => d.ToString()).ToArray();
         gmcm.Register(ModManifest, () => Config = new ModConfig(), () => Helper.WriteConfig(Config));
         gmcm.AddSectionTitle(ModManifest, () => I18n.Get("config.section.easel"));
         gmcm.AddParagraph(ModManifest, () => I18n.Get("config.intro"));
@@ -121,10 +121,10 @@ public class ModEntry : Mod
             min: 0.5f, max: 3f, interval: 0.1f,
             formatValue: v => $"{v:0.0}x");
         gmcm.AddBoolOption(ModManifest,
-            () => Config.SimplePictures,
-            value => Config.SimplePictures = value,
-            () => I18n.Get("config.simple"),
-            () => I18n.Get("config.simple.description"));
+            () => Config.SimplifiedPlainPictures,
+            value => Config.SimplifiedPlainPictures = value,
+            () => I18n.Get("config.simplified-plain"),
+            () => I18n.Get("config.simplified-plain.description"));
         gmcm.AddSectionTitle(ModManifest, () => I18n.Get("config.section.gifts"));
         gmcm.AddBoolOption(ModManifest,
             () => Config.ArtLoversLikeAnyPainting,

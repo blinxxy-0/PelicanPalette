@@ -30,7 +30,7 @@ internal sealed partial class EaselMenu : IClickableMenu
     private DifficultySettings _rules;
 
     // Paint (docs/painting_depth.md): the Palette in the bag, and how many
-    // cells of each colour it holds. Relaxed paints for free.
+    // cells of each colour it holds. Simplified paints for free.
     private Item? _palette;
     private int[] _paint = new int[Palette.All.Length];
     // (Only in a loaded game: the title-screen snapshots have no Palette.)
@@ -77,7 +77,7 @@ internal sealed partial class EaselMenu : IClickableMenu
         EnterSetup();
     }
 
-    // The Palette to paint from, when the mode spends paint (not Relaxed).
+    // The Palette to paint from, when the mode spends paint (not Simplified).
     private void LoadPalette()
     {
         _palette = null;
@@ -309,7 +309,7 @@ internal sealed partial class EaselMenu : IClickableMenu
             : ReferenceBuilder.StillLife(ids, size, _owned, techniques);
     }
 
-    private static bool Simple => ModEntry.Config.SimplePictures;
+    private static bool Simple => Difficulties.PlainPictures(ModEntry.Config.Difficulty, ModEntry.Config.SimplifiedPlainPictures);
 
     // Glazing from a medium canvas, highlights on a large one; with simple
     // pictures, glazes only for a glazed commission.

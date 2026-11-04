@@ -1,6 +1,6 @@
 <table align="right"><tr><th colspan="2">Framer's Bench</th></tr><tr><td colspan="2" align="center"><img src="images/icons/BC-blinxxy.MuseArt_FramersBench.png" width="64"></td></tr><tr><td><b>Sell price</b></td><td>600g</td></tr><tr><td><b>Recipe</b></td><td>Painting level 4</td></tr><tr><td><b>Ingredients</b></td><td><img src="images/icons/O-388.png" width="24"> Wood (20)<br><img src="images/icons/O-709.png" width="24"> Hardwood (2)<br><img src="images/icons/O-334.png" width="24"> Copper Bar (1)</td></tr><tr><td><b>Art shop</b></td><td>2,500g (Painting level 4)</td></tr></table>
 
-Put a painting in a frame and it hangs on a wall as furniture. On the easel's setup screen, **Frame a painting** shows every frame you have; pick one, then the painting. Hovering a frame shows its rarity and what it does.
+Put a painting in a frame and it hangs on a wall as furniture: a small painting takes one tile (its picture fitted to the frame), a medium one 2x2 and a large one 3x3. On the easel's setup screen, **Frame a painting** shows every frame you have; pick one, then the painting. Hovering a frame shows its rarity and what it does.
 
 ## What a frame does
 A framed painting hung in a room **inspires the easels in that room**: paintings made there get its frame's bonus. Build a studio.
