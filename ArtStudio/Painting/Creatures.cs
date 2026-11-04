@@ -199,7 +199,7 @@ internal static class Creatures
             if (p.A < 128) continue;
             (cells[ox + x, oy + y], marks[ox + x, oy + y]) = Technique.Nearest((byte)(p.R * tint.R / 255), (byte)(p.G * tint.G / 255), (byte)(p.B * tint.B / 255), owned, allowed);
         }
-        Technique.Limit(cells, marks);
+        Technique.Limit(cells, marks, owned);
         return Core.Reference.Centered(cells, canvasSize, marks);
     }
 

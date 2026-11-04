@@ -35,5 +35,14 @@ Five heart events, at 2, 4, 6, 8 and 10 hearts, tell his story with Sable. Along
 
 </details>
 
+## Julian buys a painting
+Once a season, on one of his visit days, talk to Julian again after his first line and he'll offer to buy a painting of yours at **twice the art shop's price**. Pick it from your bag, and he tells you what he thinks of it: the better the painting, the kinder the review. A good home for a Masterpiece.
+
+## Winter
+In winter Julian wears a long camel overcoat and a charcoal scarf outdoors.
+
+## Julian and Margot
+Once you've met them both, Julian meets [Margot Pell](Margot-Pell) at the Saloon on one of his visit days, and they argue about whether restoring a painting is art. You settle it. After that they bicker on his visits, a little fonder each time.
+
 ## The Fair
 Julian judges the painting contest at the Stardew Valley Fair. See [Festivals](Festivals).

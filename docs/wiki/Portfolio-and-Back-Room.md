@@ -12,6 +12,13 @@ Finish a page and Sable writes the next day, with a reward.
 | Fine Work | A gold painting, an iridium one, a glazed one, a varnished one, and a Masterpiece | Two medium linen canvases |
 | Far Places | Views of the Calico Desert, the Skull Cavern, Ginger Island's beach and its north, and the Secret Woods | Two large linen canvases |
 | Legends | The Crimsonfish, Angler, Legend, Glacierfish and Mutant Carp, painted from the fish in your bag | An Iridium Palette |
+| Faces of the Valley | Portraits (4 hearts per sitter): the Saloon regulars (Gus, Emily or Shane), a family (Robin, Demetrius, Maru or Sebastian), an old couple (Evelyn or George), Sable, and a visitor (Julian) | Three Moonlit Frames |
+
+A group's slot takes a portrait of any one of its members.
+
+## The finished book
+- **Every page finished:** Sable writes with the **Gold-Leaf Frame**, an epic [frame](Frames).
+- **Then the Summit:** paint the view from the Summit, and Sable climbs up to join you and look through the finished book. The scene plays by itself. The Summit view goes into the book as its last page.
 
 You can set an easel down just inside the Skull Cavern for its view.
 

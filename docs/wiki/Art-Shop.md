@@ -34,6 +34,14 @@ Talk to the counter to:
 | <img src="images/icons/O-blinxxy.MuseArt_Linen_Medium.png" width="24"> | Linen Canvas (Medium) | 500g | Painting level 8 |
 | <img src="images/icons/O-blinxxy.MuseArt_Linen_Large.png" width="24"> | Linen Canvas (Large) | 1,000g | Painting level 8 |
 | <img src="images/icons/O-blinxxy.MuseArt_PictureFrame.png" width="24"> | Picture Frame | 150g | Always |
+| <img src="images/icons/O-blinxxy.MuseArt_PineFrame.png" width="24"> | Pine Frame | 400g | Always |
+| <img src="images/icons/O-blinxxy.MuseArt_OakFrame.png" width="24"> | Oak Frame | 400g | Always |
+| <img src="images/icons/O-blinxxy.MuseArt_BirchFrame.png" width="24"> | Birch Frame | 400g | Always |
+| <img src="images/icons/O-blinxxy.MuseArt_WhiteFrame.png" width="24"> | White Frame | 400g | Always |
+| <img src="images/icons/O-blinxxy.MuseArt_WalnutFrame.png" width="24"> | Walnut Frame | 1,200g | Painting level 3 |
+| <img src="images/icons/O-blinxxy.MuseArt_RedLacquerFrame.png" width="24"> | Red Lacquer Frame | 1,200g | Painting level 5 |
+| <img src="images/icons/O-blinxxy.MuseArt_RopeFrame.png" width="24"> | Rope Frame | 1,200g | Painting level 7 |
+| <img src="images/icons/BC-blinxxy.MuseArt_FramersBench.png" width="24"> | Framer's Bench | 2,500g | Painting level 4 |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_sienna.png" width="24"> | Sienna Pigment | 120g | Until you know the colour |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_rose.png" width="24"> | Rose Pigment | 120g | Until you know the colour |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_marigold.png" width="24"> | Marigold Pigment | 120g | Until you know the colour |

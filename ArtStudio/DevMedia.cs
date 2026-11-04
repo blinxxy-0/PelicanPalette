@@ -76,7 +76,7 @@ internal static class DevMedia
             _monitor.Log($"Saved {path} ({texture.Width}x{texture.Height}).", LogLevel.Info);
         });
         DevTools.AddCommand(helper, "museart_signtext", "Renders a heading in the game's bold font to media/sign_<slug>.png. Usage: museart_signtext Features", (_, args) => SignText(string.Join(" ", args)));
-        DevTools.AddCommand(helper, "museart_updatecard", "Renders the 1.2 update card's parchment, lines and in-game icons to media/update_card.png (tools/art/update_card.py adds the sky, title and portraits).", (_, _) => UpdateCard());
+        DevTools.AddCommand(helper, "museart_updatecard", "Renders the update card's parchment, lines and in-game icons to media/update_card.png (tools/art/update_card.py adds the sky, title and portraits).", (_, _) => UpdateCard());
         DevTools.AddCommand(helper, "museart_wikidata", "Writes media/wikidata.json and media/icons/ for the wiki.", (_, _) => WikiData());
         // Staging a shot.
         DevTools.AddCommand(helper, "museart_zoom", "Sets the game's zoom. Usage: museart_zoom 1.5", (_, args) =>
@@ -295,20 +295,22 @@ internal static class DevMedia
     // The Python side (tools/art/update_card.py) adds what the game can't
     // draw here (the lectern, plan chest and skiff from our map art), and
     // the sky, the gold title and the portraits.
+    // The 1.3 update card (1.2's is in git history, and docs/media/page/update_1_2.png).
+    private const string UpdateTitle = "1.3 Update";
     private static readonly (string Line, string[] Icons)[] UpdateLines =
     {
-        ("-A back room and portfolio book", new[] { "lectern" }),
-        ("-A plan chest for your keepers", new[] { "planchest" }),
-        ("-Julian Vane, the visiting critic", new[] { "npc:JulianVane" }),
-        ("-Five new heart events", new[] { "(O)" + ModEntry.Id + "_OldCatalogue", "(F)" + ModEntry.Id + "_JulianReview" }),
-        ("-A painting contest at the Fair", new[] { "ribbon:0", "ribbon:1", "ribbon:2" }),
-        ("-Sable's Night Market stall", new[] { "skiff" }),
-        ("-The Moonlit Frame", new[] { "(O)" + ArtItems.MoonlitFrameItemId, "moonlit-painting" }),
-        ("-Paint the monsters you've slain", new[] { "creature:Green Slime", "creature:Bat", "creature:Dust Spirit" }),
-        ("-Krobus and the Wizard sit sooner", new[] { "npc:Krobus", "npc:Wizard" }),
-        ("-Your portfolio at the gallery", new[] { "painting" }),
-        ("-The painting record, in tabs", new[] { "tabs" }),
-        ("-Fits Stardew Valley Expanded", Array.Empty<string>()),
+        ("-Margot Pell, the conservator", new[] { "npc:MargotPell" }),
+        ("-Six heart events and a wedding", new[] { "(O)460", "(O)458" }),
+        ("-21 old paintings to find", new[] { "old:valley_mill", "old:wreck_ship", "old:calico_queen" }),
+        ("-Painting Mastery: restore them", new[] { "(BC)" + ArtItems.MastersEaselId }),
+        ("-A museum collection and wing", new[] { "(F)" + LivingPainting.Id, "(O)blinxxy.MuseArt_MargotsLoupe" }),
+        ("-Sixteen frames that do something", new[] { "(O)" + ArtItems.MoreFrame("birch").ItemId, "(O)" + ArtItems.GoldLeafFrameItemId, "(O)" + ArtItems.MoreFrame("prismatic").ItemId }),
+        ("-The Framer's Bench", new[] { "(BC)" + FramersBench.BenchId }),
+        ("-Paint your pets and farm animals", new[] { "animal:White Chicken", "animal:Brown Cow" }),
+        ("-Easels at three more festivals", new[] { "(O)746" }),
+        ("-Five special orders", new[] { "(O)858" }),
+        ("-Julian buys a painting a season", new[] { "npc:JulianVane" }),
+        ("-Wheel zoom, and Relaxed keeps the picture", Array.Empty<string>()),
     };
 
     public const int CardWidth = 1200, CardTop = 250, CardLine = 72;
@@ -327,7 +329,7 @@ internal static class DevMedia
         var b = Game1.spriteBatch;
         b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
         StardewValley.Menus.IClickableMenu.drawTextureBox(b, 0, 0, CardWidth, h, Color.White);
-        SpriteText.drawStringHorizontallyCenteredAt(b, "1.2 Update", CardWidth / 2, CardTop - 84);
+        SpriteText.drawStringHorizontallyCenteredAt(b, UpdateTitle, CardWidth / 2, CardTop - 84);
         var slots = new List<string>();
         for (int i = 0; i < UpdateLines.Length; i++)
         {
@@ -346,16 +348,25 @@ internal static class DevMedia
                     ArtHooks.Frame(DevTools.TestPainting("(O)24", PaintingRules.Iridium)).drawInMenu(b, at, 1f, 1f, 0.9f, StackDrawType.Hide);
                 else if (icon == "tabs")
                     DevTools.TestPainting("(O)24", PaintingRules.Gold).drawInMenu(b, at, 1f, 1f, 0.9f, StackDrawType.Hide);
+                else if (icon.StartsWith("old:") && OldPaintings.Get(icon.Substring(4)) is { } old)
+                    OldPaintings.Draw(b, old, new Rectangle((int)at.X + 4, (int)at.Y + 4, 56, 56));
+                else if (icon.StartsWith("animal:"))
+                    Animals.Draw(b, icon.Substring("animal:".Length), new Rectangle((int)at.X + 4, (int)at.Y + 4, 56, 56));
                 else if (icon.StartsWith("creature:"))
                     Creatures.Draw(b, icon.Substring("creature:".Length), new Rectangle((int)at.X + 4, (int)at.Y + 4, 56, 56));
                 else if (icon.StartsWith("ribbon:"))
                     b.Draw(Game1.content.Load<Texture2D>($"Mods/{ModEntry.Id}/JulianItems"), new Rectangle((int)at.X + 8, (int)at.Y + 4, 48, 48),
                         new Rectangle(48 + 16 * int.Parse(icon.Substring("ribbon:".Length)), 0, 16, 16), Color.White);
-                else if (icon.StartsWith("npc:") && Game1.getCharacterFromName(icon.Substring(4)) is { } npc)
+                else if (icon.StartsWith("npc:"))
                 {
-                    // (Each villager's own frame size: Krobus's frames are shorter than most.)
-                    int fw = npc.Sprite.SpriteWidth, fh = npc.Sprite.SpriteHeight;
-                    b.Draw(npc.Sprite.Texture, new Rectangle((int)at.X + 32 - fw, (int)at.Y + 58 - fh * 2, fw * 2, fh * 2), new Rectangle(0, 0, fw, fh), Color.White);
+                    // (Each villager's own frame size: Krobus's frames are shorter
+                    // than most. One who hasn't arrived yet, as Margot may not
+                    // have, is drawn from her sheet.)
+                    string who = icon.Substring(4);
+                    var npc = Game1.getCharacterFromName(who);
+                    var sheet = npc?.Sprite.Texture ?? Game1.content.Load<Texture2D>("Characters/" + who);
+                    int fw = npc?.Sprite.SpriteWidth ?? 16, fh = npc?.Sprite.SpriteHeight ?? 32;
+                    b.Draw(sheet, new Rectangle((int)at.X + 32 - fw, (int)at.Y + 58 - fh * 2, fw * 2, fh * 2), new Rectangle(0, 0, fw, fh), Color.White);
                 }
                 else
                     slots.Add($"{icon} {(int)at.X} {(int)at.Y}");       // drawn by the Python side
@@ -467,12 +478,40 @@ internal static class DevMedia
         var professions = new[] { skill.PleinAir, skill.Gallerist, skill.SteadyHand, skill.Visionary, skill.PatronsFavorite, skill.Prolific }
             .Select(p => new { name = p.GetName(), description = p.GetDescription() }).ToList();
 
-        var tastes = DataLoader.NpcGiftTastes(Game1.content).TryGetValue("Sable", out string raw) ? raw.Split('/') : Array.Empty<string>();
-        object Taste(int field) => field < tastes.Length
-            ? tastes[field].Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(t => !t.StartsWith("-"))
-                .Select(t => t.StartsWith("(") ? t : "(O)" + t).Select(id => (object)new { id, name = Name(id) }).ToList()
-            : new List<object>();
-        var sable = Game1.characterData.TryGetValue("Sable", out var sd) ? sd : null;
+        // A villager's birthday and gifts (Sable, and Margot from 1.3).
+        object? Villager(string npc)
+        {
+            if (!Game1.characterData.TryGetValue(npc, out var cd)) return null;
+            var tastes = DataLoader.NpcGiftTastes(Game1.content).TryGetValue(npc, out string raw) ? raw.Split('/') : Array.Empty<string>();
+            object Taste(int field) => field < tastes.Length
+                ? tastes[field].Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(t => !t.StartsWith("-"))
+                    .Select(t => t.StartsWith("(") ? t : "(O)" + t).Select(id => { Icons.Add(id); return (object)new { id, name = Name(id) }; }).ToList()
+                : new List<object>();
+            return new
+            {
+                birthday = $"{cd.BirthSeason} {cd.BirthDay}",
+                gender = cd.Gender.ToString(),
+                romanceable = cd.CanBeRomanced,
+                loves = Taste(1), likes = Taste(3), dislikes = Taste(5), hates = Taste(7), neutral = Taste(9),
+            };
+        }
+
+        // The frame styles (1.3): rarity, trait and the item.
+        var frames = ArtItems.FrameStyles.Select(f =>
+        {
+            var (rarity, trait) = Painting.Frames.Of(f);
+            string id = "(O)" + f.ItemId;
+            Icons.Add(id);
+            return new { style = f.Id, item = Name(id), id, rarity = rarity.ToString(), steps = (int)rarity, trait = trait.ToString(),
+                percent = (int)rarity * Painting.Frames.Step(trait) * 100f };
+        }).ToList();
+
+        // The old paintings (1.3), their sets, values and Margot's fees.
+        var oldPaintings = OldPaintings.All.Select(o => new
+        {
+            id = o.Id, title = OldPaintings.Title(o), set = o.Set, setName = OldPaintings.SetName(o.Set), size = o.Size,
+            value = OldPaintings.SetValue(o.Set), fee = Social.MargotService.Fee(o),
+        }).ToList();
 
         var data = new
         {
@@ -496,13 +535,11 @@ internal static class DevMedia
             },
             catalogue = Catalogue.Milestones.Select(m => new { subjects = m.Subjects, perk = m.Perk }),
             commissions = new { Shop.Commissions.MaxPosted, Shop.Commissions.MaxAccepted, Shop.Commissions.DaysToDeliver, Shop.Commissions.FriendshipReward, portraitChance = Shop.Commissions.PortraitChance },
-            sable = sable == null ? null : new
-            {
-                birthday = $"{sable.BirthSeason} {sable.BirthDay}",
-                gender = sable.Gender.ToString(),
-                romanceable = sable.CanBeRomanced,
-                loves = Taste(1), likes = Taste(3), dislikes = Taste(5), hates = Taste(7), neutral = Taste(9),
-            },
+            sable = Villager("Sable"),
+            margot = Villager("MargotPell"),
+            frames,
+            oldPaintings,
+            frameSteps = new { light = Painting.Frames.LightStep, night = Painting.Frames.NightStep, sparks = Painting.Frames.SparksStep, thrift = Painting.Frames.ThriftStep, learning = Painting.Frames.LearningStep, value = Painting.Frames.ValueStep, counted = Painting.Frames.Counted },
             artLovers = ArtItems.DefaultArtLovers().Keys,
         };
         File.WriteAllText(Path.Combine(Dir, "wikidata.json"), JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true }));

@@ -1,10 +1,40 @@
 {
-  "version": "1.2.1",
+  "version": "1.3.0",
   "objects": [
     {
       "id": "(O)blinxxy.MuseArt_Painting",
       "name": "Painting",
       "description": "A painting, made by hand at an easel.",
+      "sellPrice": 100
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_DamagedPainting_valley",
+      "name": "Damaged Painting",
+      "description": "An old painting of the valley, rolled in a tin tube and buried a long time.",
+      "sellPrice": 100
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_DamagedPainting_wreck",
+      "name": "Damaged Painting",
+      "description": "An old painting in an oilcloth case, from a wreck.",
+      "sellPrice": 100
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_DamagedPainting_miners",
+      "name": "Damaged Painting",
+      "description": "An old painting from the mining town, found among the crates.",
+      "sellPrice": 100
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_DamagedPainting_calico",
+      "name": "Damaged Painting",
+      "description": "A very old painting from the lost city of Calico.",
+      "sellPrice": 100
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_DamagedPainting_dwarvish",
+      "name": "Damaged Painting",
+      "description": "A Dwarvish painting, warm from the volcano.",
       "sellPrice": 100
     },
     {
@@ -72,6 +102,90 @@
       "name": "Moonlit Frame",
       "description": "A picture frame in midnight blue and silver, with a moon at the top. Sable sells them at the Night Market. Frame a painting in it at an easel.",
       "sellPrice": 750
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_GoldLeafFrame",
+      "name": "Gold-Leaf Frame",
+      "description": "A picture frame finished in gold leaf, from Sable, for a finished portfolio. Frame a painting in it at an easel.",
+      "sellPrice": 2500
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_DriftwoodFrame",
+      "name": "Driftwood Frame",
+      "description": "A picture frame of grey, sea-worn wood, from the museum, for the Wreck\u0027s paintings. Frame a painting in it at an easel.",
+      "sellPrice": 1500
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_IronFrame",
+      "name": "Iron Frame",
+      "description": "A picture frame of riveted iron, from the museum, for the Miners\u0027 paintings. Frame a painting in it at an easel.",
+      "sellPrice": 1500
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_SandstoneFrame",
+      "name": "Sandstone Frame",
+      "description": "A picture frame of carved sandstone, from the museum, for Calico\u0027s paintings. Frame a painting in it at an easel.",
+      "sellPrice": 1500
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_DwarvishFrame",
+      "name": "Dwarvish Frame",
+      "description": "A Dwarvish picture frame of bronze set with a gem, from the museum. Frame a painting in it at an easel.",
+      "sellPrice": 1500
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_PineFrame",
+      "name": "Pine Frame",
+      "description": "A plain frame in pale pine. Framed paintings hung in a room help paintings made there; pine saves a little paint.",
+      "sellPrice": 200
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_OakFrame",
+      "name": "Oak Frame",
+      "description": "A sturdy oak frame. Hung in a room, it helps paintings made there teach you a little more.",
+      "sellPrice": 200
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_BirchFrame",
+      "name": "Birch Frame",
+      "description": "A pale birch frame, flecked with bark. Hung in a room, it brings inspiration a little sooner.",
+      "sellPrice": 200
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_WhiteFrame",
+      "name": "White Frame",
+      "description": "A frame painted white, like a gallery\u0027s. Hung in a room, it gives paintings made there a little more light.",
+      "sellPrice": 200
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_WalnutFrame",
+      "name": "Walnut Frame",
+      "description": "Dark walnut with brass at the corners. Hung in a room, paintings made there teach you more.",
+      "sellPrice": 600
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_RedLacquerFrame",
+      "name": "Red Lacquer Frame",
+      "description": "Deep red lacquer and gold. Hung in a room, paintings made there are worth more.",
+      "sellPrice": 600
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_RopeFrame",
+      "name": "Rope Frame",
+      "description": "A frame wrapped in twisted rope, like a ship\u0027s. Hung in a room, it saves paint at the easel.",
+      "sellPrice": 600
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_PrismaticFrame",
+      "name": "Prismatic Frame",
+      "description": "Every colour at once. Hung in a room, inspiration comes much sooner.",
+      "sellPrice": 3000
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_QiFrame",
+      "name": "Qi\u0027s Frame",
+      "description": "Purple and gold, with Qi\u0027s diamond. Hung in a room, paintings made there are worth much more.",
+      "sellPrice": 3000
     },
     {
       "id": "(O)blinxxy.MuseArt_Palette",
@@ -282,6 +396,12 @@
       "name": "Old Catalogue",
       "description": "The catalogue from a small gallery show in Zuzu City, ten years ago. There\u0027s a note in pencil in one margin. Julian asked you to give it to Sable.",
       "sellPrice": 0
+    },
+    {
+      "id": "(O)blinxxy.MuseArt_MargotsLoupe",
+      "name": "Margot\u0027s Loupe",
+      "description": "Margot\u0027s jeweller\u0027s loupe, worn on a cord. Old paintings turn up more often while you wear it.",
+      "sellPrice": 750
     }
   ],
   "bigCraftables": [
@@ -292,10 +412,22 @@
       "sellPrice": 100
     },
     {
+      "id": "(BC)blinxxy.MuseArt_MastersEasel",
+      "name": "Master\u0027s Easel",
+      "description": "An easel finished in gold leaf, for a master. Paintings made at it get a little more light.",
+      "sellPrice": 5000
+    },
+    {
       "id": "(BC)blinxxy.MuseArt_PigmentMill",
       "name": "Pigment Mill",
       "description": "Grinds clay, flowers, berries, minerals and gems into tubes of paint overnight.",
       "sellPrice": 500
+    },
+    {
+      "id": "(BC)blinxxy.MuseArt_FramersBench",
+      "name": "Framer\u0027s Bench",
+      "description": "Takes a framed painting out of its frame overnight: the painting as it was, and the empty frame to use again.",
+      "sellPrice": 600
     },
     {
       "id": "(BC)blinxxy.MuseArt_VarnishCabinet",
@@ -596,6 +728,30 @@
       "known": false
     },
     {
+      "item": "Framer\u0027s Bench",
+      "id": "(BC)blinxxy.MuseArt_FramersBench",
+      "makes": 1,
+      "ingredients": [
+        {
+          "id": "(O)388",
+          "name": "Wood",
+          "count": 20
+        },
+        {
+          "id": "(O)709",
+          "name": "Hardwood",
+          "count": 2
+        },
+        {
+          "id": "(O)334",
+          "name": "Copper Bar",
+          "count": 1
+        }
+      ],
+      "level": 4,
+      "known": false
+    },
+    {
       "item": "Varnish",
       "id": "(O)blinxxy.MuseArt_Varnish",
       "makes": 2,
@@ -687,6 +843,62 @@
       "id": "(O)blinxxy.MuseArt_PictureFrame",
       "price": 150,
       "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Pine Frame",
+      "id": "(O)blinxxy.MuseArt_PineFrame",
+      "price": 400,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Oak Frame",
+      "id": "(O)blinxxy.MuseArt_OakFrame",
+      "price": 400,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Birch Frame",
+      "id": "(O)blinxxy.MuseArt_BirchFrame",
+      "price": 400,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "White Frame",
+      "id": "(O)blinxxy.MuseArt_WhiteFrame",
+      "price": 400,
+      "condition": null,
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Walnut Frame",
+      "id": "(O)blinxxy.MuseArt_WalnutFrame",
+      "price": 1200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 3",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Red Lacquer Frame",
+      "id": "(O)blinxxy.MuseArt_RedLacquerFrame",
+      "price": 1200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 5",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Rope Frame",
+      "id": "(O)blinxxy.MuseArt_RopeFrame",
+      "price": 1200,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 7",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Framer\u0027s Bench",
+      "id": "(BC)blinxxy.MuseArt_FramersBench",
+      "price": 2500,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 4",
       "oncePerPlayer": false
     },
     {
@@ -1683,6 +1895,426 @@
       }
     ],
     "neutral": []
+  },
+  "margot": {
+    "birthday": "Spring 19",
+    "gender": "Female",
+    "romanceable": true,
+    "loves": [
+      {
+        "id": "(O)614",
+        "name": "Green Tea"
+      },
+      {
+        "id": "(O)222",
+        "name": "Rhubarb Pie"
+      },
+      {
+        "id": "(O)103",
+        "name": "Ancient Doll"
+      },
+      {
+        "id": "(O)124",
+        "name": "Golden Mask"
+      },
+      {
+        "id": "(O)72",
+        "name": "Diamond"
+      }
+    ],
+    "likes": [
+      {
+        "id": "(O)395",
+        "name": "Coffee"
+      },
+      {
+        "id": "(O)424",
+        "name": "Cheese"
+      },
+      {
+        "id": "(O)340",
+        "name": "Honey"
+      },
+      {
+        "id": "(O)80",
+        "name": "Quartz"
+      },
+      {
+        "id": "(O)86",
+        "name": "Earth Crystal"
+      }
+    ],
+    "dislikes": [
+      {
+        "id": "(O)92",
+        "name": "Sap"
+      },
+      {
+        "id": "(O)167",
+        "name": "Joja Cola"
+      }
+    ],
+    "hates": [
+      {
+        "id": "(O)766",
+        "name": "Slime"
+      },
+      {
+        "id": "(O)168",
+        "name": "Trash"
+      },
+      {
+        "id": "(O)153",
+        "name": "Green Algae"
+      }
+    ],
+    "neutral": []
+  },
+  "frames": [
+    {
+      "style": "plain",
+      "item": "Picture Frame",
+      "id": "(O)blinxxy.MuseArt_PictureFrame",
+      "rarity": "Common",
+      "steps": 1,
+      "trait": "Value",
+      "percent": 2
+    },
+    {
+      "style": "moonlit",
+      "item": "Moonlit Frame",
+      "id": "(O)blinxxy.MuseArt_MoonlitFrame",
+      "rarity": "Rare",
+      "steps": 3,
+      "trait": "Night",
+      "percent": 12
+    },
+    {
+      "style": "gold-leaf",
+      "item": "Gold-Leaf Frame",
+      "id": "(O)blinxxy.MuseArt_GoldLeafFrame",
+      "rarity": "Epic",
+      "steps": 4,
+      "trait": "Value",
+      "percent": 8
+    },
+    {
+      "style": "driftwood",
+      "item": "Driftwood Frame",
+      "id": "(O)blinxxy.MuseArt_DriftwoodFrame",
+      "rarity": "Rare",
+      "steps": 3,
+      "trait": "Sparks",
+      "percent": 15.000001
+    },
+    {
+      "style": "iron",
+      "item": "Iron Frame",
+      "id": "(O)blinxxy.MuseArt_IronFrame",
+      "rarity": "Rare",
+      "steps": 3,
+      "trait": "Learning",
+      "percent": 9
+    },
+    {
+      "style": "sandstone",
+      "item": "Sandstone Frame",
+      "id": "(O)blinxxy.MuseArt_SandstoneFrame",
+      "rarity": "Rare",
+      "steps": 3,
+      "trait": "Light",
+      "percent": 6
+    },
+    {
+      "style": "dwarvish",
+      "item": "Dwarvish Frame",
+      "id": "(O)blinxxy.MuseArt_DwarvishFrame",
+      "rarity": "Epic",
+      "steps": 4,
+      "trait": "Thrift",
+      "percent": 6
+    },
+    {
+      "style": "pine",
+      "item": "Pine Frame",
+      "id": "(O)blinxxy.MuseArt_PineFrame",
+      "rarity": "Common",
+      "steps": 1,
+      "trait": "Thrift",
+      "percent": 1.5
+    },
+    {
+      "style": "oak",
+      "item": "Oak Frame",
+      "id": "(O)blinxxy.MuseArt_OakFrame",
+      "rarity": "Common",
+      "steps": 1,
+      "trait": "Learning",
+      "percent": 3
+    },
+    {
+      "style": "birch",
+      "item": "Birch Frame",
+      "id": "(O)blinxxy.MuseArt_BirchFrame",
+      "rarity": "Common",
+      "steps": 1,
+      "trait": "Sparks",
+      "percent": 5
+    },
+    {
+      "style": "white",
+      "item": "White Frame",
+      "id": "(O)blinxxy.MuseArt_WhiteFrame",
+      "rarity": "Common",
+      "steps": 1,
+      "trait": "Light",
+      "percent": 2
+    },
+    {
+      "style": "walnut",
+      "item": "Walnut Frame",
+      "id": "(O)blinxxy.MuseArt_WalnutFrame",
+      "rarity": "Uncommon",
+      "steps": 2,
+      "trait": "Learning",
+      "percent": 6
+    },
+    {
+      "style": "red-lacquer",
+      "item": "Red Lacquer Frame",
+      "id": "(O)blinxxy.MuseArt_RedLacquerFrame",
+      "rarity": "Uncommon",
+      "steps": 2,
+      "trait": "Value",
+      "percent": 4
+    },
+    {
+      "style": "rope",
+      "item": "Rope Frame",
+      "id": "(O)blinxxy.MuseArt_RopeFrame",
+      "rarity": "Uncommon",
+      "steps": 2,
+      "trait": "Thrift",
+      "percent": 3
+    },
+    {
+      "style": "prismatic",
+      "item": "Prismatic Frame",
+      "id": "(O)blinxxy.MuseArt_PrismaticFrame",
+      "rarity": "Legendary",
+      "steps": 6,
+      "trait": "Sparks",
+      "percent": 30.000002
+    },
+    {
+      "style": "qi",
+      "item": "Qi\u0027s Frame",
+      "id": "(O)blinxxy.MuseArt_QiFrame",
+      "rarity": "Legendary",
+      "steps": 6,
+      "trait": "Value",
+      "percent": 12
+    }
+  ],
+  "oldPaintings": [
+    {
+      "id": "valley_square",
+      "title": "The Town Square",
+      "set": "valley",
+      "setName": "the Old Valley",
+      "size": 28,
+      "value": 1500,
+      "fee": 600
+    },
+    {
+      "id": "valley_farm",
+      "title": "A Farm at Evening",
+      "set": "valley",
+      "setName": "the Old Valley",
+      "size": 28,
+      "value": 1500,
+      "fee": 600
+    },
+    {
+      "id": "valley_mill",
+      "title": "The Old Mill",
+      "set": "valley",
+      "setName": "the Old Valley",
+      "size": 28,
+      "value": 1500,
+      "fee": 600
+    },
+    {
+      "id": "valley_lewis",
+      "title": "A Young Man in Green",
+      "set": "valley",
+      "setName": "the Old Valley",
+      "size": 28,
+      "value": 1500,
+      "fee": 600
+    },
+    {
+      "id": "valley_harvest",
+      "title": "The Harvest",
+      "set": "valley",
+      "setName": "the Old Valley",
+      "size": 28,
+      "value": 1500,
+      "fee": 600
+    },
+    {
+      "id": "wreck_ship",
+      "title": "A Ship\u0027s Portrait",
+      "set": "wreck",
+      "setName": "the Wreck",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "wreck_storm",
+      "title": "The Storm",
+      "set": "wreck",
+      "setName": "the Wreck",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "wreck_harbour",
+      "title": "The Harbour at Dawn",
+      "set": "wreck",
+      "setName": "the Wreck",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "wreck_captain",
+      "title": "The Captain",
+      "set": "wreck",
+      "setName": "the Wreck",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "wreck_lighthouse",
+      "title": "The Lighthouse",
+      "set": "wreck",
+      "setName": "the Wreck",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "miners_town",
+      "title": "The Mining Town",
+      "set": "miners",
+      "setName": "the Miners",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "miners_family",
+      "title": "A Miner\u0027s Family",
+      "set": "miners",
+      "setName": "the Miners",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "miners_picnic",
+      "title": "Sunday on the Hill",
+      "set": "miners",
+      "setName": "the Miners",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "miners_entrance",
+      "title": "The Mine Mouth",
+      "set": "miners",
+      "setName": "the Miners",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "miners_cavern",
+      "title": "The Crystal Cave",
+      "set": "miners",
+      "setName": "the Miners",
+      "size": 28,
+      "value": 2000,
+      "fee": 800
+    },
+    {
+      "id": "calico_city",
+      "title": "The City by the Oasis",
+      "set": "calico",
+      "setName": "Calico",
+      "size": 36,
+      "value": 4000,
+      "fee": 1500
+    },
+    {
+      "id": "calico_market",
+      "title": "The Market",
+      "set": "calico",
+      "setName": "Calico",
+      "size": 36,
+      "value": 4000,
+      "fee": 1500
+    },
+    {
+      "id": "calico_queen",
+      "title": "The Queen of Calico",
+      "set": "calico",
+      "setName": "Calico",
+      "size": 36,
+      "value": 4000,
+      "fee": 1500
+    },
+    {
+      "id": "calico_caravan",
+      "title": "The Caravan",
+      "set": "calico",
+      "setName": "Calico",
+      "size": 36,
+      "value": 4000,
+      "fee": 1500
+    },
+    {
+      "id": "dwarvish_forge",
+      "title": "The Forge",
+      "set": "dwarvish",
+      "setName": "the Dwarves",
+      "size": 36,
+      "value": 6000,
+      "fee": 2500
+    },
+    {
+      "id": "dwarvish_king",
+      "title": "The Dwarf King",
+      "set": "dwarvish",
+      "setName": "the Dwarves",
+      "size": 36,
+      "value": 6000,
+      "fee": 2500
+    }
+  ],
+  "frameSteps": {
+    "light": 0.02,
+    "night": 0.04,
+    "sparks": 0.05,
+    "thrift": 0.015,
+    "learning": 0.03,
+    "value": 0.02,
+    "counted": 3
   },
   "artLovers": [
     "Leah",

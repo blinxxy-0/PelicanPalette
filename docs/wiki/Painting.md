@@ -8,10 +8,15 @@ Right-click a placed **Easel** to paint. A session has three screens: **Setup**,
   - one to three items from your bag (a still life),
   - a friend who will sit for a portrait,
   - the view, at an easel outdoors ([Portraits and Plein Air](Portraits-and-Plein-Air)),
+  - a monster you've slain, or one of your animals ([Portraits and Plein Air](Portraits-and-Plein-Air)),
+  - a damaged old painting to restore, once you're a conservator ([Old Paintings and Restoration](Old-Paintings-and-Restoration)),
   - or a **Free canvas**, with no reference and no score.
 - **Preview:** shows the reference exactly as you'll copy it, with its **difficulty** (0-100) and how long the light lasts.
 - **Brush:** cycles through the [Brushes](Brushes) in your bag.
-- **Frame a painting:** puts one of your paintings in a Picture Frame, to hang as furniture.
+- **Frame a painting:** puts one of your paintings in a frame, to hang as furniture. See [Frames](Frames).
+- **More to paint than fits:** the items and the row of friends, views and studies turn pages, with the arrows at the end of each row's label (or the mouse wheel).
+- **Frames in this room:** at an easel you've placed, icons above the bottom buttons show what the room's framed paintings give the painting. Hover one to see how much. See [Frames](Frames).
+- **Simple pictures:** above the preview, a toggle for references in plain paint only. See [Canvases and Techniques](Canvases-and-Techniques).
 - **Warnings:** under Begin, the screen tells you if you're out of canvases, if it's too late in the day (a painting can't run past 2am), or if your Palette is low on a colour the subject needs.
 
 ## Painting
@@ -40,7 +45,9 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 
 **Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on. Under the reference, the colour that cell wants is named with its palette key (for example "Snow (6)"), so look-alike colours like Cream and Snow can't be mixed up.
 
-**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all. The choice is saved, and is the same setting as in the config.
+**Zooming.** From a medium canvas, the **mouse wheel** over the canvas (or the reference) zooms in, up to 3x, towards the cell under the mouse. The reference zooms with it and always shows the same part of the picture. While zoomed, the **arrow keys** move round, scroll bars in the canvas's frame show where you are, and the wheel back out shows the whole picture again.
+
+**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all, and the same picture as Normal. The choice is saved, and is the same setting as in the config.
 
 ### Tools
 | Tool | Key | Unlocks | What it does |
@@ -55,6 +62,7 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 | Glaze | T | Medium canvases | A dark wash over paint ([Canvases and Techniques](Canvases-and-Techniques)) |
 | Highlight | H | Large canvases | A dab of thick, light paint ([Canvases and Techniques](Canvases-and-Techniques)) |
 | Undo | Z | Start | Undoes the last stroke (paint isn't refunded) |
+| Zoom | Mouse wheel | Medium canvases | Zooms the canvas and reference in, up to 3x; arrow keys move round |
 
 Number keys 1-0 pick your first ten colours.
 

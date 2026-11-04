@@ -21,7 +21,7 @@ Julian judges a painting contest at the Fair, at a table on the grass beside the
 ## The Night Market: Sable's stall
 All three nights from 5pm, Sable keeps a little skiff of their own, moored below the bridge to the submarine. Talk to them from the bridge.
 
-- **The Moonlit Frame:** one a night, for 1,500g. Frame a painting in it at an easel, and it hangs in midnight blue and silver. When you have one, the easel's framing screen lets you choose Plain or Moonlit.
+- **The Moonlit Frame:** one a night, for 1,500g. Frame a painting in it at an easel, and it hangs in midnight blue and silver. It's a rare frame: hung, it gives the easels in its room more light after 7pm (see [Frames](Frames)).
 - **Unusual paintings:** Sable buys them for 50% more (1.5× the usual price), up to three a night:
   - views of the Far Places (the desert, the Skull Cavern, Ginger Island, the Secret Woods)
   - the legendary fish
@@ -30,6 +30,15 @@ All three nights from 5pm, Sable keeps a little skiff of their own, moored below
 - **Lupini**, the market's own painter, is three boats along. Ask Sable about them.
 
 A view painted at night or in the rain says so in its description. Views painted before 1.2 don't remember.
+
+## Spirit's Eve: the haunted maze
+An easel stands in the heart of the haunted maze, by the fountain. Paint the maze by lantern light: a view you can only paint that night, and painting at a festival takes no time.
+
+## The Dance of the Moonlight Jellies
+An easel waits on the sand during the dance. Paint the jellies drifting out to sea: another view of one night only.
+
+## The Feast of the Winter Star
+If Sable draws you as their secret friend, their gift is a painting: an iridium still life of whatever you ship most.
 
 ## Sable at the festivals
 Sable goes to every festival; see [Sable](Sable).

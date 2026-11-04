@@ -1,4 +1,4 @@
-"""The 1.2 update card for the Nexus page: what's new, on one image, in the
+"""The update card for the Nexus page (1.3; 1.2's is update_1_2.png): what's new, on one image, in the
 style of the game's own update announcements (a night sky, a parchment card
 with the title across its top, a list with icons, and two characters at the
 bottom).
@@ -8,10 +8,10 @@ rendered in game by `museart_updatecard` into media/update_card.png, with
 media/update_card_slots.txt listing the icons it leaves to this script (the
 lectern, the plan chest and Sable's skiff, which are map art). This adds
 them, then the sky, the gold title (page_art's lettering, from the
-"Pelican Palette" sign text) and Sable and Julian's portraits.
+"Pelican Palette" sign text) and Margot and Julian's portraits.
 
 Usage: update_card.py <dev media dir> <docs/media dir>
-  writes <docs/media>/page/update_1_2.png
+  writes <docs/media>/page/update_1_3.png
 """
 import os
 import random
@@ -157,14 +157,14 @@ def main():
 
     corners(out)
 
-    # Sable and Julian at the bottom, cut off by the edge, as the game's cards do.
-    sable = portrait(os.path.join(CP, "sable", "portraits_winter.png"), 1)
-    julian = portrait(os.path.join(CP, "julian", "portraits.png"), 0)
-    out.alpha_composite(sable, (w // 2 - sable.width - 40, h - sable.height + 24))
+    # Margot and Julian at the bottom, cut off by the edge, as the game's cards do.
+    margot = portrait(os.path.join(CP, "margot", "portraits.png"), 1)
+    julian = portrait(os.path.join(CP, "julian", "portraits_winter.png"), 0)
+    out.alpha_composite(margot, (w // 2 - margot.width - 40, h - margot.height + 24))
     out.alpha_composite(julian, (w // 2 + 40, h - julian.height + 24))
 
     os.makedirs(os.path.join(media, "page"), exist_ok=True)
-    path = os.path.join(media, "page", "update_1_2.png")
+    path = os.path.join(media, "page", "update_1_3.png")
     out.convert("RGB").save(path)
     print("wrote", path, out.size)
 

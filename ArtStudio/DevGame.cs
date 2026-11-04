@@ -155,6 +155,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_gallerytest", "The painting record, consignment and plein air. Usage: museart_gallerytest record|consign|view (view: stand outdoors first, e.g. museart_warp Farm 64 15).", (_, args) => GalleryTest(monitor, args));
         DevTools.AddCommand(helper, "museart_marriedlifetest", "Throwaway farm only: Sable paints the farm and gives it to you; Sable comments on your paintings on the wall. Run it, warp onto the farm, then 'museart_marriedlifetest farm'.", (_, args) => MarriedLifeTest(monitor, args));
         DevTools.AddCommand(helper, "museart_watchtest", "Sable at the yard easel on a Friday: the line, and watching. Run it, then 'museart_watchtest check' a few seconds later.", (_, args) => WatchTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_zoomtest", "Zooming (1.3): the mouse wheel zooms the canvas and the reference together, towards the mouse; the arrow keys move round. 'stage' leaves it at 3x for a screenshot.", (_, args) => ZoomTest(monitor, args));
         DevTools.AddCommand(helper, "museart_modetest", "The easel's mode button: cycling, saving, and the rules it sets. Then 'museart_modetest restore'.", (_, args) => ModeTest(monitor, args));
         DevTools.AddCommand(helper, "museart_blanktest", "A painting with no picture (as CJB Item Spawner makes): names, gift tastes, price, drawing, consigning, varnishing.", (_, _) => BlankTest(monitor));
         DevTools.AddCommand(helper, "museart_cjbtest", "CJB Cheats Menu: the Painting skill button and professions on its Skills tab. Stages: (none) or 'at <level>', 'click', 'check', 'profession'.", (_, args) => CjbTest(helper, monitor, args));
@@ -1459,6 +1460,7 @@ internal static class DevGame
         Check(monitor, "the placed palette keeps its paint", placed != null && PaletteItem.Read(placed)[charcoal] == 300);
         if (placed == null) return;
 
+        Game1.activeClickableMenu = null;       // (one an earlier test left open would stay in the way)
         placed.checkForAction(who);
         Check(monitor, "right-clicking it opens its storage", Game1.activeClickableMenu is PaletteMenu);
         Game1.exitActiveMenu();
@@ -1773,7 +1775,7 @@ internal static class DevGame
 
             // The Master's Easel gives more light.
             var farm = who.currentLocation;
-            var tile = who.Tile + new Vector2(2, 0);
+            var tile = FreeTile(farm, who.Tile + new Vector2(2, 0));
             farm.objects.Remove(tile);
             farm.objects.Add(tile, ItemRegistry.Create<SObject>("(BC)" + ArtItems.EaselId));
             float plain = new EaselMenu(who, easelTile: tile).DevLightMultiplier;
@@ -1963,6 +1965,7 @@ internal static class DevGame
         var gunther = Game1.getCharacterFromName("Gunther");
         who.mailReceived.Remove(Social.PaintingWing.ToldFlag);
         gunther.CurrentDialogue.Clear();
+        Game1.activeClickableMenu = null;       // (one an earlier test left open would keep him quiet)
         gunther.checkAction(who, museum);
         bool told = who.mailReceived.Contains(Social.PaintingWing.ToldFlag);
         (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
@@ -2692,6 +2695,7 @@ internal static class DevGame
         var who = Game1.player;
         FreshStart(who);
         ModEntry.Config.Difficulty = Difficulty.Normal;
+        ModEntry.Config.SimplePictures = false;     // (whatever the config says)
         ArtProgress.SetLevel(who, 10);
         ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length));
         foreach (var item in who.Items.Where(PaintingItems.IsPainting).ToList())
@@ -2710,6 +2714,28 @@ internal static class DevGame
         Check(monitor, "only large ones have highlights", highlightedLarge > 0 && subjects.All(id => Technique.Count(Ref(id, CanvasKind.Medium).Marks, Mark.Highlight) == 0),
             $"{highlightedLarge} of {subjects.Length} large");
         Check(monitor, "simple pictures are flat", subjects.All(id => !Ref(id, CanvasKind.Large, simple: true).UsesTechniques));
+        // Glazes over the limit go back to the plain colour nearest how they
+        // looked, so a picture with techniques is shaded as deeply as without
+        // (1.3: they'd gone back to the paint under the glaze, and a slime's
+        // dark greens came back light).
+        double Luma(Reference r)
+        {
+            double sum = 0; int n = 0;
+            for (int x = 0; x < r.Cells.GetLength(0); x++)
+            for (int y = 0; y < r.Cells.GetLength(1); y++)
+            {
+                if (r.Cells[x, y] == PixelCanvas.Blank) continue;
+                var c = PaintingRenderer.CellColor(r.Cells[x, y], Purity.Pure, r.Marks[x, y]);
+                sum += 0.299 * c.R + 0.587 * c.G + 0.114 * c.B; n++;
+            }
+            return n == 0 ? 0 : sum / n;
+        }
+        var studies = new[] { "Green Slime", "Ghost", "Frost Jelly", "Bat" }.Where(c => Creatures.Frame(c) != null)
+            .Select(c => (Name: c, Full: Creatures.Reference(c, Size(CanvasKind.Large), all, PaintingRules.TechniquesFor(Size(CanvasKind.Large), false)),
+                          Plain: Creatures.Reference(c, Size(CanvasKind.Large), all, Techniques.None))).ToList();
+        var lighter = studies.Where(s => Luma(s.Full) > Luma(s.Plain) + 6).ToList();
+        Check(monitor, "with glazes and highlights, a study is shaded as deeply as in plain paint", lighter.Count == 0,
+            string.Join(", ", studies.Select(s => $"{s.Name} {Luma(s.Full):0} vs {Luma(s.Plain):0}")));
         foreach (string id in subjects.Take(4))
         {
             var r = Ref(id, CanvasKind.Large);
@@ -2946,6 +2972,70 @@ internal static class DevGame
 
     // The mode button on the easel's setup screen (1.1.1). Run it, take a
     // screenshot if wanted, then 'museart_modetest restore'.
+    private static void ZoomTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        ArtProgress.SetLevel(who, 10);
+        ArtProgress.SetOwned(who, Enumerable.Range(0, Palette.All.Length));
+        Check(monitor, "no zoom on a small canvas", !EaselMenu.StartStillLife(who, CanvasKind.Small, new[] { "(O)254" }).DevZoomOffered);
+        var menu = EaselMenu.StartStillLife(who, CanvasKind.Large, new[] { "(O)266", "(O)254", "(O)400" });
+        Game1.activeClickableMenu = menu;
+        Check(monitor, "a large canvas offers it", menu.DevZoomOffered);
+        int n = PaintingRules.CanvasSize(CanvasKind.Large);
+        var area = menu.DevCanvasArea;
+        // The mouse on a cell near the bottom right; the wheel in, twice.
+        var cell = new Point(n - 6, n - 4);
+        menu.DevHover(cell.X, cell.Y, reference: false);
+        var at = new Point(area.X + area.Width * (2 * cell.X + 1) / (2 * n), area.Y + area.Height * (2 * cell.Y + 1) / (2 * n));
+        menu.DevWheel(at, 1);
+        Check(monitor, "the wheel over the canvas zooms it in", menu.DevZoom == 2 && menu.DevCanvasView.Width == area.Width * 2, $"zoom {menu.DevZoom}");
+        Check(monitor, "...towards the cell under the mouse, which stays put", menu.DevCellAt(at) == cell, $"{menu.DevCellAt(at)}");
+        menu.DevWheel(at, 1);
+        menu.DevWheel(at, 1);
+        Check(monitor, "...up to 3x", menu.DevZoom == 3 && menu.DevCellAt(at) == cell);
+        var refView = menu.DevRefView;
+        var canvasView = menu.DevCanvasView;
+        Check(monitor, "the reference shows the same part, at the same zoom",
+            refView.Width == menu.DevRefArea.Width * 3
+            && Math.Abs((menu.DevRefArea.X - refView.X) / (float)refView.Width - (area.X - canvasView.X) / (float)canvasView.Width) < 0.01f);
+        bool maps = true;
+        foreach (var (x, y) in new[] { (n - 6, n - 4), (n - 1, n - 1), (n - 8, n - 9) })
+        {
+            var center = new Point(refView.X + refView.Width * (2 * x + 1) / (2 * n), refView.Y + refView.Height * (2 * y + 1) / (2 * n));
+            if (menu.DevRefArea.Contains(center)) maps &= menu.DevRefCellAt(center) == new Point(x, y);
+        }
+        Check(monitor, "...and its cells are still the canvas's", maps);
+        var before = menu.DevCanvasView;
+        menu.receiveKeyPress(Microsoft.Xna.Framework.Input.Keys.Left);
+        Check(monitor, "the arrow keys move round", menu.DevCanvasView.X > before.X, $"{before.X} -> {menu.DevCanvasView.X}");
+        menu.DevWheel(at, -1);
+        menu.DevWheel(at, -1);
+        Check(monitor, "the wheel back out shows the whole canvas", menu.DevZoom == 1 && menu.DevCanvasView == area && menu.DevRefView == menu.DevRefArea);
+        if (args.FirstOrDefault() == "stage")
+        {
+            menu.DevWheel(at, 1);
+            menu.DevWheel(at, 1);
+            menu.DevHover(cell.X, cell.Y, reference: false);
+        }
+        else Game1.exitActiveMenu();
+    }
+
+    // A tile near `from` with nothing on it (no object, furniture or wall),
+    // for a test to set something down without landing under furniture.
+    private static Vector2 FreeTile(GameLocation location, Vector2 from)
+    {
+        for (int r = 0; r < 8; r++)
+        for (int dx = -r; dx <= r; dx++)
+        for (int dy = -r; dy <= r; dy++)
+        {
+            var t = from + new Vector2(dx, dy);
+            if (!location.objects.ContainsKey(t) && location.GetFurnitureAt(t) == null && location.isTilePlaceable(t))
+                return t;
+        }
+        return from;
+    }
+
     private static Difficulty? _modeBefore;
     private static void ModeTest(IMonitor monitor, string[] args)
     {
@@ -3786,8 +3876,17 @@ internal static class DevGame
                 ModEntry.Config.SimplePictures = args.Contains("simple");
                 var staged = new EaselMenu(Game1.player);
                 staged.DevSetCanvas(Enum.Parse<CanvasKind>(args.ElementAtOrDefault(2) ?? "Large"));
-                staged.DevSetup(args[1]);
+                staged.DevSetup(args[1].Replace('_', ' '));     // (creature:Green_Slime for "Green Slime")
                 Game1.activeClickableMenu = staged;
+                if (staged.DevPreview is { } preview)
+                {
+                    // Which pigments it uses, and how many cells of each, and its techniques.
+                    var counts = new System.Collections.Generic.Dictionary<string, int>();
+                    foreach (byte c in preview.Cells)
+                        if (c != PixelCanvas.Blank) counts[I18n.Pigment(c)] = (counts.TryGetValue(I18n.Pigment(c), out int k) ? k : 0) + 1;
+                    _log.Log($"Staged {args[1]} ({string.Join(" ", args.Skip(2))}): " + string.Join(", ", counts.OrderByDescending(kv => kv.Value).Select(kv => $"{kv.Key} {kv.Value}"))
+                        + $"; {Technique.Count(preview.Marks, Mark.Glaze)} glazes, {Technique.Count(preview.Marks, Mark.Highlight)} highlights", LogLevel.Info);
+                }
                 break;
             case "portrait":
                 // The easel with a friend picked to sit (museart_menu portrait Abigail).

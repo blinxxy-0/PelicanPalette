@@ -7,18 +7,18 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 - `description.bbcode` is the page's Description. Paste it into the description editor's BBCode mode.
   - `{{name.png}}` marks an image. Upload each image (below) to the mod's Images tab first. Then replace each placeholder with that image's direct link: right-click the image, then "Copy image address".
   - The wiki link points at https://github.com/blinxxy-0/PelicanPalette/wiki. Run `tools/build_wiki.py` and push `docs/wiki` to the wiki repo (`PelicanPalette.wiki.git`) when it changes.
-- The release zip is `ArtStudio/bin/Release/net6.0/PelicanPalette 1.2.1.zip`. Build it with `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false`.
+- The release zip is `ArtStudio/bin/Release/net6.0/PelicanPalette 1.3.0.zip`. Build it with `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false`.
 - Images, all in `docs/media/`:
-  - `page/`: `update_1_2.png` (what's new in 1.2, made by `tools/art/update_card.py` after `museart_updatecard`), `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description.
+  - `page/`: `update_1_3.png` (what's new in 1.3, made by `tools/art/update_card.py` after `museart_updatecard`; 1.2's was `update_1_2.png`), `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description.
   - `screens/`: in-game screenshots for the description and the Images tab.
 
 ## Page fields
 
 - **Name:** Pelican Palette
 - **Summary** (the short "About this mod" line):
-  > Paint pixel art at an easel in a fishing-style minigame, level a Painting skill, and sell, gift, frame and varnish your work. With an art shop in Cindersap Forest and Sable, its romanceable owner.
+  > Paint pixel art at an easel in a fishing-style minigame, level a Painting skill, restore the valley's old paintings, and sell, gift, frame and varnish your work. With an art shop in Cindersap Forest, Sable its owner, and Margot the conservator, both romanceable.
 - **Category:** Gameplay Mechanics
-- **Version:** 1.2.1
+- **Version:** 1.3.0
 - **Tags:** Gameplay, Crafting, New Characters, Romance, Skills, Content Patcher, SMAPI
 - **Requirements:**
   - SMAPI (2400)
@@ -50,6 +50,10 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 14. `farmhouse_varnish.png`: *A Varnishing Cabinet, curing a painting*
 15. `event_gallery_1.png`: *A gallery evening at the shop*
 16. `sable_room.png`: *Sable's room, down the trapdoor in the shop*
+17. `margot_museum.png`: *Margot Pell, the conservator, at the museum* (1.3)
+18. `restore_mill.png`: *Restoring an old painting* (1.3)
+19. `collection_view.png`: *The museum's collection* (1.3)
+20. `setup_frames.png`: *Frames in the room, and what they give the easel* (1.3)
 
 ## Updates
 

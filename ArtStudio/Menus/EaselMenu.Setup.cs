@@ -176,6 +176,14 @@ internal sealed partial class EaselMenu
     public override void receiveScrollWheelAction(int direction)
     {
         base.receiveScrollWheelAction(direction);
+        // Painting: over the canvas or the reference, the wheel zooms (1.3).
+        if (_stage == EaselStage.Painting)
+        {
+            var mouse = MousePos;
+            if (_mix == null && (_canvasArea.Contains(mouse) || _refArea.Contains(mouse)))
+                ZoomAt(mouse, direction > 0 ? 1 : -1);
+            return;
+        }
         if (_stage != EaselStage.Setup) return;
         int d = direction > 0 ? -1 : 1;
         bool grid = Game1.getMouseY() < _sitterLabelY || _sitterPages <= 1;

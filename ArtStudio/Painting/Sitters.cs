@@ -92,7 +92,7 @@ internal static class Sitters
             else
                 (small[x, y], smallMarks[x, y]) = counts.OrderByDescending(kv => kv.Value).First().Key;
         }
-        Technique.Limit(small, smallMarks);
+        Technique.Limit(small, smallMarks, owned);
 
         // Centred across; resting on the bottom edge on a large canvas, or
         // cropped at the shoulders on a medium one (the head stays whole).

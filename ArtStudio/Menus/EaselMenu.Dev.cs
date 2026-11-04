@@ -63,8 +63,23 @@ internal sealed partial class EaselMenu
     // Points the mouse at a cell of the canvas, or of the reference.
     public void DevHover(int x, int y, bool reference)
     {
-        var cell = CellRect(reference ? _refArea : _canvasArea, _canvas.Size, x, y);
+        var cell = CellRect(reference ? RefView : CanvasView, _canvas.Size, x, y);
         _devMouse = cell.Center;
+    }
+
+    internal bool DevZoomOffered => ZoomOffered;
+    internal int DevZoom => _zoom;
+    internal Microsoft.Xna.Framework.Rectangle DevRefView => RefView;
+    internal Microsoft.Xna.Framework.Rectangle DevRefArea => _refArea;
+    internal Microsoft.Xna.Framework.Rectangle DevCanvasView => CanvasView;
+    internal Microsoft.Xna.Framework.Rectangle DevCanvasArea => _canvasArea;
+    internal Microsoft.Xna.Framework.Point? DevRefCellAt(Microsoft.Xna.Framework.Point p) => RefCellAt(p);
+    internal Microsoft.Xna.Framework.Point? DevCellAt(Microsoft.Xna.Framework.Point p) => CellAt(p);
+    // The wheel, with the mouse at a point.
+    internal void DevWheel(Microsoft.Xna.Framework.Point at, int direction)
+    {
+        _devMouse = at;
+        receiveScrollWheelAction(direction * 120);
     }
 
     public void DevHoverAt(Microsoft.Xna.Framework.Point at)

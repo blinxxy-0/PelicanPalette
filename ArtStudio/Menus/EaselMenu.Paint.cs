@@ -58,6 +58,83 @@ internal sealed partial class EaselMenu
 
     // Layout.
     private Rectangle _topBar, _leftCol, _rightCol, _canvasArea, _noteArea, _refArea, _finishButton, _undoButton;
+
+    // Zooming (1.3, from player feedback: large canvases and portraits were
+    // hard to read). The mouse wheel over the canvas or the reference zooms
+    // both in, a step at a time, towards the cell under the mouse; the arrow
+    // keys move round. The reference always shows the same part of the
+    // picture as the canvas, at the same zoom.
+    private const int MaxZoom = 3;
+    private int _zoom = 1;
+    // The view's top-left, as a fraction of the zoomed picture (0 at the
+    // left or top; the most is 1 - 1/zoom).
+    private float _viewX, _viewY;
+    private bool ZoomOffered => _canvas.Size >= PaintingRules.CanvasSize(CanvasKind.Medium);
+
+    // Where the whole picture is drawn, zoomed: a bigger area than the frame,
+    // of which the frame shows part. Unzoomed, it's the frame itself.
+    private Rectangle ViewOf(Rectangle frame)
+    {
+        if (_zoom <= 1) return frame;
+        int side = frame.Width * _zoom;
+        return new Rectangle(frame.X - (int)MathF.Round(_viewX * side), frame.Y - (int)MathF.Round(_viewY * side), side, side);
+    }
+
+    private Rectangle CanvasView => ViewOf(_canvasArea);
+    private Rectangle RefView => ViewOf(_refArea);
+
+    // Zooms a step in (or out), keeping the point under the mouse where it is.
+    private void ZoomAt(Point mouse, int direction)
+    {
+        if (!ZoomOffered) return;
+        int zoom = Math.Clamp(_zoom + direction, 1, MaxZoom);
+        if (zoom == _zoom) return;
+        // The mouse's place on the picture, as a fraction of it, from whichever frame it's over.
+        var frame = _refArea.Contains(mouse) ? _refArea : _canvasArea;
+        var view = ViewOf(frame);
+        float u = Math.Clamp((mouse.X - view.X) / (float)view.Width, 0f, 1f), v = Math.Clamp((mouse.Y - view.Y) / (float)view.Height, 0f, 1f);
+        float fx = (mouse.X - frame.X) / (float)frame.Width, fy = (mouse.Y - frame.Y) / (float)frame.Height;
+        _zoom = zoom;
+        _viewX = u - fx / zoom;
+        _viewY = v - fy / zoom;
+        ClampView();
+        Game1.playSound(direction > 0 ? "shwip" : "smallSelect");
+    }
+
+    // Moves the zoomed view by a few cells.
+    private void Pan(int dx, int dy)
+    {
+        if (_zoom <= 1) return;
+        float step = 3f / _canvas.Size;
+        _viewX += dx * step;
+        _viewY += dy * step;
+        ClampView();
+    }
+
+    private void ClampView()
+    {
+        float most = 1f - 1f / _zoom;
+        _viewX = Math.Clamp(_viewX, 0f, most);
+        _viewY = Math.Clamp(_viewY, 0f, most);
+    }
+
+    // Draws only inside `area` until EndClip (a zoomed picture).
+    private static readonly RasterizerState Clipped = new() { ScissorTestEnable = true };
+    private static Rectangle _scissorWas;
+    private static void BeginClip(SpriteBatch b, Rectangle area)
+    {
+        b.End();
+        _scissorWas = b.GraphicsDevice.ScissorRectangle;
+        b.GraphicsDevice.ScissorRectangle = Rectangle.Intersect(area, b.GraphicsDevice.Viewport.Bounds);
+        b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, Clipped);
+    }
+
+    private static void EndClip(SpriteBatch b)
+    {
+        b.End();
+        b.GraphicsDevice.ScissorRectangle = _scissorWas;
+        b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+    }
     private Rectangle _leaveBox, _leaveYes, _leaveNo;
     private Rectangle[] _dabs = Array.Empty<Rectangle>();
     private readonly Dictionary<PaintTool, Rectangle> _toolButtons = new();
@@ -102,6 +179,8 @@ internal sealed partial class EaselMenu
         _noteArea = new Rectangle(_leftCol.X, _leftCol.Y, SideWidth, SideWidth + 40);
         int refSide = (SideWidth - 56) / size * size;
         _refArea = new Rectangle(_noteArea.X + (SideWidth - refSide) / 2, _noteArea.Y + 44, refSide, refSide);
+        _zoom = 1;
+        _viewX = _viewY = 0f;
 
         int bottomY = _leftCol.Bottom + 8;
         _finishButton = new Rectangle(x + innerW - 180, bottomY, 180, BottomBarHeight);
@@ -244,15 +323,17 @@ internal sealed partial class EaselMenu
     private Point? CellAt(Point p)
     {
         if (!_canvasArea.Contains(p)) return null;
-        int n = _canvas.Size;
-        return new Point((p.X - _canvasArea.X) * n / _canvasArea.Width, (p.Y - _canvasArea.Y) * n / _canvasArea.Height);
+        return CellAtClamped(p);
     }
 
+    // (Off the frame, the nearest cell in view: a ruler dragged past the edge.)
     private Point CellAtClamped(Point p)
     {
         int n = _canvas.Size;
-        int x = Math.Clamp((p.X - _canvasArea.X) * n / Math.Max(1, _canvasArea.Width), 0, n - 1);
-        int y = Math.Clamp((p.Y - _canvasArea.Y) * n / Math.Max(1, _canvasArea.Height), 0, n - 1);
+        var view = CanvasView;
+        p = new Point(Math.Clamp(p.X, _canvasArea.Left, _canvasArea.Right - 1), Math.Clamp(p.Y, _canvasArea.Top, _canvasArea.Bottom - 1));
+        int x = Math.Clamp((p.X - view.X) * n / Math.Max(1, view.Width), 0, n - 1);
+        int y = Math.Clamp((p.Y - view.Y) * n / Math.Max(1, view.Height), 0, n - 1);
         return new Point(x, y);
     }
 
@@ -605,6 +686,10 @@ internal sealed partial class EaselMenu
             case Keys.T: SelectTool(PaintTool.Glaze); return;
             case Keys.H: SelectTool(PaintTool.Highlight); return;
             case Keys.M: ToggleMirror(); return;
+            case Keys.Left: Pan(-1, 0); return;
+            case Keys.Right: Pan(1, 0); return;
+            case Keys.Up: Pan(0, -1); return;
+            case Keys.Down: Pan(0, 1); return;
             case Keys.Z: Undo(); return;
         }
 
@@ -753,18 +838,22 @@ internal sealed partial class EaselMenu
         Ui.Paper(b, _noteArea);
         if (_reference != null)
         {
-            Ui.TextCentered(b, I18n.Get("paint.reference"), _noteArea.Center.X, _noteArea.Y + 12);
-            DrawCells(b, _reference.Cells, null, _refArea, CanvasColor, false, _reference.Marks);
-            DrawDamage(b, _refArea, _reference.Cells);
-            DrawMarkHints(b, _refArea);
+            Ui.TextCentered(b, _zoom > 1 ? I18n.Get("paint.reference-zoomed", new { zoom = _zoom }) : I18n.Get("paint.reference"), _noteArea.Center.X, _noteArea.Y + 12);
+            var view = RefView;
+            bool clip = view != _refArea;
+            if (clip) BeginClip(b, _refArea);
+            DrawCells(b, _reference.Cells, null, view, CanvasColor, false, _reference.Marks);
+            DrawDamage(b, view, _reference.Cells);
+            DrawMarkHints(b, view);
             Ui.Fill(b, _refArea, DuskTint());
             if (_sparkCell.HasValue)
-                DrawReferenceSpark(b, CellRect(_refArea, _canvas.Size, _sparkCell.Value.X, _sparkCell.Value.Y));
-            if (_mix == null && LinkedCell(MousePos) is Point linked)
-            {
-                DrawLinkedCell(b, CellRect(_refArea, _canvas.Size, linked.X, linked.Y));
-                DrawWantedColour(b, linked);
-            }
+                DrawReferenceSpark(b, CellRect(view, _canvas.Size, _sparkCell.Value.X, _sparkCell.Value.Y));
+            Point? linked = _mix == null ? LinkedCell(MousePos) : null;
+            if (linked is Point cell)
+                DrawLinkedCell(b, CellRect(view, _canvas.Size, cell.X, cell.Y));
+            if (clip) EndClip(b);
+            if (linked is Point wanted)
+                DrawWantedColour(b, wanted);
         }
         else
         {
@@ -863,52 +952,74 @@ internal sealed partial class EaselMenu
         var border = new Rectangle(_canvasArea.X - 12, _canvasArea.Y - 12, _canvasArea.Width + 24, _canvasArea.Height + 24);
         Ui.Fill(b, border, new Color(110, 70, 40));
         Ui.Outline(b, border, new Color(60, 35, 20), 4);
-        DrawCells(b, _canvas.Snapshot(), _canvas.PuritySnapshot(), _canvasArea, CanvasColor, true, _canvas.MarksSnapshot());
-        DrawDamage(b, _canvasArea, _canvas.Snapshot());
-        DrawMarkHints(b, _canvasArea);
+        var view = CanvasView;
+        bool clip = _zoom > 1;
+        if (clip) BeginClip(b, _canvasArea);
+        DrawCells(b, _canvas.Snapshot(), _canvas.PuritySnapshot(), view, CanvasColor, true, _canvas.MarksSnapshot());
+        DrawDamage(b, view, _canvas.Snapshot());
+        DrawMarkHints(b, view);
 
         // Faint grid so cells can be counted against the reference.
         int n = _canvas.Size;
-        if (_canvasArea.Width / n >= 10)
+        if (view.Width / n >= 10)
         {
             var line = Color.Black * 0.06f;
             for (int i = 1; i < n; i++)
             {
-                int gx = _canvasArea.X + _canvasArea.Width * i / n, gy = _canvasArea.Y + _canvasArea.Height * i / n;
-                Ui.Fill(b, new Rectangle(gx, _canvasArea.Y, 1, _canvasArea.Height), line);
-                Ui.Fill(b, new Rectangle(_canvasArea.X, gy, _canvasArea.Width, 1), line);
+                int gx = view.X + view.Width * i / n, gy = view.Y + view.Height * i / n;
+                Ui.Fill(b, new Rectangle(gx, view.Y, 1, view.Height), line);
+                Ui.Fill(b, new Rectangle(view.X, gy, view.Width, 1), line);
             }
         }
 
         if (_mirror)
-            Ui.Fill(b, new Rectangle(_canvasArea.Center.X - 1, _canvasArea.Y, 2, _canvasArea.Height), new Color(80, 120, 200) * 0.5f);
+            Ui.Fill(b, new Rectangle(view.Center.X - 1, view.Y, 2, view.Height), new Color(80, 120, 200) * 0.5f);
 
         if (_sparkCell.HasValue)
-            DrawCanvasSpark(b, CellRect(_canvasArea, n, _sparkCell.Value.X, _sparkCell.Value.Y), _sparkCell.Value);
+            DrawCanvasSpark(b, CellRect(view, n, _sparkCell.Value.X, _sparkCell.Value.Y), _sparkCell.Value);
 
         Ui.Fill(b, _canvasArea, DuskTint());
 
-        if (_mix != null) return;
-
-        // Pointing at the reference shows where that cell is on the canvas.
-        if (RefCellAt(mouse) is Point fromReference)
-            DrawLinkedCell(b, CellRect(_canvasArea, n, fromReference.X, fromReference.Y));
-
-        // Ruler preview and cursor footprint.
-        if (_rulerStart.HasValue && _selected >= 0)
+        if (_mix == null)
         {
-            var end = CellAtClamped(mouse);
-            foreach (var (x, y) in PixelCanvas.LinePoints(_rulerStart.Value.X, _rulerStart.Value.Y, end.X, end.Y))
-                Ui.Fill(b, CellRect(_canvasArea, n, x, y), PaintingRenderer.CellColor((byte)_selected, _loadPurity) * 0.5f);
+            // Pointing at the reference shows where that cell is on the canvas.
+            if (RefCellAt(mouse) is Point fromReference)
+                DrawLinkedCell(b, CellRect(view, n, fromReference.X, fromReference.Y));
+
+            // Ruler preview and cursor footprint.
+            if (_rulerStart.HasValue && _selected >= 0)
+            {
+                var end = CellAtClamped(mouse);
+                foreach (var (x, y) in PixelCanvas.LinePoints(_rulerStart.Value.X, _rulerStart.Value.Y, end.X, end.Y))
+                    Ui.Fill(b, CellRect(view, n, x, y), PaintingRenderer.CellColor((byte)_selected, _loadPurity) * 0.5f);
+            }
+            var cell = CellAt(mouse);
+            if (cell.HasValue)
+            {
+                int s = BrushSize;
+                var tl = CellRect(view, n, cell.Value.X, cell.Value.Y);
+                var br = CellRect(view, n, Math.Min(n - 1, cell.Value.X + s - 1), Math.Min(n - 1, cell.Value.Y + s - 1));
+                Ui.Outline(b, new Rectangle(tl.X, tl.Y, br.Right - tl.X, br.Bottom - tl.Y), Color.Black * 0.5f, 2);
+            }
         }
-        var cell = CellAt(mouse);
-        if (cell.HasValue)
-        {
-            int s = BrushSize;
-            var tl = CellRect(_canvasArea, n, cell.Value.X, cell.Value.Y);
-            var br = CellRect(_canvasArea, n, Math.Min(n - 1, cell.Value.X + s - 1), Math.Min(n - 1, cell.Value.Y + s - 1));
-            Ui.Outline(b, new Rectangle(tl.X, tl.Y, br.Right - tl.X, br.Bottom - tl.Y), Color.Black * 0.5f, 2);
-        }
+        if (clip) EndClip(b);
+        DrawZoomBadge(b, _canvasArea);
+    }
+
+    // While zoomed, scroll bars in the canvas's wooden border, at the bottom
+    // and the right, showing where the view is on the whole picture.
+    private void DrawZoomBadge(SpriteBatch b, Rectangle frame)
+    {
+        if (_zoom <= 1) return;
+        var track = new Color(60, 35, 20);
+        var thumb = new Color(236, 196, 120);
+        var bottom = new Rectangle(frame.X, frame.Bottom + 3, frame.Width, 6);
+        var right = new Rectangle(frame.Right + 3, frame.Y, 6, frame.Height);
+        Ui.Fill(b, bottom, track);
+        Ui.Fill(b, right, track);
+        int w = frame.Width / _zoom, h = frame.Height / _zoom;
+        Ui.Fill(b, new Rectangle(bottom.X + (int)MathF.Round(_viewX * frame.Width), bottom.Y, w, bottom.Height), thumb);
+        Ui.Fill(b, new Rectangle(right.X, right.Y + (int)MathF.Round(_viewY * frame.Height), right.Width, h), thumb);
     }
 
     // A spark never covers the colour it asks for (1.1.1, from player
@@ -978,8 +1089,10 @@ internal sealed partial class EaselMenu
     {
         if (_reference == null || !_refArea.Contains(p)) return null;
         int n = _canvas.Size;
-        return new Point((p.X - _refArea.X) * n / _refArea.Width, (p.Y - _refArea.Y) * n / _refArea.Height);
+        var view = RefView;
+        return new Point(Math.Clamp((p.X - view.X) * n / view.Width, 0, n - 1), Math.Clamp((p.Y - view.Y) * n / view.Height, 0, n - 1));
     }
+
 
     // The cell the mouse is on, on whichever grid it's over.
     private Point? LinkedCell(Point p) => CellAt(p) ?? RefCellAt(p);
@@ -1073,7 +1186,7 @@ internal sealed partial class EaselMenu
     {
         string help = _mix != null
             ? I18n.Get("paint.mix-help")
-            : I18n.Get("paint.controls");
+            : I18n.Get(!ZoomOffered ? "paint.controls" : _zoom > 1 ? "paint.controls-zoomed" : "paint.controls-zoom");
         Ui.Text(b, help, new Vector2(_leftCol.X, _finishButton.Y + 14), Game1.textColor * 0.75f);
         Ui.Button(b, _finishButton, _finishArmed > 0f ? I18n.Get("paint.finish.confirm") : I18n.Get("paint.finish"), _mix == null, _finishArmed > 0f, _finishButton.Contains(mouse));
     }

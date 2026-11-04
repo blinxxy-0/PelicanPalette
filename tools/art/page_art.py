@@ -234,6 +234,10 @@ def main():
     portrait_header(os.path.join(out, "header_sable.png"),
                     os.path.join(here, "..", "..", "[CP] Pelican Palette", "assets", "sable", "portraits.png"), 1,
                     os.path.join(out, "header_sable_portrait.png"))
+    # And Margot's (1.3), the same way.
+    portrait_header(os.path.join(out, "header_margot_pell.png"),
+                    os.path.join(here, "..", "..", "[CP] Pelican Palette", "assets", "margot", "portraits.png"), 1,
+                    os.path.join(out, "header_margot_portrait.png"))
     title_card(media, os.path.join(out, "title_card.png"),
                os.path.join(media, "signtext", "sign_pelican_palette.png"),
                os.path.join(media, "signtext", "sign_a_painting_mod_for_stardew_valley.png"))

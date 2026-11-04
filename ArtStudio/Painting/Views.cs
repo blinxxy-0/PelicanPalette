@@ -152,7 +152,7 @@ internal static class Views
             (cells[cx, cy], marks[cx, cy]) = counts.OrderByDescending(kv => kv.Value).First().Key;
         }
         RemoveSpecks(cells, marks);
-        Technique.Limit(cells, marks);
+        Technique.Limit(cells, marks, owned);
         return capture.BySize[canvasSize] = new Reference(cells, marks);
     }
 

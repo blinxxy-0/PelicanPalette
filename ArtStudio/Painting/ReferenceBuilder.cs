@@ -51,7 +51,7 @@ internal static class ReferenceBuilder
             }
             (cells[x, y], marks[x, y]) = Technique.Nearest(p.R, p.G, p.B, owned, allowed);
         }
-        Technique.Limit(cells, marks);
+        Technique.Limit(cells, marks, owned);
         return cells;
     }
 

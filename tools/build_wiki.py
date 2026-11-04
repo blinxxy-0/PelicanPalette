@@ -110,7 +110,8 @@ def home():
 - a minigame as hands-on as fishing,
 - a Painting skill,
 - an art supply shop in Cindersap Forest,
-- Sable, the former museum restorer who runs it.
+- Sable, the former museum restorer who runs it,
+- Margot Pell, the museum's conservator, and the valley's old paintings.
 
 This wiki covers every item, recipe, price and mechanic. It's written for version {DATA["version"]}.
 
@@ -127,7 +128,7 @@ This wiki covers every item, recipe, price and mechanic. It's written for versio
 | {link("Quality and Masterpieces")} | How a painting's quality is decided |
 | {link("Pigments and Paint")} | Every colour, how to learn it, and how to get paint |
 | {link("Brushes")} | The five brushes and what they change |
-| {link("Portraits and Plein Air")} | Painting friends and painting the view |
+| {link("Portraits and Plein Air")} | Painting friends, the view, creatures and animals |
 | {link("Painting Skill")} | Levels, unlocks and professions |
 
 ## Paintings
@@ -140,6 +141,10 @@ This wiki covers every item, recipe, price and mechanic. It's written for versio
 | {link("Varnishing")} | Curing paintings in a Varnishing Cabinet |
 | {link("Gifting Paintings")} | Who likes what |
 | {link("Portfolio and Back Room")} | The portfolio book and the plan chest |
+| {link("Frames")} | Frame styles, what they do hung, and the Framer's Bench |
+| {link("Old Paintings and Restoration")} | Damaged paintings, Painting Mastery, and restoring them |
+| {link("The Museum")} | The collection, its rewards, and the Painting Wing |
+| {link("Special Orders")} | The town board's painting orders, and Qi's |
 
 ## The shop and the rest
 | | |
@@ -147,8 +152,9 @@ This wiki covers every item, recipe, price and mechanic. It's written for versio
 | {link("Art Shop")} | Location, hours and stock |
 | {link("Crafting")} | Every recipe |
 | {link("Sable")} | Schedule, gifts, heart events and marriage |
+| {link("Margot Pell")} | The conservator: schedule, gifts, heart events and marriage |
 | {link("Julian Vane")} | The critic who visits each season |
-| {link("Festivals")} | The Fair's painting contest and the Night Market stall |
+| {link("Festivals")} | The Fair's contest, the Night Market stall, and painting at festivals |
 | {link("Multiplayer")} | Playing in co-op |
 | {link("Configuration")} | The settings |
 | {link("Compatibility")} | Other mods |
@@ -199,10 +205,15 @@ Right-click a placed **Easel** to paint. A session has three screens: **Setup**,
   - one to three items from your bag (a still life),
   - a friend who will sit for a portrait,
   - the view, at an easel outdoors ({link("Portraits and Plein Air")}),
+  - a monster you've slain, or one of your animals ({link("Portraits and Plein Air")}),
+  - a damaged old painting to restore, once you're a conservator ({link("Old Paintings and Restoration")}),
   - or a **Free canvas**, with no reference and no score.
 - **Preview:** shows the reference exactly as you'll copy it, with its **difficulty** (0-100) and how long the light lasts.
 - **Brush:** cycles through the {link("Brushes")} in your bag.
-- **Frame a painting:** puts one of your paintings in a Picture Frame, to hang as furniture.
+- **Frame a painting:** puts one of your paintings in a frame, to hang as furniture. See {link("Frames")}.
+- **More to paint than fits:** the items and the row of friends, views and studies turn pages, with the arrows at the end of each row's label (or the mouse wheel).
+- **Frames in this room:** at an easel you've placed, icons above the bottom buttons show what the room's framed paintings give the painting. Hover one to see how much. See {link("Frames")}.
+- **Simple pictures:** above the preview, a toggle for references in plain paint only. See {link("Canvases and Techniques")}.
 - **Warnings:** under Begin, the screen tells you if you're out of canvases, if it's too late in the day (a painting can't run past 2am), or if your Palette is low on a colour the subject needs.
 
 ## Painting
@@ -231,7 +242,9 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 
 **Finding your place.** Point at a cell of the canvas and the same cell is framed on the reference, and the other way round, so you always know which cell you're on. Under the reference, the colour that cell wants is named with its palette key (for example "Snow (6)"), so look-alike colours like Cream and Snow can't be mixed up.
 
-**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all. The choice is saved, and is the same setting as in the config.
+**Zooming.** From a medium canvas, the **mouse wheel** over the canvas (or the reference) zooms in, up to 3x, towards the cell under the mouse. The reference zooms with it and always shows the same part of the picture. While zoomed, the **arrow keys** move round, scroll bars in the canvas's frame show where you are, and the wheel back out shows the whole picture again.
+
+**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** has no time limit at all, and the same picture as Normal. The choice is saved, and is the same setting as in the config.
 
 ### Tools
 | Tool | Key | Unlocks | What it does |
@@ -246,6 +259,7 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 | Glaze | T | Medium canvases | A dark wash over paint ({link("Canvases and Techniques")}) |
 | Highlight | H | Large canvases | A dab of thick, light paint ({link("Canvases and Techniques")}) |
 | Undo | Z | Start | Undoes the last stroke (paint isn't refunded) |
+| Zoom | Mouse wheel | Medium canvases | Zooms the canvas and reference in, up to 3x; arrow keys move round |
 
 Number keys 1-0 pick your first ten colours.
 
@@ -279,7 +293,7 @@ def canvases():
         item = item_by_name(name)
         r = recipe_for(name)
         s = stock_for(name)
-        tech = {"None": "Flat colour", "Glaze": "Glazing", "Glaze, Highlight": "Glazing and highlights"}[c["techniques"]]
+        tech = {"None": "Plain paint", "Glaze": "Glazing", "Glaze, Highlight": "Glazing and highlights"}[c["techniques"]]
         rows.append(f'| {icon(item["id"])} | **{name}** | {c["size"]}x{c["size"]} | {"Start" if not c["level"] else "Level " + str(c["level"])} | {tech} | {ingredients(r)} | {gold(s["price"])} |')
     for kind in ("Medium", "Large"):
         name = f"Linen Canvas ({kind})"
@@ -323,7 +337,10 @@ A few of the brightest spots (the shine on a gem, the light in an eye) take a **
 ### How techniques are scored
 On a canvas with glazes or highlights, the results add a **Technique** rating: how many of them you put in the right places, and how few in the wrong ones (a cell out is forgiven). A painting with no techniques at all loses about a star. See {link("Quality and Masterpieces")}.
 
-On **Relaxed**, references are flat colour, but from a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as on Normal.
+### Simple pictures
+With **Simple pictures** on (above the reference on the easel's setup screen, or in the {link("Configuration")}; any difficulty), references are plain paint only: no glazes or highlights to copy. Easier, and worth a little less. From a medium canvas you still have the Glaze tool, to glaze wherever you like (it isn't scored). The exception is a painting for a glazed commission: its reference has glazes (no highlights), scored as usual.
+
+The toggle greys out when it wouldn't change the picture you've picked: always on a small canvas (it has no glazes or highlights), and on a bigger one for a subject with none anyway. A small painting is still shaded, with your pigments.
 
 ## Linen
 From Painting level 8, linen canvases (medium and large) paint like any other. They're the only canvas a **Masterpiece** can be painted on; see {link("Quality and Masterpieces")}. On the setup screen, the **Linen** button next to the canvas sizes switches to linen.
@@ -642,6 +659,13 @@ Finish a page and Sable writes the next day, with a reward.
 | Fine Work | A gold painting, an iridium one, a glazed one, a varnished one, and a Masterpiece | Two medium linen canvases |
 | Far Places | Views of the Calico Desert, the Skull Cavern, Ginger Island's beach and its north, and the Secret Woods | Two large linen canvases |
 | Legends | The Crimsonfish, Angler, Legend, Glacierfish and Mutant Carp, painted from the fish in your bag | An Iridium Palette |
+| Faces of the Valley | Portraits (4 hearts per sitter): the Saloon regulars (Gus, Emily or Shane), a family (Robin, Demetrius, Maru or Sebastian), an old couple (Evelyn or George), Sable, and a visitor (Julian) | Three Moonlit Frames |
+
+A group's slot takes a portrait of any one of its members.
+
+## The finished book
+- **Every page finished:** Sable writes with the **Gold-Leaf Frame**, an epic {link("Frames", "frame")}.
+- **Then the Summit:** paint the view from the Summit, and Sable climbs up to join you and look through the finished book. The scene plays by itself. The Summit view goes into the book as its last page.
 
 You can set an easel down just inside the Skull Cavern for its view.
 
@@ -698,6 +722,15 @@ Five heart events, at 2, 4, 6, 8 and 10 hearts, tell his story with Sable. Along
 
 </details>
 
+## Julian buys a painting
+Once a season, on one of his visit days, talk to Julian again after his first line and he'll offer to buy a painting of yours at **twice the art shop's price**. Pick it from your bag, and he tells you what he thinks of it: the better the painting, the kinder the review. A good home for a Masterpiece.
+
+## Winter
+In winter Julian wears a long camel overcoat and a charcoal scarf outdoors.
+
+## Julian and Margot
+Once you've met them both, Julian meets {link("Margot Pell")} at the Saloon on one of his visit days, and they argue about whether restoring a painting is art. You settle it. After that they bicker on his visits, a little fonder each time.
+
 ## The Fair
 Julian judges the painting contest at the Stardew Valley Fair. See {link("Festivals")}.
 """)
@@ -728,7 +761,7 @@ Julian judges a painting contest at the Fair, at a table on the grass beside the
 ## The Night Market: Sable's stall
 All three nights from 5pm, Sable keeps a little skiff of their own, moored below the bridge to the submarine. Talk to them from the bridge.
 
-- **The Moonlit Frame:** one a night, for 1,500g. Frame a painting in it at an easel, and it hangs in midnight blue and silver. When you have one, the easel's framing screen lets you choose Plain or Moonlit.
+- **The Moonlit Frame:** one a night, for 1,500g. Frame a painting in it at an easel, and it hangs in midnight blue and silver. It's a rare frame: hung, it gives the easels in its room more light after 7pm (see {link("Frames")}).
 - **Unusual paintings:** Sable buys them for 50% more (1.5× the usual price), up to three a night:
   - views of the Far Places (the desert, the Skull Cavern, Ginger Island, the Secret Woods)
   - the legendary fish
@@ -737,6 +770,15 @@ All three nights from 5pm, Sable keeps a little skiff of their own, moored below
 - **Lupini**, the market's own painter, is three boats along. Ask Sable about them.
 
 A view painted at night or in the rain says so in its description. Views painted before 1.2 don't remember.
+
+## Spirit's Eve: the haunted maze
+An easel stands in the heart of the haunted maze, by the fountain. Paint the maze by lantern light: a view you can only paint that night, and painting at a festival takes no time.
+
+## The Dance of the Moonlight Jellies
+An easel waits on the sand during the dance. Paint the jellies drifting out to sea: another view of one night only.
+
+## The Feast of the Winter Star
+If Sable draws you as their secret friend, their gift is a painting: an iridium still life of whatever you ship most.
 
 ## Sable at the festivals
 Sable goes to every festival; see {link("Sable")}.
@@ -838,6 +880,12 @@ Paint a study of any monster you've slain, from memory. On the setup screen, the
 - **The reference** is the creature's own sprite, in the colours you know.
 - **Size:** a bigger creature needs a bigger canvas.
 - **The record** has a Creatures tab ({link("Painting Record")}).
+
+## Animals
+Paint your pet, your horse, and any of the farm animals you own: chickens, ducks, rabbits, cows, goats, sheep, pigs, ostriches and dinosaurs. They have their own slot on the setup screen, next to the creatures, at any easel.
+- **The reference** is the animal's own sprite, in the colours you know.
+- **Size:** picking one moves you up to the smallest canvas it fits that you've unlocked. Goats, sheep and ostriches are shrunk to fit a medium canvas; cows, pigs and horses need a large one.
+- **The record** has an Animals tab ({link("Painting Record")}).
 
 ## Plein air: painting the view
 ![Painting the view](images/screens/setup_view.png)
@@ -1039,8 +1087,9 @@ Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewval
 
 | Setting | Default | What it does |
 |---|---|---|
-| `Difficulty` | `Normal` | **Relaxed:** no light meter, flat colour (except for glazed commissions; the Glaze tool is there from a medium canvas), no paint needed, and each colour only needs mixing once.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings pay 20% more. |
+| `Difficulty` | `Normal` | **Relaxed:** no light meter, no paint needed, and each colour only needs mixing once. The picture is the same as on Normal.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings pay 20% more.<br>Also on the easel's setup screen, under Begin. |
 | `LightTimeMultiplier` | `1.0` | Gives you more (or less) light per painting, on top of the difficulty (0.5x to 3x). |
+| `SimplePictures` | `false` | References in plain paint only, with no glazes or highlights to copy, in any difficulty (a glazed commission still asks for its glazes, and the Glaze tool is there from a medium canvas). Easier, and worth a little less. Also on the easel's setup screen, above the reference. |
 | `ArtLoversLikeAnyPainting` | `true` | Whether art lovers like even a normal-quality painting. |
 """)
 
@@ -1052,10 +1101,11 @@ def compatibility():
 - **Optional:** [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
 - **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too. Julian's events, the Fair contest and Sable's Night Market stall fit SVE's maps as well.
 - **[CJB Cheats Menu](https://www.nexusmods.com/stardewvalley/mods/4):** its Skills tab has a Painting button beside the vanilla skills (one level at a time, with the level-up screen and the profession choice at 5 and 10), and the Professions list has the six Painting professions to tick on or off.
-- **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills and Varnishing Cabinets work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days.
+- **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills, Varnishing Cabinets and Framer's Benches work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days. A bench takes a framed painting and gives back the painting, then its frame.
 - **[NPC Map Locations](https://www.nexusmods.com/stardewvalley/mods/239):** Sable shows on the map, their marker cropped to their face.
 - **[Remapping](https://www.nexusmods.com/stardewvalley/mods/29049) and map recolours:** the shop draws itself on the world map, in the same spot on vanilla and SVE maps, and its shadow takes on the colour of whatever ground is under it.
 - **[Polyamory Sweet](https://www.nexusmods.com/stardewvalley/mods/20599):** Sable can be one of several spouses. The shop's trust and the 14-heart exhibition go by Sable's own relationship, not which spouse is "first".
+- **[Alec Revisited](https://www.nexusmods.com/stardewvalley/mods/10697)** (and its SVE patch): compatible. Alec's house sits just north of the shop; the shop is added to the forest after other mods, so it's never painted over.
 - **Other mods:**
   - Anything that changes the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
   - Paintings are ordinary objects (stored with the mod's data), so they're safe in chests, Automate and other inventory mods.
@@ -1147,10 +1197,15 @@ def sidebar():
 - {link("Varnishing")}
 - {link("Gifting Paintings")}
 - {link("Portfolio and Back Room")}
+- {link("Frames")}
+- {link("Old Paintings and Restoration")}
+- {link("The Museum")}
+- {link("Special Orders")}
 
 **The valley**
 - {link("Art Shop")}
 - {link("Sable")}
+- {link("Margot Pell")}
 - {link("Julian Vane")}
 - {link("Festivals")}
 - {link("Crafting")}
@@ -1163,6 +1218,243 @@ def sidebar():
 - {link("Changelog")}
 """)
     page("_Footer", f"Pelican Palette {DATA['version']} by blinxxy. Item tables are generated from the mod's own data.")
+
+
+
+# ---------------------------------------------------------------- 1.3
+
+def margot():
+    m = DATA["margot"]
+
+    def gifts(key):
+        return "<br>".join(f'{icon(g["id"], 24)} {g["name"]}' for g in m[key]) or "-"
+    box = infobox("Margot Pell", '<img src="images/margot_portrait.png" width="128">', [
+        ("Pronouns", "she/her"),
+        ("Birthday", m["birthday"]),
+        ("Lives in", "A room off the Saloon, then a cottage by the river"),
+        ("Works at", "The museum"),
+        ("Marriage", "Yes, by anyone"),
+    ])
+    page("Margot Pell", box + f"""
+**Margot Pell** is a conservator from the Zuzu City Museum of Art. When old paintings start turning up in the valley, the museum sends her to look after them.
+- **Arrives:** the week after you find your first damaged old painting. Gunther writes to say someone is coming. See {link("Old Paintings and Restoration")}.
+- **Character:** warm, quick and talkative, especially about her work. She explains things nobody asked about, apologises, and keeps going.
+- **Sable:** they trained together at the museum, before Sable left. She has a few things to say about that.
+
+> "You don't make it new. You make it able to keep being old."
+
+<br clear="right">
+
+## Schedule
+| Day | Where |
+|---|---|
+| Most days | The museum, at her table in the library, from 9am to 5pm; the Saloon in the evening |
+| Tuesday and Thursday | Once the Painting Wing is open: the museum in the morning, the wing from 2pm ({link("The Museum")}) |
+| Sunday | Sketching at the beach in the morning (she won't show you), then the Saloon |
+| Rain | The museum until 8pm, then the Saloon |
+
+She sleeps in her room down the steps from Gus's storeroom at the Saloon. After her 4-heart event, Robin builds her a **cottage** of her own between the main road and the river, south of Haley and Emily's house, and she goes home there instead. Her Saloon room becomes Gus's guest room.
+
+She dresses for the weather: a coat and scarf outdoors in winter, linen on Ginger Island.
+
+## Gifts
+| Love | Like | Dislike | Hate |
+|---|---|---|---|
+| {gifts("loves")} | {gifts("likes")} | {gifts("dislikes")} | {gifts("hates")} |
+
+Like most villagers, she loves an iridium painting; see {link("Gifting Paintings")}.
+
+## What she does for you
+- **Restores old paintings for a fee**, before you can do it yourself. Hold a damaged painting and talk to her at the museum. She takes it, and gives it back three days later at silver quality. One at a time.
+- **Painting Mastery:** once your mastery bar is full, she sets you a test restoration. Pass it and you're a conservator. See {link("Old Paintings and Restoration")}.
+
+| Set | Her fee |
+|---|---|
+""" + "\n".join(f'| {name} | {gold(fee)} |' for name, fee in dict((o["setName"], o["fee"]) for o in DATA["oldPaintings"]).items()) + f"""
+
+## Heart events
+<details><summary>Spoilers: when and where each event happens</summary>
+
+| Hearts | Where and when |
+|---|---|
+| 2 | The museum, a weekday afternoon |
+| 4 | Robin's shop, a weekday morning: the cottage is planned |
+| 6 | Her cottage, an evening |
+| 8 | The Forest river, a sunny morning |
+| 10 | Her cottage, after hours, while dating |
+| 14 | The museum, an evening, once married |
+
+Julian and Margot also meet at the Saloon on one of his visit days, once you've met them both. See {link("Julian Vane")}.
+
+</details>
+
+## Romance and marriage
+- **Who:** Margot can be dated and married by any farmer, with a bouquet and a Mermaid's Pendant as usual. She has her own wedding.
+- **Married life:** she keeps her museum hours, Monday to Saturday. On Sundays she sketches at the river bend from her 8-heart event.
+  - **Her spouse room:** a conservation corner, with her restoration table.
+  - **Her patio:** an easel and a rack of her own small canvases. She's started painting.
+""")
+
+
+def old_paintings():
+    sets = {}
+    for o in DATA["oldPaintings"]:
+        sets.setdefault(o["setName"], []).append(o)
+    where = {
+        "valley": "Artifact spots (1.5% a dig)",
+        "wreck": "Fishing treasure chests (4% a chest)",
+        "miners": "Crates and barrels in the mines (0.4% to 0.8%, more deeper down)",
+        "calico": "Skull Cavern crates (1%), treasure rooms (10%)",
+        "dwarvish": "Volcano Dungeon chests (8%)",
+    }
+    rows = []
+    for name, items in sets.items():
+        first = items[0]
+        cells = first["size"]
+        rows.append(f'| **{name}** | {where.get(first["set"], "-")} | {", ".join(i["title"] for i in items)} | {cells}x{cells} | {gold(first["value"])} |')
+    page("Old Paintings and Restoration", f"""
+![Restoring an old painting](images/screens/restore_mill.png)
+
+Damaged old paintings turn up around the valley: twenty-one of them, in five sets. Each is flaked, torn or water-stained over about a third of it. Restored, they're worth far more than your own paintings, and the museum wants them.
+
+## Finding them
+| Set | Where | Paintings | Canvas | Restored value |
+|---|---|---|---|---|
+""" + "\n".join(rows) + f"""
+
+- **Your first is guaranteed:** the first fishing treasure chest or artifact spot after you reach Painting level 3.
+- **The Travelling Cart** sometimes sells one from any set (about one day in six), for 3,000g.
+- **Margot's loupe**, from the museum's collection, makes every way of finding one half as likely again. See {link("The Museum")}.
+
+The first one you find brings {link("Margot Pell")} to the valley the following week.
+
+## Getting one restored
+Until you're a conservator, **Margot** restores them for a fee: hold the damaged painting and talk to her at the museum. It comes back three days later, at silver quality. See {link("Margot Pell")} for her fees.
+
+## Painting Mastery
+Past Painting level 10, your Painting XP keeps counting towards **Painting Mastery**: a bar of 15,000 XP, shown in the Painting skill's tooltip.
+
+When the bar is full, talk to Margot at the museum. She sets you a **test restoration**: one of her own old paintings, restored at her table.
+- **Gold or better** and she certifies you a conservator, with the game's mastery sparkle. You get the **Master's Easel**, an easel with 15% more light.
+- **Below gold**, try again the next day.
+
+She keeps the painting either way.
+
+## Restoring one yourself
+Once you're a conservator, a damaged painting in your bag shows a **Restore** slot on any easel's setup screen.
+- **The canvas** starts as the damaged painting, with the surviving paint already there. It's its own canvas, so none is used.
+- **The reference** shows the painting as it is, damage and all: you work out what's missing from what's left. Missing cells are hatched on both, so bare canvas can't be mistaken for pale paint.
+- **Scoring:** only the damaged cells count. The right colour counts fully, a near one half, and mixing purity counts as usual. Painting over surviving paint with a different colour costs you.
+- **The light:** a restoration gets half again the usual light, since what's missing has to be worked out as well as painted.
+- **The result:** the painting, titled as it was ("The Old Mill"), at the quality you earned, restored by you.
+
+## What a restored painting is worth
+| Quality | Value |
+|---|---|
+| Normal | The set's value (above) |
+| Silver | 1.25x |
+| Gold | 1.5x |
+| Iridium | 2x |
+
+Sell it, keep it, frame it, or give it to the museum ({link("The Museum")}).
+""")
+
+
+def museum():
+    page("The Museum", f"""
+![The museum's collection](images/screens/collection_view.png)
+
+Gunther takes restored old paintings for the museum: talk to him at the counter and choose **Donate a restored painting**. They join the museum's own collection, and **View the collection** shows what's there and what's missing. See {link("Old Paintings and Restoration")} for finding and restoring them.
+
+## Rewards
+| Donated | Reward |
+|---|---|
+| The Old Valley set | Gallery furniture, each in its own letter from Gunther: a velvet rope, a gallery bench (you can sit on it) and a picture light to hang above a painting |
+| The Wreck set | The Driftwood Frame ({link("Frames")}) |
+| The Miners set | The Iron Frame |
+| The Calico set | The Sandstone Frame |
+| The Dwarvish set | The Dwarvish Frame |
+| 6 paintings | A **living painting**: a mill on a river at dusk, its water shimmering and its window's lamp flickering |
+| 12 paintings | **Margot's loupe**, worn as a ring: old paintings turn up half as often again |
+| All 21 | A **paint-tube Junimo** statue, from Sable |
+
+## The Painting Wing
+![The wing's doorway](images/screens/wing_doorway_open.png)
+
+The day after your first donation, a new wing opens through the doorway in the exhibit hall's east wall (until then it's roped off). Inside:
+- **The Old Valley** hangs framed along the back wall.
+- **Every other painting** stands on its own white marble display, with its card.
+- **A place is kept** for each painting still missing, so you can see what's left to find.
+
+{link("Margot Pell")} spends Tuesday and Thursday afternoons in the wing.
+""")
+
+
+def frames():
+    where = {
+        "plain": "Crafted; the art shop",
+        "pine": "The art shop", "oak": "The art shop", "birch": "The art shop", "white": "The art shop",
+        "walnut": "The art shop, from Painting level 3", "red-lacquer": "The art shop, from Painting level 5", "rope": "The art shop, from Painting level 7",
+        "moonlit": "Sable's Night Market stall ({})".format(link("Festivals")),
+        "driftwood": "The museum: the Wreck set", "iron": "The museum: the Miners set", "sandstone": "The museum: the Calico set",
+        "gold-leaf": "The finished portfolio ({})".format(link("Portfolio and Back Room")),
+        "dwarvish": "The museum: the Dwarvish set",
+        "prismatic": "Qi's gem shop (25 Qi Gems)",
+        "qi": "Qi's special order ({})".format(link("Special Orders")),
+    }
+    what = {
+        "Light": "+{:g}% light", "Night": "+{:g}% light after 7pm", "Sparks": "Inspiration {:g}% sooner",
+        "Thrift": "A {:g}% chance a cell's paint isn't used", "Learning": "+{:g}% Painting XP", "Value": "Paintings made there worth {:g}% more",
+    }
+    rows = [f'| {icon(f["id"])} | **{f["item"]}** | {f["rarity"]} | {what[f["trait"]].format(round(f["percent"], 1))} | {where.get(f["style"], "-")} |'
+            for f in sorted(DATA["frames"], key=lambda f: f["steps"])]
+    st = DATA["frameSteps"]
+    page("Frames", item_infobox("Framer's Bench") + f"""
+Put a painting in a frame and it hangs on a wall as furniture. On the easel's setup screen, **Frame a painting** shows every frame you have; pick one, then the painting. Hovering a frame shows its rarity and what it does.
+
+## What a frame does
+A framed painting hung in a room **inspires the easels in that room**: paintings made there get its frame's bonus. Build a studio.
+- Each frame style has one **trait**. Its **rarity** sets how strong it is: a common frame gives one step of its trait, uncommon two, rare three, epic four, legendary six.
+- **The three rarest** framed paintings in a room count, and their bonuses add up.
+- **At an easel you've placed**, the setup screen shows an icon for each bonus the room gives. Hover one to see how much.
+
+| Trait | Each step |
+|---|---|
+| Light | +{st["light"] * 100:g}% light |
+| Night | +{st["night"] * 100:g}% light, from 7pm |
+| Sparks | Inspiration sparks come {st["sparks"] * 100:g}% sooner |
+| Thrift | A {st["thrift"] * 100:g}% chance a cell's paint isn't used |
+| Learning | +{st["learning"] * 100:g}% Painting XP |
+| Value | Paintings made there are worth {st["value"] * 100:g}% more |
+
+## Frame styles
+| | Frame | Rarity | One hung | From |
+|---|---|---|---|---|
+""" + "\n".join(rows) + f"""
+
+## The Framer's Bench
+Takes a painting out of its frame, so frames can be collected and swapped.
+1. Place the bench and use it while holding a framed painting.
+2. The next morning, take out the painting, just as it was, and its empty frame.
+
+A recipe at Painting level 4, or from the art shop. It works with Automate.
+""")
+
+
+def special_orders():
+    page("Special Orders", f"""
+Painting orders appear on the special orders board outside Pierre's, alongside the usual ones, and one at Qi's.
+
+| From | Asks for | Needs | Reward |
+|---|---|---|---|
+| Lewis | Three portraits of villagers, for the town hall | Painting level 3 | 3,000g, a heart with Lewis, and four Picture Frames |
+| Gus | Two gold (or better) paintings of food or drink, for the Saloon's walls | Painting level 2 | 2,000g, a heart with Gus, and three tubes of Ruby Red |
+| Leah | A view of the Secret Woods | Painting level 4, once you've been there | 2,500g, a heart with Leah, and a Rigger Brush |
+| Elliott | A view of the beach at night | Painting level 4 | 2,500g, a heart with Elliott, and two Moonlit Frames |
+| Mr. Qi | Ship a Masterpiece of a legendary fish | Painting level 8 | 30 Qi Gems, and Qi's Frame ({link("Frames")}) |
+
+Deliver the paintings one at a time. A painting counts by what's in it: a portrait of a villager, food or drink, a view of a place, at night, and so on.
+""")
 
 
 # ---------------------------------------------------------------- images
@@ -1183,6 +1475,8 @@ def images():
     # Sable's neutral portrait, at 2x.
     sheet = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "sable", "portraits.png")).convert("RGBA")
     sheet.crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST).save(os.path.join(out, "sable_portrait.png"))
+    margot = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "margot", "portraits.png")).convert("RGBA")
+    margot.crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST).save(os.path.join(out, "margot_portrait.png"))
     julian = Image.open(os.path.join(ROOT, "[CP] Pelican Palette", "assets", "julian", "portraits.png")).convert("RGBA")
     julian.crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST).save(os.path.join(out, "julian_portrait.png"))
     # And in each outfit, at 4x, for the infobox's outfit row (shown small,
@@ -1195,6 +1489,7 @@ def images():
 def main():
     for build in (home, getting_started, painting, canvases, quality, pigments, brushes, skill, selling, record,
                   back_room, commissions, consignment, varnishing, portraits, gifting, art_shop, crafting, sable, julian, festivals, multiplayer,
+                  margot, old_paintings, museum, frames, special_orders,
                   configuration, compatibility, faq, translating, changelog, sidebar):
         build()
     if os.path.isdir(WIKI):

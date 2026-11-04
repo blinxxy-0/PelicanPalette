@@ -3,10 +3,11 @@
 - **Optional:** [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
 - **Stardew Valley Expanded:** compatible. The shop, Sable's schedule, events and festival spots all fit SVE's maps, and the shop is drawn on SVE's world map too. Julian's events, the Fair contest and Sable's Night Market stall fit SVE's maps as well.
 - **[CJB Cheats Menu](https://www.nexusmods.com/stardewvalley/mods/4):** its Skills tab has a Painting button beside the vanilla skills (one level at a time, with the level-up screen and the profession choice at 5 and 10), and the Professions list has the six Painting professions to tick on or off.
-- **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills and Varnishing Cabinets work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days.
+- **[Automate](https://www.nexusmods.com/stardewvalley/mods/1063):** Pigment Mills, Varnishing Cabinets and Framer's Benches work with it. A cabinet next to a chest takes an unvarnished painting and a tin of Varnish from it, and puts the painting back with the gallery finish after 28 days. A bench takes a framed painting and gives back the painting, then its frame.
 - **[NPC Map Locations](https://www.nexusmods.com/stardewvalley/mods/239):** Sable shows on the map, their marker cropped to their face.
 - **[Remapping](https://www.nexusmods.com/stardewvalley/mods/29049) and map recolours:** the shop draws itself on the world map, in the same spot on vanilla and SVE maps, and its shadow takes on the colour of whatever ground is under it.
 - **[Polyamory Sweet](https://www.nexusmods.com/stardewvalley/mods/20599):** Sable can be one of several spouses. The shop's trust and the 14-heart exhibition go by Sable's own relationship, not which spouse is "first".
+- **[Alec Revisited](https://www.nexusmods.com/stardewvalley/mods/10697)** (and its SVE patch): compatible. Alec's house sits just north of the shop; the shop is added to the forest after other mods, so it's never painted over.
 - **Other mods:**
   - Anything that changes the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
   - Paintings are ordinary objects (stored with the mod's data), so they're safe in chests, Automate and other inventory mods.

@@ -21,10 +21,15 @@
 - [Varnishing](Varnishing)
 - [Gifting Paintings](Gifting-Paintings)
 - [Portfolio and Back Room](Portfolio-and-Back-Room)
+- [Frames](Frames)
+- [Old Paintings and Restoration](Old-Paintings-and-Restoration)
+- [The Museum](The-Museum)
+- [Special Orders](Special-Orders)
 
 **The valley**
 - [Art Shop](Art-Shop)
 - [Sable](Sable)
+- [Margot Pell](Margot-Pell)
 - [Julian Vane](Julian-Vane)
 - [Festivals](Festivals)
 - [Crafting](Crafting)

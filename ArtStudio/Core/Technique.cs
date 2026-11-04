@@ -64,8 +64,13 @@ public static class Technique
     };
 
     // Keeps a picture from being all technique: at most a third of it glazed,
-    // and a few highlights (the palest kept). The rest go back to plain paint.
-    public static void Limit(byte[,] cells, Mark[,] marks)
+    // and a few highlights (the palest kept). The rest go back to plain paint:
+    // the owned pigment nearest the colour the technique made, so a shaded
+    // cell stays shaded (1.3: it had gone back to the pigment under the
+    // glaze, so a slime's dark greens came back light). The glazes kept are
+    // the ones no plain colour can stand in for, wherever they are in the
+    // picture (they had been the first third, scanning from the left).
+    public static void Limit(byte[,] cells, Mark[,] marks, IReadOnlyList<int> owned)
     {
         int n = cells.GetLength(0), subject = 0;
         var glazes = new List<(int X, int Y)>();
@@ -78,11 +83,24 @@ public static class Technique
             if (marks[x, y] == Mark.Glaze) glazes.Add((x, y));
             else if (marks[x, y] == Mark.Highlight) highlights.Add((x, y));
         }
-        foreach (var (x, y) in glazes.Skip(subject / 3))
+        // What a cell would be in plain paint, and how far that is from how it looks.
+        (int Plain, double Off) Plain(int x, int y)
+        {
+            var p = Palette.All[cells[x, y]];
+            var (r, g, b) = Apply(p.R, p.G, p.B, marks[x, y]);
+            int plain = Palette.Nearest(r, g, b, owned);
+            return (plain, Distance(r, g, b, plain, Mark.None));
+        }
+        void Flatten(int x, int y)
+        {
+            cells[x, y] = (byte)Plain(x, y).Plain;
             marks[x, y] = Mark.None;
+        }
+        foreach (var (x, y) in glazes.OrderByDescending(c => Plain(c.X, c.Y).Off).ThenBy(c => c.X).ThenBy(c => c.Y).Skip(subject / 3).ToList())
+            Flatten(x, y);
         int maxHighlights = Math.Max(2, subject / 25);
-        foreach (var (x, y) in highlights.OrderByDescending(c => Luma(cells[c.X, c.Y])).Skip(maxHighlights))
-            marks[x, y] = Mark.None;
+        foreach (var (x, y) in highlights.OrderByDescending(c => Luma(cells[c.X, c.Y])).Skip(maxHighlights).ToList())
+            Flatten(x, y);
     }
 
     public static int Count(Mark[,] marks, Mark mark)

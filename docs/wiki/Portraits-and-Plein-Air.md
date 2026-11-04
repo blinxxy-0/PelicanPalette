@@ -16,6 +16,12 @@ Paint a study of any monster you've slain, from memory. On the setup screen, the
 - **Size:** a bigger creature needs a bigger canvas.
 - **The record** has a Creatures tab ([Painting Record](Painting-Record)).
 
+## Animals
+Paint your pet, your horse, and any of the farm animals you own: chickens, ducks, rabbits, cows, goats, sheep, pigs, ostriches and dinosaurs. They have their own slot on the setup screen, next to the creatures, at any easel.
+- **The reference** is the animal's own sprite, in the colours you know.
+- **Size:** picking one moves you up to the smallest canvas it fits that you've unlocked. Goats, sheep and ostriches are shrunk to fit a medium canvas; cows, pigs and horses need a large one.
+- **The record** has an Animals tab ([Painting Record](Painting-Record)).
+
 ## Plein air: painting the view
 ![Painting the view](images/screens/setup_view.png)
 
