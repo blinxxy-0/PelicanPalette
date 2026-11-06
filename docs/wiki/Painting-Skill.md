@@ -26,3 +26,6 @@ At level 5 you choose one of two professions, and at level 10 one of the two tha
 |---|---|
 | **Plein Air**: The light lasts 20% longer and inspiration sparks come more often. | **Steady Hand**: Your mixes never turn muddy: at worst, they come out a bit off.<br>**Visionary**: An Inspired painting counts for twice as much toward its quality. |
 | **Gallerist**: Your paintings are worth 25% more. | **Patron's Favorite**: Paintings you give as gifts earn 25% more friendship.<br>**Prolific**: A 25% chance that starting a painting doesn't use up the canvas. |
+
+## Past level 10: Painting Mastery
+Your Painting XP keeps counting after level 10, towards **Painting Mastery** (15,000 XP). Margot sends you her old **Study Board** to hang up, and it fills with pinned studies as you go. When it's full, she tests you at the museum; pass, and you're a conservator, with the **Master's Easel** and the right to restore old paintings yourself. See [Old Paintings and Restoration](Old-Paintings-and-Restoration).

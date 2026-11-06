@@ -131,6 +131,7 @@ internal sealed partial class EaselMenu
             Purity = purity,
             Marks = marks,
             Masterpiece = _masterpiece,
+            Living = AtMastersEasel && _quality >= PaintingRules.Gold && size > PaintingRules.CanvasSize(CanvasKind.Small),
             Glazed = _reference != null && _result != null
                 ? PaintingRules.IsGlazed(TechniquesFor(_subjectItems, size), _result.Technique) : null,
             Subject = subject,
@@ -300,7 +301,8 @@ internal sealed partial class EaselMenu
             if (_reference != null && PaintingRules.Quality(_score, PaintingRules.MaxLevel) > _quality)
                 Ui.Text(b, I18n.Get("results.capped"), new Vector2(cx, cy + 40), Game1.textColor * 0.6f);
             cy += 76;
-            string sells = I18n.Get("results.sells-for", new { price = _painting.sellToStorePrice() });
+            // Margot's test piece isn't yours to sell: it goes back to Zuzu City.
+            string sells = OldPaintings.IsZuzu(Restoring) ? I18n.Get("results.zuzu") : I18n.Get("results.sells-for", new { price = _painting.sellToStorePrice() });
             Ui.Text(b, sells, new Vector2(cx, cy));
             // Beside the price, why it's more or less than usual: a new subject, or a familiar one.
             if (_reference != null && _novelty != 1f)
@@ -328,7 +330,7 @@ internal sealed partial class EaselMenu
         var lines = Game1.parseText($"\"{_critique}\"", Game1.smallFont, _keepButton.X - 24 - textX);
         Ui.Text(b, lines, new Vector2(textX, cy), Game1.textColor * 0.85f);
 
-        Ui.Button(b, _keepButton, _painting != null ? I18n.Get("results.keep") : I18n.Get("results.close"), true, false, _keepButton.Contains(MousePos));
+        Ui.Button(b, _keepButton, _painting == null ? I18n.Get("results.close") : OldPaintings.IsZuzu(Restoring) ? I18n.Get("results.give-back") : I18n.Get("results.keep"), true, false, _keepButton.Contains(MousePos));
     }
 
     private static void Criterion(SpriteBatch b, string label, string value, int x, ref int y, int row = 34)

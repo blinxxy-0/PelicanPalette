@@ -1,7 +1,8 @@
 """Builds Margot's cottage on the town map (1.3): the patch laid over Town
 once Robin has built it (data/margot.json: from her 4-heart event).
 
-  MargotCottage.png       the cottage and her bench, outlines recoloured
+  spring_MargotCottage.png the cottage and her bench, outlines recoloured
+                          (summer, fall and winter copies: seasonal_buildings.py)
                           (vanillafy.selout), on one sheet.
   MargotCottagePatch.tmx  the patch, laid over Town at ORIGIN in Overlay
                           mode: only its own tiles change, so the grass,
@@ -31,22 +32,34 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "art
 from vanillafy import selout
 from build_margot_room import write
 
+import build_margot_room
 from build_margot_room import LAYERS
+# (The cottage also draws on Back3: its corners' slivers of wall, over the
+# path. The shared writer writes the layers it's given here.)
+LAYERS = LAYERS[:2] + ["Back3"] + LAYERS[2:]
+build_margot_room.LAYERS = LAYERS
 ORIGIN = (18, 91)                     # the patch's top-left on Town
-W, H = 6, 8                           # Town x 18-23, y 91-98
-SHEET = "MargotCottage.png"
+W, H = 6, 9                           # Town x 18-23, y 91-99
+SHEET = "spring_MargotCottage.png"   # (the seasons: tools/art/seasonal_buildings.py)
 SHEET_COLS = 8
 # (pick, crop box in the pick or None, Town x, y of its top-left, solid bottom rows)
 PIECES = [
     # Cropped from x 10 so the arched door (pixels 58-73) is one tile.
-    (("stardew-margot-cottage4", "cottage_v4c_3"), (10, 0, 90, 96), (18, 91), 2),
-    # Down at the river's edge below the door, looking at the water.
-    (("stardew-margot-yard", "water_bench_2"), None, (21, 97), 1),
+    # Solid from the eaves down (2026-11-05, from playtesting: with only the
+    # walls solid you could walk in under the roof, and your head showed
+    # through it).
+    (("stardew-margot-cottage4", "cottage_v4c_3"), (10, 0, 90, 96), (18, 91), 4),
+    # Down at the river's edge, turned to face the water (west), a tile
+    # right of the door and a row below it (2026-11-05, from playtesting: it
+    # faced the viewer; PixelLab, side_bench_candidates). Solid on both its
+    # tiles, so it stands one row lower than at first: at (22, 97) it shut
+    # off the tile in front of the door (2026-11-06, from playtesting).
+    (("stardew-margot-yard", "water_bench_side"), None, (22, 98), 2),
 ]
 TOWN = "spring_town"
-# A base-game flowerpot by the door (the one by Emily's door): its top on
-# Front2, over the last pixels of the cottage's wall (on Front), its pot solid.
-POT = [("Front2", 22, 95, 56), ("Buildings", 22, 96, 88)]
+# (A base-game flowerpot stood by the door until 2026-11-05: its plant
+# overlapped the cottage's corner, and it was taken out, from playtesting.)
+POT = []
 # A tile of a piece's solid rows is solid only if the art spans at least
 # half its width and a quarter of its height: the cottage's edge columns are
 # a few pixels of ivy or wall, and its bottom row is the wall's last half-tile.
@@ -89,7 +102,18 @@ def main():
                 tp = tile.load()
                 wide = sum(1 for a in range(16) if any(tp[a, b][3] >= 128 for b in range(16))) / 16
                 tall = sum(1 for b in range(16) if any(tp[a, b][3] >= 128 for a in range(16))) / 16
-                layer = "Buildings" if j >= rows - solid and wide >= SOLID_WIDTH and tall >= SOLID_HEIGHT else "Front"
+                # Solid rows are solid; but a tile of a building's last two
+                # rows with only a sliver of wall in it (the cottage's
+                # corners) goes on Back3 (over the path's Back2), walkable and
+                # drawn under you, so
+                # you pass in front of the corner instead of under it.
+                thick = wide >= SOLID_WIDTH and tall >= SOLID_HEIGHT
+                if j < rows - solid:
+                    layer = "Front"
+                elif thick or rows <= 2 or j < rows - 2:
+                    layer = "Buildings"
+                else:
+                    layer = "Back3"
                 grid[layer][gy][gx] = (SHEET, (sy + j) * SHEET_COLS + sx + i)
     for layer, x, y, t in POT:
         grid[layer][y - ORIGIN[1]][x - ORIGIN[0]] = (TOWN, t)

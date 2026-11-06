@@ -31,6 +31,75 @@ internal static class MuseumCollection
     {
         harmony.Patch(AccessTools.Method(typeof(NPC), nameof(NPC.checkAction)),
             prefix: new HarmonyMethod(typeof(MuseumCollection), nameof(CheckActionPrefix)));
+        // His counter (1.3, from playtesting): donating a painting sits with
+        // donating artifacts, and the collection with it.
+        harmony.Patch(AccessTools.Method(typeof(StardewValley.Locations.LibraryMuseum), "OpenGuntherDialogueMenu"),
+            prefix: new HarmonyMethod(typeof(MuseumCollection), nameof(CounterPrefix)));
+        harmony.Patch(AccessTools.Method(typeof(StardewValley.Locations.LibraryMuseum), nameof(GameLocation.answerDialogueAction)),
+            prefix: new HarmonyMethod(typeof(MuseumCollection), nameof(CounterAnswerPrefix)));
+    }
+
+    // A restored old painting the museum hasn't got, framed or not.
+    public static OldPainting? Donatable(Item? item) =>
+        item != null && (PaintingItems.IsPainting(item) || ArtItems.IsFramed(item))
+        && PaintingData.Read(item) is { IsOld: true } data && OldPaintings.OfSubject(data.Subject) is { } old && !IsDonated(old.Id) ? old : null;
+
+    public static bool HasDonatable(Farmer who) => who.Items.Any(i => Donatable(i) != null);
+
+    // Gunther's counter: the game's Donate and Collect, with a painting to
+    // donate, and the collection to look at once there's one in it.
+    private static bool CounterPrefix(StardewValley.Locations.LibraryMuseum __instance)
+    {
+        try
+        {
+            var who = Game1.player;
+            bool paintings = HasDonatable(who), collection = DonatedCount > 0;
+            if (!paintings && !collection) return true;
+            var answers = new List<Response>();
+            bool locked = AccessTools.Field(typeof(StardewValley.Locations.LibraryMuseum), "mutex").GetValue(__instance) is StardewValley.Network.NetMutex mutex && mutex.IsLocked();
+            if (__instance.doesFarmerHaveAnythingToDonate(who) && !locked)
+                answers.Add(new Response("Donate", Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Donate")));
+            if (paintings)
+                answers.Add(new Response("DonatePainting", I18n.Get("museum.counter.donate-painting")));
+            if (__instance.getRewardsForPlayer(who).Count > 0)
+                answers.Add(new Response("Collect", Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Collect")));
+            if (collection)
+                answers.Add(new Response("PaintingCollection", I18n.Get("museum.counter.collection")));
+            answers.Add(new Response("Leave", Game1.content.LoadString("Strings\\Locations:ArchaeologyHouse_Gunther_Leave")));
+            __instance.createQuestionDialogue("", answers.ToArray(), "Museum");
+            return false;
+        }
+        catch (Exception)
+        {
+            return true;
+        }
+    }
+
+    private static bool CounterAnswerPrefix(string questionAndAnswer, ref bool __result)
+    {
+        if (questionAndAnswer == "Museum_DonatePainting")
+        {
+            OpenDonation(Game1.player);
+            __result = true;
+            return false;
+        }
+        if (questionAndAnswer == "Museum_PaintingCollection")
+        {
+            Game1.activeClickableMenu = new CollectionView();
+            __result = true;
+            return false;
+        }
+        return true;
+    }
+
+    // Picking which painting to give him, from the bag.
+    internal static void OpenDonation(Farmer who)
+    {
+        Game1.activeClickableMenu = new PaintingPickerMenu(I18n.Get("museum.pick"), item => Donatable(item) != null, item =>
+        {
+            if (Donatable(item) is { } old && Game1.getCharacterFromName(Curator) is { } curator)
+                Donate(who, curator, item, old);
+        }, item => Donatable(item) is { } old ? OldPaintings.Title(old) + "\n" + OldPaintings.SetName(old.Set) : "");
     }
 
     public static bool IsDonated(string id) => Game1.player.mailReceived.Contains(DonatedPrefix + id);
@@ -47,7 +116,7 @@ internal static class MuseumCollection
                 // (The Old Valley's gallery furniture comes in three letters,
                 // a letter carrying one item.)
                 ("set-valley-rope", () => SetDone("valley")),
-                ("set-valley-light", () => SetDone("valley")),
+                ("set-valley-plinth", () => SetDone("valley")),
                 ("count-6", () => DonatedCount >= 6),
                 ("count-12", () => DonatedCount >= 12),
                 ("count-21", () => DonatedCount >= OldPaintings.All.Length),
@@ -59,9 +128,11 @@ internal static class MuseumCollection
     {
         try
         {
-            if (__instance.Name != Curator || __instance.CurrentDialogue.Count > 0) return true;
-            if (who.ActiveObject is SObject held && PaintingItems.IsPainting(held) && PaintingData.Read(held) is { IsOld: true } data
-                && OldPaintings.OfSubject(data.Subject) is { } old)
+            if (__instance.Name != Curator) return true;
+            // Holding a restored old painting comes first, before his line for
+            // the day (which stays for the next time you talk to him).
+            if (who.ActiveObject is SObject held && (PaintingItems.IsPainting(held) || ArtItems.IsFramed(held))
+                && PaintingData.Read(held) is { IsOld: true } data && OldPaintings.OfSubject(data.Subject) is { } old)
             {
                 __result = true;
                 if (IsDonated(old.Id))
@@ -74,6 +145,7 @@ internal static class MuseumCollection
                     }, (_, answer) => { if (answer == "yes") Donate(who, __instance, held, old); });
                 return false;
             }
+            if (__instance.CurrentDialogue.Count > 0) return true;
             // The first time you talk to him once the painting wing's open.
             if (who.ActiveObject == null && PaintingWing.IsOpen && !who.mailReceived.Contains(PaintingWing.ToldFlag))
             {
@@ -100,23 +172,51 @@ internal static class MuseumCollection
     public static void Donate(Farmer who, NPC curator, Item painting, OldPainting old)
     {
         who.removeItemFromInventory(painting);
+        // Framed, he keeps the painting and hands you back its frame.
+        if (ArtItems.IsFramed(painting) && Frames.StyleOf(painting) is { } style)
+            who.addItemByMenuIfNecessary(ItemRegistry.Create("(O)" + style.ItemId));
         Game1.player.team.RequestSetMail(PlayerActionTarget.All, DonatedPrefix + old.Id, MailType.Received, add: true);
         who.mailReceived.Add(DonatedPrefix + old.Id);
         Game1.playSound("newArtifact");
-        Say(curator, I18n.Get("museum.thanks", new { title = OldPaintings.Title(old), count = DonatedCount, total = OldPaintings.All.Length }));
-        GrantRewards(who);
+        var earned = GrantRewards(who);
+        // The first: the wing opens tomorrow morning (PaintingWing.cs), and he says so.
+        Say(curator, ThanksFor(old, earned));
     }
 
-    // Letters for rewards earned and not yet sent (for whoever donated last).
-    public static void GrantRewards(Farmer who)
+    // His thanks, and for a set just finished or a count just reached
+    // (1.3, from playtesting), a page saying there's something in tomorrow
+    // morning's post.
+    public static string ThanksFor(OldPainting old, IReadOnlyList<string> earned)
+    {
+        var pages = new List<string>
+        {
+            I18n.Get(DonatedCount == 1 && !PaintingWing.IsOpen ? "museum.thanks-first" : "museum.thanks",
+                new { title = OldPaintings.Title(old), count = DonatedCount, total = OldPaintings.All.Length }),
+        };
+        foreach (string key in earned)
+        {
+            if (key.StartsWith("set-") && OldPaintings.Sets.Contains(key.Substring(4)))
+                pages.Add(I18n.Get("museum.reward.set", new { set = OldPaintings.SetName(key.Substring(4)) }));
+            else if (key.StartsWith("count-"))
+                pages.Add(I18n.Get("museum.reward." + key));
+        }
+        return string.Join("#$b#", pages);
+    }
+
+    // Letters for rewards earned and not yet sent (for whoever donated
+    // last), for tomorrow's post. Returns the ones just sent.
+    public static List<string> GrantRewards(Farmer who)
     {
         var mail = DataLoader.Mail(Game1.content);
+        var sent = new List<string>();
         foreach (var (key, earned) in Rewards)
         {
             string letter = RewardLetter(key);
             if (!mail.ContainsKey(letter) || who.mailReceived.Contains(letter) || who.mailForTomorrow.Contains(letter) || !earned()) continue;
             Game1.addMailForTomorrow(letter);
+            sent.Add(key);
         }
+        return sent;
     }
 
     private static void Say(NPC npc, string text)
@@ -128,10 +228,20 @@ internal static class MuseumCollection
 
     // ---- The collection, set by set ----
 
+    internal static IClickableMenu DevCollection(int set = -1, int column = 0)
+    {
+        var view = new CollectionView();
+        if (set >= 0)
+            view.DevMouse = new Point(view.xPositionOnScreen + CollectionView.Pad + CollectionView.LabelW + column * (CollectionView.Cell + CollectionView.Gap) + CollectionView.Cell / 2,
+                view.yPositionOnScreen + CollectionView.Pad + 60 + set * (CollectionView.Cell + CollectionView.Gap) + CollectionView.Cell / 2);
+        return view;
+    }
+
     private sealed class CollectionView : IClickableMenu
     {
-        private const int Cell = 80, Gap = 12, Pad = 40, LabelW = 200;
-        private string? _hover;
+        public const int Cell = 80, Gap = 12, Pad = 40, LabelW = 200;
+        public Point? DevMouse;
+        private string? _hover, _hoverTitle;
 
         public CollectionView()
             : base(0, 0, 0, 0, showUpperRightCloseButton: true)
@@ -148,8 +258,8 @@ internal static class MuseumCollection
             b.Draw(Game1.fadeToBlackRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), Color.Black * 0.6f);
             Ui.Frame(b, new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height));
             Ui.AuditMenu(new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height));
-            _hover = null;
-            var mouse = new Point(Game1.getMouseX(true), Game1.getMouseY(true));
+            _hover = _hoverTitle = null;
+            var mouse = DevMouse ?? new Point(Game1.getMouseX(true), Game1.getMouseY(true));
             int x0 = xPositionOnScreen + Pad, y = yPositionOnScreen + Pad;
             Ui.Text(b, I18n.Get("museum.collection", new { count = DonatedCount, total = OldPaintings.All.Length }), new Vector2(x0, y));
             y += 60;
@@ -167,13 +277,20 @@ internal static class MuseumCollection
                     else
                         Ui.Fill(b, inner, new Color(243, 236, 220) * 0.2f);
                     if (rect.Contains(mouse))
-                        _hover = IsDonated(painting.Id) ? OldPaintings.Title(painting) : I18n.Get("museum.missing", new { set = OldPaintings.SetName(set) });
+                    {
+                        // Its card, donated or not; missing, where to look.
+                        _hoverTitle = OldPaintings.Title(painting);
+                        string text = OldPaintings.About(painting);
+                        if (!IsDonated(painting.Id))
+                            text += "\n\n" + I18n.Get("museum.missing", new { where = OldPaintings.WhereToFind(set), cart = I18n.Get("old.where.cart") });
+                        _hover = Game1.parseText(text, Game1.smallFont, 420);
+                    }
                     x += Cell + Gap;
                 }
                 y += Cell + Gap;
             }
             base.draw(b);
-            if (_hover != null) drawHoverText(b, _hover, Game1.smallFont);
+            if (_hover != null) drawHoverText(b, _hover, Game1.smallFont, overrideX: DevMouse?.X ?? -1, overrideY: DevMouse?.Y ?? -1, boldTitleText: _hoverTitle);
             drawMouse(b);
         }
 

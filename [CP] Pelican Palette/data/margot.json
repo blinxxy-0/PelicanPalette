@@ -55,6 +55,8 @@
       }
     },
     { "Action": "Load", "Target": "Characters/MargotPell", "FromFile": "assets/margot/sprites.png" },
+    // The damaged painting on her desk in her 2-heart event (tools/art/margot_desk_painting.py).
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/MargotDeskPainting", "FromFile": "assets/margot/desk_painting.png" },
     { "Action": "Load", "Target": "Portraits/MargotPell", "FromFile": "assets/margot/portraits.png" },
     { "Action": "Load", "Target": "Characters/MargotPell_Winter", "FromFile": "assets/margot/sprites_winter.png" },
     { "Action": "Load", "Target": "Portraits/MargotPell_Winter", "FromFile": "assets/margot/portraits_winter.png" },
@@ -177,7 +179,7 @@
       "Action": "EditMap",
       "Target": "Maps/Town",
       "FromFile": "assets/MargotCottagePatch.tmx",
-      "ToArea": { "X": 18, "Y": 91, "Width": 6, "Height": 8 },
+      "ToArea": { "X": 18, "Y": 91, "Width": 6, "Height": 9 },
       "PatchMode": "Overlay",
       "MapTiles": [
         { "Position": { "X": 21, "Y": 96 }, "Layer": "Buildings", "SetProperties": { "Action": "LockedDoorWarp 6 8 blinxxy.MuseArt_MargotCottage 900 2200" } },
@@ -186,6 +188,36 @@
         { "Position": { "X": 19, "Y": 94 }, "Layer": "Paths", "Remove": true }
       ],
       "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
+    },
+    // The cobbled path from the town road to her door, the game's own
+    // Cobblestone Path baked into the map (tools/art/margot_path.py).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/Town",
+      "FromFile": "assets/MargotPathPatch.tmx",
+      "ToArea": { "X": 21, "Y": 92, "Width": 3, "Height": 5 },
+      "PatchMode": "Overlay",
+      "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
+    },
+    // Her window box, as you asked Robin to plant it in her 4-heart scene
+    // (roses are the cottage's own art; tools/art/margot_window_box.py).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/Town",
+      "MapTiles": [
+        { "Position": { "X": 19, "Y": 95 }, "Layer": "Buildings", "SetTilesheet": "z_blinxxy.MuseArt_MargotCottage", "SetIndex": 21 },
+        { "Position": { "X": 20, "Y": 95 }, "Layer": "Buildings", "SetTilesheet": "z_blinxxy.MuseArt_MargotCottage", "SetIndex": 22 }
+      ],
+      "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true, "HasFlag |contains=blinxxy.MuseArt_MargotBoxLavender": true }
+    },
+    {
+      "Action": "EditMap",
+      "Target": "Maps/Town",
+      "MapTiles": [
+        { "Position": { "X": 19, "Y": 95 }, "Layer": "Buildings", "SetTilesheet": "z_blinxxy.MuseArt_MargotCottage", "SetIndex": 29 },
+        { "Position": { "X": 20, "Y": 95 }, "Layer": "Buildings", "SetTilesheet": "z_blinxxy.MuseArt_MargotCottage", "SetIndex": 30 }
+      ],
+      "When": { "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true, "HasFlag |contains=blinxxy.MuseArt_MargotBoxMarigold": true }
     },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_MargotCottage", "FromFile": "assets/MargotCottage.tmx" },
     {
@@ -219,6 +251,12 @@
       "Target": "Data/mail",
       "Entries": {
         "blinxxy.MuseArt_MargotLetter": "{{i18n:mail.margot-letter}}[#]{{i18n:mail.margot-letter.title}}",
+        // With a painting she's restored for you (the game puts it in the letter).
+        "blinxxy.MuseArt_MargotRestored": "{{i18n:mail.margot-restored}}[#]{{i18n:mail.margot-restored.title}}",
+        // At Painting 10, her study board: Painting Mastery made visible (StudyBoard.cs).
+        "blinxxy.MuseArt_MargotMastery": "{{i18n:mail.margot-mastery}} %item id (F)blinxxy.MuseArt_StudyBoard 1 %%[#]{{i18n:mail.margot-mastery.title}}",
+        // ...and another, if that one goes missing.
+        "blinxxy.MuseArt_MargotBoardAgain": "{{i18n:mail.margot-board-again}} %item id (F)blinxxy.MuseArt_StudyBoard 1 %%[#]{{i18n:mail.margot-board-again.title}}",
         // Robin, when the cottage is done (her 4-heart event, three days on).
         "blinxxy.MuseArt_MargotCottageLetter": "{{i18n:mail.margot-cottage}}[#]{{i18n:mail.margot-cottage.title}}"
       }
@@ -240,20 +278,22 @@
     {
       "Action": "EditData", "Target": "Characters/schedules/MargotPell",
       "Entries": {
-        "Tue": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2300 blinxxy.MuseArt_MargotRoom 6 6 2",
-        "Thu": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2300 blinxxy.MuseArt_MargotRoom 6 6 2"
+        "Tue": "700 ArchaeologyHouse 18 14 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2300 blinxxy.MuseArt_MargotRoom 6 6 2",
+        "Thu": "700 ArchaeologyHouse 18 14 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2300 blinxxy.MuseArt_MargotRoom 6 6 2"
       },
       "When": { "HasFlag |contains=blinxxy.MuseArt_PaintingWingOpen": true, "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": false }
     },
     {
       "Action": "EditData", "Target": "Characters/schedules/MargotPell",
       "Entries": {
-        "Tue": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2",
-        "Thu": "700 ArchaeologyHouse 18 13 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2"
+        "Tue": "700 ArchaeologyHouse 18 14 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2",
+        "Thu": "700 ArchaeologyHouse 18 14 2/1400 blinxxy.MuseArt_PaintingWing 14 5 0/1700 Saloon 17 21 0/2200 blinxxy.MuseArt_MargotCottage 7 5 2"
       },
       "When": { "HasFlag |contains=blinxxy.MuseArt_PaintingWingOpen": true, "HasFlag |contains=blinxxy.MuseArt_MargotCottageBuilt": true }
     },
     { "Action": "Include", "FromFile": "data/margot_dialogue.json" },
+    // The festivals, and the Flower Dance.
+    { "Action": "Include", "FromFile": "data/margot_festivals.json" },
     // Her heart events (tools/build_margot_events.py, from docs/margot_events.md).
     { "Action": "Include", "FromFile": "data/margot_events.json" },
     // Her wedding (tools/build_margot_wedding.py).

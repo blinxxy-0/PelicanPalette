@@ -1,7 +1,7 @@
 <table align="right"><tr><th colspan="2">Margot Pell</th></tr><tr><td colspan="2" align="center"><img src="images/margot_portrait.png" width="128"></td></tr><tr><td><b>Pronouns</b></td><td>she/her</td></tr><tr><td><b>Birthday</b></td><td>Spring 19</td></tr><tr><td><b>Lives in</b></td><td>A room off the Saloon, then a cottage by the river</td></tr><tr><td><b>Works at</b></td><td>The museum</td></tr><tr><td><b>Marriage</b></td><td>Yes, by anyone</td></tr></table>
 
 **Margot Pell** is a conservator from the Zuzu City Museum of Art. When old paintings start turning up in the valley, the museum sends her to look after them.
-- **Arrives:** the week after you find your first damaged old painting. Gunther writes to say someone is coming. See [Old Paintings and Restoration](Old-Paintings-and-Restoration).
+- **Arrives:** a week after Gunther's letter. Take your first damaged old painting to Gunther at the museum; he writes to the city, and his letter comes the next morning. See [Old Paintings and Restoration](Old-Paintings-and-Restoration).
 - **Character:** warm, quick and talkative, especially about her work. She explains things nobody asked about, apologises, and keeps going.
 - **Sable:** they trained together at the museum, before Sable left. She has a few things to say about that.
 
@@ -19,6 +19,14 @@
 
 She sleeps in her room down the steps from Gus's storeroom at the Saloon. After her 4-heart event, Robin builds her a **cottage** of her own between the main road and the river, south of Haley and Emily's house, and she goes home there instead. Her Saloon room becomes Gus's guest room.
 
+## Festivals
+Once she's in the valley she goes to all eight festivals, near Sable, with something to say at each. Ask her to the **Flower Dance** at 4 hearts or more and she'll dance with you, in the same white dress as the other dancers.
+
+## Her cottage
+Robin's letter comes three days after the 4-heart event, and from that morning the cottage stands on the town map, with a cobbled path down from the road to its door and a bench by the river.
+- **The window box:** in the 4-heart event, Robin asks what to plant under the big window: **pink roses**, **lavender** or **marigolds**. That's what grows there (it's under snow in winter), and Margot mentions it the first time you talk to her at home.
+- **Inside:** her restoration table under the north window, a plan chest, a little kitchen, and her frame workshop along the front wall.
+
 She dresses for the weather: a coat and scarf outdoors in winter, linen on Ginger Island.
 
 ## Gifts
@@ -29,8 +37,8 @@ She dresses for the weather: a coat and scarf outdoors in winter, linen on Ginge
 Like most villagers, she loves an iridium painting; see [Gifting Paintings](Gifting-Paintings).
 
 ## What she does for you
-- **Restores old paintings for a fee**, before you can do it yourself. Hold a damaged painting and talk to her at the museum. She takes it, and gives it back three days later at silver quality. One at a time.
-- **Painting Mastery:** once your mastery bar is full, she sets you a test restoration. Pass it and you're a conservator. See [Old Paintings and Restoration](Old-Paintings-and-Restoration).
+- **Restores old paintings for a fee**, before you can do it yourself. Hold a damaged painting and talk to her at the museum (even before her line for the day: she'll always look at a painting first). She takes it, and three days later she posts it back to you, restored at silver quality: it comes attached to her letter. One at a time. Hold one out to her anywhere else and she'll tell you to bring it to the museum.
+- **Painting Mastery:** the morning after you reach Painting level 10 (or after you first meet her, if that's later), she writes with her old **Study Board** to hang on your wall. It fills as your mastery bar does, and she has something to say about each quarter the next time you talk. When it's full, she sets you a test restoration at the museum. Pass it and you're a conservator. See [Old Paintings and Restoration](Old-Paintings-and-Restoration).
 
 | Set | Her fee |
 |---|---|

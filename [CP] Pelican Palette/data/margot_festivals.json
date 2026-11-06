@@ -1,0 +1,229 @@
+// Margot at the eight festivals (1.3, from playtesting: she was at none
+// of them). Once she's in the valley, a spot at each, a few tiles from
+// Sable's (and during the main event, where there is one), added to the
+// festival's extra-characters list so other mods' villagers keep theirs,
+// and a line for each. Spots were checked with museart_festspot (walkable,
+// not water, clear of every villager, Sable included), with and without
+// Stardew Valley Expanded.
+//
+// She dances at the Flower Dance (FlowerDanceCanDance, data/margot.json):
+// her answers are FlowerDance_Accept and FlowerDance_Decline in
+// data/margot_dialogue.json, and her dress is frames 40-43 and 46-47 of
+// her sheet (tools/art/margot_dance_dress.py).
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/spring13",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.spring13}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 16 66 1",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "MargotPell 17 67 1",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/spring24",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.spring24}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 10 24 3",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "MargotPell 10 24 3",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/summer11",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.summer11}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 40 22 3",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "MargotPell 40 22 0",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/summer28",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.summer28}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 69 23 2",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "MainEvent_additionalCharacters"
+          ],
+          "Value": "MargotPell 69 23 2",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/fall16",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.fall16}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 22 64 2",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/fall27",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.fall27}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 24 63 3",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/winter8",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.winter8}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 72 15 0",
+          "Delimiter": "/"
+        },
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Main-Event_additionalCharacters"
+          ],
+          "Value": "MargotPell 62 36 1",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Festivals/winter25",
+      "Entries": {
+        "MargotPell": "{{i18n:festival.margot.winter25}}"
+      },
+      "TextOperations": [
+        {
+          "Operation": "Append",
+          "Target": [
+            "Entries",
+            "Set-Up_additionalCharacters"
+          ],
+          "Value": "MargotPell 33 58 2",
+          "Delimiter": "/"
+        }
+      ],
+      "When": {
+        "HasFlag |contains=blinxxy.MuseArt_MargotArrived": true
+      }
+    }
+  ]
+}

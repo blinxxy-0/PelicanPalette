@@ -27,3 +27,10 @@ docs/media/review/
 # Upload bundles made from docs/media.
 release/nexus/*.zip
 release/nexus/nexus_*_images/
+
+# Vanilla sprites copied in as inputs to the art tools.
+art/**/vanilla_*.png
+
+# The release zip and the Nexus preview are built from the repository.
+release/*.zip
+release/nexus/preview.html

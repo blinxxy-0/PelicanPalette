@@ -282,8 +282,11 @@ internal sealed partial class EaselMenu : IClickableMenu
 
     private static bool IsViewSubject(IReadOnlyList<string> ids) => ids.Count == 1 && Views.IsView(ids[0]);
 
-    // Restorations get half again the light: what's missing has to be worked out as well as painted.
-    private const float RestoreLight = 1.5f;
+    // A restoration's light is set from what's missing, not the whole
+    // painting (2026-11-05, from playtesting: set from the whole, a skilled
+    // painter finished with two thirds of it to spare), with a little more
+    // for matching each gap to the picture.
+    private const float RestoreLight = 1.15f;
 
     // The old painting being restored, if that's what this is (1.3).
     private OldPainting? Restoring => _subjectItems.Length == 1 ? OldPaintings.OfSubject(_subjectItems[0]) : null;

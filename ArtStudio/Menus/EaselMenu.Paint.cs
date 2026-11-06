@@ -153,7 +153,9 @@ internal sealed partial class EaselMenu
 
         _timed = !IsOriginal && _rules.LightTimer;
         _lightTotal = _lightLeft = _timed
-            ? PaintingRules.LightSeconds(_reference!, _level, LightMultiplier, !_rules.PauseLightWhileMixing) * (Restoring != null ? RestoreLight : 1f)
+            ? (Restoring is { } restoring
+                ? PaintingRules.LightSeconds(new Reference(OldPaintings.Missing(restoring)), _level, LightMultiplier, !_rules.PauseLightWhileMixing) * RestoreLight
+                : PaintingRules.LightSeconds(_reference!, _level, LightMultiplier, !_rules.PauseLightWhileMixing))
             : float.PositiveInfinity;
         _nextSpark = 5f + (float)_random.NextDouble() * 4f;
         _stage = EaselStage.Painting;
@@ -793,7 +795,7 @@ internal sealed partial class EaselMenu
         string title = SubjectTitle(_subjectItems);
         Ui.Text(b, title, new Vector2(_topBar.X, _topBar.Y + 4));
         if (_reference != null)
-            Ui.Text(b, I18n.Get("paint.difficulty", new { difficulty = _reference.Difficulty }), new Vector2(_topBar.X, _topBar.Y + 34), Game1.textColor * 0.7f);
+            Ui.Text(b, OldPaintings.IsZuzu(Restoring) ? I18n.Get("paint.zuzu") : I18n.Get("paint.difficulty", new { difficulty = _reference.Difficulty }), new Vector2(_topBar.X, _topBar.Y + 34), Game1.textColor * 0.7f);
 
         if (IsOriginal) return;
 
@@ -843,7 +845,6 @@ internal sealed partial class EaselMenu
             bool clip = view != _refArea;
             if (clip) BeginClip(b, _refArea);
             DrawCells(b, _reference.Cells, null, view, CanvasColor, false, _reference.Marks);
-            DrawDamage(b, view, _reference.Cells);
             DrawMarkHints(b, view);
             Ui.Fill(b, _refArea, DuskTint());
             if (_sparkCell.HasValue)
@@ -926,9 +927,10 @@ internal sealed partial class EaselMenu
         _ => new Color(150, 70, 50),
     };
 
-    // Restoring (1.3): the damaged cells still bare are hatched, on the
-    // reference and the canvas, so what's missing can't be mistaken for
-    // pale paint.
+    // Restoring (1.3): the damaged cells still bare on the canvas are
+    // hatched, so what's missing can't be mistaken for pale paint. The
+    // reference shows the painting whole, every colour in plain view
+    // (pointing at a gap outlines it there).
     private void DrawDamage(SpriteBatch b, Rectangle area, byte[,] cells)
     {
         if (Restoring is not { } old) return;

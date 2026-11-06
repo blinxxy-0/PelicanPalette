@@ -40,6 +40,7 @@ internal static class PaintingPatches
         if (!PaintingItems.IsPainting(__instance) && !OldPaintings.IsDamaged(__instance)) return true;
         try
         {
+            OldPaintings.Pick(__instance);
             if (drawShadow)
                 __instance.DrawShadow(spriteBatch, location, color, layerDepth);
             PaintingRenderer.DrawFramed(spriteBatch, __instance, location + new Vector2(32f, 32f), 4f * scaleSize, color * transparency, layerDepth);
@@ -71,6 +72,7 @@ internal static class PaintingPatches
     private static bool DrawWhenHeldPrefix(SObject __instance, SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f)
     {
         if (!PaintingItems.IsPainting(__instance) && !OldPaintings.IsDamaged(__instance)) return true;
+        OldPaintings.Pick(__instance, f);
         float layerDepth = Math.Max(0f, (f.StandingPixel.Y + 3) / 10000f);
         PaintingRenderer.DrawFramed(spriteBatch, __instance, objectPosition + new Vector2(32f, 32f), 4f, Color.White, layerDepth);
         return false;
@@ -88,7 +90,9 @@ internal static class PaintingPatches
         if (OldPaintings.Of(__instance) is { } old)
         {
             __result = Game1.parseText(I18n.Get("item.damaged-painting.found", new { title = OldPaintings.Title(old), set = OldPaintings.SetName(old.Set) })
-                + "\n" + I18n.Get(OldPaintings.CanRestore(Game1.player) ? "item.damaged-painting.restore" : "item.damaged-painting.margot"),
+                + "\n" + I18n.Get(OldPaintings.IsZuzu(old) ? "item.damaged-painting.zuzu"
+                    : OldPaintings.CanRestore(Game1.player) ? "item.damaged-painting.restore"
+                    : Social.Margot.Arrived || Social.Margot.LetterSent ? "item.damaged-painting.margot" : "item.damaged-painting.gunther"),
                 Game1.smallFont, Traverse.Create(__instance).Method("getDescriptionWidth").GetValue<int>());
             return;
         }

@@ -4,7 +4,7 @@ No. The art shop's letter arrives the morning after you install.
 **I can't start a painting.**
 Read the line under **Begin**. It tells you what's missing:
 - a canvas of that size,
-- a Palette in your bag,
+- a Palette in your bag (not on Simplified, where paint is free),
 - or the time: a painting can't run past 2am.
 
 **A colour on the palette is faded.**
@@ -20,10 +20,24 @@ Iridium needs Painting level 6, a high score, and usually Inspired or flawless m
 With the Glaze or Highlight tool in hand, dots show where the reference wants a glaze or a highlight ([Canvases and Techniques](Canvases-and-Techniques)).
 
 **Who can I paint?**
-Any friend at 4 hearts or more, from medium canvases.
+Any friend at 4 hearts or more, from medium canvases. Also any monster you've slain, your pet, your horse and your farm animals ([Portraits and Plein Air](Portraits-and-Plein-Air)).
+
+**My picture looks plain.**
+- **A small canvas** has no glazes or highlights; they come with medium and large canvases.
+- **The reference only uses colours you know**, in every mode. Learn more colours and pictures get truer ([Pigments and Paint](Pigments-and-Paint)).
+- **Simplified mode** leaves glazes and highlights out, unless you turn that off in the [Configuration](Configuration).
+
+**How do I meet Margot?**
+Find a damaged old painting (your first is guaranteed from Painting level 3, in the next artifact spot or fishing treasure chest) and take it to Gunther at the museum. He writes to the city that day; his letter comes the next morning, and she arrives a week after it ([Margot Pell](Margot-Pell)).
+
+**How do I restore old paintings myself?**
+Reach Painting level 10, then keep painting: your XP fills the Painting Mastery bar, and Margot's **Study Board** on your wall fills with it. When it's full, talk to Margot at the museum and pass her test at gold or better. Until then, she restores them for a fee ([Old Paintings and Restoration](Old-Paintings-and-Restoration)).
+
+**I lost my Study Board.**
+Margot posts you another the next morning, if you don't have one anywhere (at most once a week).
 
 **How do I paint the view?**
 Place an easel outdoors and use it, or use the one in the art shop's yard ([Portraits and Plein Air](Portraits-and-Plein-Air)).
 
 **Can I change the difficulty?**
-Yes ([Configuration](Configuration)).
+Yes, on the easel itself: click the mode button beside **Begin** ("Normal") to go through Simplified, Relaxed, Normal and Hard, or set it in the [Configuration](Configuration). Harder modes pay more: Simplified half, Relaxed 85%, Hard three times ([Selling and Prices](Selling-and-Prices)).

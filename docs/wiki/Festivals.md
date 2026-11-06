@@ -40,5 +40,5 @@ An easel waits on the sand during the dance. Paint the jellies drifting out to s
 ## The Feast of the Winter Star
 If Sable draws you as their secret friend, their gift is a painting: an iridium still life of whatever you ship most.
 
-## Sable at the festivals
-Sable goes to every festival; see [Sable](Sable).
+## Sable and Margot at the festivals
+Sable goes to every festival; see [Sable](Sable). So does Margot, once she's in the valley; see [Margot Pell](Margot-Pell). She dances at the Flower Dance if you ask her at 4 hearts or more.

@@ -81,7 +81,16 @@ internal sealed partial class EaselMenu
 
         int previewSize = Math.Min(320, height - 340);
         _previewArea = new Rectangle(xPositionOnScreen + width - Pad - 40 - previewSize, y + 40, previewSize, previewSize);
-        _beginButton = new Rectangle(_previewArea.Center.X - 90, _previewArea.Bottom + 86, 180, 56);
+        // Begin, and beside it the mode (1.3, from playtesting: as a line of
+        // text under Begin, it gave way to any warning, so low on paint, the
+        // mode with free paint couldn't be picked). Under them, only what's
+        // missing.
+        const int beginW = 170, modeW = 150, buttonGap = 10;
+        // (Framing a painting has no mode: Begin alone, centred.)
+        int buttonsX = _setupFraming ? _previewArea.Center.X - beginW / 2
+            : Math.Min(_previewArea.Center.X - (beginW + buttonGap + modeW) / 2, xPositionOnScreen + width - Pad - 20 - (beginW + buttonGap + modeW));
+        _beginButton = new Rectangle(buttonsX, _previewArea.Bottom + 86, beginW, 56);
+        _modeButton = new Rectangle(_beginButton.Right + buttonGap, _beginButton.Y, modeW, 56);
 
         int rowY = yPositionOnScreen + height - Pad - 96;
         int rowW = (_previewArea.X - 60 - x - 2 * 12) / 3;
@@ -428,7 +437,7 @@ internal sealed partial class EaselMenu
             LayoutSetup();
             RefreshPreview();
         }
-        else if (_modeButton.Contains(x, y))
+        else if (!_setupFraming && _modeButton.Contains(x, y))
             CycleMode();
         else if (_beginButton.Contains(x, y))
         {
@@ -651,7 +660,8 @@ internal sealed partial class EaselMenu
             DrawCells(b, _setupPreview.Cells, null, _previewArea, new Color(243, 236, 220), false, _setupPreview.Marks);
             float light = PaintingRules.LightSeconds(_setupPreview, _level, LightMultiplier, !_rules.PauseLightWhileMixing);
             Ui.Text(b, I18n.Get("setup.preview", new { difficulty = _setupPreview.Difficulty, pigments = _setupPreview.PigmentsUsed.Count }), info);
-            Ui.Text(b, _rules.LightTimer ? I18n.Get("setup.light", new { seconds = light.ToString("0") }) : I18n.Get("setup.no-time-limit"), info + new Vector2(0, 28), Game1.textColor * 0.75f);
+            int dayHours = PaintingRules.Minutes(_setupCanvas, IsLongSubject(_setupItems)) / 60;
+            Ui.Text(b, _rules.LightTimer ? I18n.Get("setup.light-hours", new { seconds = light.ToString("0"), hours = dayHours }) : I18n.Get("setup.no-limit-hours", new { hours = dayHours }), info + new Vector2(0, 28), Game1.textColor * 0.75f);
         }
         else
         {
@@ -663,35 +673,33 @@ internal sealed partial class EaselMenu
 
         bool ready = (_setupOriginal || _setupItems.Count > 0) && HasCanvas;
         Ui.Button(b, _beginButton, I18n.Get("setup.begin"), ready, false, ready && _beginButton.Contains(mouse));
-        // Under Begin: what's missing, or else the mode and how long it takes.
-        int hours = PaintingRules.Minutes(_setupCanvas, IsLongSubject(_setupItems)) / 60;
+        // Under Begin and the mode: what's missing, if anything.
         var shortOf = ShortColours();
         bool portraitTooSmall = SetupPortrait && !PaintingRules.PortraitFits(_setupCanvas);
         bool warn = portraitTooSmall || CreatureTooSmall || !HasCanvas || TooLate || NeedsPalette || shortOf.Count > 0;
-        string footer = portraitTooSmall ? I18n.Get("setup.portrait-canvas-short")
+        string? warning = portraitTooSmall ? I18n.Get("setup.portrait-canvas-short")
             : CreatureTooSmall ? I18n.Get("setup.creature-canvas-short")
             : !HasCanvas ? I18n.Get(_setupLinen ? "setup.need-linen" : "setup.need-canvas." + CanvasKeys[(int)_setupCanvas])
             : TooLate ? I18n.Get("setup.too-late-short")
             : NeedsPalette ? I18n.Get("setup.need-palette-short")
             : shortOf.Count > 0 ? I18n.Get("setup.low-paint", new { pigments = string.Join(", ", shortOf.Take(3).Select(I18n.Pigment)) })
-            : I18n.Get("setup.mode-takes", new { mode = I18n.Get("setup.mode." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()), hours });
-        var footerAt = new Vector2(_previewArea.X - 20, _beginButton.Bottom + 10);
-        // With nothing to warn about, the footer is the mode, and clicking it
-        // changes it (1.1.1: players didn't know Relaxed, with no time limit,
-        // was there, and it was only in the config).
-        _modeButton = warn || _setupFraming ? Rectangle.Empty
-            : new Rectangle((int)footerAt.X - 4, (int)footerAt.Y - 2, (int)Ui.TextWidth(footer) + 8, 32);
-        bool modeHover = _modeButton.Contains(mouse);
-        if (_modeButton != Rectangle.Empty)
+            : null;
+        // The mode, beside Begin: click to change it.
+        bool modeHover = !_setupFraming && _modeButton.Contains(mouse);
+        if (!_setupFraming)
         {
+            Ui.Button(b, _modeButton, I18n.Get("setup.mode-button." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()), true, false, modeHover);
             if (modeHover)
-                Ui.Fill(b, _modeButton, Color.White * 0.35f);
-            Ui.Fill(b, new Rectangle((int)footerAt.X, _modeButton.Bottom - 4, (int)Ui.TextWidth(footer), 2), Game1.textColor * (modeHover ? 0.8f : 0.35f));
+                _hoverText = Game1.parseText(I18n.Get("setup.mode-hover." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()
+                    + (ModEntry.Config.Difficulty == Difficulty.Simplified && !ModEntry.Config.SimplifiedPlainPictures ? "-full" : "")), Game1.smallFont, 520);
         }
-        Ui.Text(b, footer, footerAt, warn ? new Color(150, 70, 50) : Game1.textColor * (modeHover ? 1f : 0.8f));
-        if (modeHover)
-            _hoverText = Game1.parseText(I18n.Get("setup.mode-hover." + ModEntry.Config.Difficulty.ToString().ToLowerInvariant()
-                + (ModEntry.Config.Difficulty == Difficulty.Simplified && !ModEntry.Config.SimplifiedPlainPictures ? "-full" : "")), Game1.smallFont, 520);
+        // Under them, only what's missing (a little smaller if it wouldn't fit).
+        if (warn && warning != null)
+        {
+            var warnAt = new Vector2(Math.Max(_frameButton.Right + 16, _beginButton.X - 10), _beginButton.Bottom + 10);
+            float room = xPositionOnScreen + width - Pad - 16 - warnAt.X;
+            Ui.Text(b, warning, warnAt, new Color(150, 70, 50), Math.Min(1f, room / Ui.TextWidth(warning)));
+        }
 
         if (!HasCanvas && _beginButton.Contains(mouse))
             _hoverText = _setupCanvas == CanvasKind.Small ? I18n.Get("setup.craft-small") : I18n.Get("setup.craft-big");

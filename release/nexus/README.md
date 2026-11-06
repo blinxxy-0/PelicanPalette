@@ -9,7 +9,7 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
   - The wiki link points at https://github.com/blinxxy-0/PelicanPalette/wiki. Run `tools/build_wiki.py` and push `docs/wiki` to the wiki repo (`PelicanPalette.wiki.git`) when it changes.
 - The release zip is `ArtStudio/bin/Release/net6.0/PelicanPalette 1.3.0.zip`. Build it with `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false`.
 - Images, all in `docs/media/`:
-  - `page/`: `update_1_3.png` (what's new in 1.3, made by `tools/art/update_card.py` after `museart_updatecard`; 1.2's was `update_1_2.png`), `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description.
+  - `page/`: `update_1_3.png` (what's new in 1.3, made by `tools/art/update_card.py` after `museart_updatecard`; 1.2's was `update_1_2.png`), `title_card.png` (the top of the page), `banner.png` (the same without the title) and the wooden headings (`header_*.png`), for the description. A new heading: `museart_signtext <words>` in a debug game, copy `media/sign_*.png` into `docs/media/signtext/`, then `tools/art/page_art.py docs/media`.
   - `screens/`: in-game screenshots for the description and the Images tab.
 
 ## Page fields
@@ -54,6 +54,10 @@ Everything for the Pelican Palette page on Nexus Mods (Stardew Valley).
 18. `restore_mill.png`: *Restoring an old painting* (1.3)
 19. `collection_view.png`: *The museum's collection* (1.3)
 20. `setup_frames.png`: *Frames in the room, and what they give the easel* (1.3)
+21. `study_board.png`: *Margot's study board on the wall, beside a living masterwork* (1.3)
+22. `zuzu_test.png`: *Margot's test: restoring Zuzu at Dusk* (1.3)
+23. `wing_inside.png`: *The museum's new Painting Wing* (1.3)
+24. `margot_cottage.png`: *Margot's cottage by the river, with its window box and path* (1.3)
 
 ## Updates
 

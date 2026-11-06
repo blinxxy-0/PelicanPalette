@@ -52,7 +52,14 @@ internal static class OldPaintings
         new("dwarvish_forge", "dwarvish", 36), new("dwarvish_king", "dwarvish", 36),
     };
 
-    private static readonly Dictionary<string, OldPainting> ById = All.ToDictionary(p => p.Id);
+    // Margot's test piece (1.3, from playtesting): the Zuzu City Museum of
+    // Art's own, lent to her for testing conservators. Not one of the 21: it
+    // can't be found, isn't in the collection, and goes back with her.
+    public const string ZuzuSet = "zuzu";
+    public static readonly OldPainting Zuzu = new("zuzu_dusk", ZuzuSet, 28);
+    public static bool IsZuzu(OldPainting? painting) => painting?.Set == ZuzuSet;
+
+    private static readonly Dictionary<string, OldPainting> ById = All.Append(Zuzu).ToDictionary(p => p.Id);
 
     // What a restored painting of each set is worth before quality.
     public static int SetValue(string set) => set switch
@@ -89,6 +96,12 @@ internal static class OldPaintings
     public static string Title(OldPainting painting) => I18n.Get("old." + painting.Id);
 
     public static string SetName(string set) => I18n.Get("old.set." + set);
+
+    // Its museum card: what's in the picture (1.3, from playtesting: the
+    // wing and the collection describe missing ones too, with where to look).
+    public static string About(OldPainting painting) => I18n.Get("old." + painting.Id + ".about");
+
+    public static string WhereToFind(string set) => I18n.Get("old.where." + set);
 
     // ---- The pictures ----
 
@@ -182,6 +195,19 @@ internal static class OldPaintings
     }
 
     // What's left of it: the original with the damaged cells bare.
+    // Only what's missing (the rest bare): what a restoration's light is set
+    // from, since that's all there is to paint.
+    public static byte[,] Missing(OldPainting painting)
+    {
+        var cells = PixelCanvas.NewBlank(painting.Size);
+        var original = Original(painting);
+        var damaged = Damage(painting);
+        for (int x = 0; x < painting.Size; x++)
+        for (int y = 0; y < painting.Size; y++)
+            if (damaged[x, y]) cells[x, y] = original[x, y];
+        return cells;
+    }
+
     public static byte[,] Damaged(OldPainting painting)
     {
         var cells = (byte[,])Original(painting).Clone();
@@ -198,7 +224,7 @@ internal static class OldPaintings
 
     public static void AddObjectData(IDictionary<string, ObjectData> objects)
     {
-        foreach (string set in Sets)
+        foreach (string set in Sets.Append(ZuzuSet))
             objects[ItemIdFor(set)] = new ObjectData
             {
                 Name = ItemIdFor(set),
@@ -241,20 +267,34 @@ internal static class OldPaintings
         }.WriteTo(item);
     }
 
-    // A damaged painting reaching a bag without being one in particular yet
-    // (from a dig, a chest, the cart) becomes one of its set: one not found
-    // before if there's any left.
-    public static void Assign(Farmer who, Item item)
+    // A damaged painting that isn't one in particular yet (from a dig, a
+    // chest, the cart) becomes one of its set: one the museum hasn't got and
+    // that isn't already in your bag (damaged or restored), if any's left. So
+    // one you've lost, trashed or sold comes back as readily as one you've
+    // never found. That's chosen the first time it's drawn, so it shows its
+    // picture in a fishing chest or on the cart, not a bare canvas; it counts
+    // as found once it reaches a bag.
+    private const string UnclaimedKey = ModEntry.Id + "/OldUnclaimed";
+
+    public static void Pick(Item item, Farmer? who = null)
     {
         if (!IsDamaged(item) || Of(item) != null) return;
         string set = item.ItemId.Substring(ItemPrefix.Length);
         var inSet = All.Where(p => p.Set == set).ToList();
         if (inSet.Count == 0) return;
-        var found = Found(who);
-        var fresh = inSet.Where(p => !found.Contains(p.Id)).ToList();
-        var pick = (fresh.Count > 0 ? fresh : inSet)[Game1.random.Next(fresh.Count > 0 ? fresh.Count : inSet.Count)];
+        var farmer = who ?? Game1.player;
+        var wanted = inSet.Where(p => !Social.MuseumCollection.IsDonated(p.Id) && !InBagAnyForm(farmer, p.Id)).ToList();
+        var pick = (wanted.Count > 0 ? wanted : inSet)[Game1.random.Next(wanted.Count > 0 ? wanted.Count : inSet.Count)];
         Write(item, pick);
-        MarkFound(who, pick.Id);
+        item.modData[UnclaimedKey] = "1";
+    }
+
+    public static void Assign(Farmer who, Item item)
+    {
+        if (!IsDamaged(item)) return;
+        Pick(item, who);
+        if (!item.modData.Remove(UnclaimedKey) || Of(item) is not { } painting) return;
+        MarkFound(who, painting.Id);
     }
 
     public static HashSet<string> Found(Farmer who) =>
@@ -262,7 +302,11 @@ internal static class OldPaintings
 
     public static bool FoundAny(Farmer who) => Found(who).Count > 0;
 
-    private static void MarkFound(Farmer who, string id)
+    // This one's in their bag already: damaged, or restored.
+    public static bool InBagAnyForm(Farmer who, string id) => who.Items.Any(i => i != null
+        && (Of(i)?.Id == id || PaintingItems.IsPainting(i) && PaintingData.Read(i)?.Subject == SubjectFor(id)));
+
+    internal static void MarkFound(Farmer who, string id)
     {
         var found = Found(who);
         if (found.Add(id))
@@ -275,9 +319,11 @@ internal static class OldPaintings
 
     // The damaged paintings in a bag, one of each.
     public static List<string> InBag(Farmer who) =>
-        who.Items.Where(IsDamaged).Select(Of).Where(p => p != null).Select(p => SubjectFor(p!.Id)).Distinct().ToList();
+        who.Items.Where(IsDamaged).Select(Of).Where(p => p != null && !IsZuzu(p)).Select(p => SubjectFor(p!.Id)).Distinct().ToList();
 
-    public static Reference DamagedReference(OldPainting painting) => new(Damaged(painting));
+    // What a restorer works from: the painting as it was (the canvas starts
+    // as what's left of it).
+    public static Reference RestoredReference(OldPainting painting) => new(Original(painting));
 
     public static Texture2D? DamagedTexture(OldPainting painting)
     {

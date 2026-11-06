@@ -55,6 +55,33 @@ internal static class DevTools
             AtViewport(1280, 720, () => Render(new GameMenu(GameMenu.socialTab), Path.Combine(dir, "social_1280.png")));
             monitor.Log("Social page rendered.", LogLevel.Info);
         });
+        AddCommand(helper, "museart_snapcollection", "In a game: renders the museum's painting collection (the mouse over a missing painting and a donated one) and the wing's cards, at both UI sizes, to dialogue_snapshots/collection_*.png.", (_, _) =>
+        {
+            if (!Context.IsWorldReady) return;
+            string dir = Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+            Directory.CreateDirectory(dir);
+            Game1.player.mailReceived.Add(ModEntry.Id + "_Donated_wreck_ship");
+            var mill = OldPaintings.Get("valley_mill")!;
+            var ship = OldPaintings.Get("wreck_ship")!;
+            foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
+            {
+                AtViewport(w, h, () => Render(Social.MuseumCollection.DevCollection(0, 2), Path.Combine(dir, $"collection_missing_{w}.png")));
+                AtViewport(w, h, () => Render(Social.MuseumCollection.DevCollection(1, 0), Path.Combine(dir, $"collection_donated_{w}.png")));
+                foreach (var (name, text) in new[]
+                {
+                    ("missing", I18n.Get("wing.card.missing", new { title = OldPaintings.Title(mill), set = OldPaintings.SetName(mill.Set), about = OldPaintings.About(mill), where = OldPaintings.WhereToFind(mill.Set) })),
+                    ("hung", I18n.Get("wing.card.hung", new { title = OldPaintings.Title(ship), set = OldPaintings.SetName(ship.Set), about = OldPaintings.About(ship) })),
+                })
+                    AtViewport(w, h, () =>
+                    {
+                        var box = new DialogueBox(text) { transitioning = false, transitionInitialized = true };
+                        box.finishTyping();
+                        Render(box, Path.Combine(dir, $"card_{name}_{w}.png"));
+                    });
+            }
+            Game1.player.mailReceived.Remove(ModEntry.Id + "_Donated_wreck_ship");
+            monitor.Log("Collection rendered.", LogLevel.Info);
+        });
         AddCommand(helper, "museart_pos", "Moves the player to a tile where they are, even during a festival. Usage: museart_pos <x> <y>", (_, args) =>
         {
             if (Context.IsWorldReady && args.Length == 2 && int.TryParse(args[0], out int x) && int.TryParse(args[1], out int y))
@@ -405,6 +432,7 @@ internal static class DevTools
             m.DevSetCanvas(CanvasKind.Medium);
             return m;
         });
+        yield return ("setup_warning", () => { var m = new EaselMenu(Game1.player); m.DevSetup(parsnip); m.DevSetCanvas(CanvasKind.Large); return m; });
         yield return ("setup_free", () => { var m = new EaselMenu(Game1.player); m.DevSetupFree(); return m; });
         yield return ("paint_normal", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevMixedPalette(); return m; });
         yield return ("paint_hard", () => Hard(() => Paint(CanvasKind.Small, parsnip)));

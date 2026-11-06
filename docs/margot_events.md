@@ -12,6 +12,23 @@ Portrait codes in the lines: `$h` happy, `$s` sad, `$u` explaining (her own), `$
 
 ---
 
+## Before she comes: Gunther sends for her (the museum, 8am to 5pm)
+
+**Added 2026-11-04, from playtesting:** her arrival needed a moment you could see, not a letter that came on its own after a find.
+
+**Trigger:** you walk into the museum with a damaged old painting in your bag, before anyone has had Gunther's letter. Gunther is at his counter.
+
+- *You set the damaged painting on Gunther's counter.*
+- Gunther: "Oh my. Where did you find this?"
+- *He turns it to the window, very gently, and looks at it for a long time.*
+- Gunther: "It's old. Very old. Flaked, torn, water-stained... and still beautiful." / "I'm afraid it's beyond me. I know stones and bones, not paint."
+- Gunther `$h`: "But the Museum of Art in Zuzu City has a conservator. I must write to them at once."
+- Gunther: "Keep it somewhere dry. I'll let you know what they say."
+
+**After:** his letter comes the next morning (Margot Pell is on her way), and she arrives a week after it. You keep the painting.
+
+---
+
 ## 2 hearts: what's missing (the museum, a weekday afternoon)
 
 **Trigger:** you enter the museum between 1pm and 4pm on a weekday, with 2+ hearts. Margot is at the reading desks.
@@ -38,12 +55,12 @@ Portrait codes in the lines: `$h` happy, `$s` sad, `$u` explaining (her own), `$
 - Robin, at the counter: "...so a big north window, a workroom, a little kitchen. That's a cottage, not a shed." Margot: `$u` "North light doesn't change all day. It's the only light you can trust with paint."
 - She sees you. `$l` "Oh! You weren't supposed to see this yet. I mean — it's not a secret. It's just... a lot."
 - `$7` "The museum sent me for a season. It's been more than that. Gus has started charging me for jam." beat. "I don't want to go back to a city where nothing's old enough to need me."
-- Robin unrolls the drawing: a small cottage with a big window. Robin: "Three days, if the weather holds. Where are we putting it?"
-- **Choice** (remembered; she mentions it in the cottage):
-  - "Near the museum." → `$h` "Close to work. Sensible. Gunther will never let me leave." (*museum*)
-  - "Near the river." → `$7` "Where the old painters sat. ...I like that." (*river*)
-  - "Somewhere you can see the whole town." → `$u` "Then I'll know what needs fixing first." (*town*)
-  (The choice changes her line, not where it's built: the plot is fixed; see open question 1.)
+- Robin unrolls the drawing: a small cottage with a big window. Robin: "Three days, if the weather holds. There's a plot by the river, south of the main road. The big window looks out over the water." Then: "There's a window box under it, too. What should I plant?"
+- **Choice** (2026-11-05, from playtesting: it used to ask *where* the cottage should go, and it always went by the river, so the answer seemed ignored). What you choose is planted in the window box on the town map, and she mentions it the first time you talk to her at home:
+  - "Pink roses." → `$h` "Roses. Old-fashioned. I'll pretend I don't love them." (*roses*, the cottage art's own)
+  - "Lavender." → `$7` "For the moths. And the smell. ...Mostly the smell." (*lavender*)
+  - "Marigolds." → `$u` "Orange. Loud. I'll see them from my table every morning." (*marigolds*)
+  (Flags `blinxxy.MuseArt_MargotBoxRoses`/`Lavender`/`Marigold`; tools/art/margot_window_box.py, data/margot.json.)
 - Robin: "Three days, then." Margot, very quietly: `$l` "I'm staying. I said it out loud. Now I have to."
 
 **After:** three days later a letter from Robin says it's done; from that morning Margot lives in her cottage. The first time you visit, she's unpacking crates and the restoration table is already set up under the window. Her Saloon room becomes Gus's guest room (new wallpaper and furniture).
@@ -111,7 +128,7 @@ Portrait codes in the lines: `$h` happy, `$s` sad, `$u` explaining (her own), `$
 - Gunther has hung a single restored painting in the corner of the library. Margot stands in front of it, hands behind her back. `$u` "Read the card."
 - The card: *"The [painting's title]. Unknown artist, c. 1890. Restored by Margot Pell and [you], [year]."* (The first old painting you restored, or the Old Mill if none.)
 - `$l` "I've signed a thousand condition reports. I've never had my name on a card." beat. "Ours. Our names."
-- Gunther: "It's the most popular painting in the museum." Margot: `$a` "It's the *only* painting in the museum, Gunther." Gunther: "And the most popular."
+- Gunther: "It's the most popular painting in the museum." Margot: `$a` "You say that about every painting, Gunther." Gunther: "And I mean it every time." (2026-11-06: it was "It's the *only* painting in the museum", untrue once the Painting Wing is open.)
 - `$h` "You don't make it new. You make it able to keep being old." She takes your hand. "Let's keep being old."
 
 ---

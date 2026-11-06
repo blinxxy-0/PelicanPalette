@@ -1,4 +1,4 @@
-#if DEBUG
+﻿#if DEBUG
 using System;
 using System.Linq;
 using ArtStudio.Core;
@@ -128,8 +128,8 @@ internal static class DevGame
                 Social.Julian.StartVisit(day);          // (as the mod does on a visit morning)
             monitor.Log($"Now {Game1.shortDayNameFromDayOfSeason(day)} {day}; {sable.Name}'s schedule '{sable.ScheduleKey}'.", LogLevel.Info);
         });
-        DevTools.AddCommand(helper, "museart_festspot", "Finds the nearest free, walkable tile to a festival spot (with a festival id, counting other mods' extra villagers too). Usage: museart_festspot Town-Fair 19 64 [fall16]", (_, args) => FestSpot(monitor, args));
-        DevTools.AddCommand(helper, "museart_festival", "Jumps a throwaway farm to a festival and walks in, then optionally starts its main event (main), or the Flower Dance with Sable (dance). Usage: museart_festival spring24 dance", (_, args) => Festival(monitor, args));
+        DevTools.AddCommand(helper, "museart_festspot", "Finds the nearest free, walkable tile to a festival spot (with a festival id, counting other mods' extra villagers too). Usage: museart_festspot Town-Fair 19 64 [fall16 [the villager being placed, default Sable]]", (_, args) => FestSpot(monitor, args));
+        DevTools.AddCommand(helper, "museart_festival", "Jumps a throwaway farm to a festival and walks in, then optionally starts its main event (main), or the Flower Dance (dance), with Sable or another villager. Usage: museart_festival spring24 dance [MargotPell]", (_, args) => Festival(monitor, args));
         DevTools.AddCommand(helper, "museart_advance", "Clicks through the open dialogue box (to run events unattended), picking answer N at questions. Usage: museart_advance [times] [answer]", (_, args) =>
         {
             int times = args.Length > 0 && int.TryParse(args[0], out int n) ? n : 1;
@@ -157,6 +157,39 @@ internal static class DevGame
             bool found = Game1.PlayEvent(args[0], checkPreconditions: false, checkSeen: false);
             monitor.Log(found ? $"Playing {args[0]}." : $"No event {args[0]}.", found ? LogLevel.Info : LogLevel.Error);
         });
+        DevTools.AddCommand(helper, "museart_whyschedule", "Why a villager has no schedule today: their schedule data, the key the game would pick, and each leg's route. Usage: museart_whyschedule MargotPell", (_, args) =>
+        {
+            if (args.ElementAtOrDefault(1) == "arrive")
+            {
+                // A clean arrival, as in a real game: forget her, then bring her in.
+                Social.Margot.DevReset();
+                Social.MargotEvents.DevReset();
+                Social.Margot.Arrive();
+            }
+            if (Game1.getCharacterFromName(args.FirstOrDefault() ?? "MargotPell") is not { } npc) { monitor.Log("not found", LogLevel.Info); return; }
+            var raw = npc.getMasterScheduleRawData();
+            monitor.Log($"{npc.Name}: in {npc.currentLocation?.Name} {npc.TilePoint}, default {npc.DefaultMap}, followSchedule {npc.followSchedule}, schedule {(npc.Schedule == null ? "none" : npc.Schedule.Count + " legs")} '{npc.dayScheduleName.Value}', data {(raw == null ? "none" : string.Join(",", raw.Keys))}", LogLevel.Info);
+            foreach (string to in new[] { "ArchaeologyHouse", "Saloon", "Beach", npc.DefaultMap })
+                monitor.Log($"route {npc.currentLocation?.Name} -> {to}: {string.Join(">", StardewValley.Pathfinding.WarpPathfindingCache.GetLocationRoute(npc.currentLocation?.Name, to, npc.Gender) ?? new[] { "NONE" })}", LogLevel.Info);
+            if (raw != null && raw.TryGetValue("spring", out string def))
+            {
+                try
+                {
+                    var parsed = npc.parseMasterSchedule("spring", def);
+                    monitor.Log($"parse spring: {(parsed == null ? "null" : parsed.Count + " legs")}", LogLevel.Info);
+                    foreach (var (time, leg) in parsed ?? new())
+                        monitor.Log($"  {time} -> {leg.targetLocationName} {leg.targetTile}: {string.Join(" ", leg.route.Take(14).Select(p => $"{p.X},{p.Y}"))} ... ({leg.route.Count})", LogLevel.Info);
+                }
+                catch (Exception ex) { monitor.Log($"parse default threw: {ex.Message}", LogLevel.Info); }
+            }
+            if (args.ElementAtOrDefault(1) == "load")
+                monitor.Log($"TryLoadSchedule: {npc.TryLoadSchedule()} '{npc.dayScheduleName.Value}'", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_letter", "Opens a letter, to look at. Usage: museart_letter blinxxy.MuseArt_MargotLetter", (_, args) =>
+        {
+            if (!Context.IsWorldReady || args.Length == 0 || !DataLoader.Mail(Game1.content).TryGetValue(args[0], out string text)) return;
+            Game1.activeClickableMenu = new StardewValley.Menus.LetterViewerMenu(text.Split("[#]")[0], args[0]);
+        });
         DevTools.AddCommand(helper, "museart_eventpaths", "Walks every step of Sable's events against the real maps and reports anyone walking through walls, furniture, props or each other.", (_, _) => EventPaths(monitor));
         DevTools.AddCommand(helper, "museart_route", "Prints event 'move' commands for the shortest walkable route. Usage: museart_route JoshHouse 9 23 6 19 [x y ...]", (_, args) => Route(monitor, args));
         DevTools.AddCommand(helper, "museart_tiles", "Says whether each tile can be stood on. Usage: museart_tiles JoshHouse 2 19 5 20", (_, args) => Tiles(monitor, args));
@@ -175,11 +208,71 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
         DevTools.AddCommand(helper, "museart_frametest", "Frames (1.3): every style, what they do hung in a room with an easel, unframing, the Framer's Bench, and where they're sold. Run in the farmhouse.", (_, _) => FrameTest(monitor));
-        DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, _) => VarnishTest(monitor));
+        DevTools.AddCommand(helper, "museart_varnishtest", "The Varnishing Cabinet: loading a painting, the finishes, taking it out early, and a cured one. Run in the farmhouse after museart_devscene.", (_, args) => { _varnishShow = args.FirstOrDefault() == "show"; VarnishTest(monitor); });
         DevTools.AddCommand(helper, "museart_recordtest", "The painting record's tabs (1.2): what goes where, silhouettes, and tab rewards.", (_, _) => RecordTest(monitor));
         DevTools.AddCommand(helper, "museart_portfoliotest", "The portfolio book and the plan chest (1.2): slots, swaps, finished pages, and the locks.", (_, args) => PortfolioTest(monitor, args));
         DevTools.AddCommand(helper, "museart_wingtest", "The museum's painting wing (1.3): its 21 places, the roped doorway, and paintings and cards as they're donated. 'stage <n>' leaves it open with the first n donated (and the Junimo if 21), for screenshots.", (_, args) => WingTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_livingtest", "Living masterworks (the Master's Easel, 1.3): which paintings come alive, and keeping it framed. Run in the farmhouse; 'show [x y]' hangs a living restored painting to watch.", (_, args) => LivingTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_exportold", "Saves an old painting's damaged picture (a pixel a cell) to media/old_<id>_damaged.png, for art. Usage: museart_exportold valley_farm", (_, args) =>
+        {
+            var old = OldPaintings.Get(args[0]);
+            if (old == null || OldPaintings.DamagedTexture(old) is not { } texture) return;
+            string path = System.IO.Path.Combine(helper.DirectoryPath, "media", $"old_{old.Id}_damaged.png");
+            using var stream = System.IO.File.Create(path);
+            texture.SaveAsPng(stream, texture.Width, texture.Height);
+            monitor.Log($"Saved {path}", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_pathfloor", "Relays the path to Margot's cottage in another floor, to compare. Usage: museart_pathfloor 411 (an object id: 841 walkway, 411 cobblestone, 415 stepping stone, 407 gravel, 293 brick, 329 stone floor)", (_, args) =>
+        {
+            var town = Game1.getLocationFromName("Town");
+            string? floor = Game1.floorPathData.FirstOrDefault(f => ItemRegistry.QualifyItemId(f.Value.ItemId) == ItemRegistry.QualifyItemId(args[0])).Key;
+            if (town == null || floor == null) { monitor.Log($"No floor for {args[0]}.", LogLevel.Warn); return; }
+            foreach (var tile in Social.Margot.PathTiles)
+            {
+                town.terrainFeatures.Remove(tile);
+                town.terrainFeatures.Add(tile, new StardewValley.TerrainFeatures.Flooring(floor));
+            }
+            monitor.Log($"Path laid in floor {floor} ({ItemRegistry.GetDataOrErrorItem(args[0]).DisplayName}).", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_exportpath", "Draws the floor laid on Margot's path (Town x 21-23, y 92-96), as the game draws it this season, onto a transparent 1x image: media/path_<season>.png.", (_, _) =>
+        {
+            var town = Game1.getLocationFromName("Town");
+            if (town == null) return;
+            const int x0 = 21, y0 = 92, w = 3, h = 5;
+            var device = Game1.graphics.GraphicsDevice;
+            var target = new Microsoft.Xna.Framework.Graphics.RenderTarget2D(device, w * 64, h * 64);
+            var old = device.GetRenderTargets();
+            var viewport = Game1.viewport;
+            device.SetRenderTarget(target);
+            device.Clear(Color.Transparent);
+            Game1.viewport = new xTile.Dimensions.Rectangle(x0 * 64, y0 * 64, w * 64, h * 64);
+            var batch = new Microsoft.Xna.Framework.Graphics.SpriteBatch(device);
+            batch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode.FrontToBack, Microsoft.Xna.Framework.Graphics.BlendState.AlphaBlend, Microsoft.Xna.Framework.Graphics.SamplerState.PointClamp);
+            foreach (var tile in Social.Margot.PathTiles)
+                if (town.terrainFeatures.TryGetValue(tile, out var feature))
+                    feature.draw(batch);
+            batch.End();
+            Game1.viewport = viewport;
+            device.SetRenderTargets(old);
+            var data = new Color[w * 64 * h * 64];
+            target.GetData(data);
+            // Back to 1x: a game pixel is 4 screen pixels.
+            var small = new Color[w * 16 * h * 16];
+            for (int y = 0; y < h * 16; y++)
+            for (int x = 0; x < w * 16; x++)
+                small[y * w * 16 + x] = data[(y * 4 + 1) * w * 64 + x * 4 + 1];
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(device, w * 16, h * 16);
+            texture.SetData(small);
+            string path = System.IO.Path.Combine(helper.DirectoryPath, "media", $"path_{Game1.currentSeason}.png");
+            using (var stream = System.IO.File.Create(path))
+                texture.SaveAsPng(stream, w * 16, h * 16);
+            target.Dispose();
+            monitor.Log($"Saved {path}", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_lighttest", "The marble plinth, the gallery bench (sat on), and a finished painting in the Framer's Bench's bubble (1.3). Run in the farmhouse; it leaves them there to look at.", (_, _) => LightTest(monitor));
+        DevTools.AddCommand(helper, "museart_boardtest", "Margot's study board (1.3): her letter at Painting 10, the board's stages, her remarks and the test on first talk. 'show <stage 0-5>' sets your mastery to that stage (a board you've hung stays put; with 'x y' it's hung there); 'restore' puts your real mastery back.", (_, args) => BoardTest(monitor, args));
         DevTools.AddCommand(helper, "museart_collectiontest", "Painting Mastery's bar and easel, and the museum's collection of restored paintings (1.3). 'view' opens the collection; 'frames' the framing screen with every style.", (_, args) => CollectionTest(monitor, args));
+        DevTools.AddCommand(helper, "museart_giveold", "Gives you, restored, every old painting the museum hasn't got and you don't have anywhere (bag, chest or wall, damaged or restored), and counts them found. 'all' gives all 21 regardless. Quality: silver, gold (the default) or iridium. Usage: museart_giveold [all] [gold]", (_, args) => GiveOld(monitor, args));
         DevTools.AddCommand(helper, "museart_oldtest", "Old paintings (1.3): the 21 pictures and their damage, finding them, and restoring one at the easel. With 'show', opens a restoration to look at.", (_, args) => OldTest(monitor, args));
         DevTools.AddCommand(helper, "museart_ordertest", "Special orders (1.3): the painting tags, the orders' data, and Lewis's portraits delivered.", (_, _) => OrderTest(monitor));
         DevTools.AddCommand(helper, "museart_festtest", "Festivals, round two (1.3): run at Spirit's Eve or the Jellies (museart_festival fall27 / summer28) to paint there; with 'gift', Sable's Winter Star painting.", (_, args) => FestTest(helper, monitor, args));
@@ -717,18 +810,35 @@ internal static class DevGame
     {
         if (!Context.IsWorldReady) return;
         var who = Game1.player;
-        // Her arrival: nothing before a find, the letter after one, then her a week on.
+        // Her arrival: a find alone sends for no one; showing it to Gunther
+        // (his event) sends his letter the next morning, and she comes a week on.
         Social.Margot.DevReset();
         string found = who.modData.TryGetValue(ModEntry.Id + "/OldFound", out string f) ? f : null;
-        who.modData.Remove(ModEntry.Id + "/OldFound");
-        Social.Margot.Update();
-        Check(monitor, "no letter before any old painting is found", !who.mailForTomorrow.Contains(Social.Margot.LetterFlag) && Social.Margot.Npc == null);
         who.modData[ModEntry.Id + "/OldFound"] = "valley_mill";
         Social.Margot.Update();
-        Check(monitor, "Gunther's letter comes the morning after a find", who.mailForTomorrow.Contains(Social.Margot.LetterFlag)
+        Check(monitor, "a find alone doesn't send for her", !Social.Margot.LetterSent && Social.Margot.Npc == null);
+        var events = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/ArchaeologyHouse");
+        string? shownKey = events.Keys.FirstOrDefault(k => k.StartsWith(ModEntry.Id + "_MargotSentFor/"));
+        string query = shownKey?.Split('/').FirstOrDefault(p => p.StartsWith("G " + ModEntry.Id))?.Substring(2) ?? "";
+        var mill = OldPaintings.CreateDamaged(OldPaintings.Get("valley_mill")!);
+        bool without = GameStateQuery.CheckConditions(query, who.currentLocation, who);
+        who.addItemToInventory(mill);
+        bool with = GameStateQuery.CheckConditions(query, who.currentLocation, who);
+        who.removeItemFromInventory(mill);
+        Check(monitor, "Gunther's event is at the museum, for anyone carrying a damaged painting", shownKey != null && with && !without, shownKey ?? "missing");
+        Social.Margot.SendFor();
+        Check(monitor, "...and sends his letter, for the next morning", who.mailForTomorrow.Contains(Social.Margot.LetterFlag)
             && DataLoader.Mail(Game1.content).ContainsKey(Social.Margot.LetterFlag));
         Social.Margot.Update();
-        Check(monitor, "...and she isn't here yet", Social.Margot.Npc == null && !Social.Margot.Arrived);
+        Check(monitor, "...she isn't due before it comes", !Game1.MasterPlayer.modData.ContainsKey(ModEntry.Id + "/MargotDue") && !Social.Margot.Arrived);
+        who.mailForTomorrow.Remove(Social.Margot.LetterFlag);
+        who.mailbox.Add(Social.Margot.LetterFlag);
+        Social.Margot.Update();
+        Check(monitor, "...the morning it comes, she's due a week later",
+            Game1.MasterPlayer.modData.TryGetValue(ModEntry.Id + "/MargotDue", out string dueRaw) && dueRaw == (Game1.Date.TotalDays + 7).ToString(), dueRaw);
+        string letter = DataLoader.Mail(Game1.content)[Social.Margot.LetterFlag];
+        var viewer = new StardewValley.Menus.LetterViewerMenu(letter.Split("[#]")[0], Social.Margot.LetterFlag);
+        Check(monitor, "...and his letter fits on one page", viewer.mailMessage.Count == 1, $"{viewer.mailMessage.Count} pages");
         Game1.MasterPlayer.modData[ModEntry.Id + "/MargotDue"] = Game1.Date.TotalDays.ToString();
         Social.Margot.Update();
         var margot = Social.Margot.Npc;
@@ -736,6 +846,25 @@ internal static class DevGame
         if (found == null) who.modData.Remove(ModEntry.Id + "/OldFound"); else who.modData[ModEntry.Id + "/OldFound"] = found;
         if (margot == null) return;
 
+        // The game picks her day itself (it never looks for "default"; its
+        // everyday fallback is "spring", in every season).
+        string today = Game1.shortDayNameFromDayOfSeason(Game1.dayOfMonth);
+        bool loaded = margot.TryLoadSchedule();
+        Check(monitor, "the game loads her day's schedule itself", loaded && margot.followSchedule && margot.Schedule?.Count > 0,
+            $"{today}: '{margot.dayScheduleName.Value}', {margot.Schedule?.Count ?? 0} legs");
+        foreach (string season in new[] { "spring", "summer", "fall", "winter" })
+        foreach (int weekday in new[] { 1, 2, 3, 4, 5, 6, 7 })
+        {
+            var (s0, d0) = (Game1.season, Game1.dayOfMonth);
+            Game1.season = Enum.Parse<Season>(season, ignoreCase: true);
+            Game1.dayOfMonth = weekday;
+            bool ok = margot.TryLoadSchedule();
+            (Game1.season, Game1.dayOfMonth) = (s0, d0);
+            if (!ok) { Check(monitor, $"...on every day of every season (not {season} {weekday})", false); goto schedulesChecked; }
+        }
+        Check(monitor, "...on every day of every season", true);
+        schedulesChecked:
+        margot.TryLoadSchedule();
         Check(monitor, "she lives in her room down the Saloon storeroom's steps", margot.DefaultMap == "blinxxy.MuseArt_MargotRoom", $"{margot.DefaultMap} {margot.DefaultPosition / 64}");
         Check(monitor, "her sheets: sprites 64x384, portraits 128x256", margot.Sprite.Texture.Width == 64 && margot.Sprite.Texture.Height == 384
             && margot.Portrait?.Width == 128 && margot.Portrait?.Height == 256);
@@ -885,10 +1014,23 @@ internal static class DevGame
         Check(monitor, "no test before Painting 10", !Social.MargotMastery.CanOffer(who));
         ArtProgress.SetLevel(who, PaintingRules.MaxLevel);
         ArtProgress.SetMasteryXp(who, ArtProgress.MasteryXpNeeded);
-        Check(monitor, "with the mastery bar full, she offers the test", Social.MargotMastery.CanOffer(who));
+        bool hadBoardLetter = who.mailReceived.Contains(Social.StudyBoard.LetterId);
+        who.mailReceived.Remove(Social.StudyBoard.LetterId);
+        bool beforeLetter = Social.MargotMastery.CanOffer(who);
+        who.mailReceived.Add(Social.StudyBoard.LetterId);
+        Check(monitor, "with the mastery bar full, she offers the test (once she's written with her study board)", !beforeLetter && Social.MargotMastery.CanOffer(who));
         int easels = who.Items.CountId("(BC)" + ArtItems.MastersEaselId);
+        // Her test piece: Zuzu City's own, never one of the valley's 21.
+        var foundBefore = OldPaintings.Found(who).Count;
+        var zuzu = Social.MargotMastery.TestPainting(who);
+        Check(monitor, "her test piece is always Zuzu City's painting, not one of the 21", OldPaintings.IsZuzu(zuzu) && !OldPaintings.All.Contains(zuzu)
+            && OldPaintings.Get(zuzu.Id) == zuzu && OldPaintings.Original(zuzu)[0, 0] != PixelCanvas.Blank, zuzu.Id);
         // Leaving the damage as it was: no mastery, and she keeps it.
         var failed = Social.MargotMastery.StartTest(who);
+        var lent = who.Items.FirstOrDefault(i => OldPaintings.IsZuzu(OldPaintings.Of(i!)));
+        string lentText = lent?.getDescription().Replace('\n', ' ') ?? "";
+        Check(monitor, "...it says it's the city's, and can't be restored at your own easel or counted as found",
+            lent != null && lentText.Contains("Zuzu City") && !OldPaintings.InBag(who).Any() && OldPaintings.Found(who).Count == foundBefore, lentText);
         failed.DevFinish(false);
         Game1.delayedActions.ToList().ForEach(a => a.behavior?.Invoke());
         Game1.delayedActions.Clear();
@@ -905,6 +1047,8 @@ internal static class DevGame
         test.DevFinish(false);
         Game1.delayedActions.ToList().ForEach(a => a.behavior?.Invoke());
         Game1.delayedActions.Clear();
+        string restoredText = System.Text.RegularExpressions.Regex.Replace(test.DevPainting?.getDescription() ?? "", @"\s+", " ");
+        Check(monitor, "the restored test piece says it goes back to the city", restoredText.Contains("Zuzu City") && restoredText.Contains("goes back"), restoredText);
         Check(monitor, "a gold restoration makes you a conservator, with the Master's Easel",
             ArtProgress.HasMastery(who) && who.Items.CountId("(BC)" + ArtItems.MastersEaselId) == easels + 1);
         test.DevKeep();
@@ -916,6 +1060,7 @@ internal static class DevGame
         if (!hadMastery) who.mailReceived.Remove(OldPaintings.MasteryFlag);
         ArtProgress.SetLevel(who, level);
         ArtProgress.SetMasteryXp(who, masteryXp);
+        if (!hadBoardLetter) who.mailReceived.Remove(Social.StudyBoard.LetterId);
         Social.MargotMastery.DevReset(who);
         CloseDialogue();
 
@@ -937,7 +1082,24 @@ internal static class DevGame
         Check(monitor, "...and gives it back restored, silver, titled, worth the set's silver value",
             restoredWreck.Quality == PaintingRules.Silver && restoredWreck.DisplayName == OldPaintings.Title(wreck)
             && restoredWreck.salePrice() > 0 && PaintingData.Read(restoredWreck)?.IsOld == true, $"{restoredWreck.DisplayName} q{restoredWreck.Quality}");
-        Check(monitor, "...when collected, and the job is done", Social.MargotService.HandBack(margot, who, wreck) && Social.MargotService.Job(who) == null);
+        // She posts it back the morning it's ready, in her letter.
+        who.mailbox.Remove(Social.MargotService.ReturnMail);
+        Social.MargotService.PostIfReady(who);
+        bool earlyPost = who.mailbox.Contains(Social.MargotService.ReturnMail);
+        who.modData[ModEntry.Id + "/MargotJob"] = $"{wreck.Id}|{Game1.Date.TotalDays}";
+        Social.MargotService.PostIfReady(who);
+        Check(monitor, "...the morning it's ready, her letter's in the mailbox (not before)", !earlyPost && who.mailbox.Contains(Social.MargotService.ReturnMail));
+        string returnText = DataLoader.Mail(Game1.content)[Social.MargotService.ReturnMail].Split("[#]")[0];
+        var returnLetter = new StardewValley.Menus.LetterViewerMenu(returnText, Social.MargotService.ReturnMail);
+        var enclosed = Social.MargotService.Enclose(returnLetter, who);
+        Check(monitor, "...with the restored painting in it, and the job's done",
+            enclosed != null && returnLetter.itemsToGrab.Any(c => c.item == enclosed) && Social.MargotService.Job(who) == null && returnLetter.mailMessage.Count == 1);
+        Game1.activeClickableMenu = returnLetter;
+        returnLetter.exitThisMenuNoSound();
+        Check(monitor, "...and closing the letter puts it in your bag", who.Items.Any(i => i == enclosed));
+        var again = new StardewValley.Menus.LetterViewerMenu(returnText, Social.MargotService.ReturnMail, fromCollection: true);
+        Check(monitor, "...only once (rereading it later gives nothing)", Social.MargotService.Enclose(again, who) == null);
+        who.mailbox.Remove(Social.MargotService.ReturnMail);
         CloseDialogue();
         foreach (var item in who.Items.Where(i => i != null && PaintingData.Read(i)?.IsOld == true).ToList()) who.removeItemFromInventory(item);
         who.Money = money;
@@ -1088,7 +1250,7 @@ internal static class DevGame
                 foreach (string entry in extra.Split('/'))
                 {
                     string[] parts = entry.Trim().Split(' ');
-                    if (parts.Length >= 3 && parts[0] != "Sable" && int.TryParse(parts[1], out int ax) && int.TryParse(parts[2], out int ay))
+                    if (parts.Length >= 3 && parts[0] != (args.ElementAtOrDefault(4) ?? "Sable") && int.TryParse(parts[1], out int ax) && int.TryParse(parts[2], out int ay))
                         actors.Add(new Point(ax, ay));
                 }
             if (actors.Count == 0) { monitor.Log($"{args[0]} has no {layerId} layer.", LogLevel.Info); continue; }
@@ -1124,12 +1286,13 @@ internal static class DevGame
         Game1.warpFarmer(conditions[0], Game1.player.TilePoint.X, Game1.player.TilePoint.Y, 2);
         monitor.Log($"Walking into {id} at {conditions[0]} ({start}).", LogLevel.Info);
         string then = args.Length > 1 ? args[1] : "";
+        string who = args.ElementAtOrDefault(2) ?? "Sable";
         DelayedAction.functionAfterDelay(() =>
         {
             var ev = Game1.CurrentEvent;
-            var sable = ev?.actors.FirstOrDefault(a => a.Name == "Sable");
+            var sable = ev?.actors.FirstOrDefault(a => a.Name == who);
             monitor.Log(ev?.isFestival == true
-                ? $"Festival {id} is on; Sable {(sable != null ? $"is at {sable.TilePoint}, facing {sable.FacingDirection}" : "is missing")}."
+                ? $"Festival {id} is on; {who} {(sable != null ? $"is at {sable.TilePoint}, facing {sable.FacingDirection}" : "is missing")}."
                 : $"Festival {id} didn't start.", sable != null ? LogLevel.Info : LogLevel.Error);
             if (ev == null || sable == null || then == "") return;
 
@@ -1138,7 +1301,7 @@ internal static class DevGame
             // main event, as answering him does.
             if (then == "dance")
             {
-                Game1.player.friendshipData["Sable"] = new Friendship(1000);
+                Game1.player.friendshipData[who] = new Friendship(1000);
                 ev.answerDialogueQuestion(sable, "danceAsk");
                 CloseDialogue();
                 monitor.Log($"Dance partner: {Game1.player.dancePartner.TryGetVillager()?.Name ?? "none"}.", LogLevel.Info);
@@ -1146,8 +1309,8 @@ internal static class DevGame
             ev.answerDialogueQuestion(ev.getActorByName("Lewis"), "yes");
             DelayedAction.functionAfterDelay(() =>
             {
-                var actor = Game1.CurrentEvent?.actors.FirstOrDefault(a => a.Name == "Sable");
-                monitor.Log($"Main event of {id}: Sable {(actor != null ? $"is at {actor.TilePoint}, frame {actor.Sprite.currentFrame}" : "is missing")}.", actor != null ? LogLevel.Info : LogLevel.Error);
+                var actor = Game1.CurrentEvent?.actors.FirstOrDefault(a => a.Name == who);
+                monitor.Log($"Main event of {id}: {who} {(actor != null ? $"is at {actor.TilePoint}, frame {actor.Sprite.currentFrame}" : "is missing")}.", actor != null ? LogLevel.Info : LogLevel.Error);
             }, 6000);
         }, 3000);
     }
@@ -1733,6 +1896,477 @@ internal static class DevGame
     }
 
     // Painting Mastery and the museum collection (1.3, step 5, parts 4 and 5).
+    // Living masterworks (the Master's Easel, 1.3). Run in the farmhouse;
+    // 'show' hangs a living Town Square on the back wall to watch.
+    private static void LivingTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var here = who.currentLocation;
+        int level = ArtProgress.Level(who);
+        ArtProgress.SetLevel(who, PaintingRules.MaxLevel);
+        var tile = FreeTile(here, who.Tile + new Vector2(2, 0));
+        SObject Paint(string easelId, CanvasKind kind, bool restore)
+        {
+            here.objects.Remove(tile);
+            here.objects.Add(tile, ItemRegistry.Create<SObject>(easelId));
+            var menu = new EaselMenu(who, easelTile: tile);
+            if (restore)
+            {
+                var mill = OldPaintings.All.First();
+                who.addItemToInventory(OldPaintings.CreateDamaged(mill));
+                menu.DevBegin(mill.Size > 28 ? CanvasKind.Large : CanvasKind.Medium, OldPaintings.SubjectFor(mill.Id));
+                menu.DevRestorePerfectly();
+            }
+            else
+            {
+                menu.DevBegin(kind, "(O)24");
+                menu.DevPaintPerfect();
+            }
+            menu.DevFinish(false);
+            var painting = menu.DevPainting!;
+            Game1.delayedActions.Clear();
+            here.objects.Remove(tile);
+            return painting;
+        }
+        if (args.FirstOrDefault() == "light")
+        {
+            // Each old painting's restoration light, in this mode at this level (a plain easel).
+            foreach (var old in OldPaintings.All.Append(OldPaintings.Zuzu))
+            {
+                var m = new EaselMenu(who);
+                who.addItemToInventory(OldPaintings.CreateDamaged(old));
+                m.DevBegin(old.Size > 28 ? CanvasKind.Large : CanvasKind.Medium, OldPaintings.SubjectFor(old.Id));
+                monitor.Log($"Light: {old.Id} {m.DevLightTotal:0}s (whole painting's work {new Reference(OldPaintings.Original(old)).Work}, missing {new Reference(OldPaintings.Missing(old)).Work})", LogLevel.Info);
+            }
+            foreach (var p in who.Items.Where(i => i != null && OldPaintings.IsDamaged(i)).ToList()) who.removeItemFromInventory(p);
+            ArtProgress.SetLevel(who, level);
+            return;
+        }
+        var master = Paint(ArtItems.QualifiedMastersEaselId, CanvasKind.Medium, restore: true);
+        if (args.FirstOrDefault() == "show")
+        {
+            foreach (var f in here.furniture.Where(ArtItems.IsFramed).ToList()) here.furniture.Remove(f);
+            var hung = ArtHooks.Frame(master, ArtItems.GoldLeaf);
+            hung.TileLocation = new Vector2(args.Length > 2 ? int.Parse(args[1]) : 4, args.Length > 2 ? int.Parse(args[2]) : 1);
+            here.furniture.Add(hung);
+            if (args.Length > 4)
+            {
+                // And a still life beside it, which gets window light instead.
+                var still = ArtHooks.Frame(Paint(ArtItems.QualifiedMastersEaselId, CanvasKind.Medium, restore: false), ArtItems.GoldLeaf);
+                still.TileLocation = new Vector2(int.Parse(args[3]), int.Parse(args[4]));
+                here.furniture.Add(still);
+            }
+            monitor.Log($"Hung a living {master.DisplayName} (quality {master.Quality}, living {PaintingData.IsLiving(master)}) at {hung.TileLocation}.", LogLevel.Info);
+            ArtProgress.SetLevel(who, level);
+            return;
+        }
+        Check(monitor, "a gold restoration at the Master's Easel is a living masterwork", master.Quality >= PaintingRules.Gold && PaintingData.IsLiving(master),
+            $"quality {master.Quality}");
+        var masterLife = Paint(ArtItems.QualifiedMastersEaselId, CanvasKind.Medium, restore: false);
+        var plain = Paint("(BC)" + ArtItems.EaselId, CanvasKind.Medium, restore: false);
+        var small = Paint(ArtItems.QualifiedMastersEaselId, CanvasKind.Small, restore: false);
+        Check(monitor, "...as is a gold still life there, but not one at a plain easel, nor a small canvas",
+            (masterLife.Quality < PaintingRules.Gold || PaintingData.IsLiving(masterLife)) && !PaintingData.IsLiving(plain) && !PaintingData.IsLiving(small),
+            $"master q{masterLife.Quality} {PaintingData.IsLiving(masterLife)}, plain q{plain.Quality} {PaintingData.IsLiving(plain)}, small q{small.Quality} {PaintingData.IsLiving(small)}");
+        var framed = ArtHooks.Frame(master, ArtItems.Plain);
+        var unframed = ArtHooks.Unframe(framed);
+        Check(monitor, "a scene moves in its colours; a still life gets window light instead",
+            PaintingData.Read(master) is { } md && PaintingRenderer.IsScene(md) && PaintingData.Read(masterLife) is { } sd && !PaintingRenderer.IsScene(sd));
+        Check(monitor, "it stays living framed and unframed, and says so",
+            PaintingData.IsLiving(framed) && unframed is { } u && PaintingData.IsLiving(u.Painting)
+            && master.getDescription().Contains("stirs"), master.getDescription().Replace('\n', ' '));
+        foreach (var p in who.Items.Where(i => i != null && (OldPaintings.IsDamaged(i))).ToList()) who.removeItemFromInventory(p);
+        ArtProgress.SetLevel(who, level);
+    }
+
+    private static void GiveOld(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        bool all = args.Contains("all");
+        int quality = args.Contains("iridium") ? PaintingRules.Iridium : args.Contains("silver") ? PaintingRules.Silver : PaintingRules.Gold;
+        var given = new System.Collections.Generic.List<string>();
+        var items = new System.Collections.Generic.List<Item>();
+        // What's already somewhere: a bag, a chest, a wall (framed), damaged or restored.
+        var have = new System.Collections.Generic.HashSet<string>();
+        Utility.ForEachItem(item =>
+        {
+            if (OldPaintings.Of(item) is { } damaged) have.Add(damaged.Id);
+            else if (PaintingData.Read(item) is { } d && OldPaintings.OfSubject(d.Subject) is { } restored) have.Add(restored.Id);
+            return true;
+        });
+        foreach (var old in OldPaintings.All)
+        {
+            if (!all && (Social.MuseumCollection.IsDonated(old.Id) || have.Contains(old.Id))) continue;
+            var data = new PaintingData
+            {
+                Size = old.Size,
+                Cells = OldPaintings.Original(old),
+                Purity = new Purity[old.Size, old.Size],
+                Subject = OldPaintings.SubjectFor(old.Id),
+                Stars = quality >= PaintingRules.Iridium ? 5f : quality >= PaintingRules.Gold ? 4.5f : 3.5f,
+                Painter = who.Name,
+                Date = I18n.Get("painting.date", new { season = Utility.getSeasonNameFromNumber(Game1.seasonIndex), day = Game1.dayOfMonth, year = Game1.year }),
+            };
+            var painting = PaintingItems.Create(data, quality, OldPaintings.RestoredValue(old, quality));
+            OldPaintings.MarkFound(who, old.Id);
+            items.Add(painting);
+            given.Add(OldPaintings.Title(old));
+        }
+        // Those that don't fit in the bag come up in the game's 'take these' menu.
+        if (items.Count > 0)
+            who.addItemsByMenuIfNecessary(items);
+        monitor.Log(given.Count == 0 ? "Nothing to give: the museum has them all, or you have the rest somewhere (bag, chest or wall)."
+            : $"Gave {given.Count} restored ({string.Join(", ", given)}). Any that didn't fit in your bag are in the menu on screen.", LogLevel.Info);
+    }
+
+    private static void LightTest(IMonitor monitor)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        var here = who.currentLocation;
+        // The marble plinth (the Old Valley's third piece): a table, sold by Sable from Painting 6.
+        var plinth = ItemRegistry.Create<Furniture>("(F)" + ModEntry.Id + "_MarblePlinth");
+        var stock = DataLoader.Shops(Game1.content).Values.FirstOrDefault(sh => sh.Items?.Any(i => i.ItemId == "(O)" + ArtItems.FrameItemId) == true);
+        Check(monitor, "the marble plinth is a table you can set things on, and Sable sells it (from Painting 6)",
+            plinth.furniture_type.Value == Furniture.table && plinth.DisplayName != "Error Item"
+            && stock?.Items.Any(i => i.ItemId == plinth.QualifiedItemId && i.Condition.Contains(" 6")) == true, $"type {plinth.furniture_type.Value}, {plinth.DisplayName}");
+        here.furniture.Remove(here.furniture.FirstOrDefault(f => f.QualifiedItemId == plinth.QualifiedItemId));
+        plinth.TileLocation = new Vector2(7, 7);
+        plinth.heldObject.Value = ItemRegistry.Create<SObject>("(O)74");     // a prismatic shard on top
+        here.furniture.Add(plinth);
+        // The gallery bench, and you sitting on it (its art meets the floor, 1.3).
+        foreach (var old in here.furniture.Where(f => f.QualifiedItemId == "(F)" + ModEntry.Id + "_GalleryBench").ToList()) here.furniture.Remove(old);
+        var bench2 = ItemRegistry.Create<Furniture>("(F)" + ModEntry.Id + "_GalleryBench");
+        bench2.TileLocation = new Vector2(3, 6);
+        here.furniture.Add(bench2);
+        who.Position = new Vector2(3, 7) * 64f;
+        bool sat = bench2.checkForAction(who);
+        monitor.Log($"Bench: seats {bench2.GetSeatCapacity()}, sat {sat}, sitting {who.IsSitting()}.", LogLevel.Info);
+
+        // The Framer's Bench, done: its bubble shows the painting coming back.
+        var tile = new Vector2(8, 4);
+        here.objects.Remove(tile);
+        var bench = ItemRegistry.Create<SObject>(FramersBench.QualifiedBenchId);
+        here.objects.Add(tile, bench);
+        FramersBench.Start(bench, ArtHooks.Frame(DevTools.TestPainting("(O)24", PaintingRules.Gold), ArtItems.Plain));
+        FramersBench.DevAge(bench);
+        bench.MinutesUntilReady = 0;
+        bench.readyForHarvest.Value = true;
+        Check(monitor, "a done Framer's Bench holds the painting (its bubble draws it)", FramersBench.IsDone(bench) && PaintingItems.IsPainting(bench.heldObject.Value));
+    }
+
+    private static void BoardTest(IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        var who = Game1.player;
+        int[] stageXp = { 0, 3750, 7500, 11250, ArtProgress.MasteryXpNeeded, ArtProgress.MasteryXpNeeded };
+        // 'show' and 'offer' change your mastery: the first one keeps what you
+        // had, and 'restore' puts it back.
+        const string realKey = ModEntry.Id + "/DevBoardReal";
+        void RememberReal()
+        {
+            if (!who.modData.ContainsKey(realKey))
+                who.modData[realKey] = $"{ArtProgress.Level(who)}|{ArtProgress.MasteryXp(who)}|{(who.mailReceived.Contains(OldPaintings.MasteryFlag) ? 1 : 0)}";
+        }
+        if (args.FirstOrDefault() == "restore")
+        {
+            if (!who.modData.TryGetValue(realKey, out string real))
+            {
+                monitor.Log("Nothing to restore: 'museart_boardtest show' hasn't changed anything.", LogLevel.Info);
+                return;
+            }
+            var parts = real.Split('|');
+            if (ArtProgress.Level(who) != int.Parse(parts[0])) ArtProgress.SetLevel(who, int.Parse(parts[0]));
+            ArtProgress.SetMasteryXp(who, int.Parse(parts[1]));
+            if (parts[2] == "1") { if (!who.mailReceived.Contains(OldPaintings.MasteryFlag)) who.mailReceived.Add(OldPaintings.MasteryFlag); }
+            else who.mailReceived.Remove(OldPaintings.MasteryFlag);
+            who.modData.Remove(realKey);
+            monitor.Log($"Restored: Painting {ArtProgress.Level(who)}, {ArtProgress.MasteryXp(who)} Mastery XP. Study board at stage {Social.StudyBoard.Stage(who)}.", LogLevel.Info);
+            return;
+        }
+        if (args.FirstOrDefault() == "show")
+        {
+            // Only your progress changes; a board you've hung stays where it is.
+            // With a tile (dev screenshots), one is hung there.
+            int stage = int.Parse(args[1]);
+            RememberReal();
+            if (ArtProgress.Level(who) < PaintingRules.MaxLevel) ArtProgress.SetLevel(who, PaintingRules.MaxLevel);
+            ArtProgress.SetMasteryXp(who, stageXp[stage]);
+            if (stage == 5)
+            {
+                if (!who.mailReceived.Contains(OldPaintings.MasteryFlag)) who.mailReceived.Add(OldPaintings.MasteryFlag);
+            }
+            else
+                who.mailReceived.Remove(OldPaintings.MasteryFlag);
+            var here = Game1.currentLocation;
+            if (args.Length > 3)
+            {
+                var hung = here.furniture.FirstOrDefault(Social.StudyBoard.IsBoard) ?? ItemRegistry.Create<Furniture>(Social.StudyBoard.QualifiedId);
+                here.furniture.Remove(hung);
+                hung.TileLocation = new Vector2(int.Parse(args[2]), int.Parse(args[3]));
+                here.furniture.Add(hung);
+            }
+            else
+            {
+                bool anywhere = who.Items.Any(Social.StudyBoard.IsBoard);
+                Utility.ForEachLocation(l => { anywhere |= l.furniture.Any(Social.StudyBoard.IsBoard); return !anywhere; });
+                if (!anywhere)
+                    who.addItemToInventory(ItemRegistry.Create(Social.StudyBoard.QualifiedId));
+            }
+            monitor.Log($"Study board at stage {Social.StudyBoard.Stage(who)}: {Social.StudyBoard.Status(who)} (your real progress comes back with 'museart_boardtest restore'). Boards here: {string.Join(", ", here.furniture.Where(Social.StudyBoard.IsBoard).Select(f => f.TileLocation))}; in your bag: {who.Items.Count(Social.StudyBoard.IsBoard)}", LogLevel.Info);
+            return;
+        }
+        if (args.FirstOrDefault() is "zuzu" or "zuzuresult")
+        {
+            // Margot's test on the easel, or its results, to look at.
+            RememberReal();
+            ArtProgress.SetLevel(who, PaintingRules.MaxLevel);
+            Social.MargotMastery.DevReset(who);
+            var easel = Social.MargotMastery.StartTest(who);
+            if (args[0] == "zuzuresult")
+            {
+                easel.DevRestorePerfectly();
+                easel.DevFinish(false);
+                Game1.delayedActions.Clear();
+            }
+            return;
+        }
+        if (args.FirstOrDefault() == "offer")
+        {
+            // Margot beside you at the museum with the bar full: talk to her (for a screenshot).
+            if (Social.Margot.Npc == null) Social.Margot.Arrive();
+            var her = Social.Margot.Npc!;
+            RememberReal();
+            if (!who.mailReceived.Contains(Social.StudyBoard.LetterId)) who.mailReceived.Add(Social.StudyBoard.LetterId);
+            ArtProgress.SetLevel(who, PaintingRules.MaxLevel);
+            ArtProgress.SetMasteryXp(who, ArtProgress.MasteryXpNeeded);
+            who.mailReceived.Remove(OldPaintings.MasteryFlag);
+            Social.MargotMastery.DevReset(who);
+            Game1.warpCharacter(her, who.currentLocation, who.Tile + new Vector2(1, 0));
+            who.CurrentToolIndex = 0;
+            her.checkAction(who, who.currentLocation);
+            return;
+        }
+        int level = ArtProgress.Level(who), xp = ArtProgress.MasteryXp(who), remarked = Social.StudyBoard.Remarked(who);
+        bool hadMastery = who.mailReceived.Contains(OldPaintings.MasteryFlag), hadLetter = who.mailReceived.Contains(Social.StudyBoard.LetterId);
+        bool arrived = Social.Margot.Arrived;
+        string letterId = Social.StudyBoard.LetterId;
+        who.mailReceived.Remove(OldPaintings.MasteryFlag);
+        who.mailReceived.Remove(letterId);
+        who.mailbox.Remove(letterId);
+        if (!arrived) Game1.MasterPlayer.mailReceived.Add(Social.Margot.ArrivedFlag);
+
+        // Her letter, the morning after Painting 10.
+        ArtProgress.SetLevel(who, 9);
+        Social.StudyBoard.SendLetterIfDue(who);
+        Check(monitor, "no letter before Painting 10", !who.mailbox.Contains(letterId));
+        ArtProgress.SetLevel(who, PaintingRules.MaxLevel);
+        Game1.MasterPlayer.mailReceived.Remove(Social.Margot.ArrivedFlag);
+        Social.StudyBoard.SendLetterIfDue(who);
+        Check(monitor, "...nor before Margot's in the valley", !who.mailbox.Contains(letterId));
+        Game1.MasterPlayer.mailReceived.Add(Social.Margot.ArrivedFlag);
+        bool hadMet = who.friendshipData.ContainsKey(Social.Margot.Name);
+        who.friendshipData.Remove(Social.Margot.Name);
+        Social.StudyBoard.SendLetterIfDue(who);
+        Check(monitor, "...nor before you've met her", !who.mailbox.Contains(letterId));
+        who.friendshipData[Social.Margot.Name] = new Friendship();
+        Social.StudyBoard.SendLetterIfDue(who);
+        bool hasMail = DataLoader.Mail(Game1.content).TryGetValue(letterId, out string? letter);
+        Check(monitor, "at Painting 10, with Margot here, her letter comes", who.mailbox.Contains(letterId) && hasMail);
+        var viewer = new StardewValley.Menus.LetterViewerMenu((letter ?? "").Split("[#]")[0], letterId);
+        Check(monitor, "...on one page, with her study board in it", viewer.mailMessage.Count == 1
+            && viewer.itemsToGrab.Any(c => Social.StudyBoard.IsBoard(c.item)), $"{viewer.mailMessage.Count} pages, {viewer.itemsToGrab.Count} items");
+        who.mailbox.Remove(letterId);
+        who.mailReceived.Add(letterId);
+        Social.StudyBoard.SendLetterIfDue(who);
+        Check(monitor, "...once", !who.mailbox.Contains(letterId));
+
+        // Lost: she posts another (with no board anywhere), once a week at most.
+        string againId = Social.StudyBoard.AgainLetterId;
+        var stashed = new System.Collections.Generic.List<(GameLocation Where, Furniture Hung)>();
+        Utility.ForEachLocation(l =>
+        {
+            foreach (var f in l.furniture.Where(Social.StudyBoard.IsBoard).ToList()) { stashed.Add((l, f)); l.furniture.Remove(f); }
+            return true;
+        });
+        var carried = who.Items.Where(Social.StudyBoard.IsBoard).ToList();
+        foreach (var c in carried) who.removeItemFromInventory(c);
+        who.modData.Remove(ModEntry.Id + "/StudyBoardAgainDay");
+        who.mailbox.Remove(againId);
+        Social.StudyBoard.SendAgainIfLost(who);
+        bool postedAgain = who.mailbox.Contains(againId) && DataLoader.Mail(Game1.content).TryGetValue(againId, out string? againLetter)
+            && new StardewValley.Menus.LetterViewerMenu(againLetter.Split("[#]")[0], againId) is { } againViewer
+            && againViewer.mailMessage.Count == 1 && againViewer.itemsToGrab.Any(c => Social.StudyBoard.IsBoard(c.item));
+        who.mailbox.Remove(againId);
+        Social.StudyBoard.SendAgainIfLost(who);
+        bool notTwice = !who.mailbox.Contains(againId);
+        who.modData.Remove(ModEntry.Id + "/StudyBoardAgainDay");
+        who.addItemToInventory(ItemRegistry.Create(Social.StudyBoard.QualifiedId));
+        Social.StudyBoard.SendAgainIfLost(who);
+        bool notWhileHeld = !who.mailbox.Contains(againId);
+        Check(monitor, "a lost board: she posts another (one page, board inside), not again that week, and not while you have one",
+            postedAgain && notTwice && notWhileHeld, $"posted {postedAgain}, not twice {notTwice}, not while held {notWhileHeld}");
+        foreach (var c in who.Items.Where(Social.StudyBoard.IsBoard).ToList()) who.removeItemFromInventory(c);
+        foreach (var c in carried) who.addItemToInventory(c);
+        foreach (var (where, hungBoard) in stashed) where.furniture.Add(hungBoard);
+        who.modData.Remove(ModEntry.Id + "/StudyBoardAgainDay");
+
+        // The board's stages: a quarter at a time, full when she'll test you, her certificate after.
+        var stages = new System.Collections.Generic.List<int>();
+        foreach (int x in new[] { 0, 3749, 3750, 7500, 11250, 14999, 15000 })
+        {
+            ArtProgress.SetMasteryXp(who, x);
+            stages.Add(Social.StudyBoard.Stage(who));
+        }
+        who.mailReceived.Add(OldPaintings.MasteryFlag);
+        stages.Add(Social.StudyBoard.Stage(who));
+        who.mailReceived.Remove(OldPaintings.MasteryFlag);
+        Check(monitor, "the board fills a quarter at a time, then gets her certificate", string.Join(",", stages) == "0,0,1,2,3,3,4,5", string.Join(",", stages));
+        var board = ItemRegistry.Create<Furniture>(Social.StudyBoard.QualifiedId);
+        var sheet = Game1.content.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(ArtItems.FurnitureTexture);
+        ArtProgress.SetMasteryXp(who, 5000);
+        Check(monitor, "the board is wall furniture, with every stage on the sheet and the numbers in its description",
+            board.DisplayName == I18n.Get("item.study-board") && board.furniture_type.Value == Furniture.painting
+            && sheet.Height >= Social.StudyBoard.SourceRect(5).Bottom && sheet.Width >= Social.StudyBoard.SourceRect(5).Right
+            && board.getDescription().Contains("5000"), $"{board.DisplayName}, type {board.furniture_type.Value}, sheet {sheet.Width}x{sheet.Height}");
+
+        // Her remarks, once a quarter, and the test on the first talk.
+        if (Social.Margot.Npc == null) Social.Margot.Arrive();
+        var margot = Social.Margot.Npc;
+        if (margot == null)
+        {
+            Check(monitor, "Margot is in the world", false);
+        }
+        else
+        {
+            static string Said(NPC npc) => npc.CurrentDialogue.Count > 0 ? npc.CurrentDialogue.Peek().dialogues[0].Text : "";
+            Social.StudyBoard.SetRemarked(who, 0);
+            margot.CurrentDialogue.Clear();
+            ArtProgress.SetMasteryXp(who, 4000);
+            bool first = Social.StudyBoard.TryRemark(margot, who, atMuseum: false);
+            string said = Said(margot);
+            bool again = Social.StudyBoard.TryRemark(margot, who, atMuseum: false);
+            Check(monitor, "a quarter of the way, she remarks on it once", first && !again && said.Contains("edges"), said);
+            margot.CurrentDialogue.Clear();
+            ArtProgress.SetMasteryXp(who, 12000);
+            bool skip = Social.StudyBoard.TryRemark(margot, who, atMuseum: false);
+            said = Said(margot);
+            Check(monitor, "skipping ahead, only the latest quarter", skip && said.Contains("lamp") && margot.CurrentDialogue.Count == 1, said);
+            margot.CurrentDialogue.Clear();
+            ArtProgress.SetMasteryXp(who, ArtProgress.MasteryXpNeeded);
+            bool atMuseum = Social.StudyBoard.TryRemark(margot, who, atMuseum: true);
+            bool away = Social.StudyBoard.TryRemark(margot, who, atMuseum: false);
+            said = Said(margot);
+            Check(monitor, "full: away from the museum she sends you there (at it, the test instead)", !atMuseum && away && said.Contains("museum"), said);
+
+            // At the museum, with her line for the day waiting: the test comes first.
+            var museum = Game1.getLocationFromName(Social.MargotMastery.Location);
+            var oldLocation = margot.currentLocation;
+            var oldTile = margot.Tile;
+            Game1.warpCharacter(margot, museum, new Vector2(20, 10));
+            Social.MargotMastery.DevReset(who);
+            Social.StudyBoard.SetRemarked(who, 3);
+            margot.CurrentDialogue.Clear();
+            margot.CurrentDialogue.Push(new Dialogue(margot, null, "Her line for the day."));
+            int toolIndex = who.CurrentToolIndex;
+            who.CurrentToolIndex = 0;
+            bool emptyHanded = who.ActiveObject == null;
+            margot.checkAction(who, who.currentLocation);
+            var box = Game1.activeClickableMenu as StardewValley.Menus.DialogueBox;
+            var spoken = box?.characterDialogue;
+            bool inHerVoice = spoken?.speaker == margot && spoken.dialogues.Count >= 2 && spoken.dialogues.All(d => !d.Text.Contains('#') && !System.Text.RegularExpressions.Regex.Replace(d.Text, @"\$[a-z0-9]\s*$", "").Contains('$'));
+            spoken?.onFinish?.Invoke();
+            CloseDialogue();
+            Game1.delayedActions.ToList().ForEach(d => d.behavior?.Invoke());
+            Game1.delayedActions.Clear();
+            bool asked = Game1.activeClickableMenu is StardewValley.Menus.DialogueBox { isQuestion: true };
+            CloseDialogue();
+            if (margot.CurrentDialogue.Count > 1) margot.CurrentDialogue.Pop();
+            Check(monitor, "with the bar full, she offers the test on the first talk, in her own voice (portraits, no stray codes), then asks",
+                inHerVoice && asked && Social.StudyBoard.Remarked(who) == 4, $"empty-handed {emptyHanded}, voice {inHerVoice}: {string.Join(" | ", spoken?.dialogues.Select(d => d.Text) ?? Array.Empty<string>())}, asked {asked}");
+
+            // "I'm ready" asks which mode to paint it in, and the test starts in that one.
+            var modeBefore = ModEntry.Config.Difficulty;
+            var ready = who.currentLocation.afterQuestion;
+            CloseDialogue();
+            ready?.Invoke(who, "yes");
+            Game1.delayedActions.ToList().ForEach(d => d.behavior?.Invoke());
+            Game1.delayedActions.Clear();
+            var modeBox = Game1.activeClickableMenu as StardewValley.Menus.DialogueBox;
+            int modes = modeBox?.responses?.Length ?? 0;
+            var pickMode = who.currentLocation.afterQuestion;
+            CloseDialogue();
+            var other = modeBefore == Difficulty.Hard ? Difficulty.Relaxed : Difficulty.Hard;
+            pickMode?.Invoke(who, other.ToString());
+            Game1.delayedActions.ToList().ForEach(d => d.behavior?.Invoke());
+            Game1.delayedActions.Clear();
+            bool started = Game1.activeClickableMenu is EaselMenu;
+            Check(monitor, "...'I'm ready' asks which mode (all four), and the test starts in the one picked",
+                modes == Difficulties.Order.Length && ModEntry.Config.Difficulty == other && started,
+                $"{modes} modes, now {ModEntry.Config.Difficulty}, easel {started}");
+            Game1.exitActiveMenu();
+            Social.MargotMastery.TakeBackTestPainting(who);
+            ModEntry.Config.Difficulty = modeBefore;
+            ModEntry.SaveConfig();
+            Social.MargotMastery.DevReset(who);
+            CloseDialogue();
+            Check(monitor, "...and her line for the day is still there for next time", margot.CurrentDialogue.Count == 1 && Said(margot) == "Her line for the day.", Said(margot));
+
+            // Holding out a damaged painting: always her restoring, before her line for the day.
+            ArtProgress.SetMasteryXp(who, 0);
+            Social.MargotService.DevReset(who);
+            var damaged = OldPaintings.CreateDamaged(OldPaintings.All[0]);
+            who.addItemToInventory(damaged);
+            who.CurrentToolIndex = who.Items.IndexOf(damaged);
+            margot.checkAction(who, who.currentLocation);
+            bool service = Game1.activeClickableMenu is StardewValley.Menus.DialogueBox { isQuestion: true };
+            CloseDialogue();
+            Check(monitor, "holding a damaged painting at the museum, she offers to restore it on the first talk", service && margot.CurrentDialogue.Count == 1,
+                Game1.activeClickableMenu?.GetType().Name ?? "no menu");
+            Game1.warpCharacter(margot, Game1.getLocationFromName("Saloon"), new Vector2(10, 10));
+            margot.checkAction(who, who.currentLocation);
+            string notHere = Said(margot);
+            CloseDialogue();
+            if (margot.CurrentDialogue.Count > 1) margot.CurrentDialogue.Pop();
+            Check(monitor, "...elsewhere, she says to bring it to the museum", notHere.Contains("museum") && margot.CurrentDialogue.Count == 1, notHere);
+            who.removeItemFromInventory(damaged);
+
+            // At home, once, the window box you chose in her 4-heart scene.
+            var cottage = Game1.getLocationFromName(Social.MargotEvents.CottageHome);
+            if (cottage != null)
+            {
+                Game1.warpCharacter(margot, cottage, new Vector2(7, 5));
+                string boxFlag = ModEntry.Id + "_MargotBoxLavender", told = ModEntry.Id + "_MargotBoxTold";
+                bool hadBox = who.mailReceived.Contains(boxFlag);
+                who.mailReceived.Add(boxFlag);
+                who.mailReceived.Remove(told);
+                margot.CurrentDialogue.Clear();
+                bool boxFirst = Social.Margot.TryWindowBoxLine(margot, who);
+                string boxLine = Said(margot);
+                bool boxAgain = Social.Margot.TryWindowBoxLine(margot, who);
+                Check(monitor, "at home, she mentions the window box you chose, once", boxFirst && !boxAgain && boxLine.Contains("lavender"), boxLine);
+                margot.CurrentDialogue.Clear();
+                who.mailReceived.Remove(told);
+                if (!hadBox) who.mailReceived.Remove(boxFlag);
+            }
+            who.CurrentToolIndex = toolIndex;
+            margot.CurrentDialogue.Clear();
+            if (oldLocation != null) Game1.warpCharacter(margot, oldLocation, oldTile);
+        }
+
+        ArtProgress.SetLevel(who, level);
+        ArtProgress.SetMasteryXp(who, xp);
+        Social.StudyBoard.SetRemarked(who, remarked);
+        Social.MargotMastery.DevReset(who);
+        if (hadMastery) who.mailReceived.Add(OldPaintings.MasteryFlag);
+        if (!hadLetter) who.mailReceived.Remove(letterId);
+        if (!arrived) Game1.MasterPlayer.mailReceived.Remove(Social.Margot.ArrivedFlag);
+        if (!hadMet) who.friendshipData.Remove(Social.Margot.Name);
+        CloseDialogue();
+    }
+
     private static void CollectionTest(IMonitor monitor, string[] args)
     {
         if (!Context.IsWorldReady) return;
@@ -1750,6 +2384,23 @@ internal static class DevGame
                 who.mailReceived.Remove(Social.MuseumCollection.RewardLetter(key));
                 who.mailForTomorrow.Remove(Social.MuseumCollection.RewardLetter(key));
             }
+        }
+        if (args.FirstOrDefault() is "counter" or "pick")
+        {
+            // Two restored paintings in the bag (one framed), and Gunther's
+            // counter or the painting picker, to look at.
+            ClearDonations();
+            foreach (string id in new[] { "wreck_ship", "valley_mill" })
+            {
+                var restored = Social.MargotService.Restored(OldPaintings.Get(id)!);
+                who.addItemToInventory(id == "valley_mill" ? ArtHooks.Frame((SObject)restored, ArtItems.Plain) : restored);
+            }
+            if (args[0] == "pick")
+                Social.MuseumCollection.OpenDonation(who);
+            else
+                HarmonyLib.AccessTools.Method(typeof(StardewValley.Locations.LibraryMuseum), "OpenGuntherDialogueMenu")
+                    .Invoke(Game1.getLocationFromName("ArchaeologyHouse"), null);
+            return;
         }
         if (args.FirstOrDefault() == "view")
         {
@@ -1801,15 +2452,53 @@ internal static class DevGame
             // Donating the Wreck's five brings its frames.
             ClearDonations();
             var gunther = Game1.getCharacterFromName("Gunther");
+
+            // Holding one, he asks to take it even with his line for the day still to say.
+            var offered = Restored(OldPaintings.All.First(p => p.Set == "wreck"));
+            Hold(who, offered);
+            gunther.CurrentDialogue.Clear();
+            gunther.CurrentDialogue.Push(new Dialogue(gunther, null, "A line for the day."));
+            gunther.checkAction(who, gunther.currentLocation);
+            bool asked = Game1.activeClickableMenu is StardewValley.Menus.DialogueBox { isQuestion: true };
+            (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+            Game1.activeClickableMenu = null;
+            Check(monitor, "holding a restored painting, Gunther offers to take it before his line for the day", asked && gunther.CurrentDialogue.Count == 1);
+            gunther.CurrentDialogue.Clear();
+
+            // His counter offers it with the game's own Donate, framed or not.
+            var museumHouse = (StardewValley.Locations.LibraryMuseum)Game1.getLocationFromName("ArchaeologyHouse");
+            HarmonyLib.AccessTools.Method(typeof(StardewValley.Locations.LibraryMuseum), "OpenGuntherDialogueMenu").Invoke(museumHouse, null);
+            var counter = Game1.activeClickableMenu as StardewValley.Menus.DialogueBox;
+            var keys = counter?.responses?.Select(r => r.responseKey).ToList() ?? new();
+            counter?.closeDialogue();
+            Game1.activeClickableMenu = null;
+            Check(monitor, "Gunther's counter offers 'Donate a restored painting'", keys.Contains("DonatePainting"), string.Join(" ", keys));
+            who.removeItemFromInventory(offered);
+            var framedOld = ArtHooks.Frame((SObject)offered, ArtItems.Driftwood);
+            who.addItemToInventory(framedOld);
+            Check(monitor, "...framed ones too", Social.MuseumCollection.Donatable(framedOld) != null);
+            Social.MuseumCollection.Donate(who, gunther, framedOld, OldPaintings.All.First(p => p.Set == "wreck"));
+            (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
+            Game1.activeClickableMenu = null;
+            Check(monitor, "...and he hands back the empty frame", !who.Items.Contains(framedOld) && who.Items.Any(i => i?.QualifiedItemId == "(O)" + ArtItems.Driftwood.ItemId)
+                && Social.MuseumCollection.DonatedCount == 1);
+            foreach (var frame in who.Items.Where(i => i?.QualifiedItemId == "(O)" + ArtItems.Driftwood.ItemId).ToList()) who.removeItemFromInventory(frame);
+            ClearDonations();
+            gunther.CurrentDialogue.Clear();
+            var saidAfter = new System.Collections.Generic.List<string>();
             foreach (var old in OldPaintings.All.Where(p => p.Set == "wreck"))
             {
                 var painting = Restored(old);
                 who.addItemToInventory(painting);
                 Social.MuseumCollection.Donate(who, gunther, painting, old);
+                var said = gunther.CurrentDialogue.Count > 0 ? gunther.CurrentDialogue.Peek() : null;
+                saidAfter.Add(said == null ? "" : string.Join(" | ", said.dialogues.Select(d => d.Text)));
                 (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.closeDialogue();
                 gunther.CurrentDialogue.Clear();
             }
             Check(monitor, "five donated, and the Wreck is complete", Social.MuseumCollection.DonatedCount == 5 && Social.MuseumCollection.SetDone("wreck"));
+            Check(monitor, "...and on the last one, Gunther says to check tomorrow's mail (not before)",
+                saidAfter[^1].Contains("the Wreck") && saidAfter[^1].Contains("mailbox tomorrow") && saidAfter.Take(4).All(t => !t.Contains("mailbox")), saidAfter[^1]);
             Check(monitor, "...which brings Gunther's letter with driftwood frames", who.mailForTomorrow.Contains(Social.MuseumCollection.RewardLetter("set-wreck"))
                 && DataLoader.Mail(Game1.content)[Social.MuseumCollection.RewardLetter("set-wreck")].Contains(ArtItems.Driftwood.ItemId));
             Check(monitor, "...and not the Miners'", !who.mailForTomorrow.Contains(Social.MuseumCollection.RewardLetter("set-miners")));
@@ -1826,8 +2515,8 @@ internal static class DevGame
                 gunther.CurrentDialogue.Clear();
             }
             var mail = DataLoader.Mail(Game1.content);
-            var gallery = new[] { ("set-valley", "GalleryBench"), ("set-valley-rope", "VelvetRope"), ("set-valley-light", "PictureLight") };
-            Check(monitor, "the Old Valley complete brings the bench, the velvet rope and the picture light",
+            var gallery = new[] { ("set-valley", "GalleryBench"), ("set-valley-rope", "VelvetRope"), ("set-valley-plinth", "MarblePlinth") };
+            Check(monitor, "the Old Valley complete brings the bench, the velvet rope and the marble plinth",
                 gallery.All(g => who.mailForTomorrow.Contains(Social.MuseumCollection.RewardLetter(g.Item1))
                     && mail[Social.MuseumCollection.RewardLetter(g.Item1)].Contains("(F)" + ModEntry.Id + "_" + g.Item2)
                     && ItemRegistry.Create("(F)" + ModEntry.Id + "_" + g.Item2) is Furniture f && !f.DisplayName.Contains("Error")),
@@ -1922,6 +2611,20 @@ internal static class DevGame
                 + "; back " + string.Join(", ", back.Select(w => $"{w.TargetX},{w.TargetY}")));
             return;
         }
+        if (args.FirstOrDefault() == "card")
+        {
+            // A missing painting's card in the wing, read (args[1]: "hung" for a donated one's).
+            bool readHung = args.ElementAtOrDefault(1) == "hung";
+            var piece = wing.furniture.FirstOrDefault(f => Social.PaintingWing.What(f) is { } w && (readHung ? OldPaintings.Get(w) != null : w.StartsWith("card:")));
+            piece?.checkForAction(who);
+            return;
+        }
+        if (args.FirstOrDefault() == "collection")
+        {
+            // The collection, with the mouse over a missing painting (args[1]) or a donated one.
+            Game1.activeClickableMenu = Social.MuseumCollection.DevCollection();
+            return;
+        }
         if (args.FirstOrDefault() == "stage")
         {
             Donated(int.Parse(args[1]));
@@ -2013,6 +2716,16 @@ internal static class DevGame
         if (!Context.IsWorldReady) return;
         var who = Game1.player;
         bool hadMastery = who.mailReceived.Contains(OldPaintings.MasteryFlag);
+        if (args.FirstOrDefault() == "chest")
+        {
+            // A fishing treasure chest with a damaged painting in it, to look at.
+            var loot = new System.Collections.Generic.List<Item>
+            {
+                ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor("wreck")), ItemRegistry.Create("(O)166"), ItemRegistry.Create("(O)382", 5),
+            };
+            Game1.activeClickableMenu = new StardewValley.Menus.ItemGrabMenu(loot) { source = StardewValley.Menus.ItemGrabMenu.source_fishingChest };
+            return;
+        }
         if (args.FirstOrDefault() == "show")
         {
             // A restoration on the easel, half done, to look at ('museart_frame' it).
@@ -2036,17 +2749,40 @@ internal static class DevGame
             var shares = OldPaintings.All.Select(p => OldPaintings.Damage(p).Cast<bool>().Count(d => d) * 100 / (p.Size * p.Size)).ToList();
             Check(monitor, "each is about a third damaged", shares.All(s => s >= 28 && s <= 42), string.Join(" ", shares));
             Check(monitor, "...and named", OldPaintings.All.All(p => !OldPaintings.Title(p).StartsWith("old.")));
+            Check(monitor, "...each with its card's description, and every set a hint where to look",
+                OldPaintings.All.All(p => !OldPaintings.About(p).StartsWith("old.")) && OldPaintings.Sets.All(set => !OldPaintings.WhereToFind(set).StartsWith("old.")));
 
-            // A find from a set becomes one of that set, one not found before.
+            // A find from a set becomes one of that set, one not in the bag already.
             who.modData.Remove(ModEntry.Id + "/OldFound");
             var found = new System.Collections.Generic.HashSet<string>();
+            var kept = new System.Collections.Generic.List<Item>();
             for (int i = 0; i < 5; i++)
             {
                 var item = ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor("wreck"));
                 OldPaintings.Assign(who, item);
+                who.addItemToInventory(item);
+                kept.Add(item);
                 if (OldPaintings.Of(item) is { } p) found.Add(p.Id);
             }
-            Check(monitor, "five wreck finds are the five wreck paintings", found.Count == 5 && found.All(id => id.StartsWith("wreck_")), string.Join(", ", found));
+            foreach (var item in kept)
+                who.removeItemFromInventory(item);
+            Check(monitor, "five wreck finds, kept, are the five wreck paintings", found.Count == 5 && found.All(id => id.StartsWith("wreck_")), string.Join(", ", found));
+
+            // In a fishing chest (or on the cart) it shows its picture before
+            // it's taken, and counts as found only once it's in the bag.
+            who.modData.Remove(ModEntry.Id + "/OldFound");
+            var inChest = ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor("wreck"));
+            var batch = new Microsoft.Xna.Framework.Graphics.SpriteBatch(Game1.graphics.GraphicsDevice);
+            batch.Begin();
+            inChest.drawInMenu(batch, Microsoft.Xna.Framework.Vector2.Zero, 1f);
+            batch.End();
+            var shown = OldPaintings.Of(inChest);
+            bool drawn = shown != null && PaintingData.RawCells(inChest) is { } raw
+                && PaintingData.TryDecodeCells(raw, out _, out var shownCells, out _, out _) && shownCells.Cast<byte>().Any(c => c != PixelCanvas.Blank);
+            Check(monitor, "a damaged painting in a chest shows its picture before it's taken, and isn't found yet",
+                drawn && !OldPaintings.FoundAny(who), shown?.Id ?? "none");
+            OldPaintings.Assign(who, inChest);
+            Check(monitor, "...taken, it's that painting, and found", shown != null && OldPaintings.Of(inChest)?.Id == shown.Id && OldPaintings.Found(who).SetEquals(new[] { shown.Id }));
             var damaged = OldPaintings.CreateDamaged(OldPaintings.Get("valley_mill")!);
             Check(monitor, "a damaged painting isn't a painting to anything else", OldPaintings.IsDamaged(damaged) && !PaintingItems.IsPainting(damaged)
                 && !Portfolio.IsKeepable(damaged) && !Social.JulianPurchase.CanSell(damaged));
@@ -2065,6 +2801,48 @@ internal static class DevGame
             ArtProgress.SetLevel(who, level);
             Check(monitor, "the first old painting comes with the first dig from level 3", !early && dug);
             farm.debris.Clear();
+
+            // Lost before Gunther's seen it, the next dig brings another; not
+            // while one's in the bag, and not once he's written for Margot.
+            Social.Margot.DevReset();
+            ArtProgress.SetLevel(who, 3);
+            before = farm.debris.Count;
+            farm.digUpArtifactSpot(10, 10, who);
+            bool again = farm.debris.Skip(before).Any(d => d.item != null && OldPaintings.IsDamaged(d.item));
+            farm.debris.Clear();
+            var carried = ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor("valley"));
+            who.addItemToInventory(carried);
+            bool dueCarrying = OldPaintingFinds.FirstDue(who);
+            who.removeItemFromInventory(carried);
+            Social.Margot.SendFor();
+            bool dueAfterLetter = OldPaintingFinds.FirstDue(who);
+            Social.Margot.DevReset();
+            ArtProgress.SetLevel(who, level);
+            Check(monitor, "lost before Gunther's seen it, the next dig brings another", again && !dueCarrying && !dueAfterLetter,
+                $"again {again}, carrying {dueCarrying}, after the letter {dueAfterLetter}");
+
+            // A lost (or sold) one comes back as readily as one never found:
+            // finds go to paintings the museum hasn't got and that aren't in the bag.
+            var valley = OldPaintings.All.Where(p => p.Set == "valley").Select(p => p.Id).ToList();
+            foreach (string id in valley.Where(id => id != "valley_farm"))
+                who.mailReceived.Add(ModEntry.Id + "_Donated_" + id);
+            who.modData[ModEntry.Id + "/OldFound"] = string.Join(",", valley);
+            var refinds = Enumerable.Range(0, 6).Select(_ =>
+            {
+                var item = ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor("valley"));
+                OldPaintings.Pick(item, who);
+                return OldPaintings.Of(item)?.Id;
+            }).ToList();
+            var farmHeld = OldPaintings.CreateDamaged(OldPaintings.Get("valley_farm")!);
+            who.addItemToInventory(farmHeld);
+            var whileHeld = ItemRegistry.Create("(O)" + OldPaintings.ItemIdFor("valley"));
+            OldPaintings.Pick(whileHeld, who);
+            who.removeItemFromInventory(farmHeld);
+            foreach (string id in valley)
+                who.mailReceived.Remove(ModEntry.Id + "_Donated_" + id);
+            who.modData.Remove(ModEntry.Id + "/OldFound");
+            Check(monitor, "a lost painting the museum hasn't got comes back with the next find of its set", refinds.All(id => id == "valley_farm"), string.Join(" ", refinds));
+            Check(monitor, "...but not while it's in your bag (then any of the set)", OldPaintings.Of(whileHeld) != null);
 
             // Restoring (at Painting 10, as Mastery comes): perfectly, then not at all.
             who.mailReceived.Add(OldPaintings.MasteryFlag);
@@ -3105,6 +3883,11 @@ internal static class DevGame
         Draw();
         var button = menu.DevModeButton;
         Check(monitor, "with nothing to warn about, the mode is a button", button != Rectangle.Empty);
+        menu.DevSetCanvas(CanvasKind.Large);
+        Draw();
+        Check(monitor, "...and with a warning showing (no large canvas), it's still a button", menu.DevModeButton != Rectangle.Empty);
+        menu.DevSetCanvas(CanvasKind.Small);
+        Draw();
         Check(monitor, "Simplified has no light meter", !menu.DevTimed);
         menu.receiveLeftClick(button.Center.X, button.Center.Y);
         Check(monitor, "clicking it moves on to Relaxed", ModEntry.Config.Difficulty == Difficulty.Relaxed);
@@ -3426,6 +4209,8 @@ internal static class DevGame
             && DataLoader.Mail(Game1.content).TryGetValue(ModEntry.Id + "_OrderQi_Reward", out string letter) && letter.Contains(ArtItems.MoreFrame("qi").ItemId));
     }
 
+    private static bool _varnishShow;
+
     private static void VarnishTest(IMonitor monitor)
     {
         if (!Context.IsWorldReady) return;
@@ -3448,6 +4233,16 @@ internal static class DevGame
             m.DevPaintPartly(1f, 3);
             m.DevFinish(false);
             return m.DevPainting!;
+        }
+        if (_varnishShow)
+        {
+            // A cured one, its "ready" bubble up, to look at.
+            _varnishShow = false;
+            Varnish.Start(cabinet, Painting());
+            cabinet.modData[ModEntry.Id + "/VarnishStart"] = (Game1.Date.TotalDays - 28).ToString();
+            Varnish.MarkCured();
+            Game1.activeClickableMenu = null;
+            return;
         }
         int Debris(Func<Item, bool> match) => house.debris.Count(d => d.item != null && match(d.item));
 
@@ -4032,6 +4827,15 @@ internal static class DevGame
                 var outdoors = new EaselMenu(Game1.player, easelTile: Game1.player.Tile + new Vector2(0, -1));
                 outdoors.DevPickView();
                 Game1.activeClickableMenu = outdoors;
+                break;
+            case "scene":
+                // A museart_snap scenario, in the game (museart_menu scene shot_glaze [level]),
+                // for a screenshot with the world behind it.
+                {
+                    int lv = args.Length > 2 && int.TryParse(args[2], out int l) ? l : 6;
+                    var scene = DevTools.Scenarios(lv).FirstOrDefault(sc => sc.Name == args.ElementAtOrDefault(1));
+                    if (scene.Make != null) Game1.activeClickableMenu = scene.Make();
+                }
                 break;
             case "useeasel":
                 // The same call a right-click on the placed easel makes.

@@ -338,6 +338,8 @@ internal static class ArtItems
             furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{small + SmallFrameRow}/{texture}/true";
             furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
         }
+        // Margot's study board (1.3, Social/StudyBoard.cs).
+        furniture[Social.StudyBoard.Id] = Social.StudyBoard.FurnitureData(texture);
     }
 
     // ingredients/unused/yield/big craftable/unlock condition/display name

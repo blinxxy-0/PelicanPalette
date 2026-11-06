@@ -265,7 +265,10 @@ internal sealed partial class EaselMenu
 
     internal void DevKeep() => KeepAndClose();
 
+    internal void DevBegin(CanvasKind kind, params string[] itemIds) => BeginPainting(kind, itemIds);
+
     internal float DevLightMultiplier => LightMultiplier;
+    internal float DevLightTotal => _lightTotal;
 
     // Restoring: put the old painting back exactly as it was (1.3).
     internal void DevRestorePerfectly()

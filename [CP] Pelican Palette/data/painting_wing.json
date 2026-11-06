@@ -31,9 +31,12 @@
         { "Position": { "X": 49, "Y": 16 }, "Layer": "Buildings", "Remove": true },
         { "Position": { "X": 49, "Y": 15 }, "Layer": "Front", "Remove": true },
         { "Position": { "X": 49, "Y": 16 }, "Layer": "Front", "Remove": true },
-        // The wall's edge, capped above and below the opening, as at the
-        // passage between the library and the hall.
-        { "Position": { "X": 49, "Y": 17 }, "Layer": "Front", "SetTilesheet": "untitled tile sheet", "SetIndex": 163 }
+        // The wall's edge, turned along the top and bottom of the opening:
+        // above it, the end the library passage's wall has (its 193), and
+        // below it the same, flipped, so the edge starts again cleanly into
+        // the room's corner.
+        { "Position": { "X": 49, "Y": 14 }, "Layer": "Front", "SetTilesheet": "untitled tile sheet", "SetIndex": 193 },
+        { "Position": { "X": 49, "Y": 17 }, "Layer": "Front", "SetTilesheet": "untitled tile sheet", "SetIndex": 193, "SetProperties": { "@Flip": "2" } }
       ]
     },
     // The way through, only once the wing's open (the morning after your

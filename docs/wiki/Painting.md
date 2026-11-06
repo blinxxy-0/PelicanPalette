@@ -46,7 +46,7 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 
 **Zooming.** From a medium canvas, the **mouse wheel** over the canvas (or the reference) zooms in, up to 3x, towards the cell under the mouse. The reference zooms with it and always shows the same part of the picture. While zoomed, the **arrow keys** move round, scroll bars in the canvas's frame show where you are, and the wheel back out shows the whole picture again.
 
-**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Simplified, Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** is Normal with no time limit; **Simplified** also makes paint free and the picture plain. The choice is saved, and is the same setting as in the config.
+**The mode.** On the setup screen, click the mode button beside **Begin** ("Normal") to switch between Simplified, Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** is Normal with no time limit; **Simplified** also makes paint free and the picture plain. The choice is saved, and is the same setting as in the config.
 
 ### Tools
 | Tool | Key | Unlocks | What it does |

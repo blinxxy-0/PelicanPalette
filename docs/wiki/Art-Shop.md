@@ -42,6 +42,7 @@ Talk to the counter to:
 | <img src="images/icons/O-blinxxy.MuseArt_RedLacquerFrame.png" width="24"> | Red Lacquer Frame | 1,200g | Painting level 5 |
 | <img src="images/icons/O-blinxxy.MuseArt_RopeFrame.png" width="24"> | Rope Frame | 1,200g | Painting level 7 |
 | <img src="images/icons/BC-blinxxy.MuseArt_FramersBench.png" width="24"> | Framer's Bench | 2,500g | Painting level 4 |
+| <img src="images/icons/F-blinxxy.MuseArt_MarblePlinth.png" width="24"> | Marble Plinth | 2,000g | Painting level 6 |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_sienna.png" width="24"> | Sienna Pigment | 120g | Until you know the colour |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_rose.png" width="24"> | Rose Pigment | 120g | Until you know the colour |
 | <img src="images/icons/O-blinxxy.MuseArt_Pigment_marigold.png" width="24"> | Marigold Pigment | 120g | Until you know the colour |

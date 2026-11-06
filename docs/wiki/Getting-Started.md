@@ -10,7 +10,7 @@ You already know three recipes:
 
 ## Your first painting
 1. Craft an **Easel** and place it anywhere, indoors or out.
-2. Make sure you have a **Small Canvas** and a **Palette** in your bag. Sable gives you a Palette on your first visit to the [Art Shop](Art-Shop).
+2. Make sure you have a **Small Canvas** and a **Palette** in your bag. Sable gives you a Palette on your first visit to the [Art Shop](Art-Shop). (On Simplified mode, paint is free and you don't need one.)
 3. Right-click the easel. Pick the canvas size, then something from your bag to paint.
 4. Press **Begin** and copy the reference on the left of the screen. See [Painting](Painting) for how mixing and the light work.
 5. Finish, and the painting goes into your bag.

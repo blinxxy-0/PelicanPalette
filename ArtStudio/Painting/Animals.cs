@@ -179,7 +179,7 @@ internal static class Studies
     }
 
     public static Reference Reference(string subject, int canvasSize, IReadOnlyList<int> owned, Techniques allowed) =>
-        OldPaintings.OfSubject(subject) is { } old ? OldPaintings.DamagedReference(old)
+        OldPaintings.OfSubject(subject) is { } old ? OldPaintings.RestoredReference(old)
         : Animals.IsAnimal(subject) ? Animals.Reference(Animals.TypeOf(subject), canvasSize, owned, allowed)
         : Creatures.Reference(Creatures.NameOf(subject), canvasSize, owned, allowed);
 

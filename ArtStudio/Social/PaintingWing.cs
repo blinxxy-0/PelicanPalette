@@ -222,9 +222,9 @@ internal static class PaintingWing
             if (what == "rope")
                 Game1.drawObjectDialogue(I18n.Get("wing.closed"));
             else if (what.StartsWith("card:") && OldPaintings.Get(what.Substring(5)) is { } missing)
-                Game1.drawObjectDialogue(I18n.Get("wing.card.missing", new { set = OldPaintings.SetName(missing.Set) }));
+                Game1.drawObjectDialogue(I18n.Get("wing.card.missing", new { title = OldPaintings.Title(missing), set = OldPaintings.SetName(missing.Set), about = OldPaintings.About(missing), where = OldPaintings.WhereToFind(missing.Set) }));
             else if (OldPaintings.Get(what) is { } hung)
-                Game1.drawObjectDialogue(I18n.Get("wing.card.hung", new { title = OldPaintings.Title(hung), set = OldPaintings.SetName(hung.Set) }));
+                Game1.drawObjectDialogue(I18n.Get("wing.card.hung", new { title = OldPaintings.Title(hung), set = OldPaintings.SetName(hung.Set), about = OldPaintings.About(hung) }));
             return false;
         }
         catch (Exception)

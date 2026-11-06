@@ -4,7 +4,7 @@
     <image source="spring_outdoorsTileSheet" width="400" height="1264" />
   </tileset>
   <tileset firstgid="2000" name="z_blinxxy.MuseArt_ArtShopExterior" tilewidth="16" tileheight="16" tilecount="49" columns="7">
-    <image source="ArtShopExterior.png" width="112" height="112" />
+    <image source="spring_ArtShopExterior.png" width="112" height="112" />
   </tileset>
   <tileset firstgid="2049" name="z_blinxxy.MuseArt_ArtShopYard" tilewidth="16" tileheight="16" tilecount="6" columns="1">
     <image source="ArtShopYard.png" width="16" height="96" />

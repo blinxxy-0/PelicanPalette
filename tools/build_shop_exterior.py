@@ -1,7 +1,8 @@
 """Builds the map patch that puts the art shop and its yard into Cindersap
 Forest, in the open grass west of the path down from Marnie's ranch.
 
-The 7x7-tile building (ArtShopExterior.png) is its own tilesheet: its wall
+The 7x7-tile building (spring_ArtShopExterior.png, with summer, fall and
+winter copies from tools/art/seasonal_buildings.py) is its own tilesheet: its wall
 rows go on Buildings (blocking movement), the roof on Front (the farmer
 walks behind it), and its door tile gets a LockedDoorWarp into the shop.
 It was 6x6 until the deeper roof (2026-10-24), which grew it a row upward;
@@ -153,7 +154,7 @@ def write(path, layers, actions):
     <image source="spring_outdoorsTileSheet" width="400" height="1264" />
   </tileset>
   <tileset firstgid="{HOUSE_FIRST}" name="z_blinxxy.MuseArt_ArtShopExterior" tilewidth="16" tileheight="16" tilecount="{HOUSE * HOUSE}" columns="{HOUSE}">
-    <image source="ArtShopExterior.png" width="{HOUSE * 16}" height="{HOUSE * 16}" />
+    <image source="spring_ArtShopExterior.png" width="{HOUSE * 16}" height="{HOUSE * 16}" />
   </tileset>
   <tileset firstgid="{YARD_FIRST}" name="z_blinxxy.MuseArt_ArtShopYard" tilewidth="16" tileheight="16" tilecount="{YARD_TILES}" columns="1">
     <image source="ArtShopYard.png" width="16" height="{YARD_TILES * 16}" />

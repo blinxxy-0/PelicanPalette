@@ -19,7 +19,8 @@ namespace ArtStudio.Painting;
 // and the Travelling Cart sometimes sells one (data/old_paintings.json).
 //
 // The first is guaranteed: from Painting level 3, the next artifact spot
-// or fishing treasure before you've found any brings one. Wearing Margot's
+// or fishing treasure brings one, and keeps doing so (whenever you've none
+// in your bag) until it's been shown to Gunther and he's written for Margot. Wearing Margot's
 // loupe (twelve donated to the museum) makes each chance half as big again.
 internal static class OldPaintingFinds
 {
@@ -44,9 +45,14 @@ internal static class OldPaintingFinds
             postfix: new HarmonyMethod(typeof(OldPaintingFinds), nameof(VolcanoPostfix)));
     }
 
-    // The guaranteed first one is due (and is then given only once).
+    // The guaranteed first one is due: from Painting level 3, until someone's
+    // shown Gunther one and he's written for Margot, whenever there's none in
+    // your bag. (So one lost, trashed or left in a chest before he's seen it
+    // is just replaced by the next dig or fishing chest; Margot never waits
+    // on luck.)
     public static bool FirstDue(Farmer who) =>
-        !who.mailReceived.Contains(FirstGivenFlag) && !OldPaintings.FoundAny(who) && ArtProgress.Level(who) >= FirstFromLevel;
+        ArtProgress.Level(who) >= FirstFromLevel && !Social.Margot.Arrived && !Social.Margot.LetterSent
+        && !who.Items.Any(OldPaintings.IsDamaged);
 
     // A find's chance for this farmer: the loupe, worn, raises it.
     public static float Chance(Farmer? who, float chance) =>

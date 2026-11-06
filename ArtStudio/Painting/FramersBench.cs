@@ -37,6 +37,8 @@ internal static class FramersBench
             prefix: new HarmonyMethod(typeof(FramersBench), nameof(DropInPrefix)));
         harmony.Patch(AccessTools.Method(typeof(SObject), nameof(SObject.checkForAction)),
             prefix: new HarmonyMethod(typeof(FramersBench), nameof(CheckForActionPrefix)));
+        harmony.Patch(AccessTools.Method(typeof(SObject), nameof(SObject.draw), new[] { typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch), typeof(int), typeof(int), typeof(float) }),
+            postfix: new HarmonyMethod(typeof(FramersBench), nameof(DrawPostfix)));
         helper.Events.GameLoop.DayStarted += (_, _) =>
         {
             if (!Context.IsMainPlayer) return;
@@ -90,6 +92,21 @@ internal static class FramersBench
         bench.modData.Remove(StartKey);
         bench.MinutesUntilReady = 0;
         bench.readyForHarvest.Value = false;
+    }
+
+    // Done, the ready bubble shows the painting coming back, not a bare
+    // canvas (1.3, from playtesting; the frame, after it, draws as itself).
+    private static void DrawPostfix(SObject __instance, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, int x, int y)
+    {
+        if (!IsBench(__instance) || !__instance.readyForHarvest.Value || __instance.heldObject.Value is not SObject held || !PaintingItems.IsPainting(held)) return;
+        try
+        {
+            PaintingRenderer.DrawInReadyBubble(spriteBatch, __instance, held, x, y);
+        }
+        catch (Exception ex)
+        {
+            _monitor.LogOnce($"Couldn't draw the painting in the Framer's Bench's bubble: {ex}", LogLevel.Error);
+        }
     }
 
     private static bool IsFrameItem(Item item) => ArtItems.FrameStyles.Any(s => item.QualifiedItemId == "(O)" + s.ItemId);

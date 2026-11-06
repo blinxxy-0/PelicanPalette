@@ -17,7 +17,7 @@
         // letter carries one item).
         "blinxxy.MuseArt_Collection_set-valley": "{{i18n:mail.collection-valley}} %item id (F)blinxxy.MuseArt_GalleryBench 1 %%[#]{{i18n:mail.collection-valley.title}}",
         "blinxxy.MuseArt_Collection_set-valley-rope": "{{i18n:mail.collection-valley-rope}} %item id (F)blinxxy.MuseArt_VelvetRope 1 %%[#]{{i18n:mail.collection-valley-rope.title}}",
-        "blinxxy.MuseArt_Collection_set-valley-light": "{{i18n:mail.collection-valley-light}} %item id (F)blinxxy.MuseArt_PictureLight 1 %%[#]{{i18n:mail.collection-valley-light.title}}",
+        "blinxxy.MuseArt_Collection_set-valley-plinth": "{{i18n:mail.collection-valley-plinth}} %item id (F)blinxxy.MuseArt_MarblePlinth 1 %%[#]{{i18n:mail.collection-valley-plinth.title}}",
         // Six donated: the living painting.
         "blinxxy.MuseArt_Collection_count-6": "{{i18n:mail.collection-6}} %item id (F)blinxxy.MuseArt_LivingPainting 1 %%[#]{{i18n:mail.collection-6.title}}",
         // Twelve: Margot's loupe.
@@ -58,7 +58,8 @@
         // name/type/sheet size/bounding box/rotations/price/placement/display name/sprite index/texture/off limits for sale
         "blinxxy.MuseArt_VelvetRope": "blinxxy.MuseArt_VelvetRope/decor/2 2/2 1/1/500/-1/{{i18n:item.velvet-rope}}/0/Mods\\blinxxy.MuseArt\\Gallery/true",
         "blinxxy.MuseArt_GalleryBench": "blinxxy.MuseArt_GalleryBench/bench/2 2/2 1/1/750/-1/{{i18n:item.gallery-bench}}/2/Mods\\blinxxy.MuseArt\\Gallery/true",
-        "blinxxy.MuseArt_PictureLight": "blinxxy.MuseArt_PictureLight/painting/2 1/2 1/1/500/-1/{{i18n:item.picture-light}}/4/Mods\\blinxxy.MuseArt\\Gallery/true",
+        // A marble plinth (a table: set something on it). It replaced a picture light before 1.3 shipped.
+        "blinxxy.MuseArt_MarblePlinth": "blinxxy.MuseArt_MarblePlinth/table/1 2/1 1/1/500/-1/{{i18n:item.marble-plinth}}/39/Mods\\blinxxy.MuseArt\\Gallery/true",
         "blinxxy.MuseArt_PaintTubeJunimo": "blinxxy.MuseArt_PaintTubeJunimo/decor/3 3/3 1/1/5000/-1/{{i18n:item.paint-tube-junimo}}/12/Mods\\blinxxy.MuseArt\\Gallery/true",
         "blinxxy.MuseArt_LivingPainting":"blinxxy.MuseArt_LivingPainting/painting/2 2/2 2/1/2000/-1/{{i18n:item.living-painting}}/0/Mods\\blinxxy.MuseArt\\LivingPainting/true"
       }

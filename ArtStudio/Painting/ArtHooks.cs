@@ -324,7 +324,7 @@ internal static class ArtHooks
         }
         var inner = new Rectangle((int)position.X + FrameBorder * 4, (int)position.Y + FrameBorder * 4,
             (source.Width - 2 * FrameBorder) * 4, (source.Height - 2 * FrameBorder) * 4);
-        PaintingRenderer.DrawArt(spriteBatch, __instance, inner, Color.White * alpha, depth + 0.00001f);
+        PaintingRenderer.DrawArt(spriteBatch, __instance, inner, Color.White * alpha, depth + 0.00001f, alive: true);
     }
 
     private static void FurnitureDrawInMenuPostfix(Furniture __instance, SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, Color color)

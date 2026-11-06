@@ -42,6 +42,12 @@ internal sealed class PaintingData
     public const string MasterpieceKey = ModEntry.Id + "/Masterpiece";
     public static bool IsMasterpiece(Item item) => item.modData.ContainsKey(MasterpieceKey);
 
+    // Painted at the Master's Easel, gold or better, on a medium or large
+    // canvas: it comes alive when hung (PaintingRenderer.DrawLife).
+    public bool Living { get; init; }
+    public const string LivingKey = ModEntry.Id + "/Living";
+    public static bool IsLiving(Item item) => item.modData.ContainsKey(LivingKey);
+
     // Painted to a reference with glazes, and glazed well enough for a glazed
     // commission (PaintingRules.IsGlazed). Null when not recorded: paintings
     // from before 1.1.5, and originals.
@@ -95,6 +101,8 @@ internal sealed class PaintingData
             item.modData[Varnish.FinishKey] = Finish;
         if (Masterpiece)
             item.modData[MasterpieceKey] = "1";
+        if (Living)
+            item.modData[LivingKey] = "1";
         if (Glazed is bool glazed)
             item.modData[GlazedKey] = glazed ? "1" : "0";
         if (Conditions != null)
@@ -127,6 +135,7 @@ internal sealed class PaintingData
             Date = date ?? "",
             Finish = Varnish.FinishOf(item),
             Masterpiece = IsMasterpiece(item),
+            Living = IsLiving(item),
             Glazed = GlazedOf(item),
             Conditions = ConditionsOf(item),
         };

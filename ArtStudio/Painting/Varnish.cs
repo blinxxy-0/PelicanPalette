@@ -211,6 +211,8 @@ internal static class Varnish
             var area = new Rectangle((int)screen.X, (int)screen.Y, RackCanvas.Width * 4, RackCanvas.Height * 4);
             float depth = Math.Max(0f, ((y + 1) * 64 - 24) / 10000f) + x * 1E-05f + 2E-05f;
             PaintingRenderer.DrawArt(spriteBatch, painting, area, Color.White * alpha, depth);
+            if (__instance.readyForHarvest.Value)
+                PaintingRenderer.DrawInReadyBubble(spriteBatch, __instance, painting, x, y);
         }
         catch (Exception ex)
         {

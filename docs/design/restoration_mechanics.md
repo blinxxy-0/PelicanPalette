@@ -60,7 +60,7 @@ covering about a third of it.
 
 ## 3. Restoring with Margot (before Mastery)
 
-Margot arrives the week after your first find (the plan's section 6).
+Margot arrives a week after Gunther's letter, which comes the morning after you show him your first find (his short event at the museum; the plan's section 6).
 At the museum, she'll restore a damaged painting for a fee, taking three
 days, as Clint breaks geodes:
 
@@ -78,10 +78,15 @@ Her restorations come back **silver** quality: careful, but cautious.
 - At any easel, a damaged painting in your bag shows a **Restore** slot on
   the setup screen, beside the views and creatures.
 - **Painting it:** the canvas starts as the damaged painting: the surviving
-  cells already there, the damaged ones bare. The reference panel shows
-  the painting **as it is**, damage and all: you work out what's missing
-  from what's left, as Margot does ("matching what's missing to what's
-  left"). Hovering a damaged cell outlines it on both, as now.
+  cells already there, the damaged ones bare (hatched). The reference panel
+  shows the painting **as it was**, whole (2026-11-05, from playtesting: a
+  damaged reference told you to "leave bare" exactly the cells you had to
+  paint). Hovering a damaged cell outlines it on both, as for any painting.
+  The light is set from what's missing (its work, as for any reference),
+  plus 15% for matching each gap (2026-11-05: set from the whole painting,
+  a skilled painter finished with about two thirds of it to spare). About
+  285 to 335 seconds for a 28-cell painting at level 10 in Normal, 350 to
+  530 for a 36-cell one.
 - **Scored on the damaged cells only:** the right pigment counts fully, a
   near one ("a bit off") half, mixing purity as usual. Painting over a
   surviving cell with a different colour costs you. The light, the
@@ -100,7 +105,7 @@ Her restorations come back **silver** quality: careful, but cautious.
 
 | Donated | Reward |
 |---|---|
-| A whole set | That set's frame style: driftwood (Wreck), iron (Miners), sandstone (Calico), Dwarvish (Dwarvish); the Old Valley brings gallery furniture (a velvet rope, a bench, a picture light) |
+| A whole set | That set's frame style: driftwood (Wreck), iron (Miners), sandstone (Calico), Dwarvish (Dwarvish); the Old Valley brings gallery furniture (a velvet rope, a bench, a marble plinth) |
 | 6 paintings | A **living painting**: an old painting whose picture moves a little |
 | 12 paintings | **Margot's loupe**, worn as a ring: old paintings turn up half as often again |
 | All 21 | The **paint-tube Junimo statue** (furniture), and the museum's new **wing** for the collection |
@@ -149,9 +154,30 @@ Gunther: the collection view, and each finished set's frames by letter.
 The framing screen shows its style buttons in two rows once you have more
 than four.
 
+Margot's study board (`Social/StudyBoard.cs`, 2026-11-05: the bar was
+only a tooltip line, and nothing in the story mentioned it): the morning
+after Painting 10, once you've met her (2026-11-06: not from a stranger;
+her test waits for the letter too), her letter brings her old study
+board, wall furniture in six stages (bare, a quarter, half, three
+quarters, full, and full with her certificate once you're a conservator;
+art from `tools/art/study_board.py`). Right-click or hover it for the
+numbers. She remarks once on each new quarter the next time you talk to
+her (before her line for the day); a full bar away from the museum sends
+you there, and at it she offers the test on the first talk ("Not today"
+holds for the day). The offer is her own portrait dialogue, then a
+plain question box (a question box shows `$u`/`#$b#` as raw codes). Holding
+out a damaged painting is always her fee service, also before her line for
+the day (away from the museum she asks you to bring it there); her lines for
+these go on top of the day's line rather than replacing it.
+
 Margot's test restoration (step 6, `Social/MargotMastery.cs`): with the
-bar full, talk to her at the museum and she sets you one of her old
-paintings (one you haven't found). Gold or better certifies you: the
+bar full, talk to her at the museum and she sets you **Zuzu at Dusk**
+(`OldPaintings.Zuzu`, 2026-11-05 from playtesting: it was one of the 21
+you hadn't found, which she then kept). It's the Zuzu City Museum of Art's,
+lent for conservators' tests: outside the 21, never found, not in the
+collection or the restore list, and labelled the city's on the easel, the
+items and the results ("Give it back"). After "I'm ready" she asks which
+mode to paint it in, since the test skips the easel's setup screen. Gold or better certifies you: the
 mastery flag, the Mastery Cave's sound and a rainbow sparkle, and the
 Master's Easel. Below gold, try again the next day. She keeps the painting
 either way, so the test never adds to your collection.
@@ -162,8 +188,11 @@ fee and hands it back three days later, at silver, "restored by Margot".
 One at a time; once you're a conservator she sends you to your own easel.
 
 The Old Valley's gallery furniture (`tools/art/gallery_furniture.py`): a
-velvet rope, a gallery bench (a seat) and a picture light to hang above a
-painting, each in its own letter from Gunther (a letter carries one item).
+velvet rope, a gallery bench (a seat) and a marble plinth (a table: set
+something on it), each in its own letter from Gunther (a letter carries one
+item). The plinth replaced a picture light on 2026-11-05: hung on its own the
+light snapped to the top of the wall where paintings go, and fixed onto a
+painting it covered too much of it. Sable sells plinths from Painting 6.
 The living painting (`tools/art/living_painting.py`,
 `Painting/LivingPainting.cs`): a mill on a river at dusk, in four frames the
 game steps through, the water shimmering and the window's lamp flickering.

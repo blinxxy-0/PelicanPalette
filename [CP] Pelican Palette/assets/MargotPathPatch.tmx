@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="3" height="5" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+  <tileset firstgid="1" name="z_blinxxy.MuseArt_MargotPath" tilewidth="16" tileheight="16" tilecount="8" columns="8">
+    <image source="spring_MargotPath.png" width="128" height="16" />
+  </tileset>
+  <layer id="1" name="Back2" width="3" height="5">
+    <data encoding="csv">
+0,0,1,
+0,0,2,
+0,0,3,
+0,0,4,
+6,7,5
+    </data>
+  </layer>
+</map>

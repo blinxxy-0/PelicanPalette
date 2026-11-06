@@ -16,7 +16,10 @@
         "Thu": "{{i18n:margot.dialogue.Thu}}",
         "Fri": "{{i18n:margot.dialogue.Fri}}",
         "Sat": "{{i18n:margot.dialogue.Sat}}",
-        "Sun": "{{i18n:margot.dialogue.Sun}}"
+        "Sun": "{{i18n:margot.dialogue.Sun}}",
+        // Asked to the Flower Dance (data/margot_festivals.json).
+        "FlowerDance_Accept": "{{i18n:margot.dialogue.FlowerDance_Accept}}",
+        "FlowerDance_Decline": "{{i18n:margot.dialogue.FlowerDance_Decline}}"
       }
     },
     // Rainy days (the game's own file for every villager).

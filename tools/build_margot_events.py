@@ -18,12 +18,34 @@ F = f"Friendship {M}"
 def events():
     museum, robin, cottage, forest, saloon = {}, {}, {}, {}, {}
 
+    # ---- Before she comes: the first damaged painting, shown to Gunther ---
+    # (Walking into the museum with one in your bag, before anyone's had his
+    # letter. He writes to the city that day; the letter comes the next
+    # morning, and she a week after it. Margot.cs.)
+    museum["blinxxy.MuseArt_MargotSentFor/Time 800 1700/G blinxxy.MuseArt_HAS_DAMAGED_PAINTING Current/G !PLAYER_HAS_MAIL Any blinxxy.MuseArt_MargotLetter Any"] = script(
+        "continue", "3 10", "farmer 3 14 0 Gunther 3 8 2", "skippable",
+        "pause 400", "move farmer 0 -4 0", "pause 300",
+        "message " + q("You set the damaged painting on Gunther's counter."),
+        speak("Gunther", "Oh my. Where did you find this?"),
+        "pause 600",
+        "message " + q("He turns it to the window, very gently, and looks at it for a long time."),
+        speak("Gunther", "It's old. Very old. Flaked, torn, water-stained... and still beautiful.#$b#I'm afraid it's beyond me. I know stones and bones, not paint."),
+        speak("Gunther", "But the Museum of Art in Zuzu City has a conservator. I must write to them at once.$h"),
+        "blinxxy.MuseArt_MargotSendFor",
+        speak("Gunther", "Keep it somewhere dry. I'll let you know what they say."),
+        "pause 300", "end",
+    )
+
     # ---- 2 hearts: what's missing (the museum, a weekday afternoon) -------
     museum[f"blinxxy.MuseArt_Margot2h/{F} 500/DayOfWeek Mon Tue Wed Thu Fri Sat/Time 1300 1600"] = script(
         # (museart_route: up the aisle beside the reading desks.)
-        "continue", "18 12", f"farmer 20 16 0 {M} 18 13 2", "skippable",
-        "pause 600", "move farmer 0 -3 0", "move farmer -1 0 3", "pause 400",
-        "message " + q("A small damaged painting lies on the desk under her magnifying lamp: a farmhouse, a third of it flaked away."),
+        # (She stands behind her reading desk, its top at row 14; you come up beside it.)
+        # (The view a little lower than before, so the desk clears the text box.)
+        "continue", "18 15", f"farmer 20 16 0 {M} 18 14 2", "skippable",
+        # (The damaged painting, stood on her desk: tools/art/margot_desk_painting.py.)
+        "temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\MargotDeskPainting 0 0 24 32 9999 1 9999 17 13 false false 15 0 1 0 0 0",
+        "pause 600", "move farmer 0 -2 0", "move farmer -1 0 3", "pause 400",
+        "message " + q("A small damaged painting stands propped on her desk: a farmhouse, a third of it flaked away."),
         speak(M, "Come here. Quick, before the light moves.$u"),
         speak(M, "Most people think restoring is painting over the damage. It isn't. You look at what's left until it tells you what's missing.$u"),
         "pause 400",
@@ -53,13 +75,15 @@ def events():
         speak(M, "The museum sent me for a season. It's been more than that. Gus has started charging me for jam.$7#$b#I don't want to go back to a city where nothing's old enough to need me.$s"),
         f"faceDirection {M} 0", "pause 400",
         "message " + q("Robin unrolls the drawing: a small cottage with a big window."),
-        speak("Robin", "Three days, if the weather holds. Where are we putting it?"),
+        speak("Robin", "Three days, if the weather holds. There's a plot by the river, south of the main road. The big window looks out over the water."),
+        speak("Robin", "There's a window box under it, too. What should I plant?"),
         f"faceDirection {M} 3",
-        # (The answer changes her line, not where it's built: by the river.)
+        # (It's always built on the same plot. What you choose is planted
+        # in its window box, there on the town map: data/margot.json.)
         quick([
-            ("Near the museum.", ["addMailReceived blinxxy.MuseArt_MargotByMuseum", speak(M, "Close to work. Sensible. Gunther will never let me leave.$h")]),
-            ("Near the river.", ["addMailReceived blinxxy.MuseArt_MargotByRiver", speak(M, "Where the old painters sat. ...I like that.$7")]),
-            ("Somewhere you can see the whole town.", ["addMailReceived blinxxy.MuseArt_MargotByTown", speak(M, "Then I'll know what needs fixing first.$u")]),
+            ("Pink roses.", ["addMailReceived blinxxy.MuseArt_MargotBoxRoses", speak(M, "Roses. Old-fashioned. I'll pretend I don't love them.$h")]),
+            ("Lavender.", ["addMailReceived blinxxy.MuseArt_MargotBoxLavender", speak(M, "For the moths. And the smell. ...Mostly the smell.$7")]),
+            ("Marigolds.", ["addMailReceived blinxxy.MuseArt_MargotBoxMarigold", speak(M, "Orange. Loud. I'll see them from my table every morning.$u")]),
         ]),
         f"faceDirection {M} 0",
         speak("Robin", "Three days, then."),
@@ -135,8 +159,8 @@ def events():
         "blinxxy.MuseArt_MargotCard",
         speak(M, "I've signed a thousand condition reports. I've never had my name on a card.$l#$b#Ours. Our names.$l"),
         speak("Gunther", "It's the most popular painting in the museum."),
-        speak(M, "It's the only painting in the museum, Gunther.$a"),
-        speak("Gunther", "And the most popular."),
+        speak(M, "You say that about every painting, Gunther.$a"),
+        speak("Gunther", "And I mean it every time."),
         "pause 600",
         speak(M, "You don't make it new. You make it able to keep being old.$h#$b#Let's keep being old.$h"),
         "pause 300", "end",

@@ -180,7 +180,7 @@ You already know three recipes:
 
 ## Your first painting
 1. Craft an **Easel** and place it anywhere, indoors or out.
-2. Make sure you have a **Small Canvas** and a **Palette** in your bag. Sable gives you a Palette on your first visit to the {link("Art Shop")}.
+2. Make sure you have a **Small Canvas** and a **Palette** in your bag. Sable gives you a Palette on your first visit to the {link("Art Shop")}. (On Simplified mode, paint is free and you don't need one.)
 3. Right-click the easel. Pick the canvas size, then something from your bag to paint.
 4. Press **Begin** and copy the reference on the left of the screen. See {link("Painting")} for how mixing and the light work.
 5. Finish, and the painting goes into your bag.
@@ -243,7 +243,7 @@ The reference is pinned on the left; your canvas is in the middle; the palette a
 
 **Zooming.** From a medium canvas, the **mouse wheel** over the canvas (or the reference) zooms in, up to 3x, towards the cell under the mouse. The reference zooms with it and always shows the same part of the picture. While zoomed, the **arrow keys** move round, scroll bars in the canvas's frame show where you are, and the wheel back out shows the whole picture again.
 
-**The mode.** Under **Begin** on the setup screen, click the mode ("Normal mode, 1h of your day") to switch between Simplified, Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** is Normal with no time limit; **Simplified** also makes paint free and the picture plain. The choice is saved, and is the same setting as in the config.
+**The mode.** On the setup screen, click the mode button beside **Begin** ("Normal") to switch between Simplified, Relaxed, Normal and Hard; hover it to see what each changes. **Relaxed** is Normal with no time limit; **Simplified** also makes paint free and the picture plain. The choice is saved, and is the same setting as in the config.
 
 ### Tools
 | Tool | Key | Unlocks | What it does |
@@ -530,6 +530,9 @@ At level 5 you choose one of two professions, and at level 10 one of the two tha
 |---|---|
 | **Plein Air**: {prof["Plein Air"]} | **Steady Hand**: {prof["Steady Hand"]}<br>**Visionary**: {prof["Visionary"]} |
 | **Gallerist**: {prof["Gallerist"]} | **Patron's Favorite**: {prof["Patron's Favorite"]}<br>**Prolific**: {prof["Prolific"]} |
+
+## Past level 10: Painting Mastery
+Your Painting XP keeps counting after level 10, towards **Painting Mastery** (15,000 XP). Margot sends you her old **Study Board** to hang up, and it fills with pinned studies as you go. When it's full, she tests you at the museum; pass, and you're a conservator, with the **Master's Easel** and the right to restore old paintings yourself. See {link("Old Paintings and Restoration")}.
 """)
 
 
@@ -783,8 +786,8 @@ An easel waits on the sand during the dance. Paint the jellies drifting out to s
 ## The Feast of the Winter Star
 If Sable draws you as their secret friend, their gift is a painting: an iridium still life of whatever you ship most.
 
-## Sable at the festivals
-Sable goes to every festival; see {link("Sable")}.
+## Sable and Margot at the festivals
+Sable goes to every festival; see {link("Sable")}. So does Margot, once she's in the valley; see {link("Margot Pell")}. She dances at the Flower Dance if you ask her at 4 hearts or more.
 """)
 
 
@@ -1090,7 +1093,7 @@ Change these with [Generic Mod Config Menu](https://www.nexusmods.com/stardewval
 
 | Setting | Default | What it does |
 |---|---|---|
-| `Difficulty` | `Normal` | **Simplified:** the easiest: no light meter, free paint that never dries, and references in plain paint only (no glazes or highlights to copy); paintings are worth half as much.<br>**Relaxed:** Normal with no clock: no light meter, and sparks wait for you. Paint comes from your Palette and dries, and the picture is the same as on Normal; paintings are worth 85% as much.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings are worth three times as much, and you earn 20% more XP.<br>Also on the easel's setup screen, under Begin. |
+| `Difficulty` | `Normal` | **Simplified:** the easiest: no light meter, free paint that never dries, and references in plain paint only (no glazes or highlights to copy); paintings are worth half as much.<br>**Relaxed:** Normal with no clock: no light meter, and sparks wait for you. Paint comes from your Palette and dries, and the picture is the same as on Normal; paintings are worth 85% as much.<br>**Normal:** mixed colours dry after a while.<br>**Hard:** the paint on the brush runs out, the light never pauses, and sparks fade fast; paintings are worth three times as much, and you earn 20% more XP.<br>Also on the easel's setup screen, beside Begin. |
 | `LightTimeMultiplier` | `1.0` | Gives you more (or less) light per painting, on top of the difficulty (0.5x to 3x). |
 | `SimplifiedPlainPictures` | `true` | Whether Simplified mode takes glazes and highlights out of the picture. Turn it off for Simplified's free paint and wide mixing band with the whole picture to copy. |
 | `ArtLoversLikeAnyPainting` | `true` | Whether art lovers like even a normal-quality painting. |
@@ -1128,7 +1131,7 @@ No. The art shop's letter arrives the morning after you install.
 **I can't start a painting.**
 Read the line under **Begin**. It tells you what's missing:
 - a canvas of that size,
-- a Palette in your bag,
+- a Palette in your bag (not on Simplified, where paint is free),
 - or the time: a painting can't run past 2am.
 
 **A colour on the palette is faded.**
@@ -1144,13 +1147,27 @@ Iridium needs Painting level 6, a high score, and usually Inspired or flawless m
 With the Glaze or Highlight tool in hand, dots show where the reference wants a glaze or a highlight ([Canvases and Techniques](Canvases-and-Techniques)).
 
 **Who can I paint?**
-Any friend at 4 hearts or more, from medium canvases.
+Any friend at 4 hearts or more, from medium canvases. Also any monster you've slain, your pet, your horse and your farm animals ([Portraits and Plein Air](Portraits-and-Plein-Air)).
+
+**My picture looks plain.**
+- **A small canvas** has no glazes or highlights; they come with medium and large canvases.
+- **The reference only uses colours you know**, in every mode. Learn more colours and pictures get truer ([Pigments and Paint](Pigments-and-Paint)).
+- **Simplified mode** leaves glazes and highlights out, unless you turn that off in the [Configuration](Configuration).
+
+**How do I meet Margot?**
+Find a damaged old painting (your first is guaranteed from Painting level 3, in the next artifact spot or fishing treasure chest) and take it to Gunther at the museum. He writes to the city that day; his letter comes the next morning, and she arrives a week after it ([Margot Pell](Margot-Pell)).
+
+**How do I restore old paintings myself?**
+Reach Painting level 10, then keep painting: your XP fills the Painting Mastery bar, and Margot's **Study Board** on your wall fills with it. When it's full, talk to Margot at the museum and pass her test at gold or better. Until then, she restores them for a fee ([Old Paintings and Restoration](Old-Paintings-and-Restoration)).
+
+**I lost my Study Board.**
+Margot posts you another the next morning, if you don't have one anywhere (at most once a week).
 
 **How do I paint the view?**
 Place an easel outdoors and use it, or use the one in the art shop's yard ([Portraits and Plein Air](Portraits-and-Plein-Air)).
 
 **Can I change the difficulty?**
-Yes ([Configuration](Configuration)).
+Yes, on the easel itself: click the mode button beside **Begin** ("Normal") to go through Simplified, Relaxed, Normal and Hard, or set it in the [Configuration](Configuration). Harder modes pay more: Simplified half, Relaxed 85%, Hard three times ([Selling and Prices](Selling-and-Prices)).
 """)
 
 
@@ -1240,7 +1257,7 @@ def margot():
     ])
     page("Margot Pell", box + f"""
 **Margot Pell** is a conservator from the Zuzu City Museum of Art. When old paintings start turning up in the valley, the museum sends her to look after them.
-- **Arrives:** the week after you find your first damaged old painting. Gunther writes to say someone is coming. See {link("Old Paintings and Restoration")}.
+- **Arrives:** a week after Gunther's letter. Take your first damaged old painting to Gunther at the museum; he writes to the city, and his letter comes the next morning. See {link("Old Paintings and Restoration")}.
 - **Character:** warm, quick and talkative, especially about her work. She explains things nobody asked about, apologises, and keeps going.
 - **Sable:** they trained together at the museum, before Sable left. She has a few things to say about that.
 
@@ -1258,6 +1275,14 @@ def margot():
 
 She sleeps in her room down the steps from Gus's storeroom at the Saloon. After her 4-heart event, Robin builds her a **cottage** of her own between the main road and the river, south of Haley and Emily's house, and she goes home there instead. Her Saloon room becomes Gus's guest room.
 
+## Festivals
+Once she's in the valley she goes to all eight festivals, near Sable, with something to say at each. Ask her to the **Flower Dance** at 4 hearts or more and she'll dance with you, in the same white dress as the other dancers.
+
+## Her cottage
+Robin's letter comes three days after the 4-heart event, and from that morning the cottage stands on the town map, with a cobbled path down from the road to its door and a bench by the river.
+- **The window box:** in the 4-heart event, Robin asks what to plant under the big window: **pink roses**, **lavender** or **marigolds**. That's what grows there (it's under snow in winter), and Margot mentions it the first time you talk to her at home.
+- **Inside:** her restoration table under the north window, a plan chest, a little kitchen, and her frame workshop along the front wall.
+
 She dresses for the weather: a coat and scarf outdoors in winter, linen on Ginger Island.
 
 ## Gifts
@@ -1268,8 +1293,8 @@ She dresses for the weather: a coat and scarf outdoors in winter, linen on Ginge
 Like most villagers, she loves an iridium painting; see {link("Gifting Paintings")}.
 
 ## What she does for you
-- **Restores old paintings for a fee**, before you can do it yourself. Hold a damaged painting and talk to her at the museum. She takes it, and gives it back three days later at silver quality. One at a time.
-- **Painting Mastery:** once your mastery bar is full, she sets you a test restoration. Pass it and you're a conservator. See {link("Old Paintings and Restoration")}.
+- **Restores old paintings for a fee**, before you can do it yourself. Hold a damaged painting and talk to her at the museum (even before her line for the day: she'll always look at a painting first). She takes it, and three days later she posts it back to you, restored at silver quality: it comes attached to her letter. One at a time. Hold one out to her anywhere else and she'll tell you to bring it to the museum.
+- **Painting Mastery:** the morning after you reach Painting level 10 (or after you first meet her, if that's later), she writes with her old **Study Board** to hang on your wall. It fills as your mastery bar does, and she has something to say about each quarter the next time you talk. When it's full, she sets you a test restoration at the museum. Pass it and you're a conservator. See {link("Old Paintings and Restoration")}.
 
 | Set | Her fee |
 |---|---|
@@ -1328,27 +1353,32 @@ Damaged old paintings turn up around the valley: twenty-one of them, in five set
 - **Your first is guaranteed:** the first fishing treasure chest or artifact spot after you reach Painting level 3.
 - **The Travelling Cart** sometimes sells one from any set (about one day in six), for 3,000g.
 - **Margot's loupe**, from the museum's collection, makes every way of finding one half as likely again. See {link("The Museum")}.
+- **Which one you get:** each find is a painting from its set that the museum hasn't got yet and that isn't already in your bag.
 
-The first one you find brings {link("Margot Pell")} to the valley the following week.
+Take your first to **Gunther** at the museum: he writes to the city, and {link("Margot Pell")} arrives a week after his letter.
+
+**Lost one?** Nothing's lost for good. If you lose your first before Gunther has seen it (trashed, left in a chest, dropped in the mines), the next artifact spot or fishing chest brings another. After that, a painting you've lost or sold comes back as readily as one you've never found, until the museum has it. A restoration of any quality can be donated.
 
 ## Getting one restored
-Until you're a conservator, **Margot** restores them for a fee: hold the damaged painting and talk to her at the museum. It comes back three days later, at silver quality. See {link("Margot Pell")} for her fees.
+Until you're a conservator, **Margot** restores them for a fee: hold the damaged painting and talk to her at the museum. Three days later it comes back in the post, attached to her letter, at silver quality. See {link("Margot Pell")} for her fees.
 
 ## Painting Mastery
 Past Painting level 10, your Painting XP keeps counting towards **Painting Mastery**: a bar of 15,000 XP, shown in the Painting skill's tooltip.
 
-When the bar is full, talk to Margot at the museum. She sets you a **test restoration**: one of her own old paintings, restored at her table.
-- **Gold or better** and she certifies you a conservator, with the game's mastery sparkle. You get the **Master's Easel**, an easel with 15% more light.
+The morning after you reach level 10, she writes to you with her old **Study Board** (if you haven't met her yet, it comes the morning after you first talk to her). Hang it on a wall: it fills with pinned studies a quarter at a time as the bar does, and is full when she's ready to test you. Right-click it (or hover it in your bag) for the exact numbers. If you lose it, Margot posts you another (at most once a week). Margot notices each quarter too, the next time you talk to her.
+
+When the board is full, talk to Margot at the museum: she offers the test on your first word, before anything else she has to say. Say you're ready and she asks which mode you'd like to paint it in (Simplified, Relaxed, Normal or Hard; it's saved, like the easel's mode button). Then she sets you a **test restoration** at her table.
+- **Gold or better** and she certifies you a conservator, with the game's mastery sparkle. You get the **Master's Easel**, an easel with 15% more light. A medium or large painting made at it at gold or better is a **living masterwork**: hung on a wall, it moves a little. A scene (a view painted outdoors, a restored old painting or an original) comes alive in its colours: glints drift across its water (slate, cerulean, aquamarine), firelight breathes in its reds and golds (crimson, ruby, marigold) and a breeze passes over its leaves (moss, leaf). Anything else (a still life, a portrait, an animal or a creature) catches a soft band of window light drifting across it now and then.
 - **Below gold**, try again the next day.
 
-She keeps the painting either way.
+The painting is **Zuzu at Dusk**, the Zuzu City Museum of Art's own, lent to her for testing conservators. It isn't one of the valley's 21: it goes back to the city either way, and isn't part of your collection.
 
 ## Restoring one yourself
 Once you're a conservator, a damaged painting in your bag shows a **Restore** slot on any easel's setup screen.
 - **The canvas** starts as the damaged painting, with the surviving paint already there. It's its own canvas, so none is used.
-- **The reference** shows the painting as it is, damage and all: you work out what's missing from what's left. Missing cells are hatched on both, so bare canvas can't be mistaken for pale paint.
+- **The reference** shows the painting as it was, whole. The canvas starts with what's left of it, and the missing cells are hatched, so bare canvas can't be mistaken for pale paint. Point at a gap to see its colour on the reference.
 - **Scoring:** only the damaged cells count. The right colour counts fully, a near one half, and mixing purity counts as usual. Painting over surviving paint with a different colour costs you.
-- **The light:** a restoration gets half again the usual light, since what's missing has to be worked out as well as painted.
+- **The light** is set from what's missing (the cells you have to paint), with a little more for matching each gap to the picture.
 - **The result:** the painting, titled as it was ("The Old Mill"), at the quality you earned, restored by you.
 
 ## What a restored painting is worth
@@ -1367,22 +1397,24 @@ def museum():
     page("The Museum", f"""
 ![The museum's collection](images/screens/collection_view.png)
 
-Gunther takes restored old paintings for the museum: talk to him at the counter and choose **Donate a restored painting**. They join the museum's own collection, and **View the collection** shows what's there and what's missing. See {link("Old Paintings and Restoration")} for finding and restoring them.
+Gunther takes restored old paintings for the museum: talk to him at his counter and choose **Donate a restored painting**, then pick the painting from your bag. Framed ones count too: he keeps the painting and gives you back the empty frame. They join the museum's own collection, and **View the painting collection** at the counter shows what's there and what's missing. See {link("Old Paintings and Restoration")} for finding and restoring them.
 
 ## Rewards
 | Donated | Reward |
 |---|---|
-| The Old Valley set | Gallery furniture, each in its own letter from Gunther: a velvet rope, a gallery bench (you can sit on it) and a picture light to hang above a painting |
-| The Wreck set | The Driftwood Frame ({link("Frames")}) |
-| The Miners set | The Iron Frame |
-| The Calico set | The Sandstone Frame |
-| The Dwarvish set | The Dwarvish Frame |
+| The Old Valley set | Gallery furniture, each in its own letter from Gunther: a velvet rope, a gallery bench (you can sit on it) and a marble plinth, a little pedestal you can set an item on, like a table. Sable also sells marble plinths from Painting level 6, for 2,000g |
+| The Wreck set | Two Driftwood Frames ({link("Frames")}) |
+| The Miners set | Two Iron Frames |
+| The Calico set | Two Sandstone Frames |
+| The Dwarvish set | Two Dwarvish Frames |
 | 6 paintings | A **living painting**: a mill on a river at dusk, its water shimmering and its window's lamp flickering |
 | 12 paintings | **Margot's loupe**, worn as a ring: old paintings turn up half as often again |
 | All 21 | A **paint-tube Junimo** statue, from Sable |
 
+Each reward comes in the post the next morning. When a donation earns one, Gunther tells you so, and to check your mailbox.
+
 ## The Painting Wing
-![The wing's doorway](images/screens/wing_doorway_open.png)
+![The Painting Wing](images/screens/wing_inside.png)
 
 The day after your first donation, a new wing opens through the doorway in the exhibit hall's east wall (until then it's roped off). Inside:
 - **The Old Valley** hangs framed along the back wall.

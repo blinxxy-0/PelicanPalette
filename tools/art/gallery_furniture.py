@@ -3,7 +3,7 @@ section 5), to [CP] Pelican Palette/assets/collection/gallery.png (96x128,
 furniture sprite indexes on its 16-pixel grid, six to a row):
   - index 0, 32x32: the velvet rope, two brass posts and a red rope
   - index 2, 32x32: the gallery bench, green leather with brass studs
-  - index 4, 32x16: the picture light, a brass lamp to hang over a painting
+  - index 4, 32x16: the picture light (no longer used: replaced by the plinth)
   - index 10, 16x16: a gallery card, for a painting's place in the museum's
     painting wing while it's still missing (drawn here: cream card, ink lines)
   - index 15, 48x64: the wing's white marble display, a board three tiles
@@ -16,7 +16,13 @@ furniture sprite indexes on its 16-pixel grid, six to a row):
   - index 12, 48x48: the paint-tube Junimo on its marble plinth, the
     centrepiece of Sable's gallery (art/shop_interior/gallery_junimo.png,
     the same art), for the whole collection donated
-The first three are the Old Valley set's reward. PixelLab, picked
+  - index 39, 16x32: the marble plinth, white marble with a brass plaque
+    (PixelLab with a straight-on guide, art/collection/plinth, 2026-11-05),
+    the Old Valley set's third piece in place of the picture light
+Since 2026-11-05 the sheet is edited in place after this script (the
+doorway rope flipped, the bench dropped 5 pixels so its feet meet the floor
+and you sit on it, the plinth added): don't rerun it over those.
+The rope, bench and plinth are the Old Valley set's reward. PixelLab, picked
 2026-11-01 (art/collection); outlines recoloured (vanillafy.selout), never
 black.
 

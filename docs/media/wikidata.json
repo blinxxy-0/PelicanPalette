@@ -38,6 +38,12 @@
       "sellPrice": 100
     },
     {
+      "id": "(O)blinxxy.MuseArt_DamagedPainting_zuzu",
+      "name": "Damaged Painting",
+      "description": "Property of the Zuzu City Museum of Art. Margot brought it from the city to test conservators.",
+      "sellPrice": 100
+    },
+    {
       "id": "(O)blinxxy.MuseArt_Canvas_Small",
       "name": "Small Canvas",
       "description": "A stretched canvas, 20 cells square. Paint on it at an easel.",
@@ -414,7 +420,7 @@
     {
       "id": "(BC)blinxxy.MuseArt_MastersEasel",
       "name": "Master\u0027s Easel",
-      "description": "An easel finished in gold leaf, for a master. Paintings made at it get a little more light.",
+      "description": "An easel finished in gold leaf, for a master. Paintings made at it get a little more light, and one painted at gold or better comes alive when it\u0027s hung.",
       "sellPrice": 5000
     },
     {
@@ -899,6 +905,13 @@
       "id": "(BC)blinxxy.MuseArt_FramersBench",
       "price": 2500,
       "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 4",
+      "oncePerPlayer": false
+    },
+    {
+      "item": "Marble Plinth",
+      "id": "(F)blinxxy.MuseArt_MarblePlinth",
+      "price": 2000,
+      "condition": "PLAYER_BLINXXY.MUSEART.PAINTING_LEVEL Current 6",
       "oncePerPlayer": false
     },
     {

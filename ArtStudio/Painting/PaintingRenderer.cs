@@ -118,7 +118,8 @@ internal static class PaintingRenderer
 
     // Draws the painting's pixels inside `area` at the largest whole number
     // of screen pixels per cell, centered on a mat.
-    public static void DrawArt(SpriteBatch b, Item item, Rectangle area, Color tint, float layerDepth)
+    // `alive`: hung on a wall, where a living masterwork moves (DrawLife).
+    public static void DrawArt(SpriteBatch b, Item item, Rectangle area, Color tint, float layerDepth, bool alive = false)
     {
         var art = TextureFor(item);
         b.Draw(Game1.staminaRect, area, null, MatColor * (tint.A / 255f), 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
@@ -131,8 +132,125 @@ internal static class PaintingRenderer
             side = System.Math.Min(area.Width, area.Height);
         var dest = new Rectangle(area.Center.X - side / 2, area.Center.Y - side / 2, side, side);
         b.Draw(art, dest, null, tint, 0f, Vector2.Zero, SpriteEffects.None, layerDepth + 0.000001f);
+        if (alive && PaintingData.IsLiving(item))
+            DrawLife(b, item, dest, tint, layerDepth + 0.0000015f);
         if (Varnish.FinishOf(item) is string finish)
             DrawSheen(b, dest, finish, tint, layerDepth + 0.000002f);
+    }
+
+    // A machine's "ready" bubble shows its held item's plain sprite: for a
+    // painting, a bare canvas. This draws the painting itself over it (the
+    // Varnishing Cabinet, the Framer's Bench), bobbing with the bubble.
+    public static void DrawInReadyBubble(SpriteBatch b, StardewValley.Object machine, Item painting, int x, int y)
+    {
+        float bubbleDepth = (y + 1) * 64 / 10000f + machine.TileLocation.X / 50000f;
+        float bob = 4f * (float)System.Math.Round(System.Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 250.0), 2);
+        painting.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - 96 - 8 + bob)), 1f, 0.75f, bubbleDepth + 1.5E-05f,
+            StackDrawType.Hide, Color.White, drawShadow: false);
+    }
+
+    // ---- Living masterworks (the Master's Easel, 1.3) ----
+
+    // A gold-or-better painting made at the Master's Easel moves a little
+    // when it hangs, by what it's of. A scene (a view painted outdoors, a
+    // restored old painting, an original) comes alive in its colours: glints
+    // drift across its water (slate, cerulean, aquamarine), firelight
+    // breathes in its reds and golds (crimson, ruby, marigold), and a breeze
+    // passes over its leaves (moss, leaf). Anything else (a still life, a
+    // portrait, an animal, a creature), where a blue might be a shirt, gets a
+    // soft band of window light drifting slowly across it now and then.
+    private enum Life : byte { None, Water, Fire, Leaf }
+    private static readonly Dictionary<string, (int Size, Life[,] Kinds, bool Scene)> LifeCache = new();
+
+    public static bool IsScene(PaintingData data) => data.IsView || data.IsOld || data.IsOriginal;
+
+    private static Life LifeOf(byte pigment) => pigment == PixelCanvas.Blank || pigment >= Palette.All.Length ? Life.None
+        : Palette.All[pigment].Id switch
+        {
+            "slate" or "cerulean" or "aquamarine" => Life.Water,
+            "crimson" or "ruby" or "marigold" => Life.Fire,
+            "moss" or "leaf" => Life.Leaf,
+            _ => Life.None,
+        };
+
+    // Every 9 seconds, a soft diagonal band of warm light crosses the
+    // picture in about 4, as the sun through a window would.
+    private const double LightPeriod = 9.0, LightSweep = 4.0;
+
+    private static void DrawWindowLight(SpriteBatch b, Rectangle dest, int size, float cell, int side, double t, float alpha, float layerDepth)
+    {
+        double phase = t % LightPeriod;
+        if (phase > LightSweep) return;
+        // The band's centre, from before the top left to past the bottom right.
+        float centre = (float)(phase / LightSweep) * 1.6f - 0.3f;
+        const float width = 0.16f;
+        var warm = new Color(255, 236, 190);
+        for (int x = 0; x < size; x++)
+        for (int y = 0; y < size; y++)
+        {
+            float at = (x + y * 0.6f) / (size * 1.6f);
+            float off = System.Math.Abs(at - centre);
+            if (off >= width) continue;
+            float strength = (1f - off / width) * 0.2f;
+            var r = new Rectangle(dest.X + (int)(x * cell), dest.Y + (int)(y * cell), side, side);
+            b.Draw(Game1.staminaRect, r, null, warm * (strength * alpha), 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+        }
+    }
+
+    public static void DrawLife(SpriteBatch b, Item item, Rectangle dest, Color tint, float layerDepth)
+    {
+        if (PaintingData.RawCells(item) is not { } raw) return;
+        if (!LifeCache.TryGetValue(raw, out var life))
+        {
+            if (!PaintingData.TryDecodeCells(raw, out int size, out var cells, out _, out _)) return;
+            var kinds = new Life[size, size];
+            for (int x = 0; x < size; x++)
+            for (int y = 0; y < size; y++)
+                kinds[x, y] = LifeOf(cells[x, y]);
+            LifeCache[raw] = life = (size, kinds, PaintingData.Read(item) is { } data && IsScene(data));
+        }
+        double t = Game1.currentGameTime.TotalGameTime.TotalSeconds;
+        float alpha = tint.A / 255f, cell = dest.Width / (float)life.Size;
+        int side = (int)System.Math.Ceiling(cell);
+        if (!life.Scene)
+        {
+            DrawWindowLight(b, dest, life.Size, cell, side, t, alpha, layerDepth);
+            return;
+        }
+        for (int x = 0; x < life.Size; x++)
+        for (int y = 0; y < life.Size; y++)
+        {
+            var kind = life.Kinds[x, y];
+            if (kind == Life.None) continue;
+            float seed = ((x * 73 + y * 151) % 97) / 97f;
+            Color glow;
+            float strength;
+            switch (kind)
+            {
+                case Life.Water:
+                    // Bands of light sliding along the water, a glint at each crest.
+                    float wave = (float)System.Math.Sin(t * 2.0 - x * 0.9 + y * 0.45 + seed * 0.8);
+                    if (wave < 0.8f) continue;
+                    glow = Color.White;
+                    strength = (wave - 0.8f) / 0.2f * 0.4f;
+                    break;
+                case Life.Fire:
+                    // A warm breathing glow, each cell a little out of step.
+                    float flicker = (float)(0.5 + 0.5 * System.Math.Sin(t * 7.0 + seed * 6.28)) * (float)(0.6 + 0.4 * System.Math.Sin(t * 2.3 + seed * 3.1));
+                    glow = new Color(255, 214, 120);
+                    strength = 0.04f + 0.16f * flicker;
+                    break;
+                default:
+                    // A breeze crossing the leaves, left to right.
+                    float gust = (float)System.Math.Sin(t * 1.4 - x * 0.35 + System.Math.Sin(y * 0.7) * 0.6);
+                    if (gust < 0.55f) continue;
+                    glow = new Color(240, 255, 200);
+                    strength = (gust - 0.55f) / 0.45f * 0.18f;
+                    break;
+            }
+            var r = new Rectangle(dest.X + (int)(x * cell), dest.Y + (int)(y * cell), side, side);
+            b.Draw(Game1.staminaRect, r, null, glow * (strength * alpha), 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+        }
     }
 
     // Varnish catches the light: a soft diagonal glint across the top left,

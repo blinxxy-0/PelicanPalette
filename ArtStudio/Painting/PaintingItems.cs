@@ -79,12 +79,15 @@ internal static class PaintingItems
     }
 
     // Shown under the item's name: who painted it, when, and of what.
-    public static string Provenance(PaintingData data)
+    public static string Provenance(PaintingData data) =>
+        data.Living ? ProvenanceOf(data) + "\n" + I18n.Get("painting.provenance.living") : ProvenanceOf(data);
+
+    private static string ProvenanceOf(PaintingData data)
     {
         // An old painting, restored (1.3): whose hand it was isn't known.
         if (OldPaintings.OfSubject(data.Subject) is { } old)
         {
-            string text2 = I18n.Get("painting.provenance.restored", new { set = OldPaintings.SetName(old.Set), painter = data.Painter, date = data.Date });
+            string text2 = I18n.Get(OldPaintings.IsZuzu(old) ? "painting.provenance.zuzu" : "painting.provenance.restored", new { set = OldPaintings.SetName(old.Set), painter = data.Painter, date = data.Date });
             return data.Finish == null ? text2 : text2 + "\n" + I18n.Get("painting.provenance.varnished", new { finish = I18n.Get("varnish.finish." + data.Finish) });
         }
         string subject = data.IsPortrait

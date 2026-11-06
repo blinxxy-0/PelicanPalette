@@ -1,18 +1,57 @@
 using System.Linq;
 using ArtStudio.Core;
 using ArtStudio.Painting;
+using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace ArtStudio.Social;
 
 // Margot restores a damaged old painting for you, for a fee, before you
 // have Painting Mastery (1.3, restoration_mechanics.md §3): hand it to her
 // at the museum and it's ready three days later, at silver quality
-// ("careful, but cautious"), as Clint breaks geodes. One at a time.
+// ("careful, but cautious"), as Clint breaks geodes. One at a time. The
+// morning it's ready she posts it back: her letter comes with the painting
+// attached, so there's no walk back to the museum (from playtesting).
 internal static class MargotService
 {
     private const string JobKey = ModEntry.Id + "/MargotJob";       // "<painting id>|<day it's ready>"
+    public const string ReturnMail = ModEntry.Id + "_MargotRestored";
     public const int Days = 3;
+
+    public static void Register(IModHelper helper)
+    {
+        helper.Events.GameLoop.DayStarted += (_, _) => PostIfReady(Game1.player);
+        helper.Events.Display.MenuChanged += (_, e) =>
+        {
+            if (e.NewMenu is LetterViewerMenu letter && letter.mailTitle == ReturnMail && !letter.isFromCollection)
+                Enclose(letter, Game1.player);
+        };
+    }
+
+    // The morning it's ready: her letter, in your mailbox today.
+    internal static void PostIfReady(Farmer who)
+    {
+        if (Job(who) is not { } job || Game1.Date.TotalDays < job.Ready || who.mailbox.Contains(ReturnMail)) return;
+        who.mailbox.Add(ReturnMail);
+    }
+
+    // Opening her letter: the restored painting comes with it (the letter
+    // hands over whatever's left in it when it's closed, so it can't be lost).
+    internal static Item? Enclose(LetterViewerMenu letter, Farmer who)
+    {
+        if (Job(who) is not { } job || Game1.Date.TotalDays < job.Ready) return null;
+        var restored = Restored(job.Painting);
+        letter.itemsToGrab.Add(new ClickableComponent(new Rectangle(letter.xPositionOnScreen + letter.width / 2 - 48, letter.yPositionOnScreen + letter.height - 32 - 96, 96, 96), restored)
+        {
+            myID = 104, leftNeighborID = 101, rightNeighborID = 102,
+        });
+        if (letter.backButton != null) letter.backButton.rightNeighborID = 104;
+        if (letter.forwardButton != null) letter.forwardButton.leftNeighborID = 104;
+        who.modData.Remove(JobKey);
+        return restored;
+    }
 
     public static int Fee(OldPainting painting) => painting.Set switch
     {
@@ -54,10 +93,8 @@ internal static class MargotService
         }
         if (who.ActiveObject == null && job is { } waiting)
         {
-            if (Game1.Date.TotalDays < waiting.Ready)
-                Say(margot, I18n.Get("margot.service.waiting", new { title = OldPaintings.Title(waiting.Painting) }));
-            else
-                HandBack(margot, who, waiting.Painting);
+            Say(margot, I18n.Get(Game1.Date.TotalDays < waiting.Ready ? "margot.service.waiting" : "margot.service.posted",
+                new { title = OldPaintings.Title(waiting.Painting) }));
             return true;
         }
         return false;
@@ -79,21 +116,6 @@ internal static class MargotService
         return true;
     }
 
-    internal static bool HandBack(NPC margot, Farmer who, OldPainting old)
-    {
-        var restored = Restored(old);
-        if (!who.couldInventoryAcceptThisItem(restored))
-        {
-            Say(margot, I18n.Get("margot.service.full"));
-            return false;
-        }
-        who.addItemToInventory(restored);
-        who.modData.Remove(JobKey);
-        Game1.playSound("coin");
-        Say(margot, I18n.Get("margot.service.ready", new { title = OldPaintings.Title(old) }));
-        return true;
-    }
-
     // Her restoration: the picture whole again, at silver.
     internal static Item Restored(OldPainting old)
     {
@@ -111,9 +133,9 @@ internal static class MargotService
         return PaintingItems.Create(data, PaintingRules.Silver, OldPaintings.RestoredValue(old, PaintingRules.Silver));
     }
 
+    // On top of her line for the day, which stays for next time.
     private static void Say(NPC npc, string text)
     {
-        npc.CurrentDialogue.Clear();
         npc.CurrentDialogue.Push(new Dialogue(npc, null, text));
         Game1.drawDialogue(npc);
     }
