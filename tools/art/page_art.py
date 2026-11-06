@@ -234,8 +234,8 @@ def main():
     portrait_header(os.path.join(out, "header_sable.png"),
                     os.path.join(here, "..", "..", "[CP] Pelican Palette", "assets", "sable", "portraits.png"), 1,
                     os.path.join(out, "header_sable_portrait.png"))
-    # And Margot's (1.3), the same way.
-    portrait_header(os.path.join(out, "header_margot_pell.png"),
+    # And Margot's (1.3), the same way: her first name only, as the game names its villagers.
+    portrait_header(os.path.join(out, "header_margot.png"),
                     os.path.join(here, "..", "..", "[CP] Pelican Palette", "assets", "margot", "portraits.png"), 1,
                     os.path.join(out, "header_margot_portrait.png"))
     title_card(media, os.path.join(out, "title_card.png"),

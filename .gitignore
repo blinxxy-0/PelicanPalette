@@ -34,3 +34,6 @@ art/**/vanilla_*.png
 # The release zip and the Nexus preview are built from the repository.
 release/*.zip
 release/nexus/preview.html
+
+# The dev copies of the game (tools/test): Mods folders, PIDs, suite output.
+.devgame/

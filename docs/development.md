@@ -49,6 +49,25 @@ From the title screen:
 - Debug builds also run commands written to `Mods/ArtStudio/dev_commands.txt`.
 - `tools/launch_test.ps1 [-ModsPath dir]`, `tools/stop_test.ps1` and `tools/screenshot_test.ps1` drive a test copy of the game.
 
+### The automated suite (`tools/test/`)
+
+The tests are the `Check(...)` calls in `ArtStudio/DevGame.cs` (and `DevMultiplayer.cs`), grouped into `museart_*test` console commands. They run in a real copy of the game. The scripts below launch it on a separate Mods folder, start a throwaway farm, and type each command into the mod's `dev_commands.txt` inbox, waiting a set number of seconds after each one. Then they pull the `[PASS]` and `[FAIL]` lines out of the SMAPI log. The waits are tuned to one PC, so a slower machine may need longer ones.
+
+- `run_dev.ps1 -Steps "command|seconds", ... [-ModsDir devmods] [-Pattern regex]` rebuilds the mod into that Mods folder, restarts the dev copy, and runs the steps. Separate several commands within one step with `;`.
+- `run_mp.ps1 -Steps "H:command|s", "C:command|s"` runs a host and a farmhand, on `devmods` and `devmods_mp`.
+- `suite_main.ps1` runs most of the suite on one farm. `suite_extra.ps1` runs the tests that need a fresh game each: married, CJB Cheats, each festival, and co-op. `suite_all.ps1` runs both. Results go to `suite_main_out.txt` and `suite_extra_out.txt` in the dev root.
+
+The dev root is `.devgame/` in the repository, which git ignores; set `PELICAN_DEV_ROOT` to use another folder. It holds one Mods folder per setup. The mod itself is built into each folder; the other mods aren't in the repository, so download them into these folders:
+
+| Folder | Mods | Used by |
+|---|---|---|
+| `devmods` | Content Patcher, SpaceCore, Generic Mod Config Menu, Automate, NPC Map Locations, Custom Spouse Rooms, Custom Spouse Patio Redux, PolyamorySweet | the main suite, festivals, co-op host |
+| `devmods_plain` | Content Patcher, SpaceCore, Generic Mod Config Menu, CJB Cheats Menu | married tests, CJB Cheats |
+| `devmods_mp` | Content Patcher, SpaceCore, Generic Mod Config Menu | co-op farmhand |
+| `devmods_sve` | Content Patcher, SpaceCore, Generic Mod Config Menu, Stardew Valley Expanded, Farm Type Manager | SVE checks, run by hand (`run_dev.ps1 -ModsDir devmods_sve`) |
+
+The scripts only stop SMAPI processes running on a Mods folder under the dev root, so a game you're playing is never touched.
+
 ## Release, mod page and wiki
 
 - **Release zip:** `dotnet build ArtStudio/ArtStudio.csproj -c Release -p:EnableModDeploy=false` writes `ArtStudio/bin/Release/net6.0/ArtStudio <version>.zip`. Without the flag the build also deploys, so leave it on while a test game is running.
