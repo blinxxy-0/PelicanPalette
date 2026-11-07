@@ -66,17 +66,17 @@ PICKS = {
     # 6: Lupini's painting spots (he paints at a different viewpoint each day): a stool
     # with his paint box, and the rock he wipes his brushes on
     "spot_clearing_stool": ("props/vale_props_v2/painters_stool_1_3", 6, 15, 1, 0),
-    "spot_clearing_rock": ("props/vale_props_v2/paint_rock_2_1", 9, 18, 1, 0),
+    "spot_clearing_rock": ("props/vale_props_v2/paint_rock_clean", 9, 18, 1, 0),
     # (by the high street's hedge, side by side: the user, 2026-11-07, "can't be two
     # right next to each other" in the top right)
     "spot_street_stool": ("props/vale_props_v2/painters_stool_1_3", 43, 4, 1, 0),
-    "spot_street_rock": ("props/vale_props_v2/paint_rock_2_1", 46, 4, 1, 0),
+    "spot_street_rock": ("props/vale_props_v2/paint_rock_clean", 46, 4, 1, 0),
     "spot_atelier_stool": ("props/vale_props_v2/painters_stool_1_3", 79, 16, 1, 0),
-    "spot_atelier_rock": ("props/vale_props_v2/paint_rock_2_1", 79, 19, 1, 0),
+    "spot_atelier_rock": ("props/vale_props_v2/paint_rock_clean", 79, 19, 1, 0),
     "spot_meadow_stool": ("props/vale_props_v2/painters_stool_1_3", 28, 65, 1, 0),
-    "spot_meadow_rock": ("props/vale_props_v2/paint_rock_2_1", 31, 66, 1, 0),
+    "spot_meadow_rock": ("props/vale_props_v2/paint_rock_clean", 31, 66, 1, 0),
     "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 84, 62, 1, 0),
-    "spot_lake_rock": ("props/vale_props_v2/paint_rock_2_1", 87, 62, 1, 0),
+    "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 87, 62, 1, 0),
     "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
     "vale_sign": ("props/vale_sign_gilded", 19, 4, 1, 0),   # gold lettering drawn on; lit at night (map property Light)         # A: where the high street starts
     "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door
@@ -1292,6 +1292,10 @@ def place_buildings(g, assets):
                 if j >= rows - n and c0 <= i <= c1:
                     g["Buildings"][ty][tx] = gid
                     g["Front"][ty][tx] = 0
+                    if name.startswith("spot_"):
+                        # Lupini's painting spots paint the view (ArtStudio/Vale/GildedVale.cs)
+                        from vale_decor import TILE_PROPS
+                        TILE_PROPS[("Buildings", tx, ty)] = {"Action": "blinxxy.MuseArt_PaintSpot"}
                 elif j >= rows - n:
                     g["Back2"][ty][tx] = gid          # (the rest of a solid row, under the farmer: a tree's roots)
                 else:

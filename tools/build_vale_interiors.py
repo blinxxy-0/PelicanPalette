@@ -41,7 +41,7 @@ PICKS = {"tea_counter": "tea_counter_1_1", "teapot_shelf": "teapot_shelf_1_1", "
          "guestbook_case": "guestbook_case_1_0", "sketch_wall": "sketch_wall_1_2",
          "piano": "piano_1_1",
          # the guest room (2026-11-07: "very boring" with the tea room's chair and table)
-         "wardrobe": "../vale_house_v2/wardrobe_2_0", "washstand": "../vale_house_v2/washstand_2_1",
+         "wardrobe": "../vale_house_v2/wardrobe_2_0",
          "rug": "../vale_house_v2/rug_2_1", "nightstand": "../vale_house_v2/nightstand_1_0",
          "writing_desk": "../vale_house_v2/writing_desk_2_1", "easel": "../vale_house_v2/easel_2_2"}
 WALLPAPERS = ["wallpaper_1_2"]
@@ -64,18 +64,20 @@ TEA = dict(
             "armchair": ((14, 7), 1), "armchair#2": ((18, 7), 1),
             "tea_table": ((3, 7), 1), "tea_table#2": ((7, 9), 1), "tea_table#3": ((12, 9), 1),
             "piano": ((1, 9), 1)},
+    # the game's rugs (Haley's red rug, its 9-slice from townInterior_2), under the tables and the fireside
+    rugs=[(2, 6, 4, 3), (13, 6, 7, 3), (6, 8, 4, 3)],
     fireplace=(17, 1),                   # the game's brick fireplace (Haley's, the Saloon's): x, top row
     lights=[(4, 5), (10, 4), (16, 5), (10, 9), (17, 6)])
 GUEST = dict(
-    cols=list(range(13)), rows=[0, 1, 2, 3, 4, 5, 6, 7, 12, 13],
-    # an artist's room: the bed out from the wall with a nightstand beside it, a
-    # wardrobe and washstand, a writing desk and an easel by the light, a rug
-    pieces={"wardrobe": ((1, 2), 1), "washstand": ((4, 2), 1), "sketch_wall": ((6, 1), 0),
-            "nightstand": ((11, 5), 1), "rug": ((5, 5), -2), "writing_desk": ((1, 6), 1), "easel": ((4, 6), 1)},
-    bed=(9, 4), lights=[(3, 4), (9, 5), (6, 7)])
-GUEST_AT = (1, 0)                        # the guest room's top-left in the house map
-TEA_AT = (0, 10)                         # the tea room's, below it
-EXIT = (10, 22)                          # the front door (the tea room's own, in the house map)
+    cols=list(range(13)), rows=[0, 1, 2, 3, 4, 5, 6, 7],      # no bottom wall: it stands on the tea room's
+
+    # an artist's room: the bed with a nightstand beside it, a wardrobe, the easel
+    # against the wall beside it, a writing desk, a rug
+    pieces={"wardrobe": ((1, 2), 1), "easel": ((4, 2), 1), "sketch_wall": ((6, 1), 0),
+            "nightstand": ((11, 4), 1), "rug": ((5, 5), -2), "writing_desk": ((1, 5), 1)},
+    bed=(9, 3), lights=[(3, 4), (9, 5), (6, 7)])
+EXIT = (10, 12)                          # the tea room's front door
+GUEST_DOOR = 6                           # the guest room's door, in the tea room's back wall                          # the front door (the tea room's own, in the house map)
 FIREPLACE = {"Front": [(667, 668), (699, 700), (731, 732)], "Buildings": [(763, 764), (795, 796)]}
 
 
@@ -126,16 +128,15 @@ def furnish(grid, slots, room, saloon):
                         grid[layer][room["bed"][1] + j][room["bed"][0] + i] = to_sheet(gid, sets)
 
 
-def carve_passage(grid, x, y_top, y_bottom, sets):
-    """An opening through the tea room's back wall at column x, from the guest
-    room's door down to the floor: floor on Back, nothing on Buildings or Front,
-    and the wall's trim down each side of it."""
-    for y in range(y_top, y_bottom + 1):
-        grid["Back"][y][x] = to_sheet(4689 if (x + y) % 2 == 0 else 4690, sets)      # the Shed's floor
-        for l in ("Buildings", "Front", "Front2"):
-            grid[l][y][x] = None
-        grid["Front"][y][x - 1] = to_sheet(2241, sets)      # the Shed's right-hand wall trim, on the wall to its left
-        grid["Front"][y][x + 1] = to_sheet(2245, sets)      # and its left-hand trim, on the wall to its right
+RUG = (584, 616, 648)                     # Haley's rug rows (top, middle, bottom) in townInterior_2
+
+
+def lay_rug(grid, x0, y0, w, h):
+    for j in range(h):
+        row = RUG[0] if j == 0 else RUG[2] if j == h - 1 else RUG[1]
+        for i in range(w):
+            col = 0 if i == 0 else 3 if i == w - 1 else (1 if i < w - 2 else 2)
+            grid["Back2"][y0 + j][x0 + i] = ("townInterior_2", row + col)
 
 
 def main():
@@ -148,9 +149,12 @@ def main():
     for i, name in enumerate(WALLPAPERS):
         papers.alpha_composite(Image.open(os.path.join(ART, name + ".png")).convert("RGBA").crop((0, 0, 16, 48)), (i * 16, 0))
     papers.save(os.path.join(assets, "ValeWallpapers.png"))
+    t2 = 2865 + (sheet.width // 16) * (sheet.height // 16)
     tilesets = [("indoor", 1, "townInterior", 512, 1088),
                 ("walls_and_floors", 2177, "walls_and_floors", 256, 688),
-                ("z_blinxxy.MuseArt_ValeHouseInterior", 2865, SHEET, sheet.width, sheet.height)]
+                ("z_blinxxy.MuseArt_ValeHouseInterior", 2865, SHEET, sheet.width, sheet.height),
+                ("indoor2", t2, "townInterior_2", 512, 656)]
+    GUEST["rows"] = [0, 1, 2, 3, 4, 5, 6, 7, 12, 13]        # its own room, with the Shed's door at the bottom
     tea, guest = bmr.shell(shed, TEA), bmr.shell(shed, GUEST)
     furnish(tea, slots, TEA, saloon)
     fx, fy = TEA["fireplace"]
@@ -159,38 +163,47 @@ def main():
             y = fy + j + (len(FIREPLACE["Front"]) if layer == "Buildings" else 0)
             for i, gid in enumerate(pair):
                 tea[layer][y][fx + i] = ("townInterior", gid - 1)
+    for x0, y0, rw_, rh_ in TEA["rugs"]:
+        lay_rug(tea, x0, y0, rw_, rh_)
+    # The guest room's door, set in the tea room's back wall: Sam's bedroom door
+    # (SamHouse x 12, y 12-13: the door on Front over the doorway on Back), as the
+    # game's houses lead to their bedrooms (the user, 2026-11-07: stairs into a wall,
+    # then a doorway, "doesn't make sense"). Walking into it takes you upstairs.
+    dx = GUEST_DOOR
+    sam = read(os.path.join(exports, "SamHouse.tmx"))
+    ssets, slayers = sam[0], sam[1]
+    # the door (Sam's Back tiles, on Back2 so the wallpaper doesn't paint over it) and its
+    # frame (his Front), standing on the floor in wall rows 2-3
+    for src, dst in (("Back", "Back2"), ("Front", "Front")):
+        lw, data = slayers[src]
+        for k, sy in enumerate((12, 13)):
+            gid = data[sy * lw + 12]
+            tea[dst][2 + k][dx] = to_sheet(gid, ssets) if gid else None
+    tea["Buildings"][3][dx] = None           # (the wall's foot: you walk into the door)
     furnish(guest, slots, GUEST, saloon)
+    tilesets_ = tilesets
     tw, th = len(TEA["cols"]), len(TEA["rows"])
     gw, gh = len(GUEST["cols"]), len(GUEST["rows"])
-    w, h = tw, TEA_AT[1] + th
-    grid = {l: [[None] * w for _ in range(h)] for l in bmr.LAYERS}
-    for room, (ox, oy) in ((guest, GUEST_AT), (tea, TEA_AT)):
-        rw, rh = len(room["Back"][0]), len(room["Back"])
-        for l in bmr.LAYERS:
-            for y in range(rh):
-                for x in range(rw):
-                    if room[l][y][x] is not None:
-                        grid[l][oy + y][ox + x] = room[l][y][x]
-    door_x = GUEST_AT[0] + 6                              # the Shed's door column
-    carve_passage(grid, door_x, TEA_AT[1], TEA_AT[1] + 3, shed[0])
-    tile_props = []
-    for (ox, oy), rw, rh in ((GUEST_AT, gw, gh), (TEA_AT, tw, th)):
-        tile_props += [(ox + x, oy + bmr.WALL_ROW, "WallID", "Wall") for x in range(1, rw - 1) if ox + x != door_x or oy != TEA_AT[1]]
-        tile_props += [(ox + x, oy + y, "FloorID", "Floor") for y in range(3, rh - 1) for x in range(1, rw - 1)]
-    tile_props += [(door_x, y, "FloorID", "Floor") for y in range(TEA_AT[1], TEA_AT[1] + 4)]
-    bx, by = GUEST_AT[0] + GUEST["bed"][0], GUEST_AT[1] + GUEST["bed"][1]
-    # A real night's stay, as on Ginger Island: the bed's tiles put you to bed, and the
-    # map lets you wake up here (paying Bea is the C# mod's, later).
-    tile_props += [(bx + i, by + j, "TouchAction", "Sleep") for i in range(2) for j in (2, 3)]
-    lights = [(GUEST_AT[0] + x, GUEST_AT[1] + y) for x, y in GUEST["lights"]] + [(TEA_AT[0] + x, TEA_AT[1] + y) for x, y in TEA["lights"]]
-    props = {"WallIDs": "Wall blinxxy.MuseArt_ValeWallpapers:0", "FloorIDs": "Floor 0",
-             "Warp": f"{EXIT[0]} {EXIT[1]} {VALE} {INN_DOOR[0]} {INN_DOOR[1] + 1}",
-             "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in lights), "AllowWakeUpWithoutBed": "T"}
-    bmr.write(os.path.join(assets, "ValeHouse.tmx"), grid, w, h, props, tilesets, tile_props)
+    for name, grid, w, h, lights, extra, wall_skip in (
+            ("ValeHouse", tea, tw, th, TEA["lights"],
+             {"Warp": f"{EXIT[0]} {EXIT[1]} {VALE} {INN_DOOR[0]} {INN_DOOR[1] + 1} "
+                      f"{dx} 3 blinxxy.MuseArt_ValeHouseGuest 6 8"}, set()),
+            ("ValeHouseGuest", guest, gw, gh, GUEST["lights"],
+             {"Warp": f"6 9 blinxxy.MuseArt_ValeHouse {dx} 5", "AllowWakeUpWithoutBed": "T"}, set())):
+        tile_props = [(x, bmr.WALL_ROW, "WallID", "Wall") for x in range(1, w - 1) if x not in wall_skip]
+        tile_props += [(x, y, "FloorID", "Floor") for y in range(3, h - 1) for x in range(1, w - 1)]
+        if name == "ValeHouseGuest":
+            # A real night's stay, as on Ginger Island: the bed's tiles put you to bed,
+            # and the map lets you wake up here (paying Bea is the C# mod's, later).
+            bx, by = GUEST["bed"]
+            tile_props += [(bx + i, by + j, "TouchAction", "Sleep") for i in range(2) for j in (2, 3)]
+        props = {"WallIDs": "Wall blinxxy.MuseArt_ValeWallpapers:0", "FloorIDs": "Floor 0",
+                 "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in lights), **extra}
+        bmr.write(os.path.join(assets, name + ".tmx"), grid, w, h, props, tilesets_, tile_props)
+        print("wrote", name + ".tmx", f"{w}x{h}")
     old = os.path.join(assets, "ValeHouseUpstairs.tmx")
     if os.path.exists(old):
         os.remove(old)
-    print("wrote ValeHouse.tmx", f"{w}x{h}")
 
 
 if __name__ == "__main__":

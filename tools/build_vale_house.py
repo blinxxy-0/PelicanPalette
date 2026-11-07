@@ -49,34 +49,71 @@ FRONT_DOOR = ("tea", 15)
 KITCHEN = (23, 29)                          # the tea room's columns with the kitchen's tiled floor
 # Furniture: name -> (x, y of its top-left tile, solid bottom rows); "#n" repeats a piece.
 # Wall-backed pieces stand with their base on the first floor row and their top over the wall.
+# (Our own PixelLab pieces, for the things the game has none of.)
 PIECES = {
-    # the snug, west: the fireplace in the back wall, the guest-book case and the piano either side
-    "guestbook_case": ((2, 18), 1), "piano": ((7, 18), 1),
-    "armchair": ((2, 23), 1), "armchair#2": ((7, 23), 1),
-    # the tea room: wall shelves and sketches; the counter free-standing, Bea's side behind it
-    "sketch_wall": ((11, 17), 0), "teapot_shelf": ((16, 17), 0),
-    "tea_counter": ((14, 22), 2),
-    "tea_table": ((11, 25), 1), "tea_table#2": ((18, 26), 1), "tea_table#3": ((19, 22), 1), "tea_table#4": ((11, 21), 1),
-    # the kitchen, east
-    "china_dresser": ((27, 18), 1), "k_counter": ((23, 18), 1), "k_stove": ((25, 18), 1), "k_shelf": ((23, 17), 0),
+    # the tea room: the guest book by the stairs' doorway, Bea's china, her counter against
+    # the back wall by the kitchen with the teapots on a shelf above it (the user, 2026-11-07:
+    # the counter "up towards the right", off the carpet and out of the middle)
+    "guestbook_case": ((11, 18), 1), "sketch_wall": ((9, 17), 0),
+    "china_dresser": ((17, 18), 1), "teapot_shelf": ((19, 17), 0), "tea_counter": ((19, 19), 2),
+    # the tea tables, every one on a rug (the user: "some on carpet and some not doesn't make sense")
+    "tea_table": ((11, 22), 1), "tea_table#2": ((11, 25), 1), "tea_table#3": ((18, 23), 1), "tea_table#4": ((18, 26), 1),
+    # the hall: the inn's piano, and the pictures the artists left
+    "piano": ((9, 11), 1), "sketch_wall#5": ((3, 10), 0), "sketch_wall#6": ((19, 10), 0),
     # the guest room
     "wardrobe": ((3, 2), 1), "easel": ((5, 2), 1), "nightstand": ((7, 4), 1), "writing_desk": ((3, 5), 1),
     "sketch_wall#2": ((8, 1), 0),
     # the artists' room (locked till Bea's 10 hearts)
     "easel#2": ((14, 2), 1), "sketch_wall#3": ((16, 1), 0),
     # Bea's room
-    # the hall: pictures the artists left, between the doors
-    "sketch_wall#5": ((10, 10), 0), "sketch_wall#6": ((19, 10), 0),
     "wardrobe#2": ((22, 2), 1), "nightstand#2": ((25, 4), 1), "writing_desk#2": ((22, 6), 1), "sketch_wall#4": ((24, 1), 0),
 }
+# The game's own furniture, tile for tile as its houses lay it (townInterior, gids from 1;
+# townInterior_2 from 2177). Each piece is its rows, top first; each row names its layers:
+# F over the farmer, B solid, F2 small things on top, B2 on the floor (a mat). A B row on
+# the wall (a couch's back on the wainscot, as Sam's is) moves the wainscot to Back behind it.
+VANILLA = {
+    "couch":        [{"B": [493, 494, 495]}, {"B": [525, 526, 527]}],                 # Haley's red one
+    "coffee_table": [{"F": [624, 625, 626], "F2": [0, 2611, 2612]},
+                     {"B": [656, 657, 658], "F": [2642, 2643, 2644]}, {"B": [688, 689, 690]}],
+    "armchair_w":   [{"F": [555, 556]}, {"B": [587, 588]}, {"B": [619, 620]}],     # Haley's, facing west
+    "pouf":         [{"B": [492]}],
+    "floor_lamp":   [{"F": [1347]}, {"B": [453]}],
+    "plant":        [{"F": [504]}, {"B": [536]}],
+    "plant_b":      [{"F": [503]}, {"B": [535]}],
+    "clock":        [{"F": [550]}, {"B": [582]}],                                   # Josh's
+    "hall_table":   [{"B": [485, 486], "F": [335, 482]}, {"B": [517, 518]}],       # Josh's, a plant and a photo on it
+    "logs":         [{"B": [897]}],
+    # Haley's kitchen, from the wall down: cupboards and the window shelf, the counters,
+    # the stove, the sink and the fridge, a mat in front
+    "kitchen":      [{"F": [531, 532, 257, 567, 568, 257]},
+                     {"F": [563, 564, 289, 0, 571, 289], "B": [0, 0, 570, 0, 0, 0]},
+                     {"B": [599, 600, 601, 602, 603, 489], "F": [0, 0, 0, 0, 0, 514]},
+                     {"B": [631, 632, 633, 634, 635, 521], "B2": [0, 0, 0, 0, 2305, 2305]},
+                     {"B2": [2337, 2337, 2337, 2337, 2337, 0]}],
+    "dining":       [{"F": [0, 473, 474, 475, 0]},                                   # Haley's, two chairs
+                     {"F": [683, 366, 367, 333, 747], "B": [0, 505, 506, 507, 0]},
+                     {"B": [715, 537, 538, 539, 779]}],
+}
+FURNISH = [
+    # the snug: the fire, the couch with its back to the wall facing the room, the coffee
+    # table, an armchair turned to it, a pouf, a lamp (the user: "a communal area for hanging out")
+    ("logs", 4, 20), ("couch", 5, 19), ("floor_lamp", 8, 19), ("coffee_table", 5, 21),
+    ("pouf", 4, 22), ("armchair_w", 8, 21), ("plant", 1, 22), ("plant_b", 9, 27), ("pouf", 6, 24),
+    # the tea room
+    ("plant", 13, 19), ("plant_b", 22, 27),
+    # the kitchen
+    ("kitchen", 23, 17), ("dining", 24, 23), ("plant", 29, 27),
+    # the hall
+    ("hall_table", 3, 12), ("plant", 8, 12), ("clock", 12, 12), ("hall_table", 17, 12),
+    ("plant_b", 21, 12), ("hall_table", 22, 12), ("plant", 27, 12),
+]
 BEDS = {"guest": (8, 4), "artists": (16, 4), "bea": (26, 4)}   # the Saloon's spare bed, top-left
 SLEEP_IN = "guest"
-RUGS = [(2, 22, 7, 4), (10, 24, 5, 4), (17, 25, 5, 4), (3, 13, 25, 2)]   # (the last: the hall's runner)         # Haley's red rug, 9-sliced: x, y, w, h
-FIREPLACE_X = 4
-LIGHTS = [(5, 4), (15, 4), (24, 4), (8, 12), (22, 12), (5, 23), (15, 24), (25, 23)]
-EXTRA_ART = {"k_counter": "art/margot/room/picks/stardew-margot-kitchen/counter_9.png",
-             "k_stove": "art/margot/room/picks/stardew-margot-kitchen/stove_17.png",
-             "k_shelf": "art/margot/room/picks/stardew-margot-kitchen/jar_shelf_44.png"}
+RUGS = [(4, 21, 5, 4), (10, 21, 4, 7), (17, 23, 4, 6)]          # Haley's red rug, 9-sliced: x, y, w, h
+FIREPLACE_X = 2
+LIGHTS = [(5, 4), (15, 4), (24, 4), (4, 12), (18, 12), (8, 20), (2, 21), (12, 24), (19, 25), (26, 24)]
+EXTRA_ART = {}
 SHEET = "ValeHouseInterior.png"
 
 
@@ -146,10 +183,11 @@ def main():
         g["Buildings"][tl + 2][d - 1], g["Buildings"][tl + 2][d], g["Buildings"][tl + 2][d + 1] = 188, 121, 187
         g["Buildings"][tl + 3][d - 1], g["Buildings"][tl + 3][d], g["Buildings"][tl + 3][d + 1] = 220, 0, 219
         for y in range(tl, tl + 4):
-            g["Back"][y][d] = 264 if y % 2 else 232
+            # the room's own planks run under the door (the user, 2026-11-07: the
+            # vanilla threshold's wood was a different colour from the floor)
+            g["Back"][y][d] = (607 if d % 2 else 608) if y % 2 else (639 if d % 2 else 640)
             if y < tl + 3:
                 g["Back"][y][d - 1] = g["Back"][y][d + 1] = wall_first + (y - tl - 1 if y > tl else 0)
-        g["Back"][tl + 3][d] = 671
 
     # the front door: a notch in the bottom border, a mat (Haley's)
     room, d = FRONT_DOOR
@@ -186,6 +224,25 @@ def main():
                     g["Buildings"][y][x] = gid
                 else:
                     g["Front2" if g["Front"][y][x] else "Front"][y][x] = gid
+    # the game's own furniture
+    walls = {y for r in ROOMS.values() for y in range(r["t"] + 1, r["t"] + 4)}
+    for name, px, py in FURNISH:
+        for j, row in enumerate(VANILLA[name]):
+            for code, gids in row.items():
+                for i, gid in enumerate(gids):
+                    if not gid:
+                        continue
+                    x, y = px + i, py + j
+                    if code == "B":
+                        if y in walls and g["Buildings"][y][x]:
+                            g["Back"][y][x] = g["Buildings"][y][x]      # the wainscot, behind
+                        g["Buildings"][y][x] = gid
+                    elif code == "B2":
+                        g["Back2"][y][x] = gid
+                    elif code == "F2":
+                        g["Front2"][y][x] = gid
+                    else:
+                        g["Front2" if g["Front"][y][x] else "Front"][y][x] = gid
     saloon = read(os.path.join(exports, "Saloon.tmx"))
     sets, layers = saloon[0], saloon[1]
     for room, (bx, by) in BEDS.items():
@@ -199,6 +256,9 @@ def main():
 
     bx, by = BEDS[SLEEP_IN]
     tile_props = [("Back", bx + i, by + j, "TouchAction", "Sleep") for i in range(2) for j in (2, 3)]
+    # "Bed" is what tells the game you're in bed: without it, sleeping darkened the room
+    # and the day never ended (Game1.NewDay fades out only a farmer in bed)
+    tile_props += [("Back", bx + i, by + j, "Bed", "T") for i in range(2) for j in (1, 2, 3)]
     # The doorways are doors, as Haley's is ("Action Door Haley" on its foot, 121): the game
     # opens them as you walk up. (Bea's own room and the artists' room get their owners'
     # names, locking them, once the residents exist.)
@@ -236,10 +296,14 @@ def write_raw(path, g, props, tilesets, tile_props):
         if not mine:
             continue
         lines.append(f'  <objectgroup id="{len(bmr.LAYERS) + 1 + li}" name="{layer}">')
+        by_tile = {}
         for _, x, y, k, v in mine:
+            by_tile.setdefault((x, y), []).append((k, v))
+        for (x, y), kvs in by_tile.items():
             n += 1
             lines += [f'    <object id="{n}" name="TileData" x="{x * 16}" y="{y * 16}" width="16" height="16">',
-                      f'      <properties><property name="{k}" type="string" value="{v}" /></properties>', '    </object>']
+                      '      <properties>' + "".join(f'<property name="{k}" type="string" value="{v}" />' for k, v in kvs) + '</properties>',
+                      '    </object>']
         lines.append('  </objectgroup>')
     lines.append('</map>')
     open(path, "w", encoding="utf-8").write("\n".join(lines) + "\n")

@@ -39,3 +39,7 @@ Studied 2026-11-07, after the Vale House went wrong three times. I had built it 
 
 - **tools/build_vale_house.py** builds the Vale House from rectangles, using Haley's kit (all the tile numbers are in its header).
 - **Doorways between stacked rooms are real doors.** The foot tile (121) carries `Action Door`, and the game opens the door as you walk up, as it does Haley's. The dev route checker (`museart_route`) can't pass any door, Haley's included, so walk the doors by hand.
+- **Doors** need the map property `Doors` (`x y 1 120` per door) as well as `Action Door` on the foot tile, or the game never opens them. The game's doors stay open until everyone leaves the building; in the Vale's houses `ArtStudio/Vale/GildedVale.cs` (Debug only) shuts them behind you.
+- **A bed** you can sleep in needs `Bed T` on its Back tiles as well as `TouchAction Sleep`. Without `Bed`, the game darkens the room but never ends the day: `Game1.NewDay` fades out only a farmer in bed.
+- **Floors under doorways** are the room's own planks. The vanilla threshold tiles (232, 264, 671) are a different wood.
+- **Furniture is the game's own** where it has the piece: Haley's couch, coffee table, armchair, kitchen and dining table, Josh's hall table and clock, the potted plants (`VANILLA` in the builder, row by row and layer by layer, as their maps lay them). A couch goes with its back on the wainscot and its cushions to the room, never facing away from everything. Seating comes in groups round a table, on one rug. Tables in a room are either all on rugs or none.
