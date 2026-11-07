@@ -81,11 +81,14 @@ GUEST_DOOR = 6                           # the guest room's door, in the tea roo
 FIREPLACE = {"Front": [(667, 668), (699, 700), (731, 732)], "Buildings": [(763, 764), (795, 796)]}
 
 
-def pack(art):
+def pack(art, raw=()):
+    """raw: pieces already drawn on their own whole-tile canvas (wall paintings, hung at
+    their height in the wall's band), packed as they are instead of cropped and set down."""
     images, slots, x, y, row_h = {}, {}, 0, 0, 0
     for name, pick in PICKS.items():
         im = Image.open(os.path.join(art, pick + ".png")).convert("RGBA")
-        im = im.crop(im.getbbox())
+        if name not in raw:
+            im = im.crop(im.getbbox())
         cols, rows = -(-im.width // 16), -(-im.height // 16)
         tile = Image.new("RGBA", (cols * 16, rows * 16))
         tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))

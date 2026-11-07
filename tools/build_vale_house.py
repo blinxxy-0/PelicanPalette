@@ -64,8 +64,8 @@ PIECES = {
     "wardrobe": ((3, 2), 1), "easel": ((5, 2), 1), "nightstand": ((7, 4), 1), "writing_desk": ((3, 5), 1),
     # the artists' room (locked till Bea's 10 hearts): their canvases racked against the wall,
     # two easels mid-work, a stack of blank canvases, a rug to catch the drips
-    "rack_canvases": ((13, 2), 1), "easel_lighthouse": ((16, 3), 1), "easel_sunset": ((16, 6), 1),
-    "stack_canvases": ((13, 6), 1),
+    "rack_canvases": ((13, 2), 1), "easel_lighthouse": ((16, 3), 1),
+    "stack_canvases": ((17, 7), 1),                 # leaning on the bed's foot (the user, 2026-11-07)
     # Bea's room
     "wardrobe#2": ((22, 2), 1), "nightstand#2": ((25, 4), 1), "writing_desk#2": ((22, 6), 1),
     # The paintings on the walls: the ones painted for the art shop's gallery, each once
@@ -74,8 +74,10 @@ PIECES = {
     "painting_lighthouse": ((3, 10), 0), "painting_tree": ((17, 10), 0),               # the hall
     "painting_cabin": ((22, 10), 0),
     "painting_river": ((8, 1), 0),                                                       # the guest room, over the bed
-    "painting_mosaic": ((17, 1), 0),                                                     # the artists' room
+    "painting_mosaic": ((16, 1), 0),                # the artists' room (clear of the wall's 45-degree end)
     "painting_flowers": ((26, 1), 0),                                                    # Bea's, over her bed
+    # small ones: the gallery paintings not hung full size, in miniature
+    "mini_night": ((8, 10), 0), "mini_blocks": ((21, 10), 0), "mini_fruit_jug": ((7, 17), 0), "mini_stripes": ((24, 1), 0),
 }
 # The game's own furniture, tile for tile as its houses lay it (townInterior, gids from 1;
 # townInterior_2 from 2177). Each piece is its rows, top first; each row names its layers:
@@ -119,20 +121,16 @@ FURNISH = [
     # table, an armchair turned to it, a pouf, a lamp (the user: "a communal area for hanging out")
     ("logs", 4, 20), ("couch", 5, 19), ("floor_lamp", 8, 19), ("coffee_table", 5, 21),
     ("pouf", 4, 22), ("armchair_w", 8, 21), ("plant", 1, 22), ("plant_b", 9, 27), ("pouf", 6, 24),
-    ("pic_portraits", 7, 17),
     # the kids' corner below it, for visitors' children (the user, 2026-11-07)
     ("bear", 1, 25), ("kids_table", 4, 26), ("pouf", 3, 27), ("pouf", 5, 27), ("dollhouse", 6, 26),
     ("teddy", 3, 28), ("toy", 1, 27),
     # the tea room
-    ("plant", 13, 19), ("plant_b", 22, 27), ("pic_photo", 13, 17), ("pic_meadow", 22, 17),
+    ("plant", 13, 19), ("plant_b", 22, 27),
     # the kitchen
     ("kitchen", 23, 17), ("dining", 24, 23), ("plant", 29, 27),
     # the hall
     ("hall_table", 3, 12), ("plant", 8, 12), ("clock", 12, 12), ("hall_table", 17, 12),
     ("plant_b", 21, 12), ("hall_table", 22, 12), ("plant", 27, 12),
-    ("pic_landscape", 8, 10), ("pic_round", 12, 10), ("pic_pink", 21, 10), ("pic_portraits", 27, 10),
-    # the bedrooms
-    ("pic_landscape", 7, 2), ("pic_flower", 24, 2), ("pic_photo", 15, 1),
 ]
 BEDS = {"guest": (8, 4), "artists": (17, 4), "bea": (26, 4)}   # the Saloon's spare bed, top-left
 SLEEP_IN = "guest"
@@ -145,6 +143,10 @@ SHOP_SHEET = "[CP] Pelican Palette/assets/ArtShopFurniture.png"
 SHOP_PIECES_JSON = "art/shop_interior/furniture.json"
 SHOP_DIR = "art/gilded_vale/interiors/vale_house/from_shop"
 FROM_SHOP = [k.split("#")[0] for k in PIECES if k.startswith(("painting_", "easel_", "rack_", "stack_"))]
+# Paintings hang centred in the wallpaper's band: from the top of the wall's first row to the
+# wainscot's rail, 9 px into the second (the user, 2026-11-07: the big ones hung too low, over
+# the rail, the game's small framed pictures too high, against the ceiling's border)
+WALL_BAND = 25
 EXTRA_ART = {}
 SHEET = "ValeHouseInterior.png"
 
@@ -164,8 +166,13 @@ def main():
         p = where[name]
         shop.crop((p["x"] * 16, p["y"] * 16, (p["x"] + p["w"]) * 16, (p["y"] + p["h"]) * 16)).save(os.path.join(SHOP_DIR, name + ".png"))
         EXTRA_ART[name] = os.path.join(SHOP_DIR, name + ".png")
+    for name in [k for k in PIECES if k.startswith("mini_")]:
+        mini(where, shop, name[5:]).save(os.path.join(SHOP_DIR, name + ".png"))
+        EXTRA_ART[name] = os.path.join(SHOP_DIR, name + ".png")
+    for name in [k for k in PIECES if k.startswith(("painting_", "mini_"))]:
+        hang(os.path.join(SHOP_DIR, name + ".png"))
     bvi.PICKS.update({k: os.path.relpath(v, bvi.ART)[:-4].replace("\\", "/") for k, v in EXTRA_ART.items()})
-    sheet, slots = bvi.pack(bvi.ART)
+    sheet, slots = bvi.pack(bvi.ART, raw={k for k in PIECES if k.startswith(("painting_", "mini_"))})
     furn_first = T2 + 1312
     wall_first = furn_first + (sheet.width // 16) * (sheet.height // 16)
     sheet.save(os.path.join(assets, SHEET))
@@ -316,6 +323,33 @@ def main():
         if os.path.exists(os.path.join(assets, old)):
             os.remove(os.path.join(assets, old))
     print("wrote ValeHouse.tmx", f"{W}x{H}")
+
+
+def mini(where, shop, name):
+    """A gallery painting in miniature: the picture inside its frame shrunk to 10x8 (narrower
+    if it's tall), in a thin wooden frame of its own."""
+    p = where["painting_" + name]
+    c = shop.crop((p["x"] * 16, p["y"] * 16, (p["x"] + p["w"]) * 16, (p["y"] + p["h"]) * 16))
+    c = c.crop(c.getbbox())
+    inner = c.crop((3, 3, c.width - 3, c.height - 3))
+    tw, th = 10, 8
+    if inner.width / inner.height < tw / th:
+        tw = max(6, round(th * inner.width / inner.height))
+    framed = Image.new("RGBA", (tw + 4, th + 4), (74, 40, 24, 255))
+    framed.paste(Image.new("RGBA", (tw + 2, th + 2), (122, 74, 40, 255)), (1, 1))
+    framed.paste(inner.resize((tw, th), Image.BOX), (2, 2))
+    return framed
+
+
+def hang(path):
+    """Redraws a painting on its own canvas of whole tiles, two rows tall (the wall's first
+    two), centred across and hung in the middle of the wallpaper's band."""
+    im = Image.open(path).convert("RGBA")
+    im = im.crop(im.getbbox())
+    cols = -(-im.width // 16)
+    out = Image.new("RGBA", (cols * 16, 32))
+    out.alpha_composite(im, ((cols * 16 - im.width) // 2, max(0, (WALL_BAND - im.height) // 2)))
+    out.save(path)
 
 
 def write_raw(path, g, props, tilesets, tile_props):
