@@ -23,10 +23,9 @@
         // papers and floors their walls itself.
         "blinxxy.MuseArt_ValeHouse": {
           "DisplayName": "{{i18n:location.vale-house}}",
-          "DefaultArrivalTile": { "X": 10, "Y": 21 },
+          "DefaultArrivalTile": { "X": 15, "Y": 28 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeHouse", "Type": "StardewValley.Locations.DecoratableLocation" }
         }
-
       }
     },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHouse", "FromFile": "assets/ValeHouse.tmx" },

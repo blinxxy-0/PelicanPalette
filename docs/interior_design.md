@@ -34,3 +34,8 @@ Studied 2026-11-07, after the Vale House went wrong three times. I had built it 
 - **Design the plan first**, on a grid: rooms, floors, openings, the door in, and what goes where.
 - **Generate the walls from the plan**, like the terrain painter. For every floor cell, its neighbours decide its outline piece, and any floor cell with wall above it gets the wall face. The pieces are learned from the vanilla houses, as the terrain was learned from the outdoor maps.
 - **Then place furniture by these rules, and check in game** against a vanilla room side by side.
+
+## 5. Built so far
+
+- **tools/build_vale_house.py** builds the Vale House from rectangles, using Haley's kit (all the tile numbers are in its header).
+- **Doorways between stacked rooms are real doors.** The foot tile (121) carries `Action Door`, and the game opens the door as you walk up, as it does Haley's. The dev route checker (`museart_route`) can't pass any door, Haley's included, so walk the doors by hand.

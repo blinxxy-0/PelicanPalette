@@ -3855,12 +3855,12 @@
   <objectgroup id="13" name="Buildings" visible="false">
     <object id="1" name="TileData" x="448" y="304" width="16" height="16">
       <properties>
-        <property name="Action" type="string" value="Warp 10 21 blinxxy.MuseArt_ValeHouse" />
+        <property name="Action" type="string" value="Warp 15 28 blinxxy.MuseArt_ValeHouse" />
       </properties>
     </object>
     <object id="2" name="TileData" x="464" y="304" width="16" height="16">
       <properties>
-        <property name="Action" type="string" value="Warp 10 21 blinxxy.MuseArt_ValeHouse" />
+        <property name="Action" type="string" value="Warp 15 28 blinxxy.MuseArt_ValeHouse" />
       </properties>
     </object>
   </objectgroup>
