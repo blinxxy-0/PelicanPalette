@@ -170,3 +170,16 @@ tools/art/vale_road.py draws the road and its turning circle from the Bus Stop's
 - **Fences use the game's own placeable-fence sprites** (LooseSprites/Fence1 wood, Fence2 stone; 3 × 11 pieces of 16 × 32, one for every position in a fence; see the modding wiki's "How Fences Work"). The map tileset image is `../LooseSprites/Fence1`, loaded straight from the game's content, never copied. Each piece's lower half goes on Buildings and its upper half on Front a row above. Checked in game 2026-11-06.
 - **Paths-layer markers** (GameLocation.loadPathsLayerObjectsInArea): 9 oak, 10 maple, 11 pine, 22 tall grass, 24/25/26 large/medium/small bush, and 34 plus a "SpawnTree" TileData property (`fruit <id>`) for fruit trees.
 - **Building sheet width.** It is 32 columns, so a piece up to 32 tiles wide packs without wrapping.
+
+## Seasons, collision and routes for painted features (2026-11-07)
+
+- **Summer and fall.** Only a feature's bare dirt and sand follow the season: `seasonal()` in tools/art/vale_feature.py, using art/gilded_vale/season_colours.json (learned by tools/art/vale_season_colours.py), applied to large connected ground regions only. Greenery never recolours: hedges, and seedlings under glass, changing with the season looked wrong.
+- **Winter** is its own art. tools/art/vale_feature_winter.py runs PixelLab's colour edit to add snow and remove the flowers. The edit takes at most 256 px a side, so wider features go in strips; if a strip comes back unchanged, rerun with VALE_SEED and stitch the good halves. build_vale.py gives the winter art the spring cut-out's exact footprint. Cutting snow against snow left flecks.
+- **Collision** (`walkable()`):
+  - A tile is solid only if it is mostly object, or dense dark hedge.
+  - A wall line running straight through a tile makes it solid, however thin the wall.
+  - The game's orange dirt counts as path.
+  - Features never lay art over the paving.
+- **Routes.** tools/vale_routes.py runs a path search from the bus to 26 key places. Run it after every build; "0 blocked" is the bar.
+- **Lupini's painting spots.** They are placed by `reachable_spot()`: on open grass, with ground in front to stand on (paving allowed), clear of every piece, feature and the `RESERVED` yards in vale_decor.py.
+- **Props copied from vanilla take every layer**, Back included. The fountain's basin floor is on Back; without it, the paving showed through in winter.

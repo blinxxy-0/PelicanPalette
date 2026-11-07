@@ -74,6 +74,8 @@ def kind(c):
     lum = 0.3 * r + 0.59 * g + 0.11 * b
     if lum > 150 and abs(r - g) < 40 and b < g:          # pale gravel, sand, flagstones
         return "path"
+    if r > 140 and r > g + 10 and g > b + 25 and lum > 105:    # the game's orange dirt and sand
+        return "path"
     return "other"
 
 
@@ -89,8 +91,18 @@ def walkable(im, path_share=0.45):
             empty = ks.count("empty") / n
             if empty > 0.98:
                 continue
-            path = ks.count("path") / n
-            out[(tx, ty)] = path >= path_share or empty > 0.6
+            # solid only where the tile is mostly object (wall, hedge, bench, planter):
+            # an object's edge or corner poking into a tile doesn't block it (the user,
+            # 2026-11-07: stopped short of the nursery by the cold frames' edges)
+            # greenery blocks only where it's dense dark hedge; tufts of long grass walk
+            dark = sum(1 for c in t.get_flattened_data() if c[3] and is_grass(c) and 0.3 * c[0] + 0.59 * c[1] + 0.11 * c[2] < 80) / n
+            obj = max(ks.count("other") / n, dark * 0.9) if dark < 0.55 else 1.0
+            # a wall or fence running straight through a tile blocks it however thin it is
+            # (the parterre's side walls fill under half their tiles)
+            cs = list(t.get_flattened_data())
+            stone = lambda c: c[3] and abs(c[0] - c[1]) < 22 and abs(c[1] - c[2]) < 28 and 50 < c[0] < 210
+            line = any(sum(1 for y in range(16) if stone(cs[y * 16 + x])) >= 14 for x in range(16)) or                 any(sum(1 for x in range(16) if stone(cs[y * 16 + x])) >= 14 for y in range(16))
+            out[(tx, ty)] = obj < 0.5 and not line
     return out
 
 
@@ -147,7 +159,9 @@ def cutout_diff(piece, before, fray=20, seed=7):
             # channel scaled by about the same amount
             ratios = [(c[i] + 8) / (b[i] + 8) for i in range(3)]
             shade = max(ratios) - min(ratios) < 0.16 and 0.45 < sum(ratios) / 3 < 1.4
-            if near(c[:3], b) or (water(c) and water(b)) or (sand(c) and sand(b)) or shade:
+            # painted lawn goes too, so the map's own grass (and its seasons) shows
+            lawn = is_grass(c) and lum(c) > 85 and is_grass(tuple(b) + (255,))
+            if near(c[:3], b) or (water(c) and water(b)) or (sand(c) and sand(b)) or shade or lawn:
                 px[x, y] = (0, 0, 0, 0)
             elif ground(c) and frayed(x, y):
                 px[x, y] = (0, 0, 0, 0)
@@ -159,3 +173,60 @@ def cutout_diff(piece, before, fray=20, seed=7):
         for q in drop:
             px[q] = (0, 0, 0, 0)
     return im
+
+
+def seasonal(im, table, season, tolerance=18):
+    """The piece in another season: each pixel near a colour the game recolours that
+    season (tools/art/vale_season_colours.py) takes that colour's seasonal colour,
+    keeping its own offset from it, so painted grass, sand, dirt and leaves follow the
+    map's own (the user, 2026-11-06: sand left spring yellow in fall). Stone, wood,
+    glass and flowers aren't in the table and stay as they are."""
+    pairs = [(tuple(int(k[i:i + 2], 16) for i in (0, 2, 4)), tuple(int(v[i:i + 2], 16) for i in (0, 2, 4)))
+             for k, v in table[season].items()]
+    out = im.copy()
+    px = out.load()
+    w, h = out.size
+    # Only ground and greenery: connected stretches of grass, hedge, sand or dirt big
+    # enough to be ground, not the odd brown or green pixel of a pot, plank or barrel
+    # (recolouring those speckled the winter version with snow).
+    def groundish(c):
+        r, g, b, a = c
+        # bare ground only: dirt, sand, gravel. Never greenery: hedges, potted plants
+        # and seedlings under glass changing colour looked wrong (the user, 2026-11-07)
+        return a and not is_grass(c) and ((r > 140 and r > g + 15 and g > b + 25) or kind(c) == "path")
+    region = set()
+    seen = set()
+    for sy in range(h):
+        for sx in range(w):
+            if (sx, sy) in seen or not groundish(px[sx, sy]):
+                continue
+            comp, stack = [], [(sx, sy)]
+            seen.add((sx, sy))
+            while stack:
+                x, y = stack.pop()
+                comp.append((x, y))
+                for q in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                    if 0 <= q[0] < w and 0 <= q[1] < h and q not in seen and groundish(px[q]):
+                        seen.add(q)
+                        stack.append(q)
+            if len(comp) >= 60:
+                region.update(comp)
+    cache = {}
+    for (x, y) in region:
+            c = px[x, y]
+            if not c[3]:
+                continue
+            rgb = c[:3]
+            if rgb not in cache:
+                best, d = None, tolerance * tolerance * 3
+                for a, b in pairs:
+                    e = (a[0] - rgb[0]) ** 2 + (a[1] - rgb[1]) ** 2 + (a[2] - rgb[2]) ** 2
+                    if e < d:
+                        best, d = (a, b), e
+                if best:
+                    a, b = best
+                    cache[rgb] = tuple(max(0, min(255, b[i] + rgb[i] - a[i])) for i in range(3))
+                else:
+                    cache[rgb] = rgb
+            px[x, y] = cache[rgb] + (255,)
+    return out

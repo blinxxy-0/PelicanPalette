@@ -16,6 +16,10 @@ skipped is printed, so a move in the layout shows up here instead of overlapping
 """
 import random
 
+# Ground the decor pass will use, kept free by props placed before it (build_vale.py
+# reachable_spot): fenced yards and the orchard's trees, (x0, y0, x1, y1) inclusive.
+RESERVED = [(82, 13, 90, 22), (9, 55, 14, 60), (87, 2, 94, 10), (84, 25, 88, 26)]   # (the last: the overlook bench)
+
 # Tile property objects for the writer: (layer, x, y) -> {name: value}
 TILE_PROPS = {}
 
@@ -35,7 +39,10 @@ PROPS = {
     "fountain": [(2, 0, "Front", 3111)] + [(i, 1, "Front", g) for i, g in enumerate((3080, 3077, 3241, 3110, 3084))]
                 + [(i, 2 + j, "Buildings", g) for j, row in enumerate(((3112, 3305, 3273, 3305, 3116), (3144, 3145, 3305, 3147, 3148),
                                                                        (3176, 3177, 3178, 3179, 3180), (3208, 3209, 3210, 3211, 3212)))
-                   for i, g in enumerate(row)],
+                   for i, g in enumerate(row)]
+                # the basin's floor, on Back under the water (Town has it; without it the
+                # paving showed through the basin in winter, the user, 2026-11-07)
+                + [(1, 2, "Back", 3113), (2, 2, "Back", 252), (3, 2, "Back", 3115), (2, 3, "Back", 3146)],
     # the picnic table by the park (Town x 32-34, y 36-38)
     "picnic": [(0, 0, "Front", 3091), (1, 0, "Front", 3092), (2, 0, "Front", 3093), (1, 1, "Front", 1124),
                (0, 1, "Buildings", 3123), (1, 1, "Buildings", 3124), (2, 1, "Buildings", 3125),
@@ -75,7 +82,7 @@ def decor(g, ground, paths_first, W, H):
     def prop(name, x, y):
         cells = PROPS[name]
         clash = [(x + dx, y + dy) for dx, dy, layer, _ in cells
-                 if not (0 <= x + dx < W and 0 <= y + dy < H) or g[layer][y + dy][x + dx]
+                 if not (0 <= x + dx < W and 0 <= y + dy < H) or (layer != "Back" and g[layer][y + dy][x + dx])
                  or (layer == "Buildings" and (g["Front2"][y + dy][x + dx] or g["Paths"][y + dy][x + dx]))]
         if clash:
             skipped.append((name, x, y, clash[:3]))
@@ -161,7 +168,10 @@ def decor(g, ground, paths_first, W, H):
 
     # D: a hedgerow under the woods behind the high street, gaps at the lamps
     for x in (26, 29, 35, 38, 43, 46, 52):
-        marker(x, 3, BUSH_L, 3, "hedge")
+        if not all(plain(x + i, 3) for i in range(3)):
+            marker(x, 2, BUSH_L, 3, "hedge")        # a step back behind whatever stands there (Lupini's street spot)
+        else:
+            marker(x, 3, BUSH_L, 3, "hedge")
 
     # O: bushes and flowers along the upper cliff's top
     for x, kind in ((3, BUSH_M), (7, BUSH_S), (11, BUSH_M), (16, BUSH_L), (22, BUSH_S), (26, BUSH_M), (36, BUSH_M), (40, BUSH_S), (47, BUSH_L)):

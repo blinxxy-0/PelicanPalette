@@ -65,18 +65,20 @@ PICKS = {
     "old_tree": ("props/vale_props_v1/old_tree_1_1", 35, 68, (1, 3, 4), 0),
     # 6: Lupini's painting spots (he paints at a different viewpoint each day): a stool
     # with his paint box, and the rock he wipes his brushes on
-    "spot_clearing_stool": ("props/vale_props_v2/painters_stool_1_3", 4, 17, 1, 0),
-    "spot_clearing_rock": ("props/vale_props_v2/paint_rock_2_1", 8, 19, 1, 0),
-    "spot_river_stool": ("props/vale_props_v2/painters_stool_1_3", 67, 10, 1, 0),
-    "spot_river_rock": ("props/vale_props_v2/paint_rock_2_1", 70, 10, 1, 0),
-    "spot_orchard_stool": ("props/vale_props_v2/painters_stool_1_3", 84, 7, 1, 0),
-    "spot_orchard_rock": ("props/vale_props_v2/paint_rock_2_1", 84, 11, 1, 0),
-    "spot_overlook_stool": ("props/vale_props_v2/painters_stool_1_3", 89, 26, 1, 0),
-    "spot_overlook_rock": ("props/vale_props_v2/paint_rock_2_1", 92, 26, 1, 0),
-    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 66, 74, 1, 0),
-    "spot_lake_rock": ("props/vale_props_v2/paint_rock_2_1", 69, 74, 1, 0),
+    "spot_clearing_stool": ("props/vale_props_v2/painters_stool_1_3", 6, 15, 1, 0),
+    "spot_clearing_rock": ("props/vale_props_v2/paint_rock_2_1", 9, 18, 1, 0),
+    # (by the high street's hedge, side by side: the user, 2026-11-07, "can't be two
+    # right next to each other" in the top right)
+    "spot_street_stool": ("props/vale_props_v2/painters_stool_1_3", 43, 4, 1, 0),
+    "spot_street_rock": ("props/vale_props_v2/paint_rock_2_1", 46, 4, 1, 0),
+    "spot_atelier_stool": ("props/vale_props_v2/painters_stool_1_3", 79, 16, 1, 0),
+    "spot_atelier_rock": ("props/vale_props_v2/paint_rock_2_1", 79, 19, 1, 0),
+    "spot_meadow_stool": ("props/vale_props_v2/painters_stool_1_3", 28, 65, 1, 0),
+    "spot_meadow_rock": ("props/vale_props_v2/paint_rock_2_1", 31, 66, 1, 0),
+    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 84, 62, 1, 0),
+    "spot_lake_rock": ("props/vale_props_v2/paint_rock_2_1", 87, 62, 1, 0),
     "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
-    "vale_sign": ("props/vale_props_v1/vale_sign_1_3", 19, 4, 1, 0),         # A: where the high street starts
+    "vale_sign": ("props/vale_sign_gilded", 19, 4, 1, 0),   # gold lettering drawn on; lit at night (map property Light)         # A: where the high street starts
     "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door
     "firewood_emmett": ("props/vale_props_v1/firewood_1_4", 11, 59, 1, 0),   # L: in his fenced side yard
     "canvases": ("props/vale_props_v1/canvases_1_2", 79, 22, 1, 0),          # F: Lupini's garden
@@ -96,6 +98,9 @@ SEASONAL = {
     "atelier": {"winter": "buildings/vale_winter_v3/atelier_winter_0"},
     "fern": {"winter": "buildings/vale_winter_v3/fern_winter_0"},
     "emmett": {"winter": "buildings/vale_winter_v3/emmett_winter_0"},
+    "hall": {"winter": "buildings/vale_winter_v3/hall_winter_0"},
+    "studio_b": {"winter": "buildings/vale_winter_v3/studio_b_winter_0"},
+    "studio_c": {"winter": "buildings/vale_winter_v3/studio_c_winter_0"},
     "old_tree": {s: f"props/vale_tree_seasons_v1/old_tree_{s}_0" for s in ("summer", "fall", "winter")},
 }
 # The amphitheatre (the user's pick s1, 2026-11-06): PixelLab inpaint into the lower
@@ -107,6 +112,11 @@ AMPHITHEATRE = ("amphitheatre/amph_s1_0", 31, 46)
 # like vanilla"). name: (art, crop box px in it, left tile x, top tile y). Their lawn
 # is cut away so the map's seasonal grass shows; paths walk, the rest is solid
 # (tools/art/vale_feature.py).
+# Bits of a painting cut by hand, px boxes in the cut piece: the clay bank's muddy patch,
+# a track to nowhere (the user, 2026-11-06).
+# The nursery's log ran into the frame's edge and stopped flat: it goes, its glowing
+# mushrooms (Fern's "humming" ones) stay, growing straight from the grass.
+FEATURE_ERASE = {"clay": [(0, 34, 32, 72)], "nursery": [(100, 159, 176, 176, "keep_blue"), (150, 146, 176, 159, "keep_blue")]}
 FEATURES = {
     "parterre": ("features/parterre_v2/parterre_s13_0", (48, 144, 480, 288), 3, 39),   # I: the Lost Parterre (Fern)
     # (diff: cut against the bare render it was painted into, features/<name>_before.png)
@@ -114,6 +124,9 @@ FEATURES = {
     # above y 10 are drawn over the farmer, who walks under them (the user, 2026-11-06)
     "tea": ("features/tea2/tea_s24_0", "diff:tea_before:22:3", 34, 7, 40, 19, 10),
     "clay": ("features/clay/clay_s31_0", "diff:clay_before:34:12", 50, 21, 57, 27),   # G: Tobin's clay bank
+    # Fern's nursery, built into the cliff by her seedhouse: the night-flowering vine of her
+    # 8-heart event on a trellis up the rock, pots on ledges cut into it (the user, 2026-11-06)
+    "nursery": ("features/nursery/nursery_s71_0", "diff:nursery_before:2:24", 19, 28, 29, 38),
     "lakeside": ("features/lakeside2/lakeside_s53_0", "diff:lakeside2_before:30:52", 44, 54, 51, 71),   # M: the lakeside walk
 }
 
@@ -220,7 +233,8 @@ def main():
                 g["Paths"][y][x] = paths_first + rnd.choice((9, 10, 11))
 
     props = {"Outdoors": "T", "Spring_Objects": "T", "Summer_Objects": "T", "Fall_Objects": "T", "Winter_Objects": "T",
-             "BrookSounds": f"{RIVER_X + 4} 3 0"}
+             "BrookSounds": f"{RIVER_X + 4} 3 0",
+             "Light": "20 3 4 22 3 4"}             # the entrance sign's gold letters glow at dusk (two sconce lights)
     write(os.path.join(assets, "GildedVale.tmx"), g, props, tilesets)
 
 
@@ -1026,6 +1040,45 @@ def amphitheatre_art(path):
     return im
 
 
+def reachable_spot(name, im, left, bottom, pieces):
+    """The nearest place to (left, bottom) where a small prop stands on open grass the
+    farmer can reach: every tile of it and the row in front plain grass (no water, sand,
+    paving or cliff), clear of the woods round the edge and of every other piece and
+    feature (the user, 2026-11-06: Lupini's stool and rock had landed in the river and
+    in the trees; if they're ever a quest, they must be reachable)."""
+    cols, rows = im.width // 16, im.height // 16
+    taken = set()
+    for _, arts, l, b, _ in pieces:
+        if l is None:
+            continue
+        a = arts["spring"]
+        taken |= {(x, y) for x in range(l - 1, l + a.width // 16 + 1) for y in range(b - a.height // 16, b + 2)}
+    for fname, (art, box, l, t, *rest) in FEATURES.items():
+        x1, y1 = rest[:2] if rest else (l + (box[2] - box[0]) // 16 - 1, t + (box[3] - box[1]) // 16 - 1)
+        taken |= {(x, y) for x in range(l - 1, x1 + 2) for y in range(t - 1, y1 + 2)}
+
+    from vale_decor import RESERVED
+    for x0, y0, x1, y1 in RESERVED:
+        taken |= {(x, y) for x in range(x0 - 1, x1 + 2) for y in range(y0 - 1, y1 + 2)}
+
+    def grass(x, y):
+        return (6 <= x <= 89 and 3 <= y <= 71 and (x, y) not in taken
+                and all(SHORE_V[y + j][x + i] in "GD" for i in (0, 1) for j in (0, 1)))
+    for r in range(0, 12):
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                if max(abs(dx), abs(dy)) != r:
+                    continue
+                l, b = left + dx, bottom + dy
+                front_ok = all(SHORE_V[b + 1 + j][l + i + k] in "GDC" for i in range(cols) for j in (0, 1) for k in (0, 1))                     and all((l + i, b + 1) not in taken for i in range(cols))   # ground in front to stand on, paving allowed
+                if front_ok and all(grass(l + i, b - j) for i in range(cols) for j in range(rows)):
+                    if (l, b) != (left, bottom):
+                        print(name, f"moved from ({left}, {bottom}) to ({l}, {b}): reachable grass")
+                    return l, b
+    print(name, "NO reachable spot near", left, bottom)
+    return left, bottom
+
+
 def place_buildings(g, assets):
     """The picked buildings, the stairs and the amphitheatre: packed on the seasonal
     sheets (spring/summer/fall the same, winter with each piece's winter version),
@@ -1043,29 +1096,65 @@ def place_buildings(g, assets):
             if not os.path.exists(os.path.join(ART, path + ".png")):
                 continue
             im = Image.open(os.path.join(ART, path + ".png")).convert("RGBA")
+            if im.size != src.size and 0 <= im.width - src.width < 4 and 0 <= im.height - src.height < 4:
+                # padded to multiples of 4 for the edit (centred, bottom kept): crop it back
+                ox = (im.width - src.width) // 2
+                im = im.crop((ox, im.height - src.height, ox + src.width, im.height))
             im = tile_piece(im, lift, src.getbbox() if im.size == src.size else None)
             if im.size != spring.size:
                 print(season, "art for", name, "doesn't match its spring size; using spring")
                 continue
             arts[season] = im
+        if name.startswith("spot_"):
+            left, bottom = reachable_spot(name, spring, left, bottom, pieces)
         pieces.append((name, arts, left, bottom, solid))
     if os.path.exists(os.path.join(ART, AMPHITHEATRE[0] + ".png")):
         amph = amphitheatre_art(os.path.join(ART, AMPHITHEATRE[0] + ".png"))
         pieces.append(("amphitheatre", {x: amph for x in SEASONS}, AMPHITHEATRE[1], AMPHITHEATRE[2], None))
-    from vale_feature import cutout, cutout_diff, walkable
-    for name, (art, box, left, top, *rest) in FEATURES.items():
+    from vale_feature import cutout, cutout_diff, walkable, seasonal
+    import json
+    SEASON_COLOURS = json.load(open(os.path.join(ART, "season_colours.json")))
+    for name, (art, box, left, top, *rest) in ({} if os.environ.get("VALE_NO_FEATURES") else FEATURES).items():
         src = Image.open(os.path.join(ART, art + ".png")).convert("RGBA")
         if isinstance(box, str):
             _, before, rx, ry = box.split(":")
             x1, y1 = rest[:2]
             box = ((left - int(rx)) * 16, (top - int(ry)) * 16, (x1 - int(rx) + 1) * 16, (y1 - int(ry) + 1) * 16)
             im = cutout_diff(src.crop(box), Image.open(os.path.join(ART, "features", before + ".png")).crop(box))
+            px = im.load()
+            for ex0, ey0, ex1, ey1, *how in FEATURE_ERASE.get(name, ()):
+                for yy in range(ey0, min(ey1, im.height)):
+                    for xx in range(ex0, min(ex1, im.width)):
+                        c = px[xx, yy]
+                        if how and c[3] and (c[2] > c[0] + 50 or (c[2] > 150 and c[1] > 150)):
+                            continue        # (keep_blue: the mushrooms)
+                        px[xx, yy] = (0, 0, 0, 0)
         else:
             im = cutout(src.crop(box), lawn=True)
         walk = walkable(im)
         if isinstance(box, tuple) and len(rest) > 2:
             walk["front_above"] = rest[2]
-        pieces.append(("feature:" + name, {x: im for x in SEASONS}, left, top, walk))
+        arts = {"spring": im}
+        for season in ("summer", "fall"):
+            arts[season] = seasonal(im, SEASON_COLOURS, season)     # (bare dirt and sand only)
+        # Winter is its own art (tools/art/vale_feature_winter.py: snow, the flowers gone),
+        # cut against the bare map in winter (features/winter/bare_winter.png, rendered
+        # with VALE_NO_FEATURES set) the way spring is cut against the bare map in spring.
+        wpath = os.path.join(ART, "features", "winter", name + "_0.png")
+        if os.path.exists(wpath):
+            mb = (left * 16, top * 16, left * 16 + im.width, top * 16 + im.height)
+            # the spring cut-out's exact footprint, in its winter colours: cutting snow
+            # against snow left scattered flecks (the user: winter "extraordinarily messy")
+            wim = Image.open(wpath).convert("RGBA")
+            if wim.size == im.size:
+                wim.putalpha(im.getchannel("A"))
+                arts["winter"] = wim
+            else:
+                print("winter art for", name, "is", wim.size, "not", im.size)
+                arts["winter"] = im
+        else:
+            arts["winter"] = seasonal(im, SEASON_COLOURS, "winter")
+        pieces.append(("feature:" + name, arts, left, top, walk))
     slots, x, y, row_h = [], 0, 0, 0
     for _, arts, *_ in pieces:
         cols, rows = arts["spring"].width // 16, arts["spring"].height // 16
@@ -1097,6 +1186,8 @@ def place_buildings(g, assets):
                     if (i, j) not in walk:
                         continue
                     tx, ty = left + i, bottom + j
+                    if "C" in GROUND.get((g["Back"][ty][tx], g["Buildings"][ty][tx]), ()):
+                        continue        # never over the paving: the lanes stay the map's, and walkable
                     gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
                     # Never over the map's own ground pieces (a shore's rock edge on
                     # Buildings stays, and the art goes above it on Buildings2).
