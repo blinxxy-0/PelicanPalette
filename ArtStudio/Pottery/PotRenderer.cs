@@ -15,8 +15,10 @@ namespace ArtStudio.Pottery;
 // behind are placeholders until their PixelLab art (section 11's art list).
 internal sealed class PotRenderer : IDisposable
 {
-    public const int Width = 150, Height = 136, Scale = 4;
-    private const int Ground = Height - 26;          // the wheel head's top row
+    public const int Scale = 4;
+    public int Width { get; }
+    public int Height { get; }
+    private int Ground => Height - 24;               // the wheel head's top row
 
     // terracotta, darkest to lightest
     private static readonly Color[] Ramp =
@@ -29,22 +31,29 @@ internal sealed class PotRenderer : IDisposable
     private static readonly Color Thin = new(232, 70, 50), Heavy = new(70, 110, 220);
 
     private readonly Texture2D _texture;
-    private readonly Color[] _px = new Color[Width * Height];
-    private readonly byte[] _kind = new byte[Width * Height];     // 0 none, 1 clay, 2 inside (for outlines)
+    private readonly Color[] _px;
+    private readonly byte[] _kind;     // 0 none, 1 clay, 2 inside (for outlines)
 
     public int RowPx { get; private set; } = 4;     // art pixels per row of the pot
     public float UnitPx { get; private set; } = 2.4f;
     public int CentreX => Width / 2;
     public int FootY => Ground - 2;                 // the bottom row of clay, standing on the wheel head
 
-    public PotRenderer() => _texture = new Texture2D(Game1.graphics.GraphicsDevice, Width, Height);
+    public PotRenderer(int width = 150, int height = 118)
+    {
+        Width = width;
+        Height = height;
+        _px = new Color[width * height];
+        _kind = new byte[width * height];
+        _texture = new Texture2D(Game1.graphics.GraphicsDevice, width, height);
+    }
 
     public void Dispose() => _texture.Dispose();
 
     // Big enough to fill the scene, with room to pull the pot taller than the shape.
     public void FitTo(PotShape shape)
     {
-        RowPx = Math.Clamp((int)(100f / MathF.Max(shape.Rows * 1.35f, 16f)), 3, 7);
+        RowPx = Math.Clamp((int)((Ground - 8) / MathF.Max(shape.Rows * 1.35f, 16f)), 3, 7);
         UnitPx = MathF.Min(RowPx * 0.62f, 2.6f);
     }
 

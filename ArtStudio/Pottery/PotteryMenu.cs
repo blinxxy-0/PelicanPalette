@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ArtStudio.Menus;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,20 +12,23 @@ using StardewValley.Menus;
 
 namespace ArtStudio.Pottery;
 
-// The pottery prototype's wheel (docs/design/pottery_minigame.md, section 10):
-// plain shapes and no art, for feeling out the rules before anything else.
-// Centring, then throwing against a reference profile, then the stars.
-// museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard]
+// The pottery prototype's wheel (docs/design/pottery_minigame.md, sections 10
+// and 11): centring, then throwing against a reference profile, then the
+// stars. Laid out as the easel is, so the two read as one family: the title
+// and the patience bar across the top (like the easel's Light), the wheel
+// framed in the middle, the clay's grades on the left and the hands on the
+// right, the instructions and Finish along the bottom. (No Reference panel:
+// the chalk line on the wheel is the reference. The user, 2026-11-07.)
+// museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck]
 internal sealed class PotteryMenu : IClickableMenu
 {
     private enum Stage { Centring, Throwing, Results }
 
-    private const int W = 1000, H = 660;
-    private readonly PotRenderer _art = new();
-    private static readonly Color Panel = new(255, 236, 200), Ink = new(86, 22, 12);
+    private const int MaxWidth = 1240, MaxHeight = 780;
+    private const int Pad = 20, TopBar = 64, BottomBar = 56, SideWidth = 250;
 
+    private readonly PotRenderer _art = new();
     private readonly PotteryRules _rules;
-    private readonly string _shapeName;
     private Stage _stage = Stage.Centring;
     private ClayPot _pot;
     private PotShape _shape;
@@ -39,15 +43,15 @@ internal sealed class PotteryMenu : IClickableMenu
     private readonly Dictionary<string, Rectangle> _buttons = new();
 
     public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false, bool wreck = false)
-        : base(Game1.uiViewport.Width / 2 - W / 2, Game1.uiViewport.Height / 2 - H / 2, W, H, showUpperRightCloseButton: true)
     {
         _rules = rules;
-        _shapeName = Array.IndexOf(PotShape.Names, shape) >= 0 ? shape : PotShape.Names[new Random().Next(PotShape.Names.Length)];
+        string name = Array.IndexOf(PotShape.Names, shape) >= 0 ? shape : PotShape.Names[new Random().Next(PotShape.Names.Length)];
         _pot = new ClayPot(rules);
-        _shape = PotShape.Make(_shapeName, _pot.Volume);
+        _shape = PotShape.Make(name, _pot.Volume);
         _art.FitTo(_shape);
+        Reposition();
         Restart();
-        if (skipCentring || bot)
+        if (skipCentring || bot || wreck)
         {
             _centring = 1f;
             _stage = Stage.Throwing;
@@ -60,12 +64,53 @@ internal sealed class PotteryMenu : IClickableMenu
         else if (wreck)
         {
             // pulling without a pause, to see a collapse
-            _centring = 1f;
             for (int k = 0; k < 20000 && !_pot.Collapsed; k++)
                 _pot.Work(ThrowMove.PullUp, (k * 0.25f) % Math.Max(1, _pot.Rows), 1f / 10f);
             Finish();
         }
     }
+
+    private void Reposition()
+    {
+        width = Math.Min(MaxWidth, Game1.uiViewport.Width - 64);
+        height = Math.Min(MaxHeight, Game1.uiViewport.Height - 64);
+        xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
+        yPositionOnScreen = (Game1.uiViewport.Height - height) / 2;
+        initializeUpperRightCloseButton();
+    }
+
+    public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds) => Reposition();
+
+    protected override void cleanupBeforeExit()
+    {
+        _art.Dispose();
+        base.cleanupBeforeExit();
+    }
+
+    // ---- Layout ----
+
+    private Rectangle TopArea => new(xPositionOnScreen + Pad + 24, yPositionOnScreen + Pad + 8, width - Pad * 2 - 48, TopBar);
+    private Rectangle LeftArea => new(xPositionOnScreen + Pad + 16, TopArea.Bottom + 8, SideWidth, height - TopBar - BottomBar - Pad * 2 - 24);
+    private Rectangle RightArea => new(xPositionOnScreen + width - Pad - 16 - SideWidth, LeftArea.Y, SideWidth, LeftArea.Height);
+    private Rectangle BottomArea => new(TopArea.X, yPositionOnScreen + height - Pad - BottomBar, TopArea.Width, BottomBar);
+    // the wheel, at the game's own pixel scale, centred between the side panels
+    private Rectangle Scene
+    {
+        get
+        {
+            int w = _art.Width * PotRenderer.Scale, h = _art.Height * PotRenderer.Scale;
+            int midX = (LeftArea.Right + RightArea.X) / 2;
+            int midY = LeftArea.Y + LeftArea.Height / 2;
+            return new Rectangle(midX - w / 2, midY - h / 2, w, h);
+        }
+    }
+
+    private float ArtX(int x) => (x - Scene.X) / (float)PotRenderer.Scale;
+    private float ArtY(int y) => (y - Scene.Y) / (float)PotRenderer.Scale;
+    private bool InPotArea(int x, int y) => Scene.Contains(x, y);
+    private float RowAt(int y) => _art.RowAt(ArtY(y));
+
+    // ---- Rules ----
 
     // The simulation's greedy potter (for checking the rules): sweep pulls from the foot
     // until it's tall enough, then press in or let out row by row towards the reference,
@@ -114,27 +159,12 @@ internal sealed class PotteryMenu : IClickableMenu
         _move = ThrowMove.PullUp;
     }
 
-    private int PanelX => xPositionOnScreen + 650;
-    // the wheel scene, at the game's own pixel scale
-    private Rectangle Scene => new(xPositionOnScreen + 24, yPositionOnScreen + (H - PotRenderer.Height * PotRenderer.Scale) / 2,
-        PotRenderer.Width * PotRenderer.Scale, PotRenderer.Height * PotRenderer.Scale);
-    private float ArtX(int x) => (x - Scene.X) / (float)PotRenderer.Scale;
-    private float ArtY(int y) => (y - Scene.Y) / (float)PotRenderer.Scale;
-
-    protected override void cleanupBeforeExit()
-    {
-        _art.Dispose();
-        base.cleanupBeforeExit();
-    }
-
     public override void update(GameTime time)
     {
         base.update(time);
         float dt = (float)time.ElapsedGameTime.TotalSeconds;
         _spin += dt * 9f;
-        var mouse = Mouse.GetState();
-        bool held = mouse.LeftButton == ButtonState.Pressed && InPotArea(Game1.getMouseX(), Game1.getMouseY());
-
+        bool held = Mouse.GetState().LeftButton == ButtonState.Pressed && InPotArea(Game1.getMouseX(), Game1.getMouseY());
         switch (_stage)
         {
             case Stage.Centring:
@@ -180,10 +210,6 @@ internal sealed class PotteryMenu : IClickableMenu
         _stage = Stage.Results;
     }
 
-    private bool InPotArea(int x, int y) => Scene.Contains(x, y);
-
-    private float RowAt(int y) => _art.RowAt(ArtY(y));
-
     public override void receiveLeftClick(int x, int y, bool playSound = true)
     {
         base.receiveLeftClick(x, y, playSound);
@@ -217,94 +243,207 @@ internal sealed class PotteryMenu : IClickableMenu
         if (key == Keys.D3) _move = ThrowMove.LetOut;
     }
 
+    // ---- Draw ----
+
+    private static readonly (ThrowMove Move, string Key, string Label, string Name, string Hint)[] Moves =
+    {
+        (ThrowMove.PullUp, "pull", "1  Pull up", "Pull up", "Draws the clay up: taller, with thinner walls."),
+        (ThrowMove.PressIn, "press", "2  Press in", "Press in", "Narrows it at your hand. The wall thickens."),
+        (ThrowMove.LetOut, "out", "3  Let out", "Let out", "Swells it at your hand. The wall thins."),
+    };
+
     public override void draw(SpriteBatch b)
     {
         b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.6f);
-        drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, W, H, Color.White);
+        Ui.Frame(b, new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height));
         _buttons.Clear();
+        int mx = Game1.getMouseX(), my = Game1.getMouseY();
 
-        // the scene, framed as the easel frames its canvas
-        var scene = Scene;
-        drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), scene.X - 12, scene.Y - 12, scene.Width + 24, scene.Height + 24, Color.White, 4f, false);
-        bool overPot = InPotArea(Game1.getMouseX(), Game1.getMouseY());
-        Color handColor = _move switch { ThrowMove.PullUp => new Color(160, 230, 140), ThrowMove.PressIn => new Color(250, 180, 90), _ => new Color(150, 200, 250) };
-        _art.DrawScene(b, scene, _spin, _stage == Stage.Centring ? null : _pot, _shape, showReference: _stage != Stage.Centring,
-            lumpOffset: _wobble, handRow: RowAt(Game1.getMouseY()), handColor: handColor,
-            showHand: overPot && _stage != Stage.Results,
-            handX: _stage == Stage.Centring ? ArtX(Game1.getMouseX()) : float.NaN);
-        DrawPanel(b);
+        DrawTopBar(b);
+        DrawScene(b, mx, my);
+        switch (_stage)
+        {
+            case Stage.Centring: DrawCentringPanel(b); break;
+            case Stage.Throwing: DrawClay(b); DrawTools(b, mx, my); break;
+            case Stage.Results: DrawAdvice(b); DrawResults(b); break;
+        }
+        DrawBottomBar(b, mx, my);
         base.draw(b);
         drawMouse(b);
     }
 
-    private void Fill(SpriteBatch b, int x, int y, int w, int h, Color c) =>
-        b.Draw(Game1.staminaRect, new Rectangle(x, y, w, h), c);
-
-    private void DrawPanel(SpriteBatch b)
+    private void DrawTopBar(SpriteBatch b)
     {
-        int x = PanelX, y = yPositionOnScreen + 30, w = W - (PanelX - xPositionOnScreen) - 30;
-        Fill(b, x - 10, y - 10, w + 20, H - 40, Panel);
-        void Text(string s, Color? c = null, SpriteFont? font = null)
+        var top = TopArea;
+        Ui.Text(b, $"Throwing: the {_shape.Name}", new Vector2(top.X, top.Y + 4));
+        Ui.Text(b, _rules.Name, new Vector2(top.X, top.Y + 34), Game1.textColor * 0.7f);
+        if (_stage != Stage.Throwing)
+            return;
+
+        // Patience: the clay's, as the easel has its light
+        int barW = Math.Min(460, top.Width - 560);
+        var bar = new Rectangle(top.Center.X - barW / 2 + 60, top.Y + 14, barW, 28);
+        Ui.Text(b, "Patience", new Vector2(bar.X - 104, bar.Y));
+        Ui.Fill(b, bar, new Color(60, 40, 30));
+        float p = _pot.Patience;
+        Color fill = p > 0.5f ? Color.Lerp(new Color(110, 170, 80), new Color(150, 200, 90), (p - 0.5f) * 2f)
+                   : p > 0.25f ? Color.Lerp(new Color(220, 150, 60), new Color(110, 170, 80), (p - 0.25f) / 0.25f)
+                   : Color.Lerp(new Color(200, 70, 50), new Color(220, 150, 60), p / 0.25f);
+        Ui.Fill(b, new Rectangle(bar.X + 3, bar.Y + 3, (int)((bar.Width - 6) * p), bar.Height - 6), fill);
+        Ui.Outline(b, bar, new Color(40, 25, 15), 2);
+        string state = _rules.Regen > 0.5f ? "never tires" : p < 0.25f ? "slumping!" : "";
+        if (state.Length > 0)
+            Ui.Text(b, state, new Vector2(bar.Right - 10 - Ui.TextWidth(state) * 0.8f, bar.Y + 2), Color.White * 0.9f, 0.8f);
+
+        // how tall it is against the shape
+        string rows = $"Height {_pot.Rows}/{_shape.Rows}";
+        Ui.Text(b, rows, new Vector2(top.Right - Ui.TextWidth(rows), top.Y + 14),
+            _pot.Rows >= _shape.Rows ? new Color(60, 120, 40) : Game1.textColor);
+    }
+
+    // Left, while throwing: how it's going, and what the move in hand does.
+    private void DrawClay(SpriteBatch b)
+    {
+        var left = LeftArea;
+        var panel = new Rectangle(left.X, left.Y, left.Width, 286);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "The clay", panel.Center.X, panel.Y + 18);
+        var live = PotJudge.Judge(_pot, _shape, _centring);
+        int y = panel.Y + 60;
+        foreach (var (label, value) in new[] { ("Shape", live.Shape), ("Walls", live.Walls) })
         {
-            font ??= Game1.smallFont;
-            foreach (string line in Game1.parseText(s, font, w).Split('\n'))
-            {
-                b.DrawString(font, line, new Vector2(x, y), c ?? Ink);
-                y += (int)font.MeasureString("M").Y;
-            }
-            y += 6;
+            Ui.Text(b, label, new Vector2(panel.X + 24, y), Game1.textColor * 0.7f);
+            Ui.Text(b, I18n.Rating(value), new Vector2(panel.X + 116, y));
+            y += 34;
         }
-        void Button(string key, string label, bool on = false)
+        y += 6;
+        Ui.Text(b, Game1.parseText("In the cut-away, red is too thin and blue too heavy.", Game1.smallFont, panel.Width - 48),
+            new Vector2(panel.X + 24, y), Game1.textColor * 0.7f);
+
+        var hint = Moves.First(m => m.Move == _move);
+        int hy = panel.Bottom + 16;
+        Ui.Text(b, hint.Name, new Vector2(left.X + 8, hy));
+        Ui.Text(b, Game1.parseText(hint.Hint, Game1.smallFont, left.Width - 16), new Vector2(left.X + 8, hy + 32), Game1.textColor * 0.75f);
+    }
+
+    // Left, on the results: what cost the most, as Tobin would put it.
+    private void DrawAdvice(SpriteBatch b)
+    {
+        var left = LeftArea;
+        string said = _pot.Collapsed ? (_pot.CollapseReason ?? "") : string.Join(" ", PotJudge.Tips(_pot, _shape, _result!));
+        string quote = Game1.parseText($"\"{said}\"", Game1.smallFont, left.Width - 48);
+        int textH = (int)Game1.smallFont.MeasureString(quote).Y;
+        var panel = new Rectangle(left.X, left.Y, left.Width, textH + 110);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "Tobin says", panel.Center.X, panel.Y + 18);
+        Ui.Text(b, quote, new Vector2(panel.X + 24, panel.Y + 60), Game1.textColor * 0.85f);
+    }
+
+    private void DrawScene(SpriteBatch b, int mx, int my)
+    {
+        var scene = Scene;
+        drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), scene.X - 12, scene.Y - 12, scene.Width + 24, scene.Height + 24, Color.White, 4f, false);
+        bool overPot = InPotArea(mx, my);
+        Color handColor = _move switch { ThrowMove.PullUp => new Color(160, 230, 140), ThrowMove.PressIn => new Color(250, 180, 90), _ => new Color(150, 200, 250) };
+        _art.DrawScene(b, scene, _spin, _stage == Stage.Centring ? null : _pot, _shape, showReference: _stage != Stage.Centring,
+            lumpOffset: _wobble, handRow: RowAt(my), handColor: handColor,
+            showHand: overPot && _stage != Stage.Results,
+            handX: _stage == Stage.Centring ? ArtX(mx) : float.NaN);
+    }
+
+    private void DrawCentringPanel(SpriteBatch b)
+    {
+        var right = RightArea;
+        var panel = new Rectangle(right.X, right.Y, right.Width, 330);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "Centring", panel.Center.X, panel.Y + 18);
+        // the off-true gauge: the lump's drift, and the band it runs true in
+        var track = new Rectangle(panel.X + 24, panel.Y + 70, panel.Width - 48, 30);
+        Ui.Fill(b, track, new Color(70, 48, 34));
+        float bandW = track.Width * (0.8f / 12f);
+        Ui.Fill(b, new Rectangle((int)(track.Center.X - bandW), track.Y + 3, (int)(bandW * 2), track.Height - 6), new Color(120, 180, 90));
+        int markX = track.Center.X + (int)(_wobble / 12f * (track.Width / 2 - 6));
+        Ui.Fill(b, new Rectangle(markX - 4, track.Y - 4, 8, track.Height + 8), new Color(232, 182, 140));
+        Ui.Outline(b, track, new Color(40, 25, 15), 2);
+        bool trueNow = MathF.Abs(_wobble) < 0.8f;
+        string state = trueNow ? "Running true..." : MathF.Abs(_wobble) < 4f ? "Nearly true" : "Off true";
+        Ui.TextCentered(b, state, panel.Center.X, track.Bottom + 18, trueNow ? new Color(60, 120, 40) : Game1.textColor);
+        Ui.Text(b, Game1.parseText("Keep your hand over the lump as it wanders. Held, it settles.", Game1.smallFont, panel.Width - 40),
+            new Vector2(panel.X + 20, track.Bottom + 60), Game1.textColor * 0.75f);
+    }
+
+    private void DrawTools(SpriteBatch b, int mx, int my)
+    {
+        var right = RightArea;
+        var panel = new Rectangle(right.X, right.Y, right.Width, 250);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "Hands", panel.Center.X, panel.Y + 18);
+        int y = panel.Y + 56;
+        foreach (var m in Moves)
         {
-            var rect = new Rectangle(x, y, w, 44);
-            drawTextureBox(b, Game1.mouseCursors, new Rectangle(432, 439, 9, 9), rect.X, rect.Y, rect.Width, rect.Height, on ? Color.LightGreen : Color.White, 4f, false);
-            var size = Game1.smallFont.MeasureString(label);
-            b.DrawString(Game1.smallFont, label, new Vector2(rect.Center.X - size.X / 2, rect.Center.Y - size.Y / 2), Ink);
-            _buttons[key] = rect;
-            y += 52;
+            var r = new Rectangle(panel.X + 20, y, panel.Width - 40, 48);
+            Ui.Button(b, r, m.Label, selected: _move == m.Move, hovered: r.Contains(mx, my));
+            _buttons[m.Key] = r;
+            y += 58;
         }
 
-        Text($"The {_shape.Name} ({_rules.Name})", font: Game1.dialogueFont);
-        switch (_stage)
+    }
+
+    private void DrawResults(SpriteBatch b)
+    {
+        var right = RightArea;
+        var r = _result!;
+        int y = right.Y + 4;
+        if (_pot.Collapsed)
         {
-            case Stage.Centring:
-                Text("Centring. Hold the mouse on the clay and keep your hands over it as it wanders. Held true, it settles.");
-                Text($"Off true: {MathF.Abs(_wobble):0.0}");
-                break;
-            case Stage.Throwing:
-                Text("Hold the mouse on the pot to work it at that height. Match the chalk line.");
-                Button("pull", "1  Pull up", _move == ThrowMove.PullUp);
-                Button("press", "2  Press in", _move == ThrowMove.PressIn);
-                Button("out", "3  Let out", _move == ThrowMove.LetOut);
-                Text("Patience");
-                Fill(b, x, y, w, 18, new Color(90, 60, 40));
-                Fill(b, x + 2, y + 2, (int)((w - 4) * _pot.Patience), 14, _pot.Patience < 0.25f ? Color.OrangeRed : Color.SeaGreen);
-                y += 28;
-                Text(_rules.Regen > 0.5f ? "It never tires." : "Pause to let it firm up.");
-                var live = PotJudge.Judge(_pot, _shape, _centring);
-                Text($"Shape {live.Shape:P0}  Walls {live.Walls:P0}");
-                Text("Cut-away wall: red is thin, blue is heavy.", Ink * 0.75f);
-                Button("done", "Finished");
-                break;
-            case Stage.Results:
-                var r = _result!;
-                if (_pot.Collapsed)
-                    Text("It collapsed. " + _pot.CollapseReason);
-                Text($"{r.Stars:0.#} stars", Color.DarkGoldenrod, Game1.dialogueFont);
-                Text($"Shape {r.Shape:P0}\nWalls {r.Walls:P0}\nCentring {r.Centring:P0}");
-                if (!_pot.Collapsed)
-                    foreach (string tip in PotJudge.Tips(_pot, _shape, r))
-                        Text(tip, Ink * 0.8f);
-                Button("again", "Throw again");
-                Button("next", "Next shape");
-                break;
+            Ui.Text(b, "It collapsed.", new Vector2(right.X + 8, y), new Color(170, 50, 30));
+            y += 34;
+        }
+        Ui.Stars(b, r.Stars, right.X + 8, y, 40, 6);
+        y += 58;
+        void Row(string label, string value)
+        {
+            Ui.Text(b, label, new Vector2(right.X + 8, y), Game1.textColor * 0.7f);
+            Ui.Text(b, value, new Vector2(right.X + 8 + Ui.TextWidth("Centring") + 18, y));
+            y += 32;
+        }
+        Row("Shape", I18n.Rating(r.Shape));
+        Row("Walls", I18n.Rating(r.Walls));
+        Row("Centring", I18n.Rating(r.Centring));
+    }
+
+    private void DrawBottomBar(SpriteBatch b, int mx, int my)
+    {
+        var bottom = BottomArea;
+        string line = _stage switch
+        {
+            Stage.Centring => "Hold the mouse button on the clay and keep your hand over it.",
+            Stage.Throwing => "Hold the mouse on the pot to work it at that height. Match the chalk line.",
+            _ => "",
+        };
+        if (line.Length > 0)
+            Ui.Text(b, line, new Vector2(bottom.X, bottom.Y + 12));
+        if (_stage == Stage.Throwing)
+        {
+            var r = new Rectangle(bottom.Right - 180, bottom.Y, 180, bottom.Height);
+            Ui.Button(b, r, "Finished", hovered: r.Contains(mx, my));
+            _buttons["done"] = r;
+        }
+        else if (_stage == Stage.Results)
+        {
+            var next = new Rectangle(bottom.Right - 200, bottom.Y, 200, bottom.Height);
+            var again = new Rectangle(next.X - 220, bottom.Y, 200, bottom.Height);
+            Ui.Button(b, again, "Throw again", hovered: again.Contains(mx, my));
+            Ui.Button(b, next, "Next shape", hovered: next.Contains(mx, my));
+            _buttons["again"] = again;
+            _buttons["next"] = next;
         }
     }
 }
 
 internal static class PotteryProto
 {
-    public static void Register(IModHelper helper)
+    public static void Register(IModHelper helper, IMonitor monitor)
     {
         DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck] (throw: skip centring; bot: a greedy potter throws it, to check the rules; wreck: pull till it collapses)", (_, args) =>
         {
@@ -313,6 +452,38 @@ internal static class PotteryProto
             string shape = args.Length > 0 ? args[0] : "";
             string rules = args.Length > 1 ? args[1] : "normal";
             Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"));
+        });
+        // Every stage at both common sizes, with the layout audit (overlapping or spilling text),
+        // to dialogue_snapshots/pottery_*.png.
+        DevTools.AddCommand(helper, "museart_snappottery", "Renders the pottery wheel's stages at 1280x720 and 1920x1080, with the layout audit.", (_, _) =>
+        {
+            if (!Context.IsWorldReady)
+                return;
+            string dir = System.IO.Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+            System.IO.Directory.CreateDirectory(dir);
+            var rules = PotteryRules.For("normal");
+            var stages = new (string Name, Func<PotteryMenu> Make)[]
+            {
+                ("centring", () => new PotteryMenu("vase", rules)),
+                ("throwing", () => new PotteryMenu("vase", rules, skipCentring: true)),
+                ("results", () => new PotteryMenu("vase", rules, bot: true)),
+                ("collapsed", () => new PotteryMenu("cup", rules, wreck: true)),
+            };
+            var problems = new List<string>();
+            foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
+                foreach (var (name, make) in stages)
+                    DevTools.AtViewport(w, h, () =>
+                    {
+                        var menu = make();
+                        Ui.Audit = new List<Ui.AuditEntry>();
+                        DevTools.Render(menu, System.IO.Path.Combine(dir, $"pottery_{name}_{w}.png"));
+                        problems.AddRange(Ui.AuditProblems().Select(p => $"{name} @{w}x{h}: {p}"));
+                        Ui.Audit = null;
+                        menu.exitThisMenuNoSound();
+                    });
+            foreach (string problem in problems)
+                monitor.Log(problem, LogLevel.Warn);
+            monitor.Log($"Pottery rendered; {problems.Count} layout problems.", LogLevel.Info);
         });
     }
 }

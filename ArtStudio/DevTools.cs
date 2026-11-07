@@ -617,7 +617,7 @@ internal static class DevTools
         });
     }
 
-    private static void AtViewport(int w, int h, Action action)
+    internal static void AtViewport(int w, int h, Action action)
     {
         var old = Game1.uiViewport;
         Game1.uiViewport = new xTile.Dimensions.Rectangle(0, 0, w, h);
@@ -625,7 +625,7 @@ internal static class DevTools
         finally { Game1.uiViewport = old; }
     }
 
-    private static void Render(IClickableMenu menu, string path)
+    internal static void Render(IClickableMenu menu, string path)
     {
         var device = Game1.graphics.GraphicsDevice;
         int w = Game1.uiViewport.Width, h = Game1.uiViewport.Height;
