@@ -116,6 +116,13 @@ AMPHITHEATRE = ("amphitheatre/amph_s1_0", 31, 46)
 # a track to nowhere (the user, 2026-11-06).
 # The nursery's log ran into the frame's edge and stopped flat: it goes, its glowing
 # mushrooms (Fern's "humming" ones) stay, growing straight from the grass.
+# Features whose winter is their spring art with bare ground recoloured, not the snow
+# edit: nothing in them dies back, and the edit repainted the clay bank's barrow and
+# filled its pit (the user, 2026-11-07).
+WINTER_RECOLOUR = {"clay"}
+# Features allowed to draw over the paving's edge (drawn over the farmer, so the lane
+# still walks): the clay bank's drying rack stands on the lane's curb.
+OVER_PAVING = {"clay"}
 FEATURE_ERASE = {"clay": [(0, 34, 32, 72)], "nursery": [(100, 159, 176, 176, "keep_blue"), (150, 146, 176, 159, "keep_blue")]}
 FEATURES = {
     "parterre": ("features/parterre_v2/parterre_s13_0", (48, 144, 480, 288), 3, 39),   # I: the Lost Parterre (Fern)
@@ -1141,7 +1148,7 @@ def place_buildings(g, assets):
         # cut against the bare map in winter (features/winter/bare_winter.png, rendered
         # with VALE_NO_FEATURES set) the way spring is cut against the bare map in spring.
         wpath = os.path.join(ART, "features", "winter", name + "_0.png")
-        if os.path.exists(wpath):
+        if os.path.exists(wpath) and name not in WINTER_RECOLOUR:
             mb = (left * 16, top * 16, left * 16 + im.width, top * 16 + im.height)
             # the spring cut-out's exact footprint, in its winter colours: cutting snow
             # against snow left scattered flecks (the user: winter "extraordinarily messy")
@@ -1187,7 +1194,9 @@ def place_buildings(g, assets):
                         continue
                     tx, ty = left + i, bottom + j
                     if "C" in GROUND.get((g["Back"][ty][tx], g["Buildings"][ty][tx]), ()):
-                        continue        # never over the paving: the lanes stay the map's, and walkable
+                        if name[len("feature:"):] in OVER_PAVING and not walk[(i, j)]:
+                            g["Front"][ty][tx] = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
+                        continue        # never under-foot on the paving: the lanes stay the map's, and walkable
                     gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
                     # Never over the map's own ground pieces (a shore's rock edge on
                     # Buildings stays, and the art goes above it on Buildings2).
