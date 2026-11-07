@@ -1,0 +1,24 @@
+{
+ "batch": "vale_tree_seasons_v1",
+ "common": {},
+ "jobs": {
+  "old_tree_summer": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/props/vale_props_v1/old_tree_1_1.png",
+   "seed": 3,
+   "description": "The same ancient tree in summer: the pale pink blossom becomes a full deep green leafy canopy in the game's summer greens. Keep the trunk, roots, branches, the canopy's outline and every pixel's position exactly the same; change only the colours as described. Stardew Valley pixel art."
+  },
+  "old_tree_fall": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/props/vale_props_v1/old_tree_1_1.png",
+   "seed": 3,
+   "description": "The same ancient tree in autumn: the pale pink blossom becomes a canopy of shining GOLD leaves, warm gold and amber like gold leaf, glowing. Keep the trunk, roots, branches, the canopy's outline and every pixel's position exactly the same; change only the colours as described. Stardew Valley pixel art."
+  },
+  "old_tree_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/props/vale_props_v1/old_tree_1_1.png",
+   "seed": 3,
+   "description": "The same ancient tree in winter: bare branches with no leaves and no blossom, a light layer of white snow along the tops of the branches and the trunk. Keep the trunk, roots, branches, every pixel's position exactly the same; change only the colours as described. Stardew Valley pixel art."
+  }
+ }
+}

@@ -21,6 +21,10 @@ def main():
     im = Image.open(src).convert("RGBA")
     im = im.crop(im.getbbox())
     tw, th = round(im.width * factor), round(im.height * factor)
+    if max(im.size) > 200:
+        # the endpoint takes at most 200 px a side: hand it the art already resampled to
+        # the new size, to be redrawn clean there (the Exhibition Hall is 224 wide)
+        im = im.resize((tw, th), Image.LANCZOS)
     for seed in seeds:
         body = {"description": description, "reference_image": {"base64": b64(im).split(",", 1)[1]},
                 "reference_image_size": {"width": im.width, "height": im.height},

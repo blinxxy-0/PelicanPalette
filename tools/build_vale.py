@@ -38,26 +38,59 @@ from vanillafy import selout
 
 ART = "art/gilded_vale"
 # The building sheet is seasonal: the game swaps any sheet named spring_* for its
-# summer_, fall_ and winter_ siblings (docs/terrain_painting.md, section 2). Summer and
-# fall are the spring art; winter takes each piece's winter version where it has one.
+# summer_, fall_ and winter_ siblings (docs/terrain_painting.md, section 2). Each piece
+# uses its spring art in every season it has no art of its own for (SEASONAL).
 SHEET = "spring_GildedValeBuildings.png"
 SHEET_COLS = 16
-# name: (art, left tile x, bottom tile y, solid rows); art under ART, without .png
+SEASONS = ("spring", "summer", "fall", "winter")
+# name: (art, left tile x, bottom tile y, solid[, lift px]); art under ART, without .png.
+# solid: how many bottom rows block the farmer (the rest draw over him), or
+# (rows, first col, last col) for a piece only solid in its middle, like a tree's trunk.
 PICKS = {
     "vale_house": ("buildings/vale_buildings_v2/vale_house_s3_0", 23, 19, 3),
     "pottery": ("buildings/rescaled_v1/pottery_i400_s1_0", 41, 18, 3),       # rescaled 1.17x: doors to the game's size (2026-11-06)
     "atelier": ("buildings/rescaled_v1/atelier_i400_s1_0", 71, 23, 3),       # rescaled 0.81x
-    "hall": ("buildings/vale_buildings_v2/exhibition_hall_s3_0", 38, 39, 3),
-    "fern": ("buildings/vale_buildings_v2/fern_cottage_s2_0", 9, 38, 3),
+    "hall": ("buildings/rescaled_v1/hall_i400_s1_0", 38, 39, 3),             # rescaled 0.88x
+    "fern": ("buildings/rescaled_v1/fern120_i400_s1_0", 9, 38, 3),           # the user's pick (v5 r3_3, 2026-11-06), rescaled 1.2x
+    # The Old Studios: a row of three empty artists' studios (map doc, section 1); the
+    # big one reopens at Lupini's 6 hearts. One west and two east of Lupini's stairs,
+    # whose lane runs north between them (x 78-81).
+    "studio_a": ("buildings/rescaled_v1/studio_large_i400_s1_0", 68, 38, 3),    # its own design (v7 w1, its wing's end inpainted, 0.9x)
+    "studio_b": ("buildings/rescaled_v1/studio_b_i400_s1_0", 82, 38, 3),     # the user's picks v4 r3_1 (rescaled 0.93x)
+    "studio_c": ("buildings/vale_buildings_v4/old_studio_r4_1", 88, 38, 3),  # and r4_1
     "emmett": ("buildings/rescaled_v1/emmett_i400_s1_0", 15, 61, 3),         # the user's pick (v3 s2_1), rescaled 0.92x
+    # The decor plan's pieces of our own (PixelLab, props/vale_props_v1), set on the grass.
+    # "old_tree": ("props/vale_props_v1/old_tree_1_1", 32, 45, (1, 3, 4), 0),  # out of the plaza (the user: "doesn't fit"); its own place to come
+    "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
+    "vale_sign": ("props/vale_props_v1/vale_sign_1_3", 19, 4, 1, 0),         # A: where the high street starts
+    "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door
+    "tea_table_1": ("props/vale_props_v1/tea_table_1_1", 34, 12, 1, 0),      # B: the inn's tea garden
+    "tea_table_2": ("props/vale_props_v1/tea_table_1_1", 37, 15, 1, 0),
+    "statue_dancer": ("props/vale_props_v1/statue_dancer_2_1", 9, 46, 1, 0), # I: the sculpture garden
+    "statue_bust": ("props/vale_props_v1/statue_bust_2_1", 14, 46, 1, 0),
+    "statue_spiral": ("props/vale_props_v1/statue_spiral_2_2", 19, 46, 1, 0),
+    "clay_pit": ("props/vale_props_v1/clay_pit_2_3", 50, 26, 2, 0),          # G: the pottery's clay, by the river
+    "firewood_pottery": ("props/vale_props_v1/firewood_1_4", 47, 26, 1, 0),
+    "firewood_emmett": ("props/vale_props_v1/firewood_1_4", 12, 61, 1, 0),   # L
+    "canvases": ("props/vale_props_v1/canvases_1_2", 79, 22, 1, 0),          # F: Lupini's garden
+    "sunflowers_1": ("props/vale_props_v1/sunflowers_2_1", 83, 16, 1, 0),
+    "sunflowers_2": ("props/vale_props_v1/sunflowers_2_1", 88, 20, 1, 0),
+    "rowboat": ("props/vale_props_v1/rowboat_2_1", 53, 63, 2, 0),            # M: on the lake
+    "dock": ("props/vale_props_v1/dock_1_0", 60, 72, 4, 0),                  # M: out from the south shore
 }
-# Each piece's winter version, where it has one (PixelLab colour-only edits of the pick).
-WINTER = {
-    "vale_house": "buildings/vale_winter_v2/vale_house_winter_0",
-    "pottery": "buildings/vale_winter_v2/pottery_winter_0",
-    "atelier": "buildings/vale_winter_v2/atelier_winter_0",
-    "hall": "buildings/vale_winter_v2/exhibition_hall_winter_0",
-    "fern": "buildings/vale_winter_v2/fern_cottage_winter_0",
+# Every door is the same size, about 36 px with its frame (the game's are 30 to 32), so
+# no building's scale contradicts another's (the user, 2026-11-06); measured with ruled
+# close-ups, and rescaled with tools/art/vale_resize.py where it wasn't.
+# Each piece's art for the seasons it changes in (PixelLab colour-only edits of the
+# pick). A version whose size differs from spring's (an edit that added a chimney) is
+# refused and spring's used.
+SEASONAL = {
+    "vale_house": {"winter": "buildings/vale_winter_v2/vale_house_winter_0"},
+    "pottery": {"winter": "buildings/vale_winter_v3/pottery_winter_0"},
+    "atelier": {"winter": "buildings/vale_winter_v3/atelier_winter_0"},
+    "fern": {"winter": "buildings/vale_winter_v3/fern_winter_0"},
+    "emmett": {"winter": "buildings/vale_winter_v3/emmett_winter_0"},
+    "old_tree": {s: f"props/vale_tree_seasons_v1/old_tree_{s}_0" for s in ("summer", "fall", "winter")},
 }
 # The amphitheatre (the user's pick s1, 2026-11-06): PixelLab inpaint into the lower
 # cliff (tools/art/vale_inpaint.py), its art covering map tiles x 31-43, y 46-55.
@@ -149,19 +182,16 @@ def main():
                              # right-angle joins where the lake's top bank meets the river, and links the lower terrace
     bank_depth(g)            # the depth row of the straight banks (turns are paint_shores')
 
-    # Buildings: plain solid boxes on their footprints (the roofs come with the art).
-    boxes = {
-        "studios_1": (68, 36, 5, 3), "studios_2": (75, 36, 5, 3), "studios_3": (82, 36, 5, 3),
-    }
-    for x, y, w, h in boxes.values():
-        fill("Buildings", x, y, x + w, y + h, wall)
-
     place_buildings(g, assets)
+    # The dressing (the user's decor plan, 2026-11-06): the game's props and the
+    # Paths markers it turns into trees, bushes and grass (tools/vale_decor.py).
+    from vale_decor import decor
+    decor(g, GROUND, paths_first, W, H)
 
     # Woods all round, on the Paths layer: oak (9), maple (10), pine (11).
     rnd = random.Random(1)
     def tree_ok(x, y):
-        return GROUND.get((g["Back"][y][x], g["Buildings"][y][x]), ("?",) * 4) in (("G",) * 4, ("D",) * 4) and not g["Buildings"][y][x] and g["Back"][y][x] != water
+        return GROUND.get((g["Back"][y][x], g["Buildings"][y][x]), ("?",) * 4) in (("G",) * 4, ("D",) * 4) and not g["Buildings"][y][x]             and not g["Front2"][y][x] and g["Back"][y][x] != water        # (not behind a roof either)
     for y in range(H):
         for x in range(W):
             edge = x < 5 or x > 90 or y < 2 or y > 72
@@ -529,8 +559,8 @@ def paint_ground(g, exports):
         (31, 33, 33, 41),       # the foot of the west stairs
         (31, 40, 54, 46),       # the plaza before the Exhibition Hall
         (11, 40, 31, 42),       # west to Fern's
-        (11, 39, 13, 41),       # her door
-        (68, 40, 88, 42),       # east of the middle bridge: the Old Studios' row
+        (11, 39, 18, 41),       # her door and the seedhouse's
+        (68, 40, 93, 42),       # east of the middle bridge: the Old Studios' row
         (79, 33, 81, 41),       # the foot of Lupini's stairs
         (85, 40, 87, 49),       # on to the east stairs
         (51, 45, 53, 49),       # the plaza to the lower stairs
@@ -907,10 +937,12 @@ def lay_stairs(g, im, sx, sy, x, top):
 LIFT = 6
 
 
-def tile_piece(im, lift=0):
-    """A piece cropped to its art, padded to whole tiles (centred, its bottom lift px
-    above the last row's bottom), alpha made hard, outlines softened."""
-    im = im.crop(im.getbbox())
+def tile_piece(im, lift=0, box=None):
+    """A piece cropped to its art (or to box: a season's version is cropped like its
+    spring art, so a bare winter tree lines up with its full canopy), padded to whole
+    tiles (centred, its bottom lift px above the last row's bottom), alpha made hard,
+    outlines softened."""
+    im = im.crop(box or im.getbbox())
     a = im.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
     im.putalpha(a)
     cols, rows = -(-im.width // 16), -(-(im.height + lift) // 16)
@@ -975,41 +1007,46 @@ def place_buildings(g, assets):
     """The picked buildings, the stairs and the amphitheatre: packed on the seasonal
     sheets (spring/summer/fall the same, winter with each piece's winter version),
     then laid on the map."""
-    pieces = []          # (name, spring image, winter image, left, bottom, solid)
+    pieces = []          # (name, {season: image}, left, bottom, solid)
     if not os.environ.get("VALE_NO_STAIRS"):
         st = stairs_art()
-        pieces.append(("stairs", st, st, None, None, None))
-    for name, (art, left, bottom, solid) in PICKS.items():
-        spring = tile_piece(Image.open(os.path.join(ART, art + ".png")).convert("RGBA"), LIFT)
-        winter = spring
-        if name in WINTER and os.path.exists(os.path.join(ART, WINTER[name] + ".png")):
-            winter = tile_piece(Image.open(os.path.join(ART, WINTER[name] + ".png")).convert("RGBA"), LIFT)
-            if winter.size != spring.size:
-                print("winter art for", name, "doesn't match its spring size; using spring")
-                winter = spring
-        pieces.append((name, spring, winter, left, bottom, solid))
-    amph = None
+        pieces.append(("stairs", {x: st for x in SEASONS}, None, None, None))
+    for name, (art, left, bottom, solid, *rest) in PICKS.items():
+        lift = rest[0] if rest else LIFT
+        src = Image.open(os.path.join(ART, art + ".png")).convert("RGBA")
+        spring = tile_piece(src, lift)
+        arts = {x: spring for x in SEASONS}
+        for season, path in SEASONAL.get(name, {}).items():
+            if not os.path.exists(os.path.join(ART, path + ".png")):
+                continue
+            im = Image.open(os.path.join(ART, path + ".png")).convert("RGBA")
+            im = tile_piece(im, lift, src.getbbox() if im.size == src.size else None)
+            if im.size != spring.size:
+                print(season, "art for", name, "doesn't match its spring size; using spring")
+                continue
+            arts[season] = im
+        pieces.append((name, arts, left, bottom, solid))
     if os.path.exists(os.path.join(ART, AMPHITHEATRE[0] + ".png")):
         amph = amphitheatre_art(os.path.join(ART, AMPHITHEATRE[0] + ".png"))
-        pieces.append(("amphitheatre", amph, amph, AMPHITHEATRE[1], AMPHITHEATRE[2], None))
+        pieces.append(("amphitheatre", {x: amph for x in SEASONS}, AMPHITHEATRE[1], AMPHITHEATRE[2], None))
     slots, x, y, row_h = [], 0, 0, 0
-    for _, im, *_ in pieces:
-        cols, rows = im.width // 16, im.height // 16
+    for _, arts, *_ in pieces:
+        cols, rows = arts["spring"].width // 16, arts["spring"].height // 16
         if x + cols > SHEET_COLS:
             x, y, row_h = 0, y + row_h, 0
         slots.append((x, y))
         x += cols
         row_h = max(row_h, rows)
-    sheets = {season: Image.new("RGBA", (SHEET_COLS * 16, (y + row_h) * 16)) for season in ("spring", "winter")}
-    for (_, spring, winter, *_), (sx, sy) in zip(pieces, slots):
-        sheets["spring"].alpha_composite(spring, (sx * 16, sy * 16))
-        sheets["winter"].alpha_composite(winter, (sx * 16, sy * 16))
-    for season in ("spring", "summer", "fall"):
-        sheets["spring"].save(os.path.join(assets, SHEET.replace("spring_", season + "_")))
-    sheets["winter"].save(os.path.join(assets, SHEET.replace("spring_", "winter_")))
+    sheets = {season: Image.new("RGBA", (SHEET_COLS * 16, (y + row_h) * 16)) for season in SEASONS}
+    for (_, arts, *_), (sx, sy) in zip(pieces, slots):
+        for season in SEASONS:
+            sheets[season].alpha_composite(arts[season], (sx * 16, sy * 16))
+    for season in SEASONS:
+        sheets[season].save(os.path.join(assets, SHEET.replace("spring_", season + "_")))
     old = os.path.join(assets, "GildedValeBuildings.png")
     if os.path.exists(old):
         os.remove(old)      # (the sheet before it was seasonal)
+    pieces = [(name, arts["spring"], None, left, bottom, solid) for name, arts, left, bottom, solid in pieces]
     for (name, im, _, left, bottom, solid), (sx, sy) in zip(pieces, slots):
         cols, rows = im.width // 16, im.height // 16
         if name == "stairs":
@@ -1038,9 +1075,12 @@ def place_buildings(g, assets):
                     continue
                 gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
                 tx, ty = left + i, top + j
-                if j >= rows - solid:
+                n, c0, c1 = solid if isinstance(solid, tuple) else (solid, 0, cols - 1)
+                if j >= rows - n and c0 <= i <= c1:
                     g["Buildings"][ty][tx] = gid
                     g["Front"][ty][tx] = 0
+                elif j >= rows - n:
+                    g["Back2"][ty][tx] = gid          # (the rest of a solid row, under the farmer: a tree's roots)
                 else:
                     g["Front2"][ty][tx] = gid
         print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {top}-{bottom}")
@@ -1073,7 +1113,7 @@ BUILD_SHEET_H = 0
 def write(path, g, props, tilesets):
     out = ['<?xml version="1.0" encoding="utf-8"?>',
            f'<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="{W}" height="{H}" '
-           f'tilewidth="16" tileheight="16" infinite="0" nextlayerid="{len(LAYERS) + 1}" nextobjectid="1">',
+           f'tilewidth="16" tileheight="16" infinite="0" nextlayerid="{2 * len(LAYERS) + 1}" nextobjectid="1000">',
            '  <properties>']
     out += [f'    <property name="{k}" type="string" value="{v}" />' for k, v in props.items()]
     out.append('  </properties>')
@@ -1087,12 +1127,29 @@ def write(path, g, props, tilesets):
                    f'tilecount="{ROAD["count"]}" columns="{ROAD["columns"]}">')
         out.append(f'    <image source="{ROAD_SHEET}" width="{ROAD["columns"] * 16}" height="{ROAD["height"]}" />')
         out.append('  </tileset>')
+    from vale_decor import TILE_PROPS
     for i, layer in enumerate(LAYERS):
         out.append(f'  <layer id="{i + 1}" name="{layer}" width="{W}" height="{H}">')
         out.append('    <data encoding="csv">')
         out.append(",\n".join(",".join(str(v) for v in row) for row in g[layer]))
         out.append('    </data>')
         out.append('  </layer>')
+    # Tile properties, as the game's maps keep them: a "TileData" object on an object
+    # layer named for the tile layer (e.g. SpawnTree on the orchard's Paths markers).
+    oid = 1
+    for i, layer in enumerate(LAYERS):
+        props = sorted((x, y, p) for (l, x, y), p in TILE_PROPS.items() if l == layer)
+        if not props:
+            continue
+        out.append(f'  <objectgroup id="{len(LAYERS) + 1 + i}" name="{layer}" visible="false">')
+        for x, y, p in props:
+            out.append(f'    <object id="{oid}" name="TileData" x="{x * 16}" y="{y * 16}" width="16" height="16">')
+            out.append('      <properties>')
+            out += [f'        <property name="{k}" type="string" value="{v}" />' for k, v in p.items()]
+            out.append('      </properties>')
+            out.append('    </object>')
+            oid += 1
+        out.append('  </objectgroup>')
     out.append('</map>')
     open(path, "w", encoding="utf-8").write("\n".join(out))
     print("wrote", path)

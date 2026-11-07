@@ -1,0 +1,48 @@
+{
+ "batch": "vale_winter_v3",
+ "common": {},
+ "jobs": {
+  "pottery_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/winter_src/pottery_winter.png",
+   "description": "The same Stardew Valley building in winter, like the town's houses in winter: an even layer of white snow covering the roof planes and the top of the chimney ONLY. No icicles. No snow on the walls, beams, windows, sills, signs, doors or plants: everything below the roof's edge stays exactly as it is. Keep the shape and every outline identical.",
+   "seed": 2
+  },
+  "atelier_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/winter_src/atelier_winter.png",
+   "description": "The same Stardew Valley building in winter, like the town's houses in winter: an even layer of white snow covering the roof planes and the top of the chimney ONLY. No icicles. No snow on the walls, beams, windows, sills, signs, doors or plants: everything below the roof's edge stays exactly as it is. Keep the shape and every outline identical.",
+   "seed": 2
+  },
+  "hall_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/winter_src/hall_winter.png",
+   "description": "The same Stardew Valley building in winter, like the town's houses in winter: an even layer of white snow covering the roof planes and the top of the chimney ONLY. No icicles. No snow on the walls, beams, windows, sills, signs, doors or plants: everything below the roof's edge stays exactly as it is. Keep the shape and every outline identical.",
+   "seed": 2
+  },
+  "fern_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/winter_src/fern_winter.png",
+   "description": "The same Stardew Valley building in winter, like the town's houses in winter: an even layer of white snow covering the thatched roof and the seedhouse's glass roof and the top of the chimney ONLY. No icicles. No snow on the walls, beams, windows, sills, signs, doors or plants: everything below the roof's edge stays exactly as it is. Keep the shape and every outline identical.",
+   "seed": 2
+  },
+  "emmett_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/winter_src/emmett_winter.png",
+   "description": "The same Stardew Valley building in winter, like the town's houses in winter: an even layer of white snow covering the roof planes and the top of the chimney ONLY. No icicles. No snow on the walls, beams, windows, sills, signs, doors or plants: everything below the roof's edge stays exactly as it is. Keep the shape and every outline identical.",
+   "seed": 2
+  },
+  "studio_b_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/winter_src/studio_b_winter.png",
+   "description": "The same Stardew Valley building in winter, like the town's houses in winter: an even layer of white snow covering the roof planes and the top of the chimney ONLY. No icicles. No snow on the walls, beams, windows, sills, signs, doors or plants: everything below the roof's edge stays exactly as it is. Keep the shape and every outline identical.",
+   "seed": 2
+  },
+  "studio_c_winter": {
+   "endpoint": "edit-image-pixen",
+   "image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/winter_src/studio_c_winter.png",
+   "description": "The same Stardew Valley building in winter, like the town's houses in winter: an even layer of white snow covering the roof planes and the top of the chimney ONLY. No icicles. No snow on the walls, beams, windows, sills, signs, doors or plants: everything below the roof's edge stays exactly as it is. Keep the shape and every outline identical.",
+   "seed": 2
+  }
+ }
+}

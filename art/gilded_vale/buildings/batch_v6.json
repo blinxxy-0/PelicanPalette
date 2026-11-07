@@ -1,0 +1,31 @@
+{
+ "batch": "vale_buildings_v6",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_usage": "Stardew Valley building pixel art: palette, outline weight, how the roofs are shaded in rows of tiles or shingles with light ridges, dark gable edges and deep shadow under the eaves, and the high top-down front camera where the roof fills over half the building",
+  "reference_usage": "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+ },
+ "jobs": {
+  "studio_large_r1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/studio_large_guide.png",
+   "description": "The largest of the Vale's old artists' studios in Stardew Valley pixel art, long empty but a proper, handsome building worth reopening: a tall grey-green slate front-gabled roof with a big slanted north-light skylight of glass panes (a few cracked), pale dressed-stone walls with moss at the base, a lower side wing on the right with a mossy wooden-shingle roof and its own small window, a wide many-paned studio window on the front with one pane boarded, a blank painted sign board above an ordinary single wooden door the size of a person (the same size as a Stardew Valley house door, not taller than the windows' tops), ivy on one corner. STRICTLY FRONT-FACING like every Stardew Valley building: the front wall seen square-on and flat, not turned or rotated, no three-quarter or isometric angle; the roof seen from above and in front, its ridge running back away from the viewer, the two roof planes filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background. The whole building fits inside the picture with clear space above the roof's ridge: draw the complete roof, nothing cut off.",
+   "seed": 41,
+   "image_size": {
+    "width": 128,
+    "height": 176
+   }
+  },
+  "studio_large_r2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/studio_large_guide.png",
+   "description": "The largest of the Vale's old artists' studios in Stardew Valley pixel art, long empty but a proper, handsome building worth reopening: a tall grey-green slate front-gabled roof with a big slanted north-light skylight of glass panes (a few cracked), pale dressed-stone walls with moss at the base, a lower side wing on the right with a mossy wooden-shingle roof and its own small window, a wide many-paned studio window on the front with one pane boarded, a blank painted sign board above an ordinary single wooden door the size of a person (the same size as a Stardew Valley house door, not taller than the windows' tops), ivy on one corner. STRICTLY FRONT-FACING like every Stardew Valley building: the front wall seen square-on and flat, not turned or rotated, no three-quarter or isometric angle; the roof seen from above and in front, its ridge running back away from the viewer, the two roof planes filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background. The whole building fits inside the picture with clear space above the roof's ridge: draw the complete roof, nothing cut off.",
+   "seed": 42,
+   "image_size": {
+    "width": 128,
+    "height": 176
+   }
+  }
+ }
+}

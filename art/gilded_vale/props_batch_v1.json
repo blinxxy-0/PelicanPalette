@@ -1,0 +1,262 @@
+{
+ "batch": "vale_props_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_usage": "Stardew Valley pixel art: palette, outline weight, shading and the high top-down front camera of the game's town props"
+ },
+ "jobs": {
+  "bus_shelter_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A small rustic wooden bus shelter: an open front, a mossy shingled roof sloping back, a plank bench inside, a timetable board on one post with blank paper, a little lantern hanging from the eave. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 80,
+    "height": 80
+   }
+  },
+  "bus_shelter_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A small rustic wooden bus shelter: an open front, a mossy shingled roof sloping back, a plank bench inside, a timetable board on one post with blank paper, a little lantern hanging from the eave. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 9,
+   "image_size": {
+    "width": 80,
+    "height": 80
+   }
+  },
+  "vale_sign_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A hand-painted wooden village welcome sign on two rough posts: a wide blank board with no letters, painted with a little gold leaf flourish and a paintbrush motif in its corner, wildflowers at the posts' feet. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 15,
+   "image_size": {
+    "width": 64,
+    "height": 48
+   }
+  },
+  "vale_sign_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A hand-painted wooden village welcome sign on two rough posts: a wide blank board with no letters, painted with a little gold leaf flourish and a paintbrush motif in its corner, wildflowers at the posts' feet. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 23,
+   "image_size": {
+    "width": 64,
+    "height": 48
+   }
+  },
+  "noticeboard_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A wooden community noticeboard on two legs with a tiny shingled roof, pinned with a few blank paper notices and a small poster. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 29,
+   "image_size": {
+    "width": 32,
+    "height": 48
+   }
+  },
+  "noticeboard_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A wooden community noticeboard on two legs with a tiny shingled roof, pinned with a few blank paper notices and a small poster. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 37,
+   "image_size": {
+    "width": 32,
+    "height": 48
+   }
+  },
+  "tea_table_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A round white wrought-iron cafe table with two matching chairs and a cream and sage striped parasol over it, a teapot and two cups on the table. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 43,
+   "image_size": {
+    "width": 48,
+    "height": 48
+   }
+  },
+  "tea_table_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A round white wrought-iron cafe table with two matching chairs and a cream and sage striped parasol over it, a teapot and two cups on the table. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 51,
+   "image_size": {
+    "width": 48,
+    "height": 48
+   }
+  },
+  "statue_dancer_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A weathered white marble statue of a dancer with arms raised, standing on a square stone plinth, moss and a little ivy on the plinth. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 57,
+   "image_size": {
+    "width": 32,
+    "height": 64
+   }
+  },
+  "statue_dancer_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A weathered white marble statue of a dancer with arms raised, standing on a square stone plinth, moss and a little ivy on the plinth. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 65,
+   "image_size": {
+    "width": 32,
+    "height": 64
+   }
+  },
+  "statue_bust_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A weathered stone bust of a bearded old artist on a fluted stone column, lichen on the stone. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 71,
+   "image_size": {
+    "width": 32,
+    "height": 48
+   }
+  },
+  "statue_bust_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A weathered stone bust of a bearded old artist on a fluted stone column, lichen on the stone. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 79,
+   "image_size": {
+    "width": 32,
+    "height": 48
+   }
+  },
+  "statue_spiral_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "An abstract modern stone sculpture: a smooth pale stone ring twisting into a spiral, on a low square plinth, a little moss. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 85,
+   "image_size": {
+    "width": 48,
+    "height": 48
+   }
+  },
+  "statue_spiral_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "An abstract modern stone sculpture: a smooth pale stone ring twisting into a spiral, on a low square plinth, a little moss. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 93,
+   "image_size": {
+    "width": 48,
+    "height": 48
+   }
+  },
+  "clay_pit_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A shallow dug pit of wet grey potter's clay edged with a few wooden planks, a wooden bucket and a small spade beside it. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 99,
+   "image_size": {
+    "width": 48,
+    "height": 32
+   }
+  },
+  "clay_pit_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A shallow dug pit of wet grey potter's clay edged with a few wooden planks, a wooden bucket and a small spade beside it. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 107,
+   "image_size": {
+    "width": 48,
+    "height": 32
+   }
+  },
+  "firewood_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A neat stack of split firewood logs with a hand axe stuck in a chopping stump beside it. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 113,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   }
+  },
+  "firewood_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A neat stack of split firewood logs with a hand axe stuck in a chopping stump beside it. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 121,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   }
+  },
+  "canvases_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A leaning stack of old painted canvases and empty gilt picture frames, a little dusty and weathered. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 127,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   }
+  },
+  "canvases_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A leaning stack of old painted canvases and empty gilt picture frames, a little dusty and weathered. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 135,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   }
+  },
+  "sunflowers_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A clump of three tall sunflowers with big yellow heads and green leaves. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 141,
+   "image_size": {
+    "width": 32,
+    "height": 48
+   }
+  },
+  "sunflowers_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A clump of three tall sunflowers with big yellow heads and green leaves. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 149,
+   "image_size": {
+    "width": 32,
+    "height": 48
+   }
+  },
+  "rowboat_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A small wooden rowboat seen from above, two oars resting inside, moored, weathered blue paint. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 155,
+   "image_size": {
+    "width": 48,
+    "height": 32
+   }
+  },
+  "rowboat_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A small wooden rowboat seen from above, two oars resting inside, moored, weathered blue paint. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 163,
+   "image_size": {
+    "width": 48,
+    "height": 32
+   }
+  },
+  "dock_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A short wooden fishing jetty seen from above running away from the viewer: weathered planks on posts, a coil of rope and a fishing rod resting at its end. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 169,
+   "image_size": {
+    "width": 48,
+    "height": 64
+   }
+  },
+  "dock_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A short wooden fishing jetty seen from above running away from the viewer: weathered planks on posts, a coil of rope and a fishing rod resting at its end. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 177,
+   "image_size": {
+    "width": 48,
+    "height": 64
+   }
+  },
+  "old_tree_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A huge, ancient, gnarled broadleaf tree in spring blossom: a wide spreading canopy of pale pink and white blossom over a thick twisting trunk with exposed roots, the landmark of an artists' village. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 183,
+   "image_size": {
+    "width": 128,
+    "height": 144
+   }
+  },
+  "old_tree_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A huge, ancient, gnarled broadleaf tree in spring blossom: a wide spreading canopy of pale pink and white blossom over a thick twisting trunk with exposed roots, the landmark of an artists' village. Stardew Valley pixel art prop, drawn like the game's own town props: the game's palette, dark outline a shade of the neighbouring colour, seen from the game's high top-down front camera (front face square-on, top surfaces visible), not isometric, not turned. The object only, no ground, no grass, no shadow pool, no text, transparent background.",
+   "seed": 191,
+   "image_size": {
+    "width": 128,
+    "height": 144
+   }
+  }
+ }
+}

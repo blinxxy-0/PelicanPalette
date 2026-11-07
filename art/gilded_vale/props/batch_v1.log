@@ -1,0 +1,51 @@
+queued bus_shelter_1
+queued bus_shelter_2
+queued vale_sign_1
+queued vale_sign_2
+queued noticeboard_1
+queued noticeboard_2
+queued tea_table_1
+queued tea_table_2
+queued statue_dancer_1
+queued statue_dancer_2
+queued statue_bust_1
+queued statue_bust_2
+queued statue_spiral_1
+queued statue_spiral_2
+queued clay_pit_1
+queued clay_pit_2
+queued firewood_1
+queued firewood_2
+queued canvases_1
+queued canvases_2
+queued sunflowers_1
+queued sunflowers_2
+queued rowboat_1
+queued rowboat_2
+queued dock_1
+queued dock_2
+Traceback (most recent call last):
+  File "C:\Users\blinx\Desktop\MuseStardew\tools\pl_batch.py", line 82, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\blinx\Desktop\MuseStardew\tools\pl_batch.py", line 64, in main
+    r = post("/generate-image-v2", body)
+  File "C:\Users\blinx\Desktop\MuseStardew\tools\pl_batch.py", line 21, in post
+    return call("POST", path, body)
+  File "C:\Users\blinx\Desktop\MuseStardew\tools\pl_batch.py", line 14, in call
+    return json.loads(r.read())
+                      ~~~~~~^^
+  File "C:\Users\blinx\AppData\Local\Python\pythoncore-3.14-64\Lib\http\client.py", line 500, in read
+    s = self._safe_read(self.length)
+  File "C:\Users\blinx\AppData\Local\Python\pythoncore-3.14-64\Lib\http\client.py", line 648, in _safe_read
+    data = self.fp.read(cursize)
+  File "C:\Users\blinx\AppData\Local\Python\pythoncore-3.14-64\Lib\socket.py", line 729, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\blinx\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1304, in recv_into
+    return self.read(nbytes, buffer)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\blinx\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1138, in read
+    return self._sslobj.read(len, buffer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TimeoutError: The read operation timed out

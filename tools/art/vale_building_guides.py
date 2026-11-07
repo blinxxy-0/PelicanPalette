@@ -90,8 +90,11 @@ def chimney(d, x, y, w=10, h=26, col=CHIM):
 
 def save(img, name):
     # the whole roof must be on the canvas: a ridge running off the top came back cut off
-    top = img.getbbox()[1]
+    left, top, right, _ = img.getbbox()
     assert top >= 2, f"{name}: the guide's roof touches the top of its canvas"
+    # nor the sides: the large studio's wing ran to the edge and came back cut off flat
+    # (the user, 2026-11-06: "why does the edge stop so abruptly")
+    assert left >= 6 and right <= img.width - 6, f"{name}: the guide touches a side of its canvas"
     os.makedirs(OUT, exist_ok=True)
     img.save(os.path.join(OUT, name + "_guide.png"))
     print(name, img.size)
@@ -208,6 +211,26 @@ def old_studio():  # 6 x 9 tiles: an empty artists' studio, a big north-light wi
         d.line([(20, y), (76, y + 4)], fill=BEAM, width=2)
     door(d, 41, 143, 14, 22)
     save(img, "old_studio")
+
+
+def studio_large():  # 9 x 11 tiles: the Old Studio that reopens (Lupini's 6 hearts), a proper building
+    # (the user, 2026-11-06: the first one was a small studio blown up 1.38x to fix its
+    # door, so it was bigger than its neighbours and the same design; and its tip was cut.
+    # Margins on every side: the next one's wing ran off the canvas and stopped flat.)
+    img = Image.new("RGBA", (144, 176)); d = ImageDraw.Draw(img)
+    slate, stone = (96, 106, 100), (196, 186, 166)
+    wing(d, 96, 130, 108, 128, 175, (110, 98, 84), wall=stone)            # a lower side wing, a different roof
+    d.rectangle([130, 112, 132, 175], fill=shade(stone, 0.7))              # its end wall, so it reads as finished
+    peak, ridge_end, plane = gable(d, 56, 40, 100, 175, slate, wall=stone)
+    assert ridge_end >= 6, ridge_end
+    glass = (170, 200, 214)
+    d.polygon([plane(0.15, 0.2), plane(0.85, 0.2), plane(0.85, 0.75), plane(0.15, 0.75)], fill=glass)   # the north light
+    d.rectangle([22, 128, 46, 150], fill=WIN, outline=BEAM)               # the studio window, wide
+    d.line([(34, 128), (34, 150)], fill=BEAM); d.line([(22, 139), (46, 139)], fill=BEAM)
+    door(d, 56, 175, 15, 26)                                               # the game's door size
+    d.rectangle([50, 112, 76, 120], fill=(150, 120, 80), outline=BEAM)    # a sign board over the door
+    window(d, 106, 140, 14, 14)
+    save(img, "studio_large")
 
 
 if __name__ == "__main__":
