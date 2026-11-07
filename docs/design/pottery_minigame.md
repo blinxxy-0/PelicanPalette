@@ -1,12 +1,18 @@
-# Pottery: the wheel (draft for review, 2026-11-07)
+# Pottery: the wheel (plan, 2026-11-07)
 
-A first plan for a pottery minigame. Nothing here is decided yet; section 9 lists what is yours to decide.
+A plan for pottery and its minigame. The user's decisions so far (2026-11-07):
+- **Pottery is its own skill**, not a Sculpting material. This reverses the earlier "no pottery skill" rule.
+- **It comes with Sculpting in 1.5.**
+- **Glazing is banding:** you paint rings of glaze onto the spinning pot.
+- **Firing has a stoking minigame.**
+
+Section 9 lists what's still open.
 
 ## 1. Where it fits
 
-- **Already decided:** there's no pottery skill. Clay is one of Sculpting's materials (1.5), and Tobin teaches clay and fires your pieces (`docs/tobin_brief.md`, `docs/design/1.4_plan.md` section 4).
-- **What this adds:** sculpting's minigame is about **taking away**: you carve a block from the front and the side, and you can't put stone back. Clay on a wheel is the opposite. You **move** clay: nothing is cut off, and every push changes the shape somewhere else. That's different enough to need its own minigame. Sculpting's carving can still shape clay figures; **the wheel makes vessels**: cups, bowls, vases, jugs and planters.
-- **Its place in the mod:** one more way to earn Sculpting XP, and the heart of Tobin's arc ("you learn clay from him").
+- **A third skill:** Pottery, from 1 to 10 with six professions (section 8b), beside Painting and Sculpting, all in 1.5. Tobin teaches it and fires your pieces, and his arc is told through it (`docs/tobin_brief.md`).
+- **Different from sculpting:** sculpting's minigame is about **taking away**: you carve a block from the front and the side, and you can't put stone back. Clay on a wheel is the opposite. You **move** clay: nothing is cut off, and every push changes the shape somewhere else. **The wheel makes vessels**: cups, bowls, vases, jugs and planters.
+- **Clay moves to Pottery:** Sculpting keeps wood, stone, marble and ice (`1.4_plan.md` section 4's materials table, updated).
 
 ## 2. The idea in one line
 
@@ -27,16 +33,20 @@ The mod's rule for minigames applies: by default each stage asks one thing of yo
    Every move uses up the clay's **patience**: it gets wetter and weaker. A meter shows how much handling it has left. When it's low, the walls start to sag. You can stop and let it firm up for a moment (Normal), but the wheel waits for you: there's no clock.
 3. **Trimming and the rim.** A short finishing pass: trim the foot and compress the rim, one rhythm stage of three or four timed presses, like painting's finishing touches. It sets the **finish**: rough, clean or fine.
 4. **Glazing (at the kiln, later).** The pot is left to dry. When you take it to the kiln you choose a glaze and how it's applied (section 5).
-5. **Firing.** Overnight in Tobin's kiln (his firing days are Tuesday and Friday), or your own kiln once you can build one. In the morning it's ready. Firing has a small chance of a **kiln gift**: a glaze that ran beautifully, a crackle, a flash of colour. It's a little luck, the way a Treasure Chest is in fishing.
+5. **Firing: stoking the kiln.** At the kiln you load your glazed pots, then **stoke**: the kiln's heat rises and falls on a gauge, and you feed it fuel to keep it inside the glaze's band as the firing climbs to its peak. It's like fishing's bar, but slower and steadier, about 30 seconds.
+   - **Fuel:** Wood, Hardwood (burns long and steady) or Coal (hot and fast). That's why Tobin loves Hardwood, and it gives fuel a use.
+   - **Outcome:** the time inside the band sets the glaze's result: underfired is dull, well fired is true, and a perfect firing has a better chance of a **kiln gift** (a glaze that ran beautifully, a crackle, a flash of colour). Overfiring can crack a pot, but only in Hard; elsewhere it just dulls the glaze.
+   - **Then overnight:** the pots cool in the kiln and are ready in the morning.
+   - **At Tobin's:** on his firing days (Tuesday and Friday) he stokes your pots in with his own, safely but without the perfect-firing bonus, or you can stoke them yourself.
 
 ## 4. Difficulty, as painting's
 
 | Mode | What it asks |
 |---|---|
-| **Simplified** | No collapse: thin walls only lose points. Patience never runs out. A wide centring band. Worth half. |
+| **Simplified** | No collapse: thin walls only lose points. Patience never runs out. Wide bands for centring, banding and stoking. Worth half. |
 | **Relaxed** | Normal with no time pressure anywhere. |
-| **Normal** | One pressure per stage: the wobble in centring, patience in throwing, timing in trimming. The clay firms up while you pause. |
-| **Hard** | The full juggle: you set the wheel's speed yourself (fast throws quicker but thins the walls faster), patience only comes back slowly, and the clay dries as you work, so you can't take forever. Worth the most. |
+| **Normal** | One pressure per stage: the wobble in centring, patience in throwing, timing in trimming, steady hands in banding, the heat in stoking. The clay firms up while you pause. |
+| **Hard** | The full juggle: you set the wheel's speed yourself (fast throws quicker but thins the walls faster), patience only comes back slowly, the clay dries as you work, and overfiring cracks pots. Worth the most. |
 
 ## 5. Glaze
 
@@ -51,9 +61,7 @@ Glazes come from **minerals**, which is already what Tobin likes as gifts ("mine
 | Ash | Coal, or Fern's dried flowers | Speckled, earthy |
 | Copper red | Fire Quartz | Red, rare |
 
-Two ways to apply it. Glazing has its own decision in section 9:
-- **Simple:** choose one glaze, or two dipped halves.
-- **Banding:** while the pot spins, you touch a glaze brush to it at a height and it paints a ring. You match the reference's bands of colour. This plays like painting, but in rings.
+**Banding (decided):** the pot spins on the banding wheel. You pick a glaze, touch the brush to the pot at a height and hold it; it paints a ring as wide as you hold it. The reference shows the bands to match: colours, heights and widths. It plays like painting, but in rings. Your hand drifts slightly as the wheel turns, and keeping it steady is this stage's one pressure, so a wobbly hand gives a wavy band. A base coat (dipping the whole pot) comes first, as one click.
 
 Later there's a bridge to painting, like **painted sculpture** (`1.4_plan.md` section 5B): decorating a fired pot at the easel, its surface unwrapped as a canvas.
 
@@ -82,16 +90,25 @@ Quality and the Sculpting skill's level then work as painting's do.
 - **2 hearts (his brief):** he shows you the wheel. "You're bad at it; so was he." This event teaches the minigame, and the first throw is guided.
 - **4 hearts:** your first piece comes out of his kiln.
 - **Clay** comes from digging (Clay is a vanilla item), from his pit, and from his shop.
-- **Your own kiln:** a craftable kiln once you're good enough (a Sculpting level), so his firing days are a convenience, not a lock.
+- **Your own kiln:** a craftable kiln at a Pottery level, so his firing days are a convenience, not a lock.
+
+## 8b. The Pottery skill (a first pass)
+
+A SpaceCore skill from 1 to 10, like Painting. XP comes from throwing, glazing and firing; higher levels unlock larger pieces, more glazes, the kiln and the potter's wheel as furniture for your own house.
+
+| Level 5 | Level 10 (pick one of two) |
+|---|---|
+| **Thrower**: pots sell for 25% more | **Production Potter**: patience lasts 25% longer, and a small lump makes two cups. **Master of Sets**: matching sets are worth double, with a wider tolerance |
+| **Glazer**: banding's steadiness band is wider | **Kiln Keeper**: stoking's band is wider, and kiln gifts come twice as often. **Alchemist**: rare glazes from common minerals (Copper Red from Copper Ore) |
 
 ## 9. Decisions for you
 
-1. **Skill:** clay stays a Sculpting material with no pottery skill (as decided), or pottery becomes its own skill.
-2. **When:** with Sculpting in 1.5 (the current plan), or a smaller pottery-only piece earlier, in 1.4, as Tobin's thing.
-3. **Glazing:** simple (choose a glaze) or banding (paint rings while it spins).
-4. **Firing:** an overnight wait with a chance of a kiln gift (recommended), or a stoking minigame as well.
-5. **Controls:** hands follow the mouse's height and you click a move (recommended), or you drag the profile directly.
+Decided (2026-11-07): its own skill; with Sculpting in 1.5; banding; a stoking minigame. Still open:
+1. **Controls:** hands follow the mouse's height and you click a move (recommended), or you drag the profile directly.
+2. **Professions:** the first pass in section 8b.
+3. **Hand-building:** whether Pottery also makes clay figures and tiles by hand, besides the wheel's vessels, or leaves figures to Sculpting's carving in wood and stone.
+4. **Three skills in one release:** 1.5 now carries Sculpting and Pottery. It may want splitting (Pottery in 1.6, say) once both are prototyped.
 
 ## 10. How to build it, if you like it
 
-As painting was: a **prototype first**. A plain dev-only screen (`museart_pottery`) with the three throwing moves, the patience meter and a reference profile, played and tuned before any art or items. Then a simulation of the judge (`ArtStudio.Sim`, as painting's stars were calibrated), then the art, items, kiln and Tobin.
+As painting was: a **prototype first**. A plain dev-only screen (`museart_pottery`) with centring, the three throwing moves, the patience meter and a reference profile, played and tuned before any art or items. Then banding and stoking the same way. Then a simulation of the judge (`ArtStudio.Sim`, as painting's stars were calibrated), then the skill, art, items, kiln and Tobin.

@@ -1,6 +1,6 @@
 # Character brief: Tobin Clay, the potter (approved 2026-11-06)
 
-1.4 and 1.5. Decided so far (2026-11-03): he lives and works in the Vale from 1.4, with dialogue, a schedule and gift tastes; his heart arc is in **1.5**, built into sculpting (the user's choice). No pottery skill (the concept sheet's rule): clay is one of sculpting's materials.
+1.4 and 1.5. Decided so far (2026-11-03): he lives and works in the Vale from 1.4, with dialogue, a schedule and gift tastes; his heart arc is in **1.5**, built into sculpting (the user's choice). **Pottery is its own skill in 1.5** (the user, 2026-11-07, reversing the concept sheet's "no pottery skill"): he teaches it, and his arc is told through it (`docs/design/pottery_minigame.md`).
 
 ## At a glance
 - **Name:** Tobin Clay (the concept sheet's). The surname is a joke he's heard a thousand times ("It's a family trade. The name came first.").
@@ -11,7 +11,7 @@
 - **Home and work:** the pottery: the workshop at the front, with the kiln, his rooms behind.
 - **Role in the mod:**
   - **1.4:** sells his ceramics (decorative furniture: bowls, vases, planters, tiles) and clay; makes the Vale House's cups and the plaza's planters
-  - **1.5:** teaches you clay, fires your clay pieces in his kiln, and his arc is told through sculpting
+  - **1.5:** teaches you Pottery at the wheel, fires your pieces in his kiln, and his arc is told through it
 
 ## Look
 - **Build:** broad and solid, heavy forearms, big careful hands.
