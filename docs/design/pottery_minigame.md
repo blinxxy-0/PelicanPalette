@@ -89,7 +89,11 @@ Quality and the Sculpting skill's level then work as painting's do.
 
 - **2 hearts (his brief):** he shows you the wheel. "You're bad at it; so was he." This event teaches the minigame, and the first throw is guided.
 - **4 hearts:** your first piece comes out of his kiln.
-- **Clay** comes from digging (Clay is a vanilla item), from his pit, and from his shop.
+- **Clay: buy it or dig it** (the user, 2026-11-07, "similar to Graveyard Keeper"). Throwing clay is its own item, **Potter's Clay**, and it has two sources only:
+  - **Buy it from Tobin**, year-round, a lump at a time.
+  - **Dig it yourself at his clay pit** on the riverbank below the pottery (the clay bank on the Vale's map). Use a hoe or shovel on the pit's face, at a cost in energy. Each dig gives a lump or two, with a chance of a pebble, an old shard or a buried artifact. The pit has so many digs a day and refills overnight, more after rain. It's frozen in winter, when Tobin's shop is the only source. He doesn't mind you digging: "Take what you need. Fill the holes."
+  - **The vanilla Clay** you turn up tilling isn't throwing clay: it's grit and roots. Tobin can explain, and that doesn't change it.
+  - **How much:** a small piece takes 1 lump, a medium 2 and a large 4.
 - **Your own kiln:** a craftable kiln at a Pottery level, so his firing days are a convenience, not a lock.
 
 ## 8b. The Pottery skill (a first pass)
