@@ -122,7 +122,7 @@ FURNISH = [
     ("pic_portraits", 7, 17),
     # the kids' corner below it, for visitors' children (the user, 2026-11-07)
     ("bear", 1, 25), ("kids_table", 4, 26), ("pouf", 3, 27), ("pouf", 5, 27), ("dollhouse", 6, 26),
-    ("teddy", 3, 28), ("toy", 7, 28),
+    ("teddy", 3, 28), ("toy", 1, 27),
     # the tea room
     ("plant", 13, 19), ("plant_b", 22, 27), ("pic_photo", 13, 17), ("pic_meadow", 22, 17),
     # the kitchen
