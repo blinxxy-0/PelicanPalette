@@ -4,6 +4,7 @@
     <property name="Warp" value="15 31 blinxxy.MuseArt_GildedVale 28 20" />
     <property name="Light" value="5 4 4 15 4 4 24 4 4 8 12 4 22 12 4 5 23 4 15 24 4 25 23 4" />
     <property name="AllowWakeUpWithoutBed" value="T" />
+    <property name="Doors" value="6 11 1 120 15 11 1 120 25 11 1 120 15 18 1 120" />
   </properties>
   <tileset firstgid="1" name="indoor" tilewidth="16" tileheight="16" tilecount="2176" columns="32">
     <image source="townInterior" width="512" height="1088" />
