@@ -116,3 +116,48 @@ Decided (2026-11-07): its own skill; with Sculpting in 1.5; banding; a stoking m
 ## 10. How to build it, if you like it
 
 As painting was: a **prototype first**. A plain dev-only screen (`museart_pottery`) with centring, the three throwing moves, the patience meter and a reference profile, played and tuned before any art or items. Then banding and stoking the same way. Then a simulation of the judge (`ArtStudio.Sim`, as painting's stars were calibrated), then the skill, art, items, kiln and Tobin.
+
+**Prototype (2026-11-07):** `museart_pottery`, Debug only (`ArtStudio/Pottery/`). It has centring, throwing, four shapes and a judge. The user loved it, and was stuck at 3.5 stars until walls were judged as a potter would (a thick foot and firm rim allowed, changing smoothly), shown live, and explained on the results.
+
+## 11. Visuals (a plan for review)
+
+The prototype is plain rectangles. The aim is a screen that sits beside the easel's as one family: the same menu frame, framed panels, gold stars and word grades. Mockup of the pot: `art/pottery/visual_mock_v1.png` (left, now; right, proposed).
+
+### The screen
+- **Laid out like the easel's:**
+  - **Top bar:** the title and difficulty, with the patience bar styled like the easel's Light bar.
+  - **Left:** a framed **Reference** panel, showing the shape to throw as a finished pot, drawn by the same renderer.
+  - **Centre:** a framed **wheel scene**.
+  - **Right:** a framed **Tools** panel with the three moves as icon buttons, and a small gauge for how wet the clay is.
+  - **Bottom:** the instruction line and the Finish button, as the easel has them.
+- **Centring:** the same scene. The lump wobbles with a little blur, your hands follow the mouse, and the Tools panel's gauge becomes the off-true meter, like the easel's mix bar.
+- **Results:** laid out like the painting results. The pot as thrown, in leather-hard colour; the stars; word grades (Shape, Walls, Centring: Excellent, Good…); and the tips spoken as Tobin ("Heavy at the neck. Pull through it first.").
+
+### The pot: pixel art, drawn by code
+The pot changes shape every frame, so it can't be a sprite. It's drawn pixel by pixel at the game's own scale (1 art pixel = 4 screen pixels):
+- **Shading:** each pixel is shaded as a cylinder lit from the upper left, from a six-colour terracotta ramp.
+- **Spinning:** throwing rings scroll round to show it turning.
+- **Wet sheen:** a stripe of sheen runs down the lit side.
+- **Outlines and rim:** outlines are a darker shade of the colour beside them (the house rule), and the rim has a lighter lip.
+- **The clay tires:** it gets paler and shinier as patience runs down, droops visibly when it slumps, and falls in with a splat when it collapses.
+- **The cut-away:** it moves to the **right** half, so the lit side keeps its sheen. The thin and heavy tints stay.
+- **The reference:** a dotted chalk line.
+
+### Art to make (PixelLab, the house pipeline, a vanilla workshop as the style reference)
+1. **The kick wheel**, front on: a wooden frame and splash pan, and a grey wheel head with a 2 to 4 frame spin shine.
+2. **The backdrop:** Tobin's workshop wall, with shelves of pots and the kiln's glow at one side. There's a second backdrop for your own wheel at home later.
+3. **Hands:** a pair for each move (pull: fingers rising, inside and out; press in: palms squeezing; let out: one hand inside, pushing) and for centring (palms cupped). They're tinted to your farmer's skin tone, with two frames each so they move slightly.
+4. **Tool icons:** three 16x16 icons for the moves, in the style of the easel's tools.
+5. **By code:** water drops and slip spray while you work.
+6. **Sound:** a wheel hum, a wet squelch while working, and a splat for a collapse, from the game's own sound cues where they fit.
+
+### Order, each shown to you before the next
+1. The pot renderer, in code: the biggest change, and no art needed.
+2. The easel-style layout and results.
+3. The wheel and the backdrop (PixelLab candidates to choose from).
+4. The hands and icons.
+5. Sound and the collapse animation.
+
+### Open
+- **The cut-away:** always shown, or only while you hold the right mouse button. Potters check a wall by feel or by cutting a test pot; showing it only on demand is cleaner, but harder.
+- **The backdrop:** always Tobin's workshop, or wherever the wheel is (his workshop, or your house once you own one).
