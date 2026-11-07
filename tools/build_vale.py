@@ -123,7 +123,10 @@ WINTER_RECOLOUR = {"clay"}
 # Features allowed to draw over the paving's edge (drawn over the farmer, so the lane
 # still walks): the clay bank's drying rack stands on the lane's curb.
 OVER_PAVING = set()
-FEATURE_ERASE = {"clay": [(0, 34, 32, 72), (0, 0, 42, 38, "objects"), (41, 0, 80, 24, "objects"), (77, 0, 128, 12)],   # (the barrow and the drying rack removed: the user, 2026-11-07)
+# Sand trimmed to a soft, wavy patch round a centre (cx, cy, rx, ry px in the piece):
+# straight box cuts left sharp lines in the clay bank's sand (the user, 2026-11-07).
+FEATURE_SAND_PATCH = {"clay": (84, 60, 58, 46)}
+FEATURE_ERASE = {"clay": [(0, 0, 42, 38, "objects"), (41, 0, 80, 24, "objects")],   # (the barrow and the drying rack removed: the user, 2026-11-07)
                  "nursery": [(100, 159, 176, 176, "keep_blue"), (150, 146, 176, 159, "keep_blue")]}
 FEATURES = {
     "parterre": ("features/parterre_v2/parterre_s13_0", (48, 144, 480, 288), 3, 39),   # I: the Lost Parterre (Fern)
@@ -1149,13 +1152,25 @@ def place_buildings(g, assets):
                                 stack.append(nq)
                     if len(comp) >= 200:
                         big_sand.update(comp)
+            if name in FEATURE_SAND_PATCH:
+                import math
+                cx, cy, rx, ry = FEATURE_SAND_PATCH[name]
+                for yy in range(im.height):
+                    for xx in range(im.width):
+                        c = px[xx, yy]
+                        if not c[3] or (xx >= cx and not sandy(c)):
+                            continue        # (outside the patch: sand goes, and the old muddy track on the left; the shovel's grip stays)
+                        a = math.atan2((yy - cy) / ry, (xx - cx) / rx)
+                        edge = 1 + 0.10 * math.sin(3 * a + 1.3) + 0.06 * math.sin(7 * a + 0.4) + 0.04 * math.sin(13 * a)
+                        if ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 > edge * edge:
+                            px[xx, yy] = (0, 0, 0, 0)
             for ex0, ey0, ex1, ey1, *how in FEATURE_ERASE.get(name, ()):
                 for yy in range(ey0, min(ey1, im.height)):
                     for xx in range(ex0, min(ex1, im.width)):
                         c = px[xx, yy]
                         if how == ["keep_blue"] and c[3] and (c[2] > c[0] + 50 or (c[2] > 150 and c[1] > 150)):
                             continue        # (keep_blue: the mushrooms)
-                        if how == ["objects"] and (xx, yy) in big_sand:
+                        if how == ["objects"] and (xx, yy) in big_sand and c[0] > 200:   # (darker sand is the removed things' shadow)
                             continue        # (objects: the sand under them stays, no straight cut)
                         px[xx, yy] = (0, 0, 0, 0)
         else:
