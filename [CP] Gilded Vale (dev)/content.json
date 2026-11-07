@@ -40,8 +40,43 @@
         "blinxxy.MuseArt_ValeHall": {
           "DisplayName": "{{i18n:location.vale-hall}}",
           "DefaultArrivalTile": { "X": 14, "Y": 21 },
-          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeHall", "Type": "StardewValley.Locations.DecoratableLocation" }
-        }
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeHall", "Type": "StardewValley.Locations.DecoratableLocation" }        }
+      }
+    },
+    // What the Vale's pieces say when you right-click them (tools/build_vale_buildings.py,
+    // "describe": Action Message on the piece and its plaque)
+    {
+      "Action": "EditData",
+      "Target": "Strings/StringsFromMaps",
+      "Entries": {
+        "blinxxy.MuseArt_Vale.hall.mural": "{{i18n:vale.hall.mural}}",
+        "blinxxy.MuseArt_Vale.hall.jade_hills": "{{i18n:vale.hall.jade_hills}}",
+        "blinxxy.MuseArt_Vale.hall.eco_hill": "{{i18n:vale.hall.eco_hill}}",
+        "blinxxy.MuseArt_Vale.hall.kitemaster": "{{i18n:vale.hall.kitemaster}}",
+        "blinxxy.MuseArt_Vale.hall.boat": "{{i18n:vale.hall.boat}}",
+        "blinxxy.MuseArt_Vale.hall.needlepoint": "{{i18n:vale.hall.needlepoint}}",
+        "blinxxy.MuseArt_Vale.hall.panel": "{{i18n:vale.hall.panel}}",
+        "blinxxy.MuseArt_Vale.hall.panel_b": "{{i18n:vale.hall.panel_b}}",
+        "blinxxy.MuseArt_Vale.hall.bowls": "{{i18n:vale.hall.bowls}}",
+        "blinxxy.MuseArt_Vale.hall.jug": "{{i18n:vale.hall.jug}}",
+        "blinxxy.MuseArt_Vale.hall.flowers": "{{i18n:vale.hall.flowers}}",
+        "blinxxy.MuseArt_Vale.hall.flowers_b": "{{i18n:vale.hall.flowers_b}}",
+        "blinxxy.MuseArt_Vale.hall.spiral": "{{i18n:vale.hall.spiral}}",
+        "blinxxy.MuseArt_Vale.hall.spiral_b": "{{i18n:vale.hall.spiral_b}}",
+        "blinxxy.MuseArt_Vale.hall.kiln_woman": "{{i18n:vale.hall.kiln_woman}}",
+        "blinxxy.MuseArt_Vale.hall.moss_figure": "{{i18n:vale.hall.moss_figure}}",
+        "blinxxy.MuseArt_Vale.hall.visitors_book": "{{i18n:vale.hall.visitors_book}}",
+        "blinxxy.MuseArt_Vale.hall.poster": "{{i18n:vale.hall.poster}}",
+        "blinxxy.MuseArt_Vale.hall.vista": "{{i18n:vale.hall.vista}}",
+        "blinxxy.MuseArt_Vale.hall.calico_falls": "{{i18n:vale.hall.calico_falls}}",
+        "blinxxy.MuseArt_Vale.hall.sheeted": "{{i18n:vale.hall.sheeted}}",
+        "blinxxy.MuseArt_Vale.hall.crates": "{{i18n:vale.hall.crates}}",
+        "blinxxy.MuseArt_Vale.hall.crates_b": "{{i18n:vale.hall.crates_b}}",
+        "blinxxy.MuseArt_Vale.hall.ladder": "{{i18n:vale.hall.ladder}}",
+        "blinxxy.MuseArt_Vale.hall.unshown": "{{i18n:vale.hall.unshown}}",
+        "blinxxy.MuseArt_Vale.hall.frame_rack": "{{i18n:vale.hall.frame_rack}}",
+        "blinxxy.MuseArt_Vale.hall.dancing_grass": "{{i18n:vale.hall.dancing_grass}}",
+        "blinxxy.MuseArt_Vale.hall.ledger": "{{i18n:vale.hall.ledger}}"
       }
     },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHouse", "FromFile": "assets/ValeHouse.tmx" },

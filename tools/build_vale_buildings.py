@@ -91,6 +91,7 @@ ART = {
     "flower_case":   (2, 2, 1),     # a glass case of Fern's pressed flowers
     "plinth":        (1, 2, 1),     # a sculpture on a plinth
     "plinth_b":      (1, 2, 1), "plinth_c": (1, 2, 1), "panel_b": (2, 3, 1),
+    "plaque":        (1, 1, 1),     # a brass label on a short post
     "reception":     (3, 2, 1),     # a desk with the visitors' book
     "sheeted":       (2, 2, 1),     # frames under a dust sheet
     "poster":        (2, 2, 0),     # a faded poster for the last exhibition
@@ -250,7 +251,7 @@ BUILDINGS = {
                    "flower_case": "flower_case_2_8", "plinth": "plinth_1_0", "plinth_b": "plinth_1_5",
                    "plinth_c": "plinth_1_7", "reception": "reception_1_6",
                    "sheeted": "sheeted_1_5", "poster": "poster_1_0", "crates": "crates_1_7",
-                   "frame_rack": "frame_rack_1_1", "ladder": "ladder_1_8"}.items()}},
+                   "frame_rack": "frame_rack_1_1", "ladder": "ladder_1_8", "plaque": "../hall_v2/plaque_1_0"}.items()}},
         lights=[(5, 17), (11, 17), (14, 15), (19, 17), (25, 17), (14, 5), (25, 5)],
         pieces=[
             # the gallery's back wall: the mural at the west end, paintings
@@ -266,13 +267,34 @@ BUILDINGS = {
             # by the door: the desk with the visitors' book; palms in the corners
             # a runner up the middle, from the door to the back room
             ("rug#2", 13, 15, 3, 7),
-            ("reception", 11, 20), ("plant", 16, 20), ("plant", 1, 14), ("plant", 1, 20), ("plant_b", 28, 20), ("plant", 28, 14),
+            # (the user, 2026-11-07: the desk at the top of the runner, before the back room)
+            ("reception", 13, 15), ("plant", 16, 20), ("plant", 1, 14), ("plant", 1, 20), ("plant_b", 28, 20), ("plant", 28, 14),
+            # a brass plaque before every exhibit (the user, 2026-11-07); right-click one,
+            # or the exhibit, to read it
+            ("plaque", 5, 14), ("plaque#2", 10, 14), ("plaque#3", 16, 14), ("plaque#4", 19, 14),
+            ("plaque#5", 22, 14), ("plaque#6", 27, 14), ("plaque#7", 8, 17), ("plaque#8", 8, 20),
+            ("plaque#9", 17, 18), ("plaque#10", 17, 21), ("plaque#11", 20, 18), ("plaque#12", 20, 21),
+            ("plaque#13", 23, 18), ("plaque#14", 23, 21), ("plaque#15", 27, 18), ("plaque#16", 27, 21),
             # the back room: the exhibition nobody took down
             ("poster", 10, 1), ("game_2423", 13, 1), ("game_1565", 16, 1),
             ("sheeted", 10, 5), ("sheeted#2", 16, 6), ("crates", 9, 7), ("ladder", 19, 3), ("plinth_b#2", 13, 6),
             # the storeroom
             ("frame_rack", 23, 2), ("game_1606", 26, 1), ("crates#2", 26, 5), ("writing_desk", 22, 6), ("sheeted#3", 27, 7),
         ],
+        # what right-clicking a piece (or its plaque) says: piece -> text key (i18n vale.hall.<key>)
+        describe={"mural": "mural", "plaque": "mural", "game_1554": "jade_hills", "plaque#2": "jade_hills",
+                  "game_1541": "eco_hill", "plaque#3": "eco_hill", "game_1612": "kitemaster", "plaque#4": "kitemaster",
+                  "game_2421": "boat", "plaque#5": "boat", "game_1567": "needlepoint", "plaque#6": "needlepoint",
+                  "panel": "panel", "plaque#7": "panel", "panel_b": "panel_b", "plaque#8": "panel_b",
+                  "bowl_case": "bowls", "plaque#9": "bowls", "bowl_case#2": "jug", "plaque#10": "jug",
+                  "flower_case": "flowers", "plaque#11": "flowers", "flower_case#2": "flowers_b", "plaque#12": "flowers_b",
+                  "plinth": "spiral", "plaque#13": "spiral", "plinth_c": "kiln_woman", "plaque#14": "kiln_woman",
+                  "plinth_b": "moss_figure", "plaque#15": "moss_figure", "plinth#2": "spiral_b", "plaque#16": "spiral_b",
+                  "reception": "visitors_book",
+                  "poster": "poster", "game_2423": "vista", "game_1565": "calico_falls", "sheeted": "sheeted",
+                  "sheeted#2": "sheeted", "crates": "crates", "ladder": "ladder", "plinth_b#2": "unshown",
+                  "frame_rack": "frame_rack", "game_1606": "dancing_grass", "crates#2": "crates_b",
+                  "sheeted#3": "sheeted", "writing_desk": "ledger"},
         notes=["The Exhibition Hall: one floor plan, like the Community Center's main room. Front door at the bottom.",
                "The gallery: the mural on the west end of the back wall, two benches on a rug before it; panels of",
                "the Vale's past artists' work; glass cases of Tobin's bowls and Fern's pressed flowers; sculptures on",
@@ -294,7 +316,10 @@ BUILDINGS = {
         zones=[(17, 14, 25, 20, "flagstones")],
         wall_zones=[("main", 17, 25, 57)],        # the seedhouse's back wall is glass
         wall=7, walls={"bedroom": 100},
-        picks={},
+        picks={"chest": "art/gilded_vale/interiors/pottery/pottery_v1/chest_1_9",
+               **{k: "art/gilded_vale/interiors/fern/fern_v1/" + k + "_1_0" for k in (
+                   "pressed_flowers", "seed_drawers", "potting_bench", "vine_trellis", "seed_counter", "seed_trays",
+                   "mushroom_pot", "soil_sacks", "watering_can")}},
         lights=[(4, 16), (12, 16), (20, 16), (23, 18), (5, 6)],
         pieces=[
             # the cottage end: the fire, the couch with its back to the wall, the coffee
@@ -577,6 +602,10 @@ def pack(picks):
     return sheet, {n: (sy * SHEET_COLS + sx, c, r) for n, (sx, sy, c, r) in slots.items()}, shade_row * SHEET_COLS
 
 
+def message_key(building, key):
+    return f"blinxxy.MuseArt_Vale.{building}.{key}"
+
+
 def build(name, exports, assets):
     import build_margot_room as bmr
     from build_shop_interior import read
@@ -732,6 +761,22 @@ def build(name, exports, assets):
                         g["Front2"][py + 1 + j][px + i] = FURN + EASEL_PAINTING + 32 * j + i
 
     tile_props = [("Buildings", d_, rooms[lower]["t"] + 2, "Action", "Door") for _, lower, d_ in spec["doors"]]
+    # right-click a piece (or its plaque) to read about it: Action Message, its text in
+    # Strings/StringsFromMaps (content.json, from i18n vale.<building>.<key>)
+    for p in spec["pieces"]:
+        key = spec.get("describe", {}).get(p[0])
+        if not key:
+            continue
+        x0, y0 = p[1], p[2]
+        w, h, sol = footprint(p)
+        if sol:
+            cells = [(x0 + i, y0 + h - 1 - j) for i in range(w) for j in range(sol)]
+        else:                                   # on the wall: its wainscot below, in reach
+            r = next(r for r in rooms.values() if r["a"] <= x0 <= r["b"] and r["t"] < y0 <= r["t"] + 3)
+            cells = [(x0 + i, y) for i in range(w) for y in (r["t"] + 2, r["t"] + 3)]
+        for x, y in cells:
+            if g["Buildings"][y][x]:
+                tile_props.append(("Buildings", x, y, "Action", f"Message {message_key(name, key)}"))
     props = {"Warp": " ".join(warps),
              "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in spec["lights"])}
     if spec["doors"]:

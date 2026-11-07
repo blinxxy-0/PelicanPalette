@@ -1,0 +1,27 @@
+{
+ "batch": "hall_v2",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle (straight front view from slightly above), pixel scale and colours of this room's furniture: wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "plaque_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small museum label stand: a short dark wooden post, knee high, with a little slanted brass plaque on top engraved with tiny lines of text, filling the tile",
+   "seed": 991
+  },
+  "plaque_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small museum label stand: a short dark wooden post, knee high, with a little slanted brass plaque on top engraved with tiny lines of text, filling the tile",
+   "seed": 992
+  }
+ }
+}
