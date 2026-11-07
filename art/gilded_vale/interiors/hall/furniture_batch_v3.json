@@ -1,0 +1,91 @@
+{
+ "batch": "hall_v3",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle (straight front view from slightly above), pixel scale and colours of this room's furniture: wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "plaque_wide_1": {
+   "image_size": {
+    "width": 32,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a low museum label stand two tiles wide: a short dark wooden bench-like base with a wide slanted brass plaque engraved with tiny lines of text",
+   "seed": 1300
+  },
+  "plaque_wide_2": {
+   "image_size": {
+    "width": 32,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a low museum label stand two tiles wide: a short dark wooden bench-like base with a wide slanted brass plaque engraved with tiny lines of text",
+   "seed": 1301
+  },
+  "jug_case_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a museum glass display case on a dark wooden stand, inside it a single tall slip-white ceramic jug with a slate blue handle and two small cups",
+   "seed": 1302
+  },
+  "jug_case_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a museum glass display case on a dark wooden stand, inside it a single tall slip-white ceramic jug with a slate blue handle and two small cups",
+   "seed": 1303
+  },
+  "leaf_case_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a museum glass-topped display table on dark wooden legs, inside it one large sheet of cream paper with pressed fern fronds and autumn leaves arranged in a circle",
+   "seed": 1304
+  },
+  "leaf_case_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a museum glass-topped display table on dark wooden legs, inside it one large sheet of cream paper with pressed fern fronds and autumn leaves arranged in a circle",
+   "seed": 1305
+  },
+  "plinth_d_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a dark green marble plinth with a small bronze sculpture of a heron standing on one leg on top, for a gallery",
+   "seed": 1306
+  },
+  "plinth_d_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a dark green marble plinth with a small bronze sculpture of a heron standing on one leg on top, for a gallery",
+   "seed": 1307
+  },
+  "sheeted_statue_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall statue on a plinth completely covered by a dusty white dust sheet, its shape showing through",
+   "seed": 1308
+  },
+  "sheeted_statue_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall statue on a plinth completely covered by a dusty white dust sheet, its shape showing through",
+   "seed": 1309
+  }
+ }
+}

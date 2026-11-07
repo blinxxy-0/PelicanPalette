@@ -92,6 +92,9 @@ ART = {
     "plinth":        (1, 2, 1),     # a sculpture on a plinth
     "plinth_b":      (1, 2, 1), "plinth_c": (1, 2, 1), "panel_b": (2, 3, 1),
     "plaque":        (1, 1, 1),     # a brass label on a short post
+    "plaque_wide":   (2, 1, 1),     # and a wide one, for the mural
+    "jug_case":      (2, 2, 1), "leaf_case": (2, 2, 1), "plinth_d": (1, 2, 1),
+    "sheeted_statue": (1, 2, 1),    # a sculpture under a dust sheet
     "reception":     (3, 2, 1),     # a desk with the visitors' book
     "sheeted":       (2, 2, 1),     # frames under a dust sheet
     "poster":        (2, 2, 0),     # a faded poster for the last exhibition
@@ -108,6 +111,16 @@ ART = {
     "mushroom_pot":  (1, 1, 1),     # the mushroom she swears hums
     "soil_sacks":    (1, 2, 1),
     "watering_can":  (1, 1, 1),
+    # Emmett's
+    "pinned_maps":   (3, 2, 0),     # maps of everywhere he's played, pinned to the wall, string between towns
+    "instrument_stand": (2, 2, 1),  # his fiddle on a stand, a concertina with a broken key, Tobin's ocarina
+    "music_stand":   (1, 2, 1),     # sheet music, half of it crossed out
+    "coat_rack":     (1, 2, 1),     # his long travel-worn coat, the red neckerchief
+    "moss_wall":     (1, 2, 0),     # moss and ivy creeping down the plaster from a beam
+    "moss_patch":    (1, 1, -2),    # moss in a corner of the floorboards
+    "stump_stool":   (1, 1, 1),     # a mossy tree stump for a stool
+    "fern_pot":      (1, 2, 1),     # a big fern in an old bucket
+    "crate_table":   (1, 1, 1),     # an upturned crate for a side table, a candle and a mug
     # the inn's, reused
     "wardrobe":      (2, 3, 1), "nightstand": (1, 2, 1), "writing_desk": (2, 2, 1), "sketch_wall": (2, 2, 0),
 }
@@ -251,7 +264,10 @@ BUILDINGS = {
                    "flower_case": "flower_case_2_8", "plinth": "plinth_1_0", "plinth_b": "plinth_1_5",
                    "plinth_c": "plinth_1_7", "reception": "reception_1_6",
                    "sheeted": "sheeted_1_5", "poster": "poster_1_0", "crates": "crates_1_7",
-                   "frame_rack": "frame_rack_1_1", "ladder": "ladder_1_8", "plaque": "../hall_v2/plaque_1_0"}.items()}},
+                   "frame_rack": "frame_rack_1_1", "ladder": "ladder_1_8", "plaque": "../hall_v2/plaque_1_0",
+                   "plaque_wide": "../hall_v3/plaque_wide_1_0", "jug_case": "../hall_v3/jug_case_1_1",
+                   "leaf_case": "../hall_v3/leaf_case_1_1", "plinth_d": "../hall_v3/plinth_d_1_5",
+                   "sheeted_statue": "../hall_v3/sheeted_statue_1_0"}.items()}},
         lights=[(5, 17), (11, 17), (14, 15), (19, 17), (25, 17), (14, 5), (25, 5)],
         pieces=[
             # the gallery's back wall: the mural at the west end, paintings
@@ -262,37 +278,35 @@ BUILDINGS = {
             # free-standing panels of the Vale's past artists' work
             ("panel", 9, 15), ("panel_b", 9, 18),
             # the residents' work: Tobin's bowls, Fern's pressed flowers, sculptures
-            ("bowl_case", 17, 16), ("flower_case", 20, 16), ("bowl_case#2", 17, 19), ("flower_case#2", 20, 19),
-            ("plinth", 23, 16), ("plinth_b", 27, 16), ("plinth_c", 23, 19), ("plinth#2", 27, 19),
+            # (every exhibit its own: the user, 2026-11-07, "we want this to be unique")
+            ("bowl_case", 17, 16), ("flower_case", 20, 16), ("jug_case", 17, 19), ("leaf_case", 20, 19),
+            ("plinth", 23, 16), ("plinth_b", 27, 16), ("plinth_c", 23, 19), ("plinth_d", 27, 19),
             # by the door: the desk with the visitors' book; palms in the corners
             # a runner up the middle, from the door to the back room
             ("rug#2", 13, 15, 3, 7),
             # (the user, 2026-11-07: the desk at the top of the runner, before the back room)
             ("reception", 13, 15), ("plant", 16, 20), ("plant", 1, 14), ("plant", 1, 20), ("plant_b", 28, 20), ("plant", 28, 14),
-            # a brass plaque before every exhibit (the user, 2026-11-07); right-click one,
-            # or the exhibit, to read it
-            ("plaque", 5, 14), ("plaque#2", 10, 14), ("plaque#3", 16, 14), ("plaque#4", 19, 14),
-            ("plaque#5", 22, 14), ("plaque#6", 27, 14), ("plaque#7", 8, 17), ("plaque#8", 8, 20),
-            ("plaque#9", 17, 18), ("plaque#10", 17, 21), ("plaque#11", 20, 18), ("plaque#12", 20, 21),
-            ("plaque#13", 23, 18), ("plaque#14", 23, 21), ("plaque#15", 27, 18), ("plaque#16", 27, 21),
+            # a brass plaque below each painting on the wall, a wide one centred under the
+            # mural (the user, 2026-11-07: fewer than one per exhibit, "too crowded");
+            # right-click a plaque, or any exhibit, to read about it
+            ("plaque_wide", 4, 14), ("plaque#2", 10, 14), ("plaque#3", 16, 14), ("plaque#4", 19, 14),
+            ("plaque#5", 22, 14), ("plaque#6", 27, 14),
             # the back room: the exhibition nobody took down
             ("poster", 10, 1), ("game_2423", 13, 1), ("game_1565", 16, 1),
-            ("sheeted", 10, 5), ("sheeted#2", 16, 6), ("crates", 9, 7), ("ladder", 19, 3), ("plinth_b#2", 13, 6),
+            ("sheeted", 10, 5), ("sheeted#2", 16, 6), ("crates", 9, 7), ("ladder", 19, 3), ("sheeted_statue", 13, 6),
             # the storeroom
             ("frame_rack", 23, 2), ("game_1606", 26, 1), ("crates#2", 26, 5), ("writing_desk", 22, 6), ("sheeted#3", 27, 7),
         ],
         # what right-clicking a piece (or its plaque) says: piece -> text key (i18n vale.hall.<key>)
-        describe={"mural": "mural", "plaque": "mural", "game_1554": "jade_hills", "plaque#2": "jade_hills",
+        describe={"mural": "mural", "plaque_wide": "mural", "game_1554": "jade_hills", "plaque#2": "jade_hills",
                   "game_1541": "eco_hill", "plaque#3": "eco_hill", "game_1612": "kitemaster", "plaque#4": "kitemaster",
                   "game_2421": "boat", "plaque#5": "boat", "game_1567": "needlepoint", "plaque#6": "needlepoint",
-                  "panel": "panel", "plaque#7": "panel", "panel_b": "panel_b", "plaque#8": "panel_b",
-                  "bowl_case": "bowls", "plaque#9": "bowls", "bowl_case#2": "jug", "plaque#10": "jug",
-                  "flower_case": "flowers", "plaque#11": "flowers", "flower_case#2": "flowers_b", "plaque#12": "flowers_b",
-                  "plinth": "spiral", "plaque#13": "spiral", "plinth_c": "kiln_woman", "plaque#14": "kiln_woman",
-                  "plinth_b": "moss_figure", "plaque#15": "moss_figure", "plinth#2": "spiral_b", "plaque#16": "spiral_b",
+                  "panel": "panel", "panel_b": "panel_b", "bowl_case": "bowls", "jug_case": "jug",
+                  "flower_case": "flowers", "leaf_case": "flowers_b", "plinth": "spiral", "plinth_c": "kiln_woman",
+                  "plinth_b": "moss_figure", "plinth_d": "heron",
                   "reception": "visitors_book",
                   "poster": "poster", "game_2423": "vista", "game_1565": "calico_falls", "sheeted": "sheeted",
-                  "sheeted#2": "sheeted", "crates": "crates", "ladder": "ladder", "plinth_b#2": "unshown",
+                  "sheeted#2": "sheeted", "crates": "crates", "ladder": "ladder", "sheeted_statue": "unshown",
                   "frame_rack": "frame_rack", "game_1606": "dancing_grass", "crates#2": "crates_b",
                   "sheeted#3": "sheeted", "writing_desk": "ledger"},
         notes=["The Exhibition Hall: one floor plan, like the Community Center's main room. Front door at the bottom.",
@@ -348,6 +362,49 @@ BUILDINGS = {
                "The seedhouse: glass back wall, stone floor; seed drawers, the potting bench, the night-flowering",
                "vine on its trellis, the counter she sells seeds from, seedling trays, the humming mushroom.",
                "Behind, through a door: her bedroom. Orange outline = new PixelLab piece. Dotted line = walkway."]),
+
+    # Emmett's cottage (map doc, section 5: "small. One room: instruments, maps, a bed";
+    # emmett_brief.md: a fiddler who has played every town in Ferngill and has no place
+    # of his own; rain days here, writing). The room, and his bed in a nook behind it.
+    "emmett": dict(
+        title="Emmett's cottage", location="blinxxy.MuseArt_ValeEmmett", tmx="ValeEmmett.tmx",
+        W=18, H=21, outside=(19, 61),
+        rooms={"nook": dict(a=2, b=8, t=0, f=8, label="The nook"),
+               "room": dict(a=1, b=15, t=9, f=17, label="Emmett's room")},
+        doors=[("nook", "room", 5)],
+        front=("room", 10),
+        zones=[],
+        # plain cream plaster, as outside (the user, 2026-11-07: the interior should reflect
+        # the cottage's plaster and beams; and moss: "a rougher more homey guy")
+        wall=103,
+        picks={},
+        lights=[(4, 15), (9, 15), (13, 15), (4, 6)],
+        pieces=[
+            # by the fire: logs, his armchair turned to it on a rug, a pouf for a guest
+            # by the fire: logs, his armchair turned to it on a rug, a mossy stump for a guest,
+            # a crate for a side table
+            ("fireplace_stone", 2, 10), ("logs", 1, 13), ("rug", 3, 14, 4, 3), ("armchair_w", 5, 14),
+            ("stump_stool", 3, 15), ("crate_table", 7, 16),
+            # the maps of everywhere he's been, pinned over the desk where he writes
+            ("pinned_maps", 7, 10), ("writing_desk", 7, 13),
+            # his songbooks, the window, his instruments and a music stand
+            ("bookcase", 11, 11), ("window", 14, 10), ("instrument_stand", 13, 14), ("music_stand", 11, 15),
+            ("coat_rack", 15, 13), ("fern_pot", 1, 15), ("chest", 12, 16),
+            # moss: creeping down the plaster, and in the corners of the floor
+            ("moss_wall", 10, 10), ("moss_wall#2", 13, 10), ("moss_patch", 10, 13), ("moss_patch#2", 15, 16),
+            ("moss_patch#3", 9, 16), ("moss_patch#4", 14, 16),
+            # the nook: his bed, a lantern on the nightstand, the trunk he travelled with
+            # the nook, under the eaves: one small window in the middle, like the gable's outside
+            ("bed", 6, 4), ("nightstand", 8, 3), ("window", 5, 1), ("chest#2", 2, 7), ("fern_pot#2", 2, 4),
+            ("moss_wall#3", 7, 1), ("moss_wall#4", 3, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
+        ],
+        notes=["Emmett's cottage: small, one floor plan, cream plaster walls as outside. The front door opens into his room.",
+               "By the stone fireplace (under the chimney outside): his armchair turned to it on a rug, a mossy stump for a guest, a crate for a side table, logs.",
+               "Over the desk where he writes on rainy days: maps of everywhere he's played, pinned up.",
+               "His songbooks, his instruments on a stand (fiddle, the concertina, Tobin's ocarina), a music stand, his coat.",
+               "Behind, through a door: the nook under the eaves, one small window like the gable's, his bed and the trunk he travelled with.",
+               "Moss creeps down the plaster in places and grows in the corners of the floor; a fern in an old bucket in each room.",
+               "Orange outline = new PixelLab piece. Dotted line = walkway."]),
 }
 
 # the game's floorings (walls_and_floors) for floors that aren't planks or Sam's tiles
@@ -458,7 +515,17 @@ def plan(name, out):
     font = ImageFont.truetype("arial.ttf", 11)
     bold = ImageFont.truetype("arialbd.ttf", 14)
     small = ImageFont.truetype("arial.ttf", 13)
-    notes_h = 22 * len(spec["notes"]) + 16
+    measure = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    notes = []
+    for ln in spec["notes"]:                        # wrapped to the plan's width
+        words = ln.split()
+        notes.append(words.pop(0))
+        for wd in words:
+            if measure.textlength(notes[-1] + " " + wd, font=small) < W * T - 20:
+                notes[-1] += " " + wd
+            else:
+                notes.append(wd)
+    notes_h = 22 * len(notes) + 16
     im = Image.new("RGB", (W * T, H * T + notes_h), (24, 22, 28))
     d = ImageDraw.Draw(im, "RGBA")
 
@@ -547,7 +614,7 @@ def plan(name, out):
 
     for r in spec["rooms"].values():
         d.text(((r["a"] + r["b"] + 1) / 2 * T, (r["t"] + 1) * T + 6), r["label"], fill=(40, 20, 10), font=bold, anchor="mt")
-    for i, ln in enumerate(spec["notes"]):
+    for i, ln in enumerate(notes):
         d.text((10, H * T + 10 + 22 * i), ln, fill=(230, 230, 230), font=small)
     im.save(out)
     print("wrote", out)
