@@ -20,10 +20,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private enum Stage { Centring, Throwing, Results }
 
     private const int W = 1000, H = 660;
-    // drawn as big as the shape allows, with room to pull it taller than the reference
-    private int RowPx => (int)Math.Clamp(540f / MathF.Max(_shape.Rows * 1.4f, 18f), 8f, 26f);
-    private int UnitPx => (int)MathF.Min(RowPx * 0.85f, 11f);
-    private static readonly Color Clay = new(156, 98, 70), ClayDark = new(110, 64, 44), Hollow = new(58, 34, 26);
+    private readonly PotRenderer _art = new();
     private static readonly Color Panel = new(255, 236, 200), Ink = new(86, 22, 12);
 
     private readonly PotteryRules _rules;
@@ -41,13 +38,14 @@ internal sealed class PotteryMenu : IClickableMenu
 
     private readonly Dictionary<string, Rectangle> _buttons = new();
 
-    public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false)
+    public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false, bool wreck = false)
         : base(Game1.uiViewport.Width / 2 - W / 2, Game1.uiViewport.Height / 2 - H / 2, W, H, showUpperRightCloseButton: true)
     {
         _rules = rules;
         _shapeName = Array.IndexOf(PotShape.Names, shape) >= 0 ? shape : PotShape.Names[new Random().Next(PotShape.Names.Length)];
         _pot = new ClayPot(rules);
         _shape = PotShape.Make(_shapeName, _pot.Volume);
+        _art.FitTo(_shape);
         Restart();
         if (skipCentring || bot)
         {
@@ -57,6 +55,14 @@ internal sealed class PotteryMenu : IClickableMenu
         if (bot)
         {
             Bot(_pot, _shape);
+            Finish();
+        }
+        else if (wreck)
+        {
+            // pulling without a pause, to see a collapse
+            _centring = 1f;
+            for (int k = 0; k < 20000 && !_pot.Collapsed; k++)
+                _pot.Work(ThrowMove.PullUp, (k * 0.25f) % Math.Max(1, _pot.Rows), 1f / 10f);
             Finish();
         }
     }
@@ -108,9 +114,18 @@ internal sealed class PotteryMenu : IClickableMenu
         _move = ThrowMove.PullUp;
     }
 
-    private int Cx => xPositionOnScreen + 320;
-    private int Base => yPositionOnScreen + H - 70;
     private int PanelX => xPositionOnScreen + 650;
+    // the wheel scene, at the game's own pixel scale
+    private Rectangle Scene => new(xPositionOnScreen + 24, yPositionOnScreen + (H - PotRenderer.Height * PotRenderer.Scale) / 2,
+        PotRenderer.Width * PotRenderer.Scale, PotRenderer.Height * PotRenderer.Scale);
+    private float ArtX(int x) => (x - Scene.X) / (float)PotRenderer.Scale;
+    private float ArtY(int y) => (y - Scene.Y) / (float)PotRenderer.Scale;
+
+    protected override void cleanupBeforeExit()
+    {
+        _art.Dispose();
+        base.cleanupBeforeExit();
+    }
 
     public override void update(GameTime time)
     {
@@ -140,7 +155,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void UpdateCentring(float dt, bool held)
     {
         _centringTime += dt;
-        float hand = (Game1.getMouseX() - Cx) / (float)UnitPx;
+        float hand = (ArtX(Game1.getMouseX()) - _art.CentreX) / _art.UnitPx;
         bool onIt = held && MathF.Abs(hand - _wobble) < _rules.CentringBand;
         if (onIt)
         {
@@ -165,10 +180,9 @@ internal sealed class PotteryMenu : IClickableMenu
         _stage = Stage.Results;
     }
 
-    private bool InPotArea(int x, int y) =>
-        x >= xPositionOnScreen + 20 && x < PanelX - 10 && y >= yPositionOnScreen + 20 && y < Base + 30;
+    private bool InPotArea(int x, int y) => Scene.Contains(x, y);
 
-    private float RowAt(int y) => (Base - y) / (float)RowPx - 0.5f;
+    private float RowAt(int y) => _art.RowAt(ArtY(y));
 
     public override void receiveLeftClick(int x, int y, bool playSound = true)
     {
@@ -187,6 +201,7 @@ internal sealed class PotteryMenu : IClickableMenu
                 case "again": Restart(); break;
                 case "next":
                     _shape = PotShape.Make(PotShape.Names[(Array.IndexOf(PotShape.Names, _shape.Name) + 1) % PotShape.Names.Length], _pot.Volume);
+                    _art.FitTo(_shape);
                     Restart();
                     break;
             }
@@ -208,13 +223,15 @@ internal sealed class PotteryMenu : IClickableMenu
         drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, W, H, Color.White);
         _buttons.Clear();
 
-        DrawWheel(b);
-        if (_stage == Stage.Centring)
-            DrawLump(b);
-        else
-            DrawPot(b);
-        if (_stage != Stage.Centring)
-            DrawReference(b);
+        // the scene, framed as the easel frames its canvas
+        var scene = Scene;
+        drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), scene.X - 12, scene.Y - 12, scene.Width + 24, scene.Height + 24, Color.White, 4f, false);
+        bool overPot = InPotArea(Game1.getMouseX(), Game1.getMouseY());
+        Color handColor = _move switch { ThrowMove.PullUp => new Color(160, 230, 140), ThrowMove.PressIn => new Color(250, 180, 90), _ => new Color(150, 200, 250) };
+        _art.DrawScene(b, scene, _spin, _stage == Stage.Centring ? null : _pot, _shape, showReference: _stage != Stage.Centring,
+            lumpOffset: _wobble, handRow: RowAt(Game1.getMouseY()), handColor: handColor,
+            showHand: overPot && _stage != Stage.Results,
+            handX: _stage == Stage.Centring ? ArtX(Game1.getMouseX()) : float.NaN);
         DrawPanel(b);
         base.draw(b);
         drawMouse(b);
@@ -222,91 +239,6 @@ internal sealed class PotteryMenu : IClickableMenu
 
     private void Fill(SpriteBatch b, int x, int y, int w, int h, Color c) =>
         b.Draw(Game1.staminaRect, new Rectangle(x, y, w, h), c);
-
-    private void DrawWheel(SpriteBatch b)
-    {
-        Fill(b, Cx - 230, Base, 460, 14, new Color(120, 120, 128));
-        Fill(b, Cx - 230, Base + 14, 460, 6, new Color(80, 80, 88));
-        // spokes moving, to show it turning
-        for (int k = 0; k < 8; k++)
-        {
-            float u = ((_spin * 0.15f + k / 8f) % 1f);
-            int x = Cx - 230 + (int)(u * 460);
-            Fill(b, x, Base + 2, 3, 10, new Color(150, 150, 158));
-        }
-    }
-
-    private void DrawLump(SpriteBatch b)
-    {
-        float shake = MathF.Sin(_spin * 2.3f) * MathF.Min(3f, MathF.Abs(_wobble)) * 0.6f;
-        int cx = Cx + (int)((_wobble + shake) * UnitPx);
-        for (int i = 0; i < 9; i++)
-        {
-            float r = 10f - i * 0.35f;
-            int w = (int)(r * UnitPx * 2);
-            Fill(b, cx - w / 2, Base - (i + 1) * RowPx, w, RowPx, i % 2 == 0 ? Clay : ClayDark * 0.9f);
-        }
-        // your hands
-        int hx = Game1.getMouseX();
-        Fill(b, hx - 2, Base - 9 * RowPx - 20, 4, 9 * RowPx + 20, Color.White * 0.7f);
-        // the true centre
-        Fill(b, Cx - 1, Base - 9 * RowPx - 30, 2, 20, Color.Gold);
-    }
-
-    private void DrawPot(SpriteBatch b)
-    {
-        var pot = _pot;
-        Color clay = pot.Collapsed ? new Color(120, 90, 80) : Color.Lerp(Clay, new Color(186, 120, 90), 1f - pot.Patience);
-        // the floor
-        Fill(b, Cx - (int)(pot.R[0] * UnitPx), Base - 6, (int)(pot.R[0] * UnitPx * 2), 6, ClayDark);
-        for (int i = 0; i < pot.Rows; i++)
-        {
-            int y = Base - (i + 1) * RowPx;
-            int outer = (int)(pot.R[i] * UnitPx);
-            int inner = (int)((pot.R[i] - pot.T[i]) * UnitPx);
-            // left: cut through, showing the wall, tinted by how good its thickness is
-            float fit = PotJudge.WallFit(pot.T[i], i, pot.Rows);
-            Color wall = fit >= 0.99f ? clay : pot.T[i] < PotJudge.ThinWall ? Color.Lerp(clay, Color.OrangeRed, 1f - fit * 0.6f) : Color.Lerp(clay, new Color(90, 70, 160), 1f - fit * 0.6f);
-            Fill(b, Cx - outer, y, outer - inner, RowPx, wall);
-            Fill(b, Cx - inner, y, inner, RowPx, Hollow);
-            // right: the outside, turning
-            Fill(b, Cx, y, outer, RowPx, clay);
-            float u = (_spin * 0.4f + i * 0.13f) % 1f;
-            Fill(b, Cx + (int)(u * outer), y, 2, RowPx, ClayDark * 0.6f);
-            Fill(b, Cx + outer - 3, y, 3, RowPx, ClayDark);
-        }
-        Fill(b, Cx, Base - pot.Rows * RowPx, 1, pot.Rows * RowPx, ClayDark * 0.8f);
-        // your hand
-        if (_stage == Stage.Throwing && InPotArea(Game1.getMouseX(), Game1.getMouseY()))
-        {
-            int y = Game1.getMouseY();
-            Color c = _move switch { ThrowMove.PullUp => Color.LightGreen, ThrowMove.PressIn => Color.Orange, _ => Color.LightBlue };
-            Fill(b, Cx - 250, y - 1, 500, 2, c * 0.8f);
-        }
-    }
-
-    // The reference profile, as a line through the middle of each row's edge.
-    private void DrawReference(SpriteBatch b)
-    {
-        var col = Color.White * 0.8f;
-        Vector2 At(int i, int side) => new(Cx + side * _shape.R[i] * UnitPx, Base - (i + 0.5f) * RowPx);
-        foreach (int side in new[] { -1, 1 })
-        {
-            Line(b, new Vector2(Cx + side * _shape.R[0] * UnitPx, Base), At(0, side), col);
-            for (int i = 1; i < _shape.Rows; i++)
-                Line(b, At(i - 1, side), At(i, side), col);
-            Line(b, At(_shape.Rows - 1, side), new Vector2(Cx + side * _shape.R[^1] * UnitPx, Base - _shape.Rows * RowPx), col);
-        }
-        int top = Base - _shape.Rows * RowPx;
-        int rt = (int)(_shape.R[^1] * UnitPx);
-        Fill(b, Cx - rt, top - 1, rt * 2, 2, col);
-    }
-
-    private static void Line(SpriteBatch b, Vector2 from, Vector2 to, Color c)
-    {
-        Vector2 d = to - from;
-        b.Draw(Game1.staminaRect, from, null, c, MathF.Atan2(d.Y, d.X), new Vector2(0f, 0.5f), new Vector2(d.Length(), 2f), SpriteEffects.None, 1f);
-    }
 
     private void DrawPanel(SpriteBatch b)
     {
@@ -340,7 +272,7 @@ internal sealed class PotteryMenu : IClickableMenu
                 Text($"Off true: {MathF.Abs(_wobble):0.0}");
                 break;
             case Stage.Throwing:
-                Text("Hold the mouse on the pot: your hand works at that height. Match the white outline.");
+                Text("Hold the mouse on the pot to work it at that height. Match the chalk line.");
                 Button("pull", "1  Pull up", _move == ThrowMove.PullUp);
                 Button("press", "2  Press in", _move == ThrowMove.PressIn);
                 Button("out", "3  Let out", _move == ThrowMove.LetOut);
@@ -348,10 +280,10 @@ internal sealed class PotteryMenu : IClickableMenu
                 Fill(b, x, y, w, 18, new Color(90, 60, 40));
                 Fill(b, x + 2, y + 2, (int)((w - 4) * _pot.Patience), 14, _pot.Patience < 0.25f ? Color.OrangeRed : Color.SeaGreen);
                 y += 28;
-                Text(_rules.Regen > 0.5f ? "Simplified: it never tires." : "Pause and it firms up again.");
+                Text(_rules.Regen > 0.5f ? "It never tires." : "Pause to let it firm up.");
                 var live = PotJudge.Judge(_pot, _shape, _centring);
                 Text($"Shape {live.Shape:P0}  Walls {live.Walls:P0}");
-                Text("The cut-away wall goes red where it's thin, blue where it's heavy.", Ink * 0.75f);
+                Text("Cut-away wall: red is thin, blue is heavy.", Ink * 0.75f);
                 Button("done", "Finished");
                 break;
             case Stage.Results:
@@ -374,13 +306,13 @@ internal static class PotteryProto
 {
     public static void Register(IModHelper helper)
     {
-        DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot] (throw: skip centring; bot: a greedy potter throws it, to check the rules)", (_, args) =>
+        DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck] (throw: skip centring; bot: a greedy potter throws it, to check the rules; wreck: pull till it collapses)", (_, args) =>
         {
             if (!Context.IsWorldReady)
                 return;
             string shape = args.Length > 0 ? args[0] : "";
             string rules = args.Length > 1 ? args[1] : "normal";
-            Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"));
+            Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"));
         });
     }
 }
