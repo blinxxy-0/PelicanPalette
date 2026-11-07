@@ -40,7 +40,12 @@
         "blinxxy.MuseArt_ValeHall": {
           "DisplayName": "{{i18n:location.vale-hall}}",
           "DefaultArrivalTile": { "X": 14, "Y": 21 },
-          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeHall", "Type": "StardewValley.Locations.DecoratableLocation" }        }
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeHall", "Type": "StardewValley.Locations.DecoratableLocation" }        },
+        "blinxxy.MuseArt_ValeFern": {
+          "DisplayName": "{{i18n:location.vale-fern}}",
+          "DefaultArrivalTile": { "X": 6, "Y": 19 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeFern", "Type": "StardewValley.Locations.DecoratableLocation" }
+        }
       }
     },
     // What the Vale's pieces say when you right-click them (tools/build_vale_buildings.py,
@@ -83,6 +88,7 @@
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValePottery", "FromFile": "assets/ValePottery.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeAtelier", "FromFile": "assets/ValeAtelier.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeFern", "FromFile": "assets/ValeFern.tmx" },
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeWallpapers", "FromFile": "assets/ValeWallpapers.png" },
     {
       "Action": "EditData",

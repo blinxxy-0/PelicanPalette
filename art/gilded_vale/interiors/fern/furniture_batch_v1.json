@@ -1,0 +1,155 @@
+{
+ "batch": "fern_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle (straight front view from slightly above, never angled), pixel scale and colours of this room's furniture: wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "pressed_flowers_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: three small wooden frames hanging on a wall holding pressed wildflowers and fern leaves on cream paper",
+   "seed": 1100
+  },
+  "pressed_flowers_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: three small wooden frames hanging on a wall holding pressed wildflowers and fern leaves on cream paper",
+   "seed": 1101
+  },
+  "seed_drawers_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden apothecary cabinet standing against a wall with many small labelled seed drawers with brass pulls, a few seed packets and a little pot of herbs on top, two tiles wide and three tall",
+   "seed": 1102
+  },
+  "seed_drawers_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden apothecary cabinet standing against a wall with many small labelled seed drawers with brass pulls, a few seed packets and a little pot of herbs on top, two tiles wide and three tall",
+   "seed": 1103
+  },
+  "potting_bench_1": {
+   "image_size": {
+    "width": 48,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden potting bench standing against a wall, three tiles wide: terracotta pots, a pile of dark soil, a trowel and seedlings on its top, a shelf of pots above, bags under it",
+   "seed": 1104
+  },
+  "potting_bench_2": {
+   "image_size": {
+    "width": 48,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden potting bench standing against a wall, three tiles wide: terracotta pots, a pile of dark soil, a trowel and seedlings on its top, a shelf of pots above, bags under it",
+   "seed": 1105
+  },
+  "vine_trellis_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden trellis standing against a wall with a lush dark green climbing vine on it covered in pale glowing white night flowers, in a big pot, two tiles wide and three tall",
+   "seed": 1106
+  },
+  "vine_trellis_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden trellis standing against a wall with a lush dark green climbing vine on it covered in pale glowing white night flowers, in a big pot, two tiles wide and three tall",
+   "seed": 1107
+  },
+  "seed_counter_1": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small rustic wooden shop counter, three tiles wide, with a tray of colourful seed packets, a tin cash box and a little potted flower on top",
+   "seed": 1108
+  },
+  "seed_counter_2": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small rustic wooden shop counter, three tiles wide, with a tray of colourful seed packets, a tin cash box and a little potted flower on top",
+   "seed": 1109
+  },
+  "seed_trays_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a low wooden table holding black plant trays full of tiny green seedlings",
+   "seed": 1110
+  },
+  "seed_trays_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a low wooden table holding black plant trays full of tiny green seedlings",
+   "seed": 1111
+  },
+  "mushroom_pot_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small clay pot with a cluster of pale blue glowing mushrooms growing in it",
+   "seed": 1112
+  },
+  "mushroom_pot_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small clay pot with a cluster of pale blue glowing mushrooms growing in it",
+   "seed": 1113
+  },
+  "soil_sacks_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: two burlap sacks of dark potting soil stacked, one open",
+   "seed": 1114
+  },
+  "soil_sacks_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: two burlap sacks of dark potting soil stacked, one open",
+   "seed": 1115
+  },
+  "watering_can_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a green metal watering can standing on the floor",
+   "seed": 1116
+  },
+  "watering_can_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a green metal watering can standing on the floor",
+   "seed": 1117
+  }
+ }
+}

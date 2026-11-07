@@ -317,9 +317,12 @@ BUILDINGS = {
         wall_zones=[("main", 17, 25, 57)],        # the seedhouse's back wall is glass
         wall=7, walls={"bedroom": 100},
         picks={"chest": "art/gilded_vale/interiors/pottery/pottery_v1/chest_1_9",
-               **{k: "art/gilded_vale/interiors/fern/fern_v1/" + k + "_1_0" for k in (
-                   "pressed_flowers", "seed_drawers", "potting_bench", "vine_trellis", "seed_counter", "seed_trays",
-                   "mushroom_pot", "soil_sacks", "watering_can")}},
+               **{k: "art/gilded_vale/interiors/fern/fern_v1/" + v for k, v in {
+                   "pressed_flowers": "pressed_flowers_1_0", "seed_drawers": "seed_drawers_2_0",
+                   "potting_bench": "potting_bench_2_0", "vine_trellis": "vine_trellis_2_2",
+                   "seed_counter": "seed_counter_1_0", "seed_trays": "seed_trays_1_2",
+                   "mushroom_pot": "mushroom_pot_1_4", "soil_sacks": "soil_sacks_1_0",
+                   "watering_can": "watering_can_1_0"}.items()}},
         lights=[(4, 16), (12, 16), (20, 16), (23, 18), (5, 6)],
         pieces=[
             # the cottage end: the fire, the couch with its back to the wall, the coffee
