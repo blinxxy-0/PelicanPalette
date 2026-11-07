@@ -148,3 +148,15 @@ The user found dirt paths everywhere "kinda jank", so the village is paved with 
 - **Cobble never touches dirt or sand.** The curbs meet grass, so any S corner next to a C becomes G. Trails start a step away from the paving, as in Town.
 - **Seasons come free.** spring_town swaps to its seasonal versions, and winter keeps the cobble with snowy curbs.
 - **Asphalt.** The Bus Stop's road pieces (outdoors sheet 1028–1057) are straight and horizontal only. Timberline makes its turns from rotated copies of them (Tiled flip flags) plus its own sheet. A Vale road with turns would need our own sheet built the same way.
+
+## The bus road (our own sheet), added 2026-11-06
+
+tools/art/vale_road.py draws the road and its turning circle from the Bus Stop's own road tiles: 1029 is the top curb, 1055 the asphalt, 1057 the dashes and 1054 the bottom lip, with grass from 176.
+
+- **The shape.** The road is a signed distance: the straight road joined to a circle with a smooth fillet.
+- **The curb.** It is copied layer by layer outward from the asphalt: seam, lip, lit top, face, then shade. How tall it is depends on which way the edge faces: north-facing edges get the tall curb, south- and side-facing edges the thin lip.
+- **Seasons.** Every colour is sampled from that season's sheet, so one script makes all four seasons of `<season>_GildedValeRoad.png`.
+- **Layout.** The tiles' layout goes to art/gilded_vale/road/layout.json, and build_vale.py `lay_road()` lays it.
+- **Building.** Run vale_road.py before build_vale.py whenever the road changes.
+- **Dark grass stays 3 tiles clear of the road**, whose tiles carry plain grass.
+- **Seasonal custom sheets work in game.** A sheet named spring_* in the pack's assets swaps to its summer_/fall_/winter_ siblings. Checked 2026-11-06.

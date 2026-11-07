@@ -167,18 +167,19 @@ def fern_cottage():  # 10 x 9 tiles: a thatched front-gable cottage and a glass 
     # The seedhouse: the farm's greenhouse in small (its copper frames, a steep glass
     # gable, the arched fanlight over the door), per the user (2026-11-03); the game's
     # greenhouse goes to PixelLab as a second reference.
+    # Its door is a full-size door, as tall as the cottage's: the first seedhouse's was
+    # half the height, which no scale makes sense of (the user, 2026-11-06).
     glass, lit, copper = (170, 214, 226), (204, 232, 238), (190, 104, 58)
-    d.polygon([(100, 100), (128, 58), (156, 100)], fill=lit)
-    d.polygon([(128, 58), (156, 100), (158, 90), (130, 48)], fill=glass)
-    d.rectangle([100, 100, 156, 143], fill=glass)
-    d.line([(100, 100), (128, 58), (156, 100)], fill=copper, width=2)
-    d.line([(128, 58), (128, 100)], fill=copper, width=1)
+    d.polygon([(100, 92), (128, 50), (156, 92)], fill=lit)
+    d.polygon([(128, 50), (156, 92), (158, 82), (130, 40)], fill=glass)
+    d.rectangle([100, 92, 156, 143], fill=glass)
+    d.line([(100, 92), (128, 50), (156, 92)], fill=copper, width=2)
+    d.line([(128, 50), (128, 92)], fill=copper, width=1)
     for x in (100, 114, 142, 156):
-        d.line([(x, 100), (x, 143)], fill=copper, width=2)
-    d.line([(100, 100), (156, 100)], fill=copper, width=2)
-    d.line([(100, 122), (156, 122)], fill=copper, width=1)
-    d.pieslice([118, 118, 138, 138], 180, 360, fill=lit, outline=copper)
-    d.rectangle([120, 128, 136, 143], fill=DOOR)
+        d.line([(x, 92), (x, 143)], fill=copper, width=2)
+    d.line([(100, 92), (156, 92)], fill=copper, width=2)
+    d.pieslice([119, 108, 137, 126], 180, 360, fill=lit, outline=copper)
+    d.rectangle([121, 117, 135, 143], fill=DOOR)          # 15 x 27, the cottage door's size
     save(img, "fern_cottage")
 
 

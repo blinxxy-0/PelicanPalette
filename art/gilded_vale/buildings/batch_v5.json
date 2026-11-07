@@ -1,0 +1,87 @@
+{
+ "batch": "vale_buildings_v5",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_usage": "Stardew Valley building pixel art: palette, outline weight, how the roofs are shaded in rows of tiles or shingles with light ridges, dark gable edges and deep shadow under the eaves, and the high top-down front camera where the roof fills over half the building",
+  "reference_usage": "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+ },
+ "jobs": {
+  "fern_cottage_r1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A gardener's small cottage in Stardew Valley pixel art: a golden straw thatched roof with a few wildflowers growing in it, cream walls, a round-topped green door, flower boxes under the windows; attached on the right, a small glass seedhouse that is a little version of the farm's greenhouse in the second reference: copper-orange frames, glass panes, a steep glass gable, green seedlings visible inside, and a FULL-SIZE door with an arched fanlight: the seedhouse door is exactly as tall and as wide as the cottage's green door, both doors the size of a person. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big thatched roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background. The whole building fits inside the picture with a little space above the roof's ridge: draw the complete roof, nothing cut off.",
+   "seed": 31,
+   "image_size": {
+    "width": 160,
+    "height": 144
+   },
+   "reference_images": [
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/fern_cottage_guide.png",
+     "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+    ],
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vanilla_greenhouse_ref.png",
+     "the game's own greenhouse: copy its design, frames, glass and colours for the small seedhouse on the cottage's right; draw it much smaller, as in the first reference"
+    ]
+   ]
+  },
+  "fern_cottage_r2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A gardener's small cottage in Stardew Valley pixel art: a golden straw thatched roof with a few wildflowers growing in it, cream walls, a round-topped green door, flower boxes under the windows; attached on the right, a small glass seedhouse that is a little version of the farm's greenhouse in the second reference: copper-orange frames, glass panes, a steep glass gable, green seedlings visible inside, and a FULL-SIZE door with an arched fanlight: the seedhouse door is exactly as tall and as wide as the cottage's green door, both doors the size of a person. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big thatched roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background. The whole building fits inside the picture with a little space above the roof's ridge: draw the complete roof, nothing cut off.",
+   "seed": 32,
+   "image_size": {
+    "width": 160,
+    "height": 144
+   },
+   "reference_images": [
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/fern_cottage_guide.png",
+     "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+    ],
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vanilla_greenhouse_ref.png",
+     "the game's own greenhouse: copy its design, frames, glass and colours for the small seedhouse on the cottage's right; draw it much smaller, as in the first reference"
+    ]
+   ]
+  },
+  "fern_cottage_r3": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A gardener's small cottage in Stardew Valley pixel art: a golden straw thatched roof with a few wildflowers growing in it, cream walls, a round-topped green door, flower boxes under the windows; attached on the right, a small glass seedhouse that is a little version of the farm's greenhouse in the second reference: copper-orange frames, glass panes, a steep glass gable, green seedlings visible inside, and a FULL-SIZE door with an arched fanlight: the seedhouse door is exactly as tall and as wide as the cottage's green door, both doors the size of a person. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big thatched roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background. The whole building fits inside the picture with a little space above the roof's ridge: draw the complete roof, nothing cut off.",
+   "seed": 33,
+   "image_size": {
+    "width": 160,
+    "height": 144
+   },
+   "reference_images": [
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/fern_cottage_guide.png",
+     "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+    ],
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vanilla_greenhouse_ref.png",
+     "the game's own greenhouse: copy its design, frames, glass and colours for the small seedhouse on the cottage's right; draw it much smaller, as in the first reference"
+    ]
+   ]
+  },
+  "fern_cottage_r4": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "description": "A gardener's small cottage in Stardew Valley pixel art: a golden straw thatched roof with a few wildflowers growing in it, cream walls, a round-topped green door, flower boxes under the windows; attached on the right, a small glass seedhouse that is a little version of the farm's greenhouse in the second reference: copper-orange frames, glass panes, a steep glass gable, green seedlings visible inside, and a FULL-SIZE door with an arched fanlight: the seedhouse door is exactly as tall and as wide as the cottage's green door, both doors the size of a person. Seen from above and in front like the Stardew Valley town buildings, a steep front-gabled roof whose ridge runs back away from the viewer, two big thatched roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background. The whole building fits inside the picture with a little space above the roof's ridge: draw the complete roof, nothing cut off.",
+   "seed": 34,
+   "image_size": {
+    "width": 160,
+    "height": 144
+   },
+   "reference_images": [
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/fern_cottage_guide.png",
+     "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+    ],
+    [
+     "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/vanilla_greenhouse_ref.png",
+     "the game's own greenhouse: copy its design, frames, glass and colours for the small seedhouse on the cottage's right; draw it much smaller, as in the first reference"
+    ]
+   ]
+  }
+ }
+}

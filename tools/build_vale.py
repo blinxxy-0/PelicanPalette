@@ -45,11 +45,11 @@ SHEET_COLS = 16
 # name: (art, left tile x, bottom tile y, solid rows); art under ART, without .png
 PICKS = {
     "vale_house": ("buildings/vale_buildings_v2/vale_house_s3_0", 23, 19, 3),
-    "pottery": ("buildings/vale_buildings_v2/pottery_s3_3", 43, 18, 3),
-    "atelier": ("buildings/vale_buildings_v2/atelier_s1_0", 70, 23, 3),
+    "pottery": ("buildings/rescaled_v1/pottery_i400_s1_0", 41, 18, 3),       # rescaled 1.17x: doors to the game's size (2026-11-06)
+    "atelier": ("buildings/rescaled_v1/atelier_i400_s1_0", 71, 23, 3),       # rescaled 0.81x
     "hall": ("buildings/vale_buildings_v2/exhibition_hall_s3_0", 38, 39, 3),
     "fern": ("buildings/vale_buildings_v2/fern_cottage_s2_0", 9, 38, 3),
-    "emmett": ("buildings/vale_buildings_v3/emmett_cottage_s2_1", 14, 61, 3),     # the user's pick, 2026-11-06
+    "emmett": ("buildings/rescaled_v1/emmett_i400_s1_0", 15, 61, 3),         # the user's pick (v3 s2_1), rescaled 0.92x
 }
 # Each piece's winter version, where it has one (PixelLab colour-only edits of the pick).
 WINTER = {
@@ -128,6 +128,7 @@ def main():
 
     grass, dirt, water, wall = GRASS, DIRT, WATER, WALL
     paint_ground(g, sys.argv[3] if len(sys.argv) > 3 else os.path.dirname(town_path))
+    lay_road(g)
 
     # The two cliffs, right across, then the stairs cut through them.
     crnd = random.Random(3)
@@ -499,7 +500,7 @@ def paint_ground(g, exports):
         ([(65, 41.5), (66, 41.5)], 1.0),
         ([(52, 55.4), (52, 56), (47, 56.5)], 1.1),                    # the lower stairs' foot, along the lake's rim
         ([(86, 55.4), (86.5, 64)], 1.0),                              # the east stairs down to the overlook
-        ([(10, 11), (6.5, 14), (6.5, 20)], 0.9),                      # the Painter's clearing
+        ([(8, 12), (6.5, 14), (6.5, 20)], 0.9),                       # the Painter's clearing
     ):
         stroke(pts, r, "S")
     # Each lower flight's approaches: the stairs' width, centred on them, stopping just
@@ -507,7 +508,7 @@ def paint_ground(g, exports):
     # upper flights are paved right up to the steps, as the Town square's stairs are.
     for sx, top in STAIR_SPOTS:
         if top == CLIFF_B:
-            stroke([(sx + 2, top + 7.4), (sx + 2, top + 9)], 1.5, "S")      # starting just past the bottom step
+            stroke([(sx + 2, top + 6), (sx + 2, top + 9)], 1.5, "S")        # starting right at the bottom step
 
     # The paved village (Pelican Town's cobble, tools/vale_terrain.py COBBLE): straight
     # lanes and squares with curbed edges, as the Town square has; the game has no
@@ -517,8 +518,7 @@ def paint_ground(g, exports):
             for x in range(x0, x1 + 1):
                 V[y][x] = "C"
     for box in (
-        (4, 3, 19, 9),          # the bus square, where Pam's bus stops (drawn in C#, as in the Desert)
-        (0, 6, 54, 9),          # the high street, in from the west road
+        (19, 6, 54, 9),         # the high street, from the bus road's turning circle (lay_road)
         (52, 6, 54, 21),        # down past the pottery
         (44, 19, 54, 21),       # to the pottery's door
         (20, 9, 22, 22),        # round to the inn
@@ -534,7 +534,7 @@ def paint_ground(g, exports):
         (79, 33, 81, 41),       # the foot of Lupini's stairs
         (85, 40, 87, 49),       # on to the east stairs
         (51, 45, 53, 49),       # the plaza to the lower stairs
-        (22, 56, 45, 58),       # the amphitheatre's forecourt
+        (22, 55, 45, 58),       # the amphitheatre's forecourt, up to the stage
         (22, 56, 24, 64),       # down past Emmett's cottage
         (14, 62, 24, 64),       # to his door
     ):
@@ -548,10 +548,12 @@ def paint_ground(g, exports):
 
     # Darker grass: soft patches, kept two tiles from dirt and water.
     dark = noise(7, 21)
+    import json
+    road = {tuple(map(int, k.split(","))) for k in json.load(open(ROAD_LAYOUT))["tiles"]}   # its tiles carry plain grass
     for y in range(H + 1):
         for x in range(W + 1):
             near_cliff = any(top - 2 <= y <= top + 9 for top in (CLIFF_A, CLIFF_B))   # plain grass round cliffs and their shadow
-            if V[y][x] == "G" and dark(x, y) >= 0.6 and not near_cliff and not any(V[j][i] in "SWC" for i, j in around(x, y, 2)):
+            if V[y][x] == "G" and dark(x, y) >= 0.6 and not near_cliff and not any(V[j][i] in "SWC" for i, j in around(x, y, 2))                     and not any((i, j) in road for i, j in around(x, y, 3)):
                 V[y][x] = "D"
 
     # No lone corners: a single corner of one terrain inside another (a tuft of grass
@@ -878,6 +880,13 @@ def lay_stairs(g, im, sx, sy, x, top):
     walkable, with our cliff cleared from under them; its side walls (the outer
     columns) on Buildings2, over our cliff, which stays solid there."""
     cols, rows = im.width // 16, im.height // 16
+    # The top step is ragged, and what shows between its stones was the cliff's grassy
+    # lip, a green line across the top of every flight (the user, 2026-11-06). Where a
+    # lane runs up to the flight, its paving carries on under the step instead.
+    for i in range(cols):
+        above = (g["Back"][top - 1][x + i], g["Buildings"][top - 1][x + i])
+        if "C" in GROUND.get(above, ()):
+            g["Back"][top][x + i], g["Buildings"][top][x + i] = above
     for j in range(rows):
         ty = top - 1 + j
         for i in range(cols):
@@ -906,23 +915,52 @@ def tile_piece(im):
 def amphitheatre_art(path):
     """The painted amphitheatre with the ground round it dropped: grass, path and the
     cliff's rock connected to the edge of the painting go, so the map's own seasonal
-    ground and our cliff show through (as for the stairs); only stone and stage stay."""
+    ground and our cliff show through (as for the stairs); only stone and stage stay.
+    The stage's planks are the path's orange, so the stage is kept whole (cutting the
+    path away took a band out of it: the user, 2026-11-06, "a weird line of grass
+    through the wooden platform"), and the dark grass flecks left along the bottom go."""
     im = Image.open(path).convert("RGBA")
     px = im.load()
     w, h = im.size
+    STAGE = (104, 125, 32, 26)          # the stage's ellipse in the painting: centre x, y, radii
 
-    def ground(c):
-        r, g, b, a = c
-        return a and ((g > r + 12 and g > b + 12) or (r > 170 and r > g + 25 and g > b + 40) or b < r * 0.3)
+    def stage(x, y):
+        return ((x - STAGE[0]) / STAGE[2]) ** 2 + ((y - STAGE[1]) / STAGE[3]) ** 2 <= 1
+
+    def ground(x, y):
+        r, g, b, a = px[x, y]
+        if not a:
+            return False
+        if stage(x, y):
+            return g > r + 12 and g > b + 12        # only the grass round the stage's rim
+        return (g > r + 12 and g > b + 12) or (r > 170 and r > g + 25 and g > b + 40) or b < r * 0.3
     seen, stack = set(), [(x, y) for x in range(w) for y in (0, h - 1)] + [(x, y) for y in range(h) for x in (0, w - 1)]
     while stack:
         x, y = stack.pop()
-        if (x, y) in seen or not (0 <= x < w and 0 <= y < h) or not ground(px[x, y]):
+        if (x, y) in seen or not (0 <= x < w and 0 <= y < h) or not ground(x, y):
             continue
         seen.add((x, y))
         stack += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
     for x, y in seen:
         px[x, y] = (0, 0, 0, 0)
+
+    def bare(x, y):
+        return not (0 <= x < w and 0 <= y < h) or not px[x, y][3]
+    for _ in range(3):
+        # greenish pixels on the cut edge (grass shadow and outline the fill stopped at)
+        # and pixels left with at most one neighbour
+        drop = []
+        for y in range(h):
+            for x in range(w):
+                r, g, b, a = px[x, y]
+                if not a or stage(x, y):
+                    continue
+                n = [(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+                edge = any(bare(*q) for q in n)
+                if (edge and g >= r and g > b) or sum(1 for q in n if not bare(*q)) <= 1:
+                    drop.append((x, y))
+        for x, y in drop:
+            px[x, y] = (0, 0, 0, 0)
     return im
 
 
@@ -1003,6 +1041,24 @@ def place_buildings(g, assets):
     BUILD_SHEET_H = sheets["spring"].height
 
 
+# The bus road and its turning circle: our own seasonal sheet, drawn from the Bus
+# Stop's road by tools/art/vale_road.py (run it first; it writes the sheets into the
+# pack and the layout here).
+ROAD_LAYOUT = "art/gilded_vale/road/layout.json"
+ROAD_SHEET = "spring_GildedValeRoad.png"
+ROAD_FIRST = 30000
+ROAD = {}
+
+
+def lay_road(g):
+    import json
+    ROAD.update(json.load(open(ROAD_LAYOUT)))
+    for key, i in ROAD["tiles"].items():
+        x, y = map(int, key.split(","))
+        g["Back"][y][x] = ROAD_FIRST + i
+        g["Buildings"][y][x] = 0
+
+
 BUILD_FIRST = 20000
 BUILD_SHEET_H = 0
 
@@ -1019,6 +1075,11 @@ def write(path, g, props, tilesets):
                f'tilecount="{SHEET_COLS * BUILD_SHEET_H // 16}" columns="{SHEET_COLS}">')
     out.append(f'    <image source="{SHEET}" width="{SHEET_COLS * 16}" height="{BUILD_SHEET_H}" />')
     out.append('  </tileset>')
+    if ROAD:
+        out.append(f'  <tileset firstgid="{ROAD_FIRST}" name="z_blinxxy.MuseArt_GildedValeRoad" tilewidth="16" tileheight="16" '
+                   f'tilecount="{ROAD["count"]}" columns="{ROAD["columns"]}">')
+        out.append(f'    <image source="{ROAD_SHEET}" width="{ROAD["columns"] * 16}" height="{ROAD["height"]}" />')
+        out.append('  </tileset>')
     for i, layer in enumerate(LAYERS):
         out.append(f'  <layer id="{i + 1}" name="{layer}" width="{W}" height="{H}">')
         out.append('    <data encoding="csv">')
