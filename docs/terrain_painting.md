@@ -160,3 +160,13 @@ tools/art/vale_road.py draws the road and its turning circle from the Bus Stop's
 - **Building.** Run vale_road.py before build_vale.py whenever the road changes.
 - **Dark grass stays 3 tiles clear of the road**, whose tiles carry plain grass.
 - **Seasonal custom sheets work in game.** A sheet named spring_* in the pack's assets swaps to its summer_/fall_/winter_ siblings. Checked 2026-11-06.
+
+## Painted features and props (added 2026-11-06)
+
+- **Painting a feature in.** Use tools/art/vale_paint_feature.py: PixelLab inpaint into a render of the bare map, with a strip of a real vanilla map above it in the same picture (features/context_town_park.png or context_town_river.png). Without that strip the results "don't have a Stardew Valley look". With it they copy the game's orange dirt, round bushes, flat greens and stone walls.
+- **Cutting it out.** tools/art/vale_feature.py `cutout_diff` keeps only the pixels the painting changed against the bare render: unchanged grass, sand and water go, recoloured water goes, and any flat shade of the ground underneath goes. Light ground that reaches the frame edge is frayed along a smooth wave, never hedges.
+- **Collision.** `walkable()` makes a tile walkable if it is mostly path or empty, solid otherwise. Art goes on Back2 if walkable, on Buildings if solid, and on Buildings2 over the map's own Buildings pieces, which are never removed.
+- **Dark grass is kept out from under features**, as it is from under the road.
+- **Fences use the game's own placeable-fence sprites** (LooseSprites/Fence1 wood, Fence2 stone; 3 × 11 pieces of 16 × 32, one for every position in a fence; see the modding wiki's "How Fences Work"). The map tileset image is `../LooseSprites/Fence1`, loaded straight from the game's content, never copied. Each piece's lower half goes on Buildings and its upper half on Front a row above. Checked in game 2026-11-06.
+- **Paths-layer markers** (GameLocation.loadPathsLayerObjectsInArea): 9 oak, 10 maple, 11 pine, 22 tall grass, 24/25/26 large/medium/small bush, and 34 plus a "SpawnTree" TileData property (`fruit <id>`) for fruit trees.
+- **Building sheet width.** It is 32 columns, so a piece up to 32 tiles wide packs without wrapping.

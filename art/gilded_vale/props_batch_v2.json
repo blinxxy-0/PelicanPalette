@@ -1,0 +1,46 @@
+{
+ "batch": "vale_props_v2",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_usage": "Stardew Valley pixel art: palette, outline weight, shading and camera of the game's props"
+ },
+ "jobs": {
+  "painters_stool_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "seed": 61,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "A small wooden three-legged folding stool with a battered wooden paint box open on the ground beside it, brushes in a jar. Stardew Valley pixel art prop in the game's palette and outline, high top-down front camera, the object only, no ground, transparent background."
+  },
+  "painters_stool_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "seed": 62,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "A small wooden three-legged folding stool with a battered wooden paint box open on the ground beside it, brushes in a jar. Stardew Valley pixel art prop in the game's palette and outline, high top-down front camera, the object only, no ground, transparent background."
+  },
+  "paint_rock_1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "seed": 63,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "A low flat grey boulder spattered and dabbed with old dried paint in many colours where a painter has wiped his brushes for years. Stardew Valley pixel art prop in the game's palette and outline, high top-down front camera, the object only, no ground, transparent background."
+  },
+  "paint_rock_2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "seed": 64,
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "A low flat grey boulder spattered and dabbed with old dried paint in many colours where a painter has wiped his brushes for years. Stardew Valley pixel art prop in the game's palette and outline, high top-down front camera, the object only, no ground, transparent background."
+  }
+ }
+}

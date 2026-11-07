@@ -14,6 +14,7 @@ Every piece checks its footprint first: markers go only on plain grass with noth
 on the tile; props only where no building, lane or other prop already is. Anything
 skipped is printed, so a move in the layout shows up here instead of overlapping.
 """
+import random
 
 # Tile property objects for the writer: (layer, x, y) -> {name: value}
 TILE_PROPS = {}
@@ -40,6 +41,12 @@ PROPS = {
                (0, 1, "Buildings", 3123), (1, 1, "Buildings", 3124), (2, 1, "Buildings", 3125),
                (0, 2, "Buildings", 3155), (1, 2, "Buildings", 3156), (2, 2, "Buildings", 3157)],
 }
+
+# The game's fence sprites (LooseSprites/Fence1-5: 3 x 11 pieces of 16 x 32), as map
+# tilesheets (build_vale.py write()); piece numbers from the modding wiki's tutorial.
+FENCE_FIRST = {"wood": 31000, "stone": 31100}
+FENCE_SHEETS = {"wood": "Fence1", "stone": "Fence2"}
+UL, UR, V_MID, V_TOP_END, BL, H_MID, BR, H_RIGHT_END, H_LEFT_END = 0, 2, 3, 5, 6, 7, 8, 9, 10
 
 OAK, MAPLE, PINE, GRASS, BUSH_L, BUSH_M, BUSH_S, SPAWN_TREE = 9, 10, 11, 22, 24, 25, 26, 34
 BUSH_W = {BUSH_L: 3, BUSH_M: 2, BUSH_S: 1}
@@ -77,6 +84,75 @@ def decor(g, ground, paths_first, W, H):
             g[layer][y + dy][x + dx] = gid
         return True
 
+    rnd = random.Random(5)
+
+    def fence(x0, y0, x1, y1, sides="tblr", gates=(), side_gates=(), kind="wood"):
+        """The game's own placeable fence, laid as map tiles (LooseSprites/Fence1 wood,
+        Fence2 stone; the user, 2026-11-06, after the modding wiki's "How Fences Work"):
+        a piece for every place in a fence, upper and lower corners, run ends, the
+        vertical post and its top end, so corners join as a farmer's fences do. Each
+        piece is 16 x 32: its lower half on Buildings (solid), its upper half on Front a
+        row up, so the piece below overlaps the one above, as the game draws them.
+        gates: gaps in the top or bottom run (x); side_gates: gaps in the sides (y)."""
+        first = FENCE_FIRST[kind]
+        cells = {}
+        horiz = [y for y, side in ((y0, "t"), (y1, "b")) if side in sides]
+        for y in horiz:
+            for x in range(x0, x1 + 1):
+                if x in gates and y == y1:          # (gates are in the bottom run)
+                    continue
+                corner_l, corner_r = x == x0 and "l" in sides, x == x1 and "r" in sides
+                if corner_l:
+                    cells[(x, y)] = UL if y == y0 else BL
+                elif corner_r:
+                    cells[(x, y)] = UR if y == y0 else BR
+                elif x == x0 or (y == y1 and (x - 1) in gates):
+                    cells[(x, y)] = H_LEFT_END
+                elif x == x1 or (y == y1 and (x + 1) in gates):
+                    cells[(x, y)] = H_RIGHT_END
+                else:
+                    cells[(x, y)] = H_MID
+        for x, side in ((x0, "l"), (x1, "r")):
+            if side not in sides:
+                continue
+            for y in range(y0, y1 + 1):
+                if (x, y) in cells or y in side_gates:
+                    continue
+                top_end = (y == y0) or (y - 1) in side_gates
+                cells[(x, y)] = V_TOP_END if top_end else V_MID
+        for (x, y), piece in cells.items():
+            col, row = piece % 3, piece // 3
+            top, bottom = first + (row * 2) * 3 + col, first + (row * 2 + 1) * 3 + col
+            if not (0 < y < H and 0 <= x < W) or g["Buildings"][y][x] or g["Front2"][y][x] or g["Front"][y - 1][x]:
+                skipped.append(("fence", x, y))
+                continue
+            g["Buildings"][y][x] = bottom
+            g["Front"][y - 1][x] = top
+
+    def flowers(x0, y0, x1, y1, share, ground=0.0):
+        """Wildflowers in the grass: the game's flower tufts (pink 258, blue 308) on Front,
+        and some of the grass itself its flowery tiles (152, 153)."""
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                if not plain(x, y):
+                    continue
+                r = rnd.random()
+                if r < share:
+                    g["Front"][y][x] = rnd.choice((258, 308))
+                elif r < share + ground and g["Back"][y][x] == 176:
+                    g["Back"][y][x] = rnd.choice((152, 153))
+
+    def rock(x, y):
+        if plain(x, y):
+            g["Buildings"][y][x] = rnd.choice((233, 283))
+
+    def clump(x, y, tree=OAK):
+        """A stand as the game grows them: a tree with bushes and flowers at its feet."""
+        marker(x, y, tree, why="clump tree")
+        for dx, dy, k in ((-2, 1, BUSH_M), (2, 1, BUSH_S), (-1, 2, BUSH_S)):
+            marker(x + dx, y + dy, k, BUSH_W[k], "clump bush")
+        flowers(x - 3, y - 1, x + 3, y + 3, 0.12)
+
     # Q: lamps along the high street (its north curb) and the plaza
     for x in (24, 33, 41, 50):
         prop("lamp", x, 2)
@@ -100,8 +176,7 @@ def decor(g, ground, paths_first, W, H):
         marker(x, y, GRASS, why="clearing grass")
 
     # B: the inn's garden, between it and the pottery (tea tables come with the props)
-    for x, y, k in ((35, 17, BUSH_M), (38, 17, BUSH_S)):     # (the game has no free-standing bed: Town's is against Emily's wall)
-        marker(x, y, k, BUSH_W[k], "inn garden bush")
+    # (Bea's tea garden is painted into the map: build_vale.py FEATURES)
 
     # E: an old orchard across the river, north-east
     for (x, y), t in zip(((88, 3), (92, 3), (90, 6), (88, 9), (93, 9)), (CHERRY, APPLE, PEACH, APRICOT, APPLE)):
@@ -126,11 +201,7 @@ def decor(g, ground, paths_first, W, H):
     prop("bench_w", 52, 41)
     prop("bench_long", 41, 43)
 
-    # I: the sculpture garden: beds and hedges (the statues come with the props)
-    for x, y, k in ((3, 44, BUSH_M), (26, 44, BUSH_M), (6, 46, BUSH_S), (23, 46, BUSH_S)):
-        marker(x, y, k, BUSH_W[k], "garden bush")
-    for x, k in ((10, BUSH_M), (15, BUSH_S), (19, BUSH_M)):
-        marker(x, 46, k, BUSH_W[k], "garden hedge")
+    # I: the Lost Parterre is painted into the map (build_vale.py FEATURES)
 
     # K: Fern's wildflower meadow, long grass in drifts, bushes at its edges
     for y in range(64, 75):
@@ -141,7 +212,7 @@ def decor(g, ground, paths_first, W, H):
         marker(x, y, k, BUSH_W[k], "meadow edge")
 
     # The lower terrace's open middle: a stand of trees between the meadow and the lake
-    for x, y, t in ((33, 63, OAK), (37, 67, MAPLE), (41, 63, OAK), (35, 72, PINE), (43, 70, MAPLE), (39, 74, OAK), (5, 57, MAPLE), (27, 60, OAK)):
+    for x, y, t in ((5, 57, MAPLE), (27, 60, OAK), (31, 72, PINE)):        # (the Gilded Tree's lawn is x 33-44)
         marker(x, y, t, why="lower trees")
 
     # N: a picnic spot at the end of the east trail
@@ -150,6 +221,41 @@ def decor(g, ground, paths_first, W, H):
         marker(x, y, k, BUSH_W[k], "picnic bush")
     for x, y, t in ((94, 66, MAPLE), (90, 72, OAK)):
         marker(x, y, t, why="picnic tree")
+
+    # The cohesion pass (the user, 2026-11-06, after Timberline Falls: "we're missing
+    # things like nature, fences, bushes"): every home gets a yard, the grass gets its
+    # flowers and stones, and trees grow in stands with bushes at their feet.
+
+    # Lupini's wild garden, fenced, a gate onto his lane (x 79-81)
+    fence(82, 13, 90, 22, sides="tblr", gates=(85, 86))
+    flowers(83, 14, 89, 21, 0.18, 0.2)
+    # Emmett's side yard, against his cottage's west wall
+    fence(9, 55, 14, 60, sides="tlb", gates=(11, 12))
+    flowers(10, 57, 13, 59, 0.15)
+    # the Old Studios gone to seed: long grass at their sides and backs
+    for x, y in ((66, 34), (67, 36), (66, 37), (79, 31), (94, 33), (94, 36), (81, 35), (88, 30)):
+        marker(x, y, GRASS, why="studio grass")
+    # stands of trees in the open ground
+    clump(14, 21, MAPLE)
+    clump(5, 31, OAK)
+    clump(73, 45, MAPLE)
+    clump(85, 45, OAK)
+    clump(91, 52, PINE)
+    clump(26, 70, OAK)
+    # stones here and there, as the game's grass has
+    for x, y in ((16, 12), (6, 25), (39, 24), (58, 30), (70, 44), (90, 43), (4, 50), (24, 57), (29, 66), (8, 72), (92, 62), (47, 66)):
+        rock(x, y)
+    # flowers through every open stretch (the meadow thickest)
+    flowers(0, 10, 20, 27, 0.03, 0.04)          # the upper west
+    flowers(34, 20, 55, 27, 0.03, 0.03)         # under the inn and the pottery
+    flowers(64, 0, 95, 12, 0.04, 0.05)          # the orchard
+    flowers(0, 28, 30, 38, 0.03, 0.03)          # the middle west (above the parterre)
+    flowers(64, 42, 95, 47, 0.05, 0.06)         # below the Old Studios
+    flowers(2, 62, 31, 75, 0.12, 0.25)          # Fern's meadow
+    flowers(0, 54, 50, 75, 0.03, 0.03)          # the rest of the lower terrace
+    flowers(84, 54, 95, 75, 0.04, 0.04)         # the picnic side
+    flowers(0, 26, 56, 27, 0.06)                # along the upper cliff's top
+    flowers(0, 46, 95, 47, 0.05)                # and the lower one's
 
     for s in skipped:
         print("decor skipped", s)

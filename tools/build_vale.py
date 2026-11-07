@@ -41,7 +41,7 @@ ART = "art/gilded_vale"
 # summer_, fall_ and winter_ siblings (docs/terrain_painting.md, section 2). Each piece
 # uses its spring art in every season it has no art of its own for (SEASONAL).
 SHEET = "spring_GildedValeBuildings.png"
-SHEET_COLS = 16
+SHEET_COLS = 32                 # (wide enough for the widest piece: the parterre is 27)
 SEASONS = ("spring", "summer", "fall", "winter")
 # name: (art, left tile x, bottom tile y, solid[, lift px]); art under ART, without .png.
 # solid: how many bottom rows block the farmer (the rest draw over him), or
@@ -60,23 +60,29 @@ PICKS = {
     "studio_c": ("buildings/vale_buildings_v4/old_studio_r4_1", 88, 38, 3),  # and r4_1
     "emmett": ("buildings/rescaled_v1/emmett_i400_s1_0", 15, 61, 3),         # the user's pick (v3 s2_1), rescaled 0.92x
     # The decor plan's pieces of our own (PixelLab, props/vale_props_v1), set on the grass.
-    # "old_tree": ("props/vale_props_v1/old_tree_1_1", 32, 45, (1, 3, 4), 0),  # out of the plaza (the user: "doesn't fit"); its own place to come
+    # 2: the Gilded Tree on its own lawn between the amphitheatre and the lake (out of the
+    # plaza: the user, 2026-11-06, "doesn't fit in the center of the town"); gold in fall
+    "old_tree": ("props/vale_props_v1/old_tree_1_1", 35, 68, (1, 3, 4), 0),
+    # 6: Lupini's painting spots (he paints at a different viewpoint each day): a stool
+    # with his paint box, and the rock he wipes his brushes on
+    "spot_clearing_stool": ("props/vale_props_v2/painters_stool_1_3", 4, 17, 1, 0),
+    "spot_clearing_rock": ("props/vale_props_v2/paint_rock_2_1", 8, 19, 1, 0),
+    "spot_river_stool": ("props/vale_props_v2/painters_stool_1_3", 67, 10, 1, 0),
+    "spot_river_rock": ("props/vale_props_v2/paint_rock_2_1", 70, 10, 1, 0),
+    "spot_orchard_stool": ("props/vale_props_v2/painters_stool_1_3", 84, 7, 1, 0),
+    "spot_orchard_rock": ("props/vale_props_v2/paint_rock_2_1", 84, 11, 1, 0),
+    "spot_overlook_stool": ("props/vale_props_v2/painters_stool_1_3", 89, 26, 1, 0),
+    "spot_overlook_rock": ("props/vale_props_v2/paint_rock_2_1", 92, 26, 1, 0),
+    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 66, 74, 1, 0),
+    "spot_lake_rock": ("props/vale_props_v2/paint_rock_2_1", 69, 74, 1, 0),
     "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
     "vale_sign": ("props/vale_props_v1/vale_sign_1_3", 19, 4, 1, 0),         # A: where the high street starts
     "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door
-    "tea_table_1": ("props/vale_props_v1/tea_table_1_1", 34, 12, 1, 0),      # B: the inn's tea garden
-    "tea_table_2": ("props/vale_props_v1/tea_table_1_1", 37, 15, 1, 0),
-    "statue_dancer": ("props/vale_props_v1/statue_dancer_2_1", 9, 46, 1, 0), # I: the sculpture garden
-    "statue_bust": ("props/vale_props_v1/statue_bust_2_1", 14, 46, 1, 0),
-    "statue_spiral": ("props/vale_props_v1/statue_spiral_2_2", 19, 46, 1, 0),
-    "clay_pit": ("props/vale_props_v1/clay_pit_2_3", 50, 26, 2, 0),          # G: the pottery's clay, by the river
-    "firewood_pottery": ("props/vale_props_v1/firewood_1_4", 47, 26, 1, 0),
-    "firewood_emmett": ("props/vale_props_v1/firewood_1_4", 12, 61, 1, 0),   # L
+    "firewood_emmett": ("props/vale_props_v1/firewood_1_4", 11, 59, 1, 0),   # L: in his fenced side yard
     "canvases": ("props/vale_props_v1/canvases_1_2", 79, 22, 1, 0),          # F: Lupini's garden
     "sunflowers_1": ("props/vale_props_v1/sunflowers_2_1", 83, 16, 1, 0),
     "sunflowers_2": ("props/vale_props_v1/sunflowers_2_1", 88, 20, 1, 0),
     "rowboat": ("props/vale_props_v1/rowboat_2_1", 53, 63, 2, 0),            # M: on the lake
-    "dock": ("props/vale_props_v1/dock_1_0", 60, 72, 4, 0),                  # M: out from the south shore
 }
 # Every door is the same size, about 36 px with its frame (the game's are 30 to 32), so
 # no building's scale contradicts another's (the user, 2026-11-06); measured with ruled
@@ -95,6 +101,19 @@ SEASONAL = {
 # The amphitheatre (the user's pick s1, 2026-11-06): PixelLab inpaint into the lower
 # cliff (tools/art/vale_inpaint.py), its art covering map tiles x 31-43, y 46-55.
 AMPHITHEATRE = ("amphitheatre/amph_s1_0", 31, 46)
+# Features painted into the map with PixelLab inpaint, a real Town garden shown above
+# them in the picture so they come out in the game's style (the user, 2026-11-06: the
+# first parterre "doesn't have a Stardew Valley look and feel"; "needed to feel more
+# like vanilla"). name: (art, crop box px in it, left tile x, top tile y). Their lawn
+# is cut away so the map's seasonal grass shows; paths walk, the rest is solid
+# (tools/art/vale_feature.py).
+FEATURES = {
+    "parterre": ("features/parterre_v2/parterre_s13_0", (48, 144, 480, 288), 3, 39),   # I: the Lost Parterre (Fern)
+    # (diff: cut against the bare render it was painted into, features/<name>_before.png)
+    "tea": ("features/tea/tea_s23_0", "diff:tea_before:22:3", 34, 9, 40, 19),        # B: Bea's tea garden
+    "clay": ("features/clay/clay_s31_0", "diff:clay_before:34:12", 50, 21, 57, 27),   # G: Tobin's clay bank
+    "lakeside": ("features/lakeside2/lakeside_s53_0", "diff:lakeside2_before:30:52", 44, 54, 51, 71),   # M: the lakeside walk
+}
 
 W, H = 96, 76
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
@@ -558,8 +577,7 @@ def paint_ground(g, exports):
         (79, 24, 81, 29),       # Lupini's stairs
         (31, 33, 33, 41),       # the foot of the west stairs
         (31, 40, 54, 46),       # the plaza before the Exhibition Hall
-        (11, 40, 31, 42),       # west to Fern's
-        (11, 39, 18, 41),       # her door and the seedhouse's
+        (29, 40, 31, 42),       # west to the Lost Parterre's gate (its gravel walk leads on to Fern's door)
         (68, 40, 93, 42),       # east of the middle bridge: the Old Studios' row
         (79, 33, 81, 41),       # the foot of Lupini's stairs
         (85, 40, 87, 49),       # on to the east stairs
@@ -580,6 +598,9 @@ def paint_ground(g, exports):
     dark = noise(7, 21)
     import json
     road = {tuple(map(int, k.split(","))) for k in json.load(open(ROAD_LAYOUT))["tiles"]}   # its tiles carry plain grass
+    for name, (art, box, left, top, *rest) in FEATURES.items():   # nor under a painted feature (its lawn is cut to the map's)
+        x1, y1 = rest if rest else (left + (box[2] - box[0]) // 16 - 1, top + (box[3] - box[1]) // 16 - 1)
+        road |= {(x, y) for x in range(left - 1, x1 + 3) for y in range(top - 1, y1 + 3)}
     for y in range(H + 1):
         for x in range(W + 1):
             near_cliff = any(top - 2 <= y <= top + 9 for top in (CLIFF_A, CLIFF_B))   # plain grass round cliffs and their shadow
@@ -1029,6 +1050,17 @@ def place_buildings(g, assets):
     if os.path.exists(os.path.join(ART, AMPHITHEATRE[0] + ".png")):
         amph = amphitheatre_art(os.path.join(ART, AMPHITHEATRE[0] + ".png"))
         pieces.append(("amphitheatre", {x: amph for x in SEASONS}, AMPHITHEATRE[1], AMPHITHEATRE[2], None))
+    from vale_feature import cutout, cutout_diff, walkable
+    for name, (art, box, left, top, *rest) in FEATURES.items():
+        src = Image.open(os.path.join(ART, art + ".png")).convert("RGBA")
+        if isinstance(box, str):
+            _, before, rx, ry = box.split(":")
+            x1, y1 = rest
+            box = ((left - int(rx)) * 16, (top - int(ry)) * 16, (x1 - int(rx) + 1) * 16, (y1 - int(ry) + 1) * 16)
+            im = cutout_diff(src.crop(box), Image.open(os.path.join(ART, "features", before + ".png")).crop(box))
+        else:
+            im = cutout(src.crop(box), lawn=True)
+        pieces.append(("feature:" + name, {x: im for x in SEASONS}, left, top, walkable(im)))
     slots, x, y, row_h = [], 0, 0, 0
     for _, arts, *_ in pieces:
         cols, rows = arts["spring"].width // 16, arts["spring"].height // 16
@@ -1052,6 +1084,26 @@ def place_buildings(g, assets):
         if name == "stairs":
             for x, top in STAIR_SPOTS:
                 lay_stairs(g, im, sx, sy, x, top)
+            continue
+        if name.startswith("feature:"):
+            walk = solid
+            for j in range(rows):
+                for i in range(cols):
+                    if (i, j) not in walk:
+                        continue
+                    tx, ty = left + i, bottom + j
+                    gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
+                    # Never over the map's own ground pieces (a shore's rock edge on
+                    # Buildings stays, and the art goes above it on Buildings2).
+                    if g["Buildings"][ty][tx]:
+                        g["Buildings2"][ty][tx] = gid
+                    elif walk[(i, j)]:
+                        g["Back2"][ty][tx] = gid
+                    else:
+                        g["Buildings"][ty][tx] = gid
+                    g["Paths"][ty][tx] = 0
+            print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {bottom}-{bottom + rows - 1},",
+                  sum(1 for v in walk.values() if not v), "solid")
             continue
         if name == "amphitheatre":
             # Over the cliff and under the farmer (Buildings2); where it fully covers a
@@ -1127,7 +1179,12 @@ def write(path, g, props, tilesets):
                    f'tilecount="{ROAD["count"]}" columns="{ROAD["columns"]}">')
         out.append(f'    <image source="{ROAD_SHEET}" width="{ROAD["columns"] * 16}" height="{ROAD["height"]}" />')
         out.append('  </tileset>')
-    from vale_decor import TILE_PROPS
+    from vale_decor import TILE_PROPS, FENCE_FIRST, FENCE_SHEETS
+    # The game's fence sprites, straight from its content (never copied into the pack).
+    for kind, first in FENCE_FIRST.items():
+        out.append(f'  <tileset firstgid="{first}" name="z_fence_{kind}" tilewidth="16" tileheight="16" tilecount="66" columns="3">')
+        out.append(f'    <image source="../LooseSprites/{FENCE_SHEETS[kind]}" width="48" height="352" />')
+        out.append('  </tileset>')
     for i, layer in enumerate(LAYERS):
         out.append(f'  <layer id="{i + 1}" name="{layer}" width="{W}" height="{H}">')
         out.append('    <data encoding="csv">')
