@@ -1,4 +1,4 @@
-# Character brief: Fern Aster, the gardener (DRAFT, for approval)
+# Character brief: Fern Aster, the gardener (approved 2026-11-06)
 
 1.4, the Gilded Vale. Decided so far (2026-11-03): a woman, marriageable by any farmer, one of 1.4's two romances.
 
@@ -57,6 +57,7 @@ Sample lines:
 - **Winter:** the seedhouse most of the day; the sculpture garden in the afternoon, clearing snow off the statues.
 
 ## Gift tastes (first pass)
+- **Paintings:** the mod's rule, by quality (nobody dislikes one). An **art lover** (added to `Mods/blinxxy.MuseArt/ArtLovers`), so a normal painting is liked.
 - **Loves:** wildflowers (Sweet Pea, Crocus, Summer Spangle), Ancient Fruit seeds, any rare seed, Moss.
 - **Likes:** flowers, forage, fertiliser ("not romantic, but useful").
 - **Dislikes:** cut flowers in a bouquet ("they were alive this morning") except the Bouquet itself, which she accepts as tradition; weed killer and anything that poisons the ground.
@@ -64,7 +65,7 @@ Sample lines:
 ## Heart events (outline; scripts to be written for approval)
 - **2 hearts (the meadow):** she's on her knees, saving a nest of bees from the mower she refused to use. You help.
 - **4 hearts (the sculpture garden):** a heritage-society letter: clear the garden or lose the grant. She shows you the moss on the oldest statue, and asks what you'd do.
-- **6 hearts (your farm):** she visits for the first time, walks your fields, and is quiet. Then she asks for a corner of your farm to leave wild. A choice: yes (a small wild patch appears, with her forage), or no.
+- **6 hearts (your farm):** she visits for the first time, walks your fields, and is quiet. Then she says your farm's tidy rows need something that wasn't planned, and gives you a packet of the season's wild seeds (the game's own Spring, Summer, Fall or Winter Seeds) to plant wherever you like. (Her wild corner of the farm was dropped, 2026-11-04: it would have meant changing the farm itself.)
 - **8 hearts (the seedhouse, at night):** the night-flowering vine blooms. She admits what she's afraid of.
 - **10 hearts (the sculpture garden, dating):** she clears one path through the garden, just one, and leaves the rest. The statues on that path are the first ones you can see properly (and in 1.5, sculpt beside).
 - **14 hearts (married):** a seed she planted on the farm the day she moved in has grown into something nobody's seen before.

@@ -148,4 +148,4 @@ The concept sheet's hidden things (its section 7), placed:
 3. **The Old Studios** (new): a row of three empty studios, one of them open, as the seventh interior?
 4. **The amphitheatre built into the cliff,** its seats as the drop between terraces?
 5. **The ticket:** 500g, like the Desert?
-6. **A Vale portfolio page?**
+6. **A Vale portfolio page?** Only as a bonus outside the portfolio's count: a new counted page would un-finish completed books (the gold-leaf frame and the Summit scene, 1.3).

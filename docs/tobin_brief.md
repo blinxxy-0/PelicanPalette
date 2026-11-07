@@ -1,4 +1,4 @@
-# Character brief: Tobin Clay, the potter (DRAFT, for approval)
+# Character brief: Tobin Clay, the potter (approved 2026-11-06)
 
 1.4 and 1.5. Decided so far (2026-11-03): he lives and works in the Vale from 1.4, with dialogue, a schedule and gift tastes; his heart arc is in **1.5**, built into sculpting (the user's choice). No pottery skill (the concept sheet's rule): clay is one of sculpting's materials.
 
@@ -54,6 +54,7 @@ Sample lines:
 - **Evenings:** the Vale House, with Lupini, arguing.
 
 ## Gift tastes (first pass)
+- **Paintings:** the mod's rule, by quality (nobody dislikes one). An **art lover** (added to `Mods/blinxxy.MuseArt/ArtLovers`), so a normal painting is liked.
 - **Loves:** Clay (a joke, but he means it), Hardwood (for the kiln), a hearty meal (Spicy Eel, Survival Burger), Coffee.
 - **Likes:** minerals and crystals (for glazes), cooked food, flowers (Fern's taught him).
 - **Dislikes:** anything flimsy or fake: plastic, trash, gold bars ("good for nothing but looking at").

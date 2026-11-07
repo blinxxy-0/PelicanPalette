@@ -1,4 +1,4 @@
-# Character brief: Bea Thistle, the innkeeper (DRAFT, for approval)
+# Character brief: Bea Thistle, the innkeeper (approved 2026-11-06)
 
 1.4, the Gilded Vale. Decided so far (2026-11-03): a woman, a friend to ten hearts (not marriageable), renamed from the concept sheet's Mara Bell (too close to Margot Pell, and then Maru).
 
@@ -11,7 +11,12 @@
 - **Home and work:** the Vale House, the Vale's inn and tea room. She lives in the rooms upstairs.
 - **Role in the mod:**
   - the Vale's social hub: the inn, the tea room, the noticeboard
-  - sells food, tea and a room for the night (you can stay over, and take the morning bus home)
+  - sells food and tea
+  - **a room for the night (decided 2026-11-04: a real overnight stay, like sleeping on Ginger Island).** Built on the game's own sleep:
+    - **The bed:** a guest-room bed with the tile property `Bed` and the `TouchAction Sleep` tile on Back, the pair the farmhouse bed uses. Step onto it and the game asks "Go to sleep for the night?".
+    - **Waking up there:** the Vale House map gets `AllowWakeUpWithoutBed T`. In 1.6 the game then wakes you where you slept (`GameLocation.CanWakeUpHere`, `Farmer.lastSleepLocation`) instead of sending you home. The tent kit uses the same route, and the Island farmhouse is special-cased into it.
+    - **The day ends as usual:** shipping, crops, animals and the farmer's save all happen as normal, as on the Island.
+    - **Paying:** the only new code. Bea takes the gold at the desk (an amount to decide, around 200g) and the room's door opens for that night. Before then, the bed says the room is booked.
   - hosts the Open House's refreshments and Emmett's evenings by the fire
 
 ## Look
@@ -51,7 +56,7 @@ Sample lines:
 
 ## Schedule
 - **Every day:** the Vale House: the tea room from 9, the bar in the evening.
-- **Wednesdays:** the bus to Pelican Town in the morning, for Pierre's; back by 2.
+- **Thursdays:** the bus to Pelican Town in the morning, for Pierre's (closed on Wednesdays); back by 2.
 - **Sundays:** the tea room closes at noon; she walks the riverside.
 - **The Open House:** the refreshments table in the plaza.
 
@@ -65,7 +70,7 @@ Sample lines:
 - **4 hearts (the inn's attic):** she asks you to help clear it. Her great-aunt's guest books, fifty years of artists' signatures and sketches. She can't throw them away.
 - **6 hearts (the plaza):** a buyer from the city offers for the inn. She asks what you'd do. A choice that doesn't decide it: she's asking herself.
 - **8 hearts (the Vale House, closed for the night):** she cooks something for herself, for the first time in years, and asks you to stay. She turns the buyer down.
-- **10 hearts (the inn, reopened):** she opens the Vale House her way: the guest books on the shelf for anyone to read, a room kept free for artists who can't pay. She gives you a key to it (you can stay free).
+- **10 hearts (the inn, reopened):** she opens the Vale House her way: the guest books on the shelf for anyone to read, a room kept free for artists who can't pay. She gives you a key to it: from then on the artists' room is yours for free, any night.
 
 ## After her arc
 - The guest-book shelf in the tea room; the artists' room upstairs.

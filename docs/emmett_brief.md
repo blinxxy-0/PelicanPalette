@@ -1,4 +1,4 @@
-# Character brief: Emmett Wren, the musician (DRAFT, for approval)
+# Character brief: Emmett Wren, the musician (approved 2026-11-06)
 
 1.4, the Gilded Vale. Decided so far (2026-11-03): the concept sheet's Etta Wren, now a man; marriageable by any farmer, one of 1.4's two romances. His story follows the sheet's arc for Etta, extended to fourteen hearts.
 
@@ -27,7 +27,8 @@
 - **The road:** from eighteen he travelled the Republic playing fiddle at festivals, taverns, weddings and wakes, and learned the songs of every town that would teach him.
 - **The Vale:** five years ago, worn out, he walked into the Vale on a spring evening and found its amphitheatre, empty and overgrown. He meant to stay a week.
 - **The trouble:** he's never stayed anywhere. Part of him is still waiting to leave, and he plays for everyone and lets nobody close.
-- **The arc (from the sheet):** he rediscovers the pleasure of making music with people, not performing at them. It ends with a song of his own about the Vale and the people in it. The romance adds: he learns to stay.
+- **The arc: belonging.** He knows a song from every town in Ferngill and has none of his own place. It ends with the first song he's ever written about somewhere he lives, the Vale and the people in it. The romance adds: he learns to stay.
+  - **Not Lupini's theme** (the concept sheet's "music without pressure to perform" was nearly Lupini's "painting for yourself", and Margot's and Sable's arcs are about making art too). Emmett's is about home, not art.
 
 ## Personality and voice
 - Free-spirited, playful and teasing; breaks into song mid-conversation and makes up little tunes about what's happening.
@@ -58,6 +59,7 @@ Sample lines:
 - **The Open House:** the amphitheatre, all afternoon.
 
 ## Gift tastes (first pass)
+- **Paintings:** the mod's rule, by quality (nobody dislikes one). An **art lover** (added to `Mods/blinxxy.MuseArt/ArtLovers`), so a normal painting is liked.
 - **Loves:** a good meal (Pumpkin Soup, Fish Stew), Pale Ale, a Chanterelle ("tastes like autumn"), anything you made yourself.
 - **Likes:** most cooked food, fruit, beer and cider, amethysts ("good for the throat, my nan said").
 - **Dislikes:** expensive things that are just expensive (gold bars, diamonds) and raw ore.

@@ -1,4 +1,4 @@
-# Character brief: Lupini, the painter (DRAFT, for approval)
+# Character brief: Lupini, the painter (approved 2026-11-06)
 
 1.4, the Gilded Vale. Decided so far (2026-11-03): he lives in the Vale, he/him, a friend to ten hearts (not marriageable). His heart arc follows the concept sheet, with a new 10-heart event.
 
@@ -6,7 +6,7 @@
 - **Name:** Lupini (canon). He goes by the one name; "Famous Painter Lupini" is what the Night Market calls him.
 - **Pronouns:** he/him (decided 2026-11-03).
 - **Marriage:** no. Friendship to 10 hearts, like Julian.
-- **Age:** late fifties. Old enough to have been famous for thirty years.
+- **Age:** about fifty, Julian's age. Famous for twenty years.
 - **Birthday:** Winter 18, the day after the Night Market closes, when he's home again (free in vanilla; to check against SVE).
 - **Home:** his atelier in the Gilded Vale, over the lake.
 - **Role in the mod:**
@@ -30,7 +30,7 @@
 
 ## Backstory
 - **Fame:** he came to the Vale at twenty, when it was full of artists, and painted there all his life. At thirty a single review in a Zuzu City paper made his name. He's been "Famous Painter Lupini" ever since.
-- **The review was Julian's.** The same critic, years before he ended Sable's painting with a review, made Lupini's with one. Lupini has never met Julian, and doesn't want to.
+- **The review was Julian's,** twenty years ago: a rave, from a young critic on his way up, ten years before his review of Sable. It fits Julian's canon in the mod: he's famous for one cruel sentence ("technically flawless and completely empty") and says he's been "dining out on it ever since". He barely remembers the rave. Lupini has never forgotten it, never met him, and doesn't want to.
 - **The trouble:** since then he's painted for the next show, the next buyer, what people expect a Lupini to look like. He's good at it. He's forgotten why he started.
 - **The arc:** the concept sheet's question: "If nobody ever saw your art, would you still want to make it?" He learns that recognition isn't the only reason to paint. It ends with him painting something nobody will see.
 - **Not Sable's story.** Sable stopped painting after **failure**; Lupini kept painting after **success** and emptied it out. Two ends of the same critic. That's why they "nod, and don't talk" (our line from 1.2): each one is what the other is afraid of becoming.
@@ -54,7 +54,7 @@ Sample lines:
 - **Bea:** she keeps his tab at the Vale House and pretends to be strict about it.
 - **Fern:** she's let ivy grow over his studio window, and he's never asked her to cut it back.
 - **Sable:** the nod, until his 10-heart event.
-- **Julian:** they meet at the Open House (once both are at the right point in their stories).
+- **Julian:** they meet at the Open House (once both are at the right point in their stories). Julian doesn't remember writing the review that made Lupini; that's the scene.
 
 ## Meeting him, and schedule
 - **First meeting:** the Night Market, as in canon. Before the Vale opens, that's the only place to see him.
@@ -66,16 +66,18 @@ Sample lines:
 - **Evenings:** the Vale House, at the fire.
 
 ## Gift tastes (first pass)
-- **Loves:** fine wine, coffee, the Vale's wildflowers (Fern's), any painting of yours that is not a commission (the mod's rule: a painting's taste depends on its quality).
+- **Paintings:** the mod's rule, by quality (nobody dislikes one). He's an **art lover** (added to the list: `Mods/blinxxy.MuseArt/ArtLovers`), so a normal one is liked; and a portrait of himself is loved, as for anyone.
+- **Loves:** fine wine, coffee, the Vale's wildflowers (Fern's).
 - **Likes:** fruit, quartz and crystals ("for the light in them"), flowers.
-- **Dislikes:** anything mass-produced (cheap gifts from Pierre's shelves), clay (he says Tobin's given him enough).
+- **Dislikes:** Joja Cola and other mass-made things ("it tastes of a meeting"), clay (he says Tobin's given him enough).
 
 ## Heart events (outline; from the concept sheet, scripts to be written for approval)
 - **2 hearts, The Artist's Eye (Pelican Town or the Vale's sign):** he's sketching a puddle. You guess wrong. He's drawing how the light lies on it.
 - **4 hearts, A Place Worth Painting (the Vale):** a walk; nothing's right until you stop somewhere ordinary. He starts sketching and can't say why. The spot becomes a paintable view.
 - **6 hearts, The Unfinished Painting (an empty studio):** an anonymous artist's unfinished painting, sketches and a note. Restore it, finish it, or leave it? If you know Margot, he mentions her. It stays unresolved. (The artist stays anonymous: the mod already has one mystery painter, "E.")
 - **8 hearts, The Exhibition (the Exhibition Hall):** a small show with no judging. He hangs the unfinished painting as it is. He's nervous, then happy. The Hall stays open for good.
-- **10 hearts, Something Nobody Will See (the overlook, at dawn; new):** he's painting a picture he won't show or sell. He asks you to set up an easel beside him. You paint together in silence. If Sable's arc is far enough along, Sable comes up the path, and the two painters finally talk. He gives you his old travelling easel (furniture).
+  - **Not Sable's exhibition.** Sable's 14-heart event (1.2) is their return to showing their own originals, at the shop's gallery. Lupini's is the opposite: he reopens the Vale's hall for **everyone else's** work, its past artists' and its residents' (Tobin's bowls, Fern's pressed flowers), and hangs nothing of his own but his 4-heart sketch beside the anonymous unfinished painting.
+- **10 hearts, Something Nobody Will See (the overlook, at dawn; new):** he's painting a picture he won't show or sell. He asks you to set up an easel beside him. You paint together in silence. If Sable's arc is far enough along, Sable comes up the path, and the two painters finally talk. He gives you his old travelling easel, **as furniture only**: Painting Mastery's master's easel (1.3) stays the only easel with a bonus. (Or a one-off frame style of his, fitted to the frames table: to decide.)
 
 ## After his arc
 - His paintings in the Hall change with the seasons; his 4-heart sketch hangs there.
