@@ -18,6 +18,11 @@
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
   </ItemGroup>
 
+  <!-- The pottery prototype's art (1.5, in development, Debug only like its code) never ships. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <IgnoreModFilePatterns>assets[/\\]pottery[/\\]</IgnoreModFilePatterns>
+  </PropertyGroup>
+
   <!-- The Content Patcher pack (the shop's building, interior and stock) deploys alongside. -->
   <ItemGroup>
     <ContentPacks Include="..\[CP] Pelican Palette" Version="$(Version)" />

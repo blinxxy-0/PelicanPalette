@@ -1,0 +1,32 @@
+{
+ "batch": "wheel_art_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/interiors/pottery/pottery_v1/kiln_2_6.png",
+  "style_usage": "the Stardew Valley pixel art style and colours of Tobin's pottery: warm brick and wood ramps, dark coloured (never black) outlines, clean flat shading"
+ },
+ "jobs": {
+  "backdrop": {
+   "image_size": {"width": 152, "height": 120},
+   "no_background": false,
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/pottery/backdrop_guide.png",
+   "reference_usage": "the layout to follow exactly: plank wall, a long shelf of pots near the top, a brick kiln with its glowing mouth at the right edge, a plank floor along the bottom",
+   "description": "Stardew Valley pixel art, a close-up of a potter's workshop wall seen straight on at eye level, as the background of a minigame: a warm wooden plank wall, a long wooden shelf near the top with a row of glazed pots, jars and bowls in terracotta, slate blue and slip white, a brick kiln at the right edge with its arched mouth glowing orange, a wooden plank floor along the bottom. The middle is plain wall, slightly dim, with nothing in front of it, so a pot on a wheel in front reads clearly. No people, no wheel, no furniture in the middle.",
+   "seed": 41
+  },
+  "wheel": {
+   "image_size": {"width": 96, "height": 48},
+   "no_background": true,
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/interiors/pottery/pottery_v2/wheel_1_0.png",
+   "reference_usage": "Tobin's potter's wheel: its wood and grey wheel head",
+   "description": "Stardew Valley pixel art, one object alone on a transparent background, seen straight from the front at eye level, close up and perfectly symmetrical: a potter's kick wheel. A flat round grey metal wheel head on top, seen edge-on as a thin wide disc, with nothing on it; a wide shallow round wooden splash pan around it; a sturdy wooden frame with two legs; a heavy round wooden kick wheel low down between the legs. Warm wood, dark coloured (not black) outlines.",
+   "seed": 42
+  },
+  "hands": {
+   "image_size": {"width": 64, "height": 64},
+   "no_background": true,
+   "description": "Stardew Valley pixel art, one item alone on a transparent background, close up, seen from the front: a pair of human hands wet with grey-brown clay slip, as a potter's hands at the wheel: cupped together as if holding a round lump between them, or one hand from each side pressing inward, or fingertips curled pulling upward, or palms flat. Warm skin, dark coloured (not black) outlines, simple clean shading.",
+   "seed": 43
+  }
+ }
+}

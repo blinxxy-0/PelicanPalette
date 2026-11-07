@@ -11,14 +11,51 @@ namespace ArtStudio.Pottery;
 // by pixel onto a small canvas at the game's own scale (one art pixel shows as
 // four screen pixels), shaded as a cylinder lit from the upper left, with a
 // wet sheen, turning rings, outlines a darker shade of the clay beside them,
-// and the right half cut away to show the wall. The wheel and the workshop
-// behind are placeholders until their PixelLab art (section 11's art list).
+// and the right half cut away to show the wall. Behind it, Tobin's workshop
+// wall and his kick wheel, and your hands on the clay (PixelLab, styled on
+// his pottery's kiln: art/pottery/, assets/pottery/).
+internal sealed record Sprite(int W, int H, Color[] Px);
+
+internal static class PotteryArt
+{
+    public static Sprite? Workshop, Wheel, HandLeft, HandRight, HandsCupped;
+    // the wheel head's middle, in the wheel sprite (where a pot's foot stands)
+    public const int WheelHeadX = 38, WheelHeadY = 6, WheelHeadLeft = 17, WheelHeadRight = 59, WheelHeadBottom = 8;
+    private static bool _loaded;
+
+    public static void Load(StardewModdingAPI.IModHelper helper)
+    {
+        if (_loaded)
+            return;
+        _loaded = true;
+        Sprite? Get(string name)
+        {
+            try
+            {
+                var tex = helper.ModContent.Load<Texture2D>($"assets/pottery/{name}.png");
+                var px = new Color[tex.Width * tex.Height];
+                tex.GetData(px);
+                return new Sprite(tex.Width, tex.Height, px);
+            }
+            catch
+            {
+                return null;        // (drawn plainly without it)
+            }
+        }
+        Workshop = Get("workshop");
+        Wheel = Get("wheel");
+        HandLeft = Get("hand_left");
+        HandRight = Get("hand_right");
+        HandsCupped = Get("hands_cupped");
+    }
+}
+
 internal sealed class PotRenderer : IDisposable
 {
     public const int Scale = 4;
     public int Width { get; }
     public int Height { get; }
-    private int Ground => Height - 24;               // the wheel head's top row
+    private int Ground => Height - 33;               // the wheel head's top row (the wheel's legs reach the bottom)
 
     // terracotta, darkest to lightest
     private static readonly Color[] Ramp =
@@ -37,7 +74,8 @@ internal sealed class PotRenderer : IDisposable
     public int RowPx { get; private set; } = 4;     // art pixels per row of the pot
     public float UnitPx { get; private set; } = 2.4f;
     public int CentreX => Width / 2;
-    public int FootY => Ground - 2;                 // the bottom row of clay, standing on the wheel head
+    // the bottom row of clay: on the wheel head's near edge, inside the splash pan
+    public int FootY => PotteryArt.Wheel != null ? Ground - 1 - PotteryArt.WheelHeadY + PotteryArt.WheelHeadBottom : Ground - 2;
 
     public PotRenderer(int width = 150, int height = 118)
     {
@@ -73,6 +111,7 @@ internal sealed class PotRenderer : IDisposable
         Outline();
         if (pot != null && !pot.Collapsed)
             Rim(pot);
+        PanFront();
         if (showReference)
             Reference(shape);
         if (showHand)
@@ -87,8 +126,54 @@ internal sealed class PotRenderer : IDisposable
             _px[y * Width + x] = c;
     }
 
+    // A sprite onto the canvas, over what's there.
+    private void Blit(Sprite s, int x0, int y0)
+    {
+        for (int y = 0; y < s.H; y++)
+        {
+            int ty = y0 + y;
+            if (ty < 0 || ty >= Height) continue;
+            for (int x = 0; x < s.W; x++)
+            {
+                int tx = x0 + x;
+                if (tx < 0 || tx >= Width) continue;
+                Color c = s.Px[y * s.W + x];
+                if (c.A > 127)
+                    _px[ty * Width + tx] = new Color(c.R, c.G, c.B);
+            }
+        }
+    }
+
+    // A hand, its forearm carried on up out of the top of the scene (the sprite's top
+    // row, the arm's cross-section, repeated), so it reaches in from above.
+    private void BlitArm(Sprite s, int x0, int y0)
+    {
+        Blit(s, x0, y0);
+        // the arm's cross-section: the first row that's a whole forearm, not its outline's edge
+        int arm = 0;
+        for (int y = 0; y < s.H / 2; y++)
+        {
+            int opaque = 0;
+            for (int x = 0; x < s.W; x++)
+                if (s.Px[y * s.W + x].A > 127) opaque++;
+            if (opaque >= 8) { arm = y; break; }
+        }
+        for (int x = 0; x < s.W; x++)
+        {
+            Color c = s.Px[arm * s.W + x];
+            if (c.A <= 127) continue;
+            for (int y = 0; y < y0 + arm; y++)
+                Set(x0 + x, y, new Color(c.R, c.G, c.B));
+        }
+    }
+
     private void Backdrop()
     {
+        if (PotteryArt.Workshop is { } wall)
+        {
+            Blit(wall, 0, 0);
+            return;
+        }
         // Tobin's workshop, for now: a plank wall, a shelf, a plank floor
         for (int y = 0; y < Height; y++)
             for (int x = 0; x < Width; x++)
@@ -121,6 +206,17 @@ internal sealed class PotRenderer : IDisposable
     private void Wheel(float spin)
     {
         int cx = CentreX;
+        if (PotteryArt.Wheel is { } wheel)
+        {
+            int wx = cx - PotteryArt.WheelHeadX, wy = Ground - 1 - PotteryArt.WheelHeadY;
+            Blit(wheel, wx, wy);
+            // its shine going round
+            int span = PotteryArt.WheelHeadRight - PotteryArt.WheelHeadLeft;
+            int sx = wx + PotteryArt.WheelHeadLeft + 2 + (int)((spin * 5f) % (span - 4));
+            for (int k = 0; k < 3; k++)
+                Set(sx + k, Ground - 1, new Color(232, 232, 238));
+            return;
+        }
         // the splash pan
         for (int y = Ground + 1; y < Ground + 11; y++)
             for (int x = cx - 40; x <= cx + 40; x++)
@@ -248,6 +344,21 @@ internal sealed class PotRenderer : IDisposable
         Set(cx0, Ground, Color.Gold);
     }
 
+    // The splash pan's near rim, drawn again in front of the clay's foot so the pot stands in it.
+    private void PanFront()
+    {
+        if (PotteryArt.Wheel is not { } wheel)
+            return;
+        int wx = CentreX - PotteryArt.WheelHeadX, wy = Ground - 1 - PotteryArt.WheelHeadY;
+        for (int y = PotteryArt.WheelHeadBottom + 1; y < wheel.H; y++)
+            for (int x = 0; x < wheel.W; x++)
+            {
+                Color c = wheel.Px[y * wheel.W + x];
+                if (c.A > 127)
+                    Set(wx + x, wy + y, new Color(c.R, c.G, c.B));
+            }
+    }
+
     // Any clay pixel against the background takes a darker shade of itself.
     private void Outline()
     {
@@ -300,9 +411,23 @@ internal sealed class PotRenderer : IDisposable
             Set(x, top, Chalk);
     }
 
-    // Your hands (placeholders until their art): a short bar either side at the working height.
+    // Your hands: cupped over the lump while centring, at the pot's sides while throwing.
     private void Hand(float row, Color c, ClayPot? pot, float handX)
     {
+        if (PotteryArt.HandLeft is { } left && PotteryArt.HandRight is { } right && PotteryArt.HandsCupped is { } cupped)
+        {
+            if (!float.IsNaN(handX))
+            {
+                BlitArm(cupped, (int)handX - cupped.W / 2, FootY - cupped.H + 4);
+                return;
+            }
+            int hy = (int)MathF.Round(FootY - (row + 0.5f) * RowPx);
+            float pr = pot != null && pot.Rows > 0 ? pot.R[Math.Clamp((int)row, 0, pot.Rows - 1)] * UnitPx : 20f;
+            int top = hy - (int)(left.H * 0.68f);
+            BlitArm(left, (int)(CentreX - pr) + 5 - left.W, top);
+            BlitArm(right, (int)(CentreX + pr) - 5, top);
+            return;
+        }
         int y = (int)MathF.Round(FootY - (row + 0.5f) * RowPx);
         if (!float.IsNaN(handX))
         {

@@ -41,6 +41,11 @@ internal sealed class PotteryMenu : IClickableMenu
     private readonly Random _random = new();
 
     private readonly Dictionary<string, Rectangle> _buttons = new();
+    // (snapshots only: where the mouse is pretended to be, to show the hands)
+    internal Point? FakeMouse;
+    private int MouseX => FakeMouse?.X ?? Game1.getMouseX();
+    private int MouseY => FakeMouse?.Y ?? Game1.getMouseY();
+    internal Point SceneCentre(float up = 0.35f) => new(Scene.Center.X, Scene.Bottom - (int)(Scene.Height * up));
 
     public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false, bool wreck = false)
     {
@@ -257,7 +262,7 @@ internal sealed class PotteryMenu : IClickableMenu
         b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.6f);
         Ui.Frame(b, new Rectangle(xPositionOnScreen, yPositionOnScreen, width, height));
         _buttons.Clear();
-        int mx = Game1.getMouseX(), my = Game1.getMouseY();
+        int mx = MouseX, my = MouseY;
 
         DrawTopBar(b);
         DrawScene(b, mx, my);
@@ -451,6 +456,7 @@ internal static class PotteryProto
                 return;
             string shape = args.Length > 0 ? args[0] : "";
             string rules = args.Length > 1 ? args[1] : "normal";
+            PotteryArt.Load(helper);
             Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"));
         });
         // Every stage at both common sizes, with the layout audit (overlapping or spilling text),
@@ -461,11 +467,15 @@ internal static class PotteryProto
                 return;
             string dir = System.IO.Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
             System.IO.Directory.CreateDirectory(dir);
+            PotteryArt.Load(helper);
             var rules = PotteryRules.For("normal");
             var stages = new (string Name, Func<PotteryMenu> Make)[]
             {
                 ("centring", () => new PotteryMenu("vase", rules)),
+                ("centring_hands", () => { var m = new PotteryMenu("vase", rules); m.FakeMouse = m.SceneCentre(0.2f); return m; }),
                 ("throwing", () => new PotteryMenu("vase", rules, skipCentring: true)),
+                ("throwing_hands", () => { var m = new PotteryMenu("vase", rules, skipCentring: true); m.FakeMouse = m.SceneCentre(0.3f); return m; }),
+                ("results_hands", () => { var m = new PotteryMenu("jug", rules, bot: true); return m; }),
                 ("results", () => new PotteryMenu("vase", rules, bot: true)),
                 ("collapsed", () => new PotteryMenu("cup", rules, wreck: true)),
             };
