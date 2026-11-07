@@ -36,12 +36,18 @@
           "DisplayName": "{{i18n:location.vale-atelier}}",
           "DefaultArrivalTile": { "X": 7, "Y": 19 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeAtelier", "Type": "StardewValley.Locations.DecoratableLocation" }
+        },
+        "blinxxy.MuseArt_ValeHall": {
+          "DisplayName": "{{i18n:location.vale-hall}}",
+          "DefaultArrivalTile": { "X": 14, "Y": 21 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeHall", "Type": "StardewValley.Locations.DecoratableLocation" }
         }
       }
     },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHouse", "FromFile": "assets/ValeHouse.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValePottery", "FromFile": "assets/ValePottery.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeAtelier", "FromFile": "assets/ValeAtelier.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx" },
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeWallpapers", "FromFile": "assets/ValeWallpapers.png" },
     {
       "Action": "EditData",

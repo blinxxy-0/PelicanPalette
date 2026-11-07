@@ -84,6 +84,29 @@ ART = {
     "bench":         (3, 1, 1),     # a long plain gallery bench
     "hat_stand":     (1, 2, 1),     # his straw hat and smock on it
     "empty_hook":    (1, 2, 0),     # a nail and a paler square of wallpaper
+    # the Exhibition Hall's
+    "mural":         (6, 2, 0),     # the Vale painted by its artists, faded (repainted after Lupini's 8 hearts)
+    "panel":         (2, 3, 1),     # a free-standing gallery panel, a painting hung on it
+    "bowl_case":     (2, 2, 1),     # a glass case of Tobin's bowls
+    "flower_case":   (2, 2, 1),     # a glass case of Fern's pressed flowers
+    "plinth":        (1, 2, 1),     # a sculpture on a plinth
+    "plinth_b":      (1, 2, 1), "plinth_c": (1, 2, 1), "panel_b": (2, 3, 1),
+    "reception":     (3, 2, 1),     # a desk with the visitors' book
+    "sheeted":       (2, 2, 1),     # frames under a dust sheet
+    "poster":        (2, 2, 0),     # a faded poster for the last exhibition
+    "crates":        (2, 2, 1),     # packing crates, a frame sticking out
+    "frame_rack":    (2, 3, 1),     # empty frames stacked in a rack
+    "ladder":        (1, 3, 1),     # a stepladder against the wall
+    # Fern's
+    "pressed_flowers": (2, 2, 0),   # pressed wildflowers in frames, on the wall
+    "seed_drawers":  (2, 3, 1),     # a cabinet of little labelled seed drawers
+    "potting_bench": (3, 3, 1),     # against the glass: pots, soil, a trowel
+    "vine_trellis":  (2, 3, 1),     # the night-flowering vine (her 8-heart event)
+    "seed_counter":  (3, 2, 1),     # where she sells seeds: packets in a tray, a cash tin
+    "seed_trays":    (2, 2, 1),     # seedling trays on a low table
+    "mushroom_pot":  (1, 1, 1),     # the mushroom she swears hums
+    "soil_sacks":    (1, 2, 1),
+    "watering_can":  (1, 1, 1),
     # the inn's, reused
     "wardrobe":      (2, 3, 1), "nightstand": (1, 2, 1), "writing_desk": (2, 2, 1), "sketch_wall": (2, 2, 0),
 }
@@ -99,6 +122,11 @@ LUPINI = {"painting_1": 1844,       # Clouds
           "painting_7": 1852,       # Tropical Fish #173
           "painting_8": 1846}       # 1000 Years From Now
 EASEL_PAINTING = 1838               # Red Eagle
+# Other paintings of the game's (Data/Furniture), for the Exhibition Hall: "game_<id>" -> size
+GAME_PAINTINGS = {1554: (3, 2), 1547: (3, 2), 1541: (2, 2), 1557: (2, 2), 2421: (2, 2), 1565: (2, 2),
+                  1567: (1, 2), 2329: (2, 2), 2423: (2, 2), 1802: (2, 2), 1612: (2, 2), 1606: (1, 2)}
+for _id, _wh in GAME_PAINTINGS.items():
+    LUPINI[f"game_{_id}"] = _id
 BED = (2, 4)                        # the Saloon's spare bed
 # The game's rugs that 9-slice (townInterior_2, their top-left tile): ("rug", x, y, w, h)
 RUGS = {"rug": 2761,                # Haley's red one
@@ -200,12 +228,120 @@ BUILDINGS = {
                "Through the door, the studio: the easel under the big north window, paint and brush tables,",
                "the fireside (couch, coffee table, armchair on one rug), and his bed under two paintings.",
                "Paintings are the game's own Lupini paintings. Orange outline = new PixelLab piece. Dotted line = walkway."]),
+
+    # The Exhibition Hall (map doc, sections 5 and 8: "like the Community Center's main
+    # room"; the Vale's gallery once Lupini's 8-heart event reopens it, its displays
+    # changing; the mural on its west wall; the abandoned exhibition in its back room).
+    # Built open; the closed version (until the 8 hearts) is the same plan with dust
+    # sheets over the displays.
+    "hall": dict(
+        title="The Exhibition Hall", location="blinxxy.MuseArt_ValeHall", tmx="ValeHall.tmx",
+        W=30, H=25, outside=(44, 39),
+        rooms={"back":    dict(a=9, b=19, t=0, f=9, label="The back room"),
+               "store":   dict(a=22, b=28, t=0, f=9, label="Storeroom"),
+               "gallery": dict(a=1, b=28, t=10, f=22, label="The gallery")},
+        doors=[("back", "gallery", 14), ("store", "gallery", 25)],
+        front=("gallery", 14),
+        zones=[(1, 14, 28, 22, "stone tiles")],
+        wall=78, walls={"back": 103, "store": 103},     # a museum green; the back rooms faded plaster
+        picks={"bench": "art/gilded_vale/interiors/atelier/bench_clean",
+               **{k: "art/gilded_vale/interiors/hall/hall_v1/" + v for k, v in {
+                   "mural": "../mural_faded", "panel": "panel_1_0", "panel_b": "panel_1_2", "bowl_case": "bowl_case_1_1",
+                   "flower_case": "flower_case_2_8", "plinth": "plinth_1_0", "plinth_b": "plinth_1_5",
+                   "plinth_c": "plinth_1_7", "reception": "reception_1_6",
+                   "sheeted": "sheeted_1_5", "poster": "poster_1_0", "crates": "crates_1_7",
+                   "frame_rack": "frame_rack_1_1", "ladder": "ladder_1_8"}.items()}},
+        lights=[(5, 17), (11, 17), (14, 15), (19, 17), (25, 17), (14, 5), (25, 5)],
+        pieces=[
+            # the gallery's back wall: the mural at the west end, paintings
+            ("mural", 2, 11), ("game_1554", 9, 11), ("game_1541", 16, 11), ("game_1612", 19, 11), ("game_2421", 22, 11),
+            ("game_1567", 27, 11),
+            # before the mural: two benches on a rug
+            ("rug", 2, 16, 6, 5), ("bench", 3, 17), ("bench#2", 3, 19),
+            # free-standing panels of the Vale's past artists' work
+            ("panel", 9, 15), ("panel_b", 9, 18),
+            # the residents' work: Tobin's bowls, Fern's pressed flowers, sculptures
+            ("bowl_case", 17, 16), ("flower_case", 20, 16), ("bowl_case#2", 17, 19), ("flower_case#2", 20, 19),
+            ("plinth", 23, 16), ("plinth_b", 27, 16), ("plinth_c", 23, 19), ("plinth#2", 27, 19),
+            # by the door: the desk with the visitors' book; palms in the corners
+            # a runner up the middle, from the door to the back room
+            ("rug#2", 13, 15, 3, 7),
+            ("reception", 11, 20), ("plant", 16, 20), ("plant", 1, 14), ("plant", 1, 20), ("plant_b", 28, 20), ("plant", 28, 14),
+            # the back room: the exhibition nobody took down
+            ("poster", 10, 1), ("game_2423", 13, 1), ("game_1565", 16, 1),
+            ("sheeted", 10, 5), ("sheeted#2", 16, 6), ("crates", 9, 7), ("ladder", 19, 3), ("plinth_b#2", 13, 6),
+            # the storeroom
+            ("frame_rack", 23, 2), ("game_1606", 26, 1), ("crates#2", 26, 5), ("writing_desk", 22, 6), ("sheeted#3", 27, 7),
+        ],
+        notes=["The Exhibition Hall: one floor plan, like the Community Center's main room. Front door at the bottom.",
+               "The gallery: the mural on the west end of the back wall, two benches on a rug before it; panels of",
+               "the Vale's past artists' work; glass cases of Tobin's bowls and Fern's pressed flowers; sculptures on",
+               "plinths; the visitors' book by the door. Paintings on the walls are the game's own.",
+               "Behind: the back room (the abandoned exhibition: sheeted frames, crates, a poster) and a storeroom.",
+               "Closed until Lupini's 8 hearts: the same plan with dust sheets over everything. Orange = new PixelLab piece."]),
+
+    # Fern's cottage and seedhouse (map doc, section 5: "like Leah's. With the seedhouse as
+    # a glass room on one side"; fern_brief.md). Two doors outside, the cottage's and the
+    # seedhouse's, into one room: the cottage end and the glass end, a row of plants
+    # between them; her bedroom behind.
+    "fern": dict(
+        title="Fern's cottage", location="blinxxy.MuseArt_ValeFern", tmx="ValeFern.tmx",
+        W=28, H=23, outside=[(12, 38), (17, 38)],
+        rooms={"bedroom": dict(a=2, b=10, t=0, f=9, label="Fern's bedroom"),
+               "main":    dict(a=1, b=25, t=10, f=20, label="The cottage            The seedhouse")},
+        doors=[("bedroom", "main", 8)],
+        front=[("main", 6), ("main", 21)],
+        zones=[(17, 14, 25, 20, "flagstones")],
+        wall_zones=[("main", 17, 25, 57)],        # the seedhouse's back wall is glass
+        wall=7, walls={"bedroom": 100},
+        picks={},
+        lights=[(4, 16), (12, 16), (20, 16), (23, 18), (5, 6)],
+        pieces=[
+            # the cottage end: the fire, the couch with its back to the wall, the coffee
+            # table and an armchair on one rug; her pressed flowers over the couch;
+            # the kitchen and her table
+            ("fireplace", 2, 11), ("pressed_flowers", 5, 11), ("couch", 4, 13), ("rug", 4, 15, 5, 4),
+            ("coffee_table", 4, 15), ("armchair_w", 7, 15), ("kitchen", 10, 11), ("dining", 11, 17),
+            ("plant", 1, 18), ("floor_lamp", 9, 18),
+            # between the two ends, a row of her plants
+            ("plant_b", 16, 14), ("plant", 16, 18),
+            # the seedhouse: seed drawers, the potting bench against the glass, the vine
+            # on its trellis; the counter she sells seeds from; seedling trays, soil
+            ("seed_drawers", 17, 12), ("potting_bench", 20, 12), ("vine_trellis", 24, 12),
+            ("seed_counter", 22, 17), ("seed_trays", 17, 16), ("seed_trays#2", 24, 15),
+            ("mushroom_pot", 19, 14), ("soil_sacks", 25, 18), ("watering_can", 19, 18), ("plant_b", 17, 18),
+            # her bedroom
+            ("wardrobe", 2, 2), ("window", 5, 1), ("bed", 6, 4), ("nightstand", 8, 3),
+            ("pressed_flowers#2", 9, 1), ("plant_b", 10, 4), ("rug", 2, 6, 4, 3), ("chest", 6, 8),
+        ],
+        notes=["Fern's cottage and seedhouse: one floor plan. Two doors in, as outside: the cottage's and the seedhouse's.",
+               "The cottage end: the fireplace, couch, coffee table and armchair on one rug, her pressed flowers;",
+               "the kitchen and her table. A row of her plants marks where the glass room starts.",
+               "The seedhouse: glass back wall, stone floor; seed drawers, the potting bench, the night-flowering",
+               "vine on its trellis, the counter she sells seeds from, seedling trays, the humming mushroom.",
+               "Behind, through a door: her bedroom. Orange outline = new PixelLab piece. Dotted line = walkway."]),
 }
 
 # the game's floorings (walls_and_floors) for floors that aren't planks or Sam's tiles
-FLOORINGS = {"flagstones": 10, "terracotta": 21, "parquet": 16}
-FLOOR_COLOURS = {"planks": (196, 140, 82), "flagstones": (150, 146, 138), "terracotta": (186, 98, 60), "parquet": (150, 90, 50), "kitchen tiles": (200, 214, 226),
+FLOORINGS = {"flagstones": 10, "terracotta": 21, "parquet": 16, "checker": 22, "stone tiles": 9}
+FLOOR_COLOURS = {"planks": (196, 140, 82), "flagstones": (150, 146, 138), "terracotta": (186, 98, 60), "parquet": (150, 90, 50), "checker": (200, 200, 210), "stone tiles": (220, 200, 160), "kitchen tiles": (200, 214, 226),
                  "carpet": (150, 70, 70), "straw": (214, 190, 110), "glass": (170, 210, 190)}
+
+
+def fronts(spec):
+    """The front doors: [(room, x, (outside door x, y))]. A building may have more
+    than one (Fern's cottage and her seedhouse)."""
+    fr = spec["front"] if isinstance(spec["front"], list) else [spec["front"]]
+    out = spec["outside"] if isinstance(spec["outside"], list) else [spec["outside"]]
+    return [(room, x, o) for (room, x), o in zip(fr, out)]
+
+
+def paper_at(spec, rn, x):
+    """The wallpaper of room rn's back wall at column x (wall_zones: (room, x0, x1, paper))."""
+    for zr, x0, x1, pp in spec.get("wall_zones", []):
+        if zr == rn and x0 <= x <= x1:
+            return pp
+    return spec.get("walls", {}).get(rn, spec.get("wall", 0))
 
 
 def solid_cells(spec):
@@ -227,7 +363,7 @@ def footprint(p):
     if key == "bed":
         return BED[0], BED[1], 3
     if key in LUPINI:
-        return 2, 2, 0
+        return (*GAME_PAINTINGS.get(LUPINI[key], (2, 2)), 0)
     if key in VANILLA:
         rows = VANILLA[key]
         w = max(len(g) for r in rows for g in r.values())
@@ -262,9 +398,9 @@ def walk_cells(spec):
         tl = spec["rooms"][lower]["t"]
         for y in range(tl, tl + 4):
             cells.add((d, y))
-    room, d = spec["front"]
-    f = spec["rooms"][room]["f"]
-    cells |= {(d, f + 1), (d, f + 2)}
+    for room, d, _ in fronts(spec):
+        f = spec["rooms"][room]["f"]
+        cells |= {(d, f + 1), (d, f + 2)}
     return cells - solid_cells(spec)
 
 
@@ -321,10 +457,13 @@ def plan(name, out):
         box(dx, spec["rooms"][upper]["f"], 1, 1, fill=FLOOR_COLOURS["planks"])
         box(dx, tl, 1, 4, fill=(236, 200, 120))
         box(dx - 1, tl, 3, 4, outline=(255, 240, 200), width=2)
-    room, dx = spec["front"]
-    f = spec["rooms"][room]["f"]
-    box(dx, f, 1, 2, fill=(236, 200, 120))
-    d.text((dx * T + T // 2, (f + 2) * T + 4), "FRONT DOOR", fill=(255, 255, 255), font=bold, anchor="mt")
+    for room, dx, _ in fronts(spec):
+        f = spec["rooms"][room]["f"]
+        box(dx, f, 1, 2, fill=(236, 200, 120))
+        d.text((dx * T + T // 2, (f + 2) * T + 4), "FRONT DOOR", fill=(255, 255, 255), font=bold, anchor="mt")
+    for zr, x0, x1, pp in spec.get("wall_zones", []):
+        r = spec["rooms"][zr]
+        box(x0, r["t"] + 1, x1 - x0 + 1, 2, fill=(190, 225, 230))                     # a glass wall
 
     # grid
     for x in range(W + 1):
@@ -337,7 +476,7 @@ def plan(name, out):
         d.text((2, y * T + 1), str(y), fill=(255, 255, 0), font=font)
 
     # rugs first, then the furniture
-    for p in sorted(spec["pieces"], key=lambda p: p[0] not in RUGS):
+    for p in sorted(spec["pieces"], key=lambda p: p[0].split("#")[0] not in RUGS):
         key = p[0].split("#")[0]
         x, y = p[1], p[2]
         w, h, s = footprint(p)
@@ -364,6 +503,8 @@ def plan(name, out):
 
     # the walkways: from the front door to every room's door
     walk = walk_cells(spec)
+    room, dx, _ = fronts(spec)[0]
+    f = spec["rooms"][room]["f"]
     start = (dx, f + 1)
     for upper, lower, ddx in spec["doors"]:
         path = route(walk, start, (ddx, spec["rooms"][upper]["f"] - 1))
@@ -475,10 +616,9 @@ def build(name, exports, assets):
                 g["Buildings"][y][x] = 1 if x in (a - 1, b + 1) or y == t else 0
         for x in range(a, b + 1):
             g["Front"][t][x] = 2 if x == a else 4 if x == b else (2122 if x % 5 == 3 else 3)
-        paper = wallpaper(spec.get("walls", {}).get(rn, spec.get("wall", 0)))
         for k in range(3):
             for x in range(a, b + 1):
-                g["Back"][t + 1 + k][x] = paper[k]
+                g["Back"][t + 1 + k][x] = wallpaper(paper_at(spec, rn, x))[k]
         for x in range(a + 1, b):
             g["Buildings"][t + 2][x] = 81
             g["Buildings"][t + 3][x] = 113
@@ -501,7 +641,7 @@ def build(name, exports, assets):
     # doors between stacked rooms (Haley's, down from her room into the living room)
     for upper, lower, d in spec["doors"]:
         fu, tl = rooms[upper]["f"], rooms[lower]["t"]
-        paper = wallpaper(spec.get("walls", {}).get(lower, spec.get("wall", 0)))
+        paper = wallpaper(paper_at(spec, lower, d))
         g["Front"][fu][d - 1], g["Front"][fu][d], g["Front"][fu][d + 1] = 163, 0, 164
         g["Front"][tl][d - 1], g["Front"][tl][d], g["Front"][tl][d + 1] = 195, 57, 194
         g["Front"][tl + 1][d - 1], g["Front"][tl + 1][d], g["Front"][tl + 1][d + 1] = 827, 89, 827
@@ -517,12 +657,14 @@ def build(name, exports, assets):
         g["Back2"][tl + 4][d] = 0
 
     # the front door: a notch in the bottom border, a mat (Haley's)
-    room, d = spec["front"]
-    f = rooms[room]["f"]
-    g["Front"][f][d - 1], g["Front"][f][d], g["Front"][f][d + 1] = 163, 0, 164
-    g["Front"][f + 1][d - 1], g["Front"][f + 1][d], g["Front"][f + 1][d + 1] = 97, 197, 131
-    g["Back"][f + 1][d], g["Buildings"][f + 1][d] = 23, 0
-    g["Back"][f + 2][d] = g["Buildings"][f + 2][d] = 0
+    warps = []
+    for room, d, (ox, oy) in fronts(spec):
+        f = rooms[room]["f"]
+        g["Front"][f][d - 1], g["Front"][f][d], g["Front"][f][d + 1] = 163, 0, 164
+        g["Front"][f + 1][d - 1], g["Front"][f + 1][d], g["Front"][f + 1][d + 1] = 97, 197, 131
+        g["Back"][f + 1][d], g["Buildings"][f + 1][d] = 23, 0
+        g["Back"][f + 2][d] = g["Buildings"][f + 2][d] = 0
+        warps.append(f"{d} {f + 2} {VALE} {ox} {oy + 1}")
 
     # rugs (Haley's red one, on Back2), then the furniture
     walls = {y for r in rooms.values() for y in range(r["t"] + 1, r["t"] + 4)}
@@ -545,8 +687,9 @@ def build(name, exports, assets):
                             g[layer][py + j][px + i] = gid
         elif key in LUPINI:
             n = LUPINI[key]
-            for j in range(2):
-                for i in range(2):
+            pw, ph = GAME_PAINTINGS.get(n, (2, 2))
+            for j in range(ph):
+                for i in range(pw):
                     g["Front2" if g["Front"][py + j][px + i] else "Front"][py + j][px + i] = FURN + n + 32 * j + i
         elif key in VANILLA:
             for j, row in enumerate(VANILLA[key]):
@@ -589,8 +732,7 @@ def build(name, exports, assets):
                         g["Front2"][py + 1 + j][px + i] = FURN + EASEL_PAINTING + 32 * j + i
 
     tile_props = [("Buildings", d_, rooms[lower]["t"] + 2, "Action", "Door") for _, lower, d_ in spec["doors"]]
-    ox, oy = spec["outside"]
-    props = {"Warp": f"{d} {f + 2} {VALE} {ox} {oy + 1}",
+    props = {"Warp": " ".join(warps),
              "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in spec["lights"])}
     if spec["doors"]:
         # the game makes a tile a door only if this lists it (x y, sheet 1, tile 120), as Haley's map does
@@ -605,6 +747,8 @@ def build(name, exports, assets):
     # the walkways, on the built map: from the front door's mat to every room (a door's
     # foot, 121, opens as you walk up)
     walk = {(x, y) for y in range(H) for x in range(W) if g["Buildings"][y][x] in (0, 121) and g["Back"][y][x] != 1}
+    room, d, _ = fronts(spec)[0]
+    f = rooms[room]["f"]
     for rn, r in rooms.items():
         ok = route(walk, (d, f + 1), (r["a"] + (r["b"] - r["a"]) // 2, r["f"] - 1)) or              any(route(walk, (d, f + 1), (x, r["f"] - 1)) for x in range(r["a"], r["b"] + 1))
         print(f"  route to {rn}: {'ok' if ok else 'BLOCKED'}")
