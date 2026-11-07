@@ -261,8 +261,8 @@ BUILDINGS = {
         picks={"bench": "art/gilded_vale/interiors/atelier/bench_clean",
                **{k: "art/gilded_vale/interiors/hall/hall_v1/" + v for k, v in {
                    "mural": "../mural_faded", "panel": "panel_1_0", "panel_b": "panel_1_2", "bowl_case": "bowl_case_1_1",
-                   "flower_case": "flower_case_2_8", "plinth": "plinth_1_0", "plinth_b": "plinth_1_5",
-                   "plinth_c": "plinth_1_7", "reception": "reception_1_6",
+                   "flower_case": "flower_case_2_8", "plinth": "../plinth_slate", "plinth_b": "../plinth_sandstone",
+                   "plinth_c": "../plinth_brick", "reception": "reception_1_6",     # (plinths: tools/art/vale_plinths.py)
                    "sheeted": "sheeted_1_5", "poster": "poster_1_0", "crates": "crates_1_7",
                    "frame_rack": "frame_rack_1_1", "ladder": "ladder_1_8", "plaque": "../hall_v2/plaque_1_0",
                    "plaque_wide": "../hall_v3/plaque_wide_1_0", "jug_case": "../hall_v3/jug_case_1_1",
