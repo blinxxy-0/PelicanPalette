@@ -110,7 +110,9 @@ AMPHITHEATRE = ("amphitheatre/amph_s1_0", 31, 46)
 FEATURES = {
     "parterre": ("features/parterre_v2/parterre_s13_0", (48, 144, 480, 288), 3, 39),   # I: the Lost Parterre (Fern)
     # (diff: cut against the bare render it was painted into, features/<name>_before.png)
-    "tea": ("features/tea/tea_s23_0", "diff:tea_before:22:3", 34, 9, 40, 19),        # B: Bea's tea garden
+    # B: Bea's tea garden; its rose arch rises over the high street's edge, so the rows
+    # above y 10 are drawn over the farmer, who walks under them (the user, 2026-11-06)
+    "tea": ("features/tea2/tea_s24_0", "diff:tea_before:22:3", 34, 7, 40, 19, 10),
     "clay": ("features/clay/clay_s31_0", "diff:clay_before:34:12", 50, 21, 57, 27),   # G: Tobin's clay bank
     "lakeside": ("features/lakeside2/lakeside_s53_0", "diff:lakeside2_before:30:52", 44, 54, 51, 71),   # M: the lakeside walk
 }
@@ -599,7 +601,7 @@ def paint_ground(g, exports):
     import json
     road = {tuple(map(int, k.split(","))) for k in json.load(open(ROAD_LAYOUT))["tiles"]}   # its tiles carry plain grass
     for name, (art, box, left, top, *rest) in FEATURES.items():   # nor under a painted feature (its lawn is cut to the map's)
-        x1, y1 = rest if rest else (left + (box[2] - box[0]) // 16 - 1, top + (box[3] - box[1]) // 16 - 1)
+        x1, y1 = rest[:2] if rest else (left + (box[2] - box[0]) // 16 - 1, top + (box[3] - box[1]) // 16 - 1)
         road |= {(x, y) for x in range(left - 1, x1 + 3) for y in range(top - 1, y1 + 3)}
     for y in range(H + 1):
         for x in range(W + 1):
@@ -1055,12 +1057,15 @@ def place_buildings(g, assets):
         src = Image.open(os.path.join(ART, art + ".png")).convert("RGBA")
         if isinstance(box, str):
             _, before, rx, ry = box.split(":")
-            x1, y1 = rest
+            x1, y1 = rest[:2]
             box = ((left - int(rx)) * 16, (top - int(ry)) * 16, (x1 - int(rx) + 1) * 16, (y1 - int(ry) + 1) * 16)
             im = cutout_diff(src.crop(box), Image.open(os.path.join(ART, "features", before + ".png")).crop(box))
         else:
             im = cutout(src.crop(box), lawn=True)
-        pieces.append(("feature:" + name, {x: im for x in SEASONS}, left, top, walkable(im)))
+        walk = walkable(im)
+        if isinstance(box, tuple) and len(rest) > 2:
+            walk["front_above"] = rest[2]
+        pieces.append(("feature:" + name, {x: im for x in SEASONS}, left, top, walk))
     slots, x, y, row_h = [], 0, 0, 0
     for _, arts, *_ in pieces:
         cols, rows = arts["spring"].width // 16, arts["spring"].height // 16
@@ -1095,7 +1100,9 @@ def place_buildings(g, assets):
                     gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
                     # Never over the map's own ground pieces (a shore's rock edge on
                     # Buildings stays, and the art goes above it on Buildings2).
-                    if g["Buildings"][ty][tx]:
+                    if ty < walk.get("front_above", -1):
+                        g["Front"][ty][tx] = gid           # over the farmer, who walks under it
+                    elif g["Buildings"][ty][tx]:
                         g["Buildings2"][ty][tx] = gid
                     elif walk[(i, j)]:
                         g["Back2"][ty][tx] = gid
