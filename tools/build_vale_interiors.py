@@ -43,7 +43,7 @@ PICKS = {"tea_counter": "tea_counter_1_1", "teapot_shelf": "teapot_shelf_1_1", "
          # the guest room (2026-11-07: "very boring" with the tea room's chair and table)
          "wardrobe": "../vale_house_v2/wardrobe_2_0",
          "rug": "../vale_house_v2/rug_2_1", "nightstand": "../vale_house_v2/nightstand_1_0",
-         "writing_desk": "../vale_house_v2/writing_desk_2_1", "easel": "../vale_house_v2/easel_2_2"}
+         "writing_desk": "../vale_house_v2/writing_desk_2_1", "easel": "../vale_house_v2/easel_2_2_clean"}
 WALLPAPERS = ["wallpaper_1_2"]
 VALE = "blinxxy.MuseArt_GildedVale"
 INN_DOOR = (28, 19)                  # the inn's door on the Vale map (build_vale.py vale_house)
