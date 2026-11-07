@@ -122,8 +122,9 @@ AMPHITHEATRE = ("amphitheatre/amph_s1_0", 31, 46)
 WINTER_RECOLOUR = {"clay"}
 # Features allowed to draw over the paving's edge (drawn over the farmer, so the lane
 # still walks): the clay bank's drying rack stands on the lane's curb.
-OVER_PAVING = {"clay"}
-FEATURE_ERASE = {"clay": [(0, 34, 32, 72)], "nursery": [(100, 159, 176, 176, "keep_blue"), (150, 146, 176, 159, "keep_blue")]}
+OVER_PAVING = set()
+FEATURE_ERASE = {"clay": [(0, 34, 32, 72), (0, 0, 42, 38, "objects"), (41, 0, 80, 24, "objects"), (77, 0, 128, 12)],   # (the barrow and the drying rack removed: the user, 2026-11-07)
+                 "nursery": [(100, 159, 176, 176, "keep_blue"), (150, 146, 176, 159, "keep_blue")]}
 FEATURES = {
     "parterre": ("features/parterre_v2/parterre_s13_0", (48, 144, 480, 288), 3, 39),   # I: the Lost Parterre (Fern)
     # (diff: cut against the bare render it was painted into, features/<name>_before.png)
@@ -1129,12 +1130,33 @@ def place_buildings(g, assets):
             box = ((left - int(rx)) * 16, (top - int(ry)) * 16, (x1 - int(rx) + 1) * 16, (y1 - int(ry) + 1) * 16)
             im = cutout_diff(src.crop(box), Image.open(os.path.join(ART, "features", before + ".png")).crop(box))
             px = im.load()
+            # the main stretches of sand, for "objects" erasing: a barrow's pale outline
+            # passes for sand, but it isn't joined to the bank's sand
+            sandy = lambda c: c[3] and c[0] > 140 and c[0] > c[1] + 10 and c[1] > c[2] + 25
+            big_sand, seen = set(), set()
+            for sy0 in range(im.height):
+                for sx0 in range(im.width):
+                    if (sx0, sy0) in seen or not sandy(px[sx0, sy0]):
+                        continue
+                    comp, stack = [], [(sx0, sy0)]
+                    seen.add((sx0, sy0))
+                    while stack:
+                        qx, qy = stack.pop()
+                        comp.append((qx, qy))
+                        for nq in ((qx + 1, qy), (qx - 1, qy), (qx, qy + 1), (qx, qy - 1)):
+                            if 0 <= nq[0] < im.width and 0 <= nq[1] < im.height and nq not in seen and sandy(px[nq]):
+                                seen.add(nq)
+                                stack.append(nq)
+                    if len(comp) >= 200:
+                        big_sand.update(comp)
             for ex0, ey0, ex1, ey1, *how in FEATURE_ERASE.get(name, ()):
                 for yy in range(ey0, min(ey1, im.height)):
                     for xx in range(ex0, min(ex1, im.width)):
                         c = px[xx, yy]
-                        if how and c[3] and (c[2] > c[0] + 50 or (c[2] > 150 and c[1] > 150)):
+                        if how == ["keep_blue"] and c[3] and (c[2] > c[0] + 50 or (c[2] > 150 and c[1] > 150)):
                             continue        # (keep_blue: the mushrooms)
+                        if how == ["objects"] and (xx, yy) in big_sand:
+                            continue        # (objects: the sand under them stays, no straight cut)
                         px[xx, yy] = (0, 0, 0, 0)
         else:
             im = cutout(src.crop(box), lawn=True)
@@ -1160,7 +1182,15 @@ def place_buildings(g, assets):
                 print("winter art for", name, "is", wim.size, "not", im.size)
                 arts["winter"] = im
         else:
-            arts["winter"] = seasonal(im, SEASON_COLOURS, "winter")
+            # bare ground recoloured; painted grass tufts go (there's no grass in winter)
+            wim = seasonal(im, SEASON_COLOURS, "winter")
+            wpx = wim.load()
+            for yy in range(wim.height):
+                for xx in range(wim.width):
+                    c = wpx[xx, yy]
+                    if c[3] and c[1] > c[0] + 12 and c[1] > c[2] + 12:
+                        wpx[xx, yy] = (0, 0, 0, 0)
+            arts["winter"] = wim
         pieces.append(("feature:" + name, arts, left, top, walk))
     slots, x, y, row_h = [], 0, 0, 0
     for _, arts, *_ in pieces:

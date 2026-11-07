@@ -165,6 +165,47 @@ def cutout_diff(piece, before, fray=20, seed=7):
                 px[x, y] = (0, 0, 0, 0)
             elif ground(c) and frayed(x, y):
                 px[x, y] = (0, 0, 0, 0)
+    # Objects stay whole (the user, 2026-11-07: the clay bank's rack and barrow "still
+    # missing parts"): dark wood over cobbles or sand passed the shade test above. Every
+    # solid object in the painting (a blob of non-ground pixels the painting changed) is
+    # closed up, holes and shadow included, and all of its painted pixels kept.
+    src = piece.convert("RGBA").load()
+    def obj(x, y):
+        c = src[x, y]
+        if not c[3] or ground(c) or water(c):
+            return False
+        return not near(c[:3], bp[x, y])
+    mask = [[obj(x, y) for x in range(w)] for y in range(h)]
+    # keep only blobs big enough to be things (not grass tufts or stones in the sand)
+    seen = [[False] * w for _ in range(h)]
+    keep = [[False] * w for _ in range(h)]
+    for sy in range(h):
+        for sx in range(w):
+            if seen[sy][sx] or not mask[sy][sx]:
+                continue
+            comp, stack = [], [(sx, sy)]
+            seen[sy][sx] = True
+            while stack:
+                x, y = stack.pop()
+                comp.append((x, y))
+                for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                    if 0 <= nx < w and 0 <= ny < h and not seen[ny][nx] and mask[ny][nx]:
+                        seen[ny][nx] = True
+                        stack.append((nx, ny))
+            if len(comp) >= 25:
+                for x, y in comp:
+                    keep[y][x] = True
+    R = 3
+    dil = [[any(keep[yy][xx] for yy in range(max(0, y - R), min(h, y + R + 1)) for xx in range(max(0, x - R), min(w, x + R + 1)))
+            for x in range(w)] for y in range(h)]
+    closed = [[all(dil[yy][xx] for yy in range(max(0, y - R), min(h, y + R + 1)) for xx in range(max(0, x - R), min(w, x + R + 1)))
+               for x in range(w)] for y in range(h)]
+    for y in range(h):
+        for x in range(w):
+            if closed[y][x] and src[x, y][3]:
+                c = src[x, y]
+                if not is_grass(c):          # (never grass: painted lawn and tufts stay cut)
+                    px[x, y] = c
     # lone flecks
     for _ in range(2):
         drop = [(x, y) for y in range(h) for x in range(w) if px[x, y][3] and
