@@ -111,6 +111,7 @@ DOORS = {
     (44, 39): "14 21 blinxxy.MuseArt_ValeHall", (45, 39): "14 21 blinxxy.MuseArt_ValeHall",     # the Exhibition Hall, its double door
     (12, 38): "6 19 blinxxy.MuseArt_ValeFern", (17, 38): "21 19 blinxxy.MuseArt_ValeFern",      # Fern's cottage, and her seedhouse
     (18, 61): "10 16 blinxxy.MuseArt_ValeEmmett", (19, 61): "10 16 blinxxy.MuseArt_ValeEmmett",  # Emmett's cottage (its door straddles the two)
+    (73, 38): "12 18 blinxxy.MuseArt_ValeStudio",                                               # the big Old Studio (Lupini's 6 hearts open it)
 }
 # The amphitheatre (the user's pick s1, 2026-11-06): PixelLab inpaint into the lower
 # cliff (tools/art/vale_inpaint.py), its art covering map tiles x 31-43, y 46-55.

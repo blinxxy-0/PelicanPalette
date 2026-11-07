@@ -1,0 +1,187 @@
+{
+ "batch": "studio_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle (straight front view from slightly above, never angled), pixel scale and colours of this room's furniture: wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "dusty_window_1": {
+   "image_size": {
+    "width": 64,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a tall old studio window set in a stone wall, four tiles wide and two tall, dusty grey glass panes with two cracked, cobwebs in its corners, a pale grey light",
+   "seed": 1700
+  },
+  "dusty_window_2": {
+   "image_size": {
+    "width": 64,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a tall old studio window set in a stone wall, four tiles wide and two tall, dusty grey glass panes with two cracked, cobwebs in its corners, a pale grey light",
+   "seed": 1701
+  },
+  "pinned_sketches_1": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: several charcoal sketches on curling paper pinned to a wall: studies of a figure, a landscape and hands, three tiles wide and two tall",
+   "seed": 1702
+  },
+  "pinned_sketches_2": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: several charcoal sketches on curling paper pinned to a wall: studies of a figure, a landscape and hands, three tiles wide and two tall",
+   "seed": 1703
+  },
+  "backward_painting_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a framed canvas hung on a wall the wrong way round, showing only the bare wooden stretcher bars and back of the canvas, with a small torn paper label",
+   "seed": 1704
+  },
+  "backward_painting_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a framed canvas hung on a wall the wrong way round, showing only the bare wooden stretcher bars and back of the canvas, with a small torn paper label",
+   "seed": 1705
+  },
+  "cobweb_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a dusty grey cobweb in the top corner of a wall, mostly transparent",
+   "seed": 1706
+  },
+  "cobweb_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a dusty grey cobweb in the top corner of a wall, mostly transparent",
+   "seed": 1707
+  },
+  "unfinished_easel_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: an old wooden artist's easel holding an unfinished painting of a valley at sunset, half of the canvas still bare sketch lines, dusty",
+   "seed": 1708
+  },
+  "unfinished_easel_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: an old wooden artist's easel holding an unfinished painting of a valley at sunset, half of the canvas still bare sketch lines, dusty",
+   "seed": 1709
+  },
+  "note_table_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a small rickety wooden table with a folded paper note, a dried-up palette and stiff paint brushes in a jar, dusty",
+   "seed": 1710
+  },
+  "note_table_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a small rickety wooden table with a folded paper note, a dried-up palette and stiff paint brushes in a jar, dusty",
+   "seed": 1711
+  },
+  "paint_trestle_1": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a long rough wooden trestle table three tiles wide, crusted with old dried paint drips, a few dried-up paint tins on it",
+   "seed": 1712
+  },
+  "paint_trestle_2": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a long rough wooden trestle table three tiles wide, crusted with old dried paint drips, a few dried-up paint tins on it",
+   "seed": 1713
+  },
+  "sheeted_chair_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a chair completely covered by a dusty white dust sheet",
+   "seed": 1714
+  },
+  "sheeted_chair_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a chair completely covered by a dusty white dust sheet",
+   "seed": 1715
+  },
+  "leaves_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a few dry brown and orange autumn leaves scattered flat on a wooden floor, seen from above, mostly transparent",
+   "seed": 1716
+  },
+  "leaves_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a few dry brown and orange autumn leaves scattered flat on a wooden floor, seen from above, mostly transparent",
+   "seed": 1717
+  },
+  "old_cot_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a narrow old iron bed frame cot with a thin worn mattress and a folded grey wool blanket, its head against a wall",
+   "seed": 1718
+  },
+  "old_cot_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a narrow old iron bed frame cot with a thin worn mattress and a folded grey wool blanket, its head against a wall",
+   "seed": 1719
+  },
+  "washstand_1": {
+   "image_size": {
+    "width": 16,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a narrow old wooden washstand against a wall with a cracked white jug in a basin and a small spotted mirror above it",
+   "seed": 1720
+  },
+  "washstand_2": {
+   "image_size": {
+    "width": 16,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), muted dusty colours, dark coloured (not black) outlines: a narrow old wooden washstand against a wall with a cracked white jug in a basin and a small spotted mirror above it",
+   "seed": 1721
+  }
+ }
+}

@@ -51,6 +51,11 @@
           "DisplayName": "{{i18n:location.vale-emmett}}",
           "DefaultArrivalTile": { "X": 10, "Y": 16 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeEmmett", "Type": "StardewValley.Locations.DecoratableLocation" }
+        },
+        "blinxxy.MuseArt_ValeStudio": {
+          "DisplayName": "{{i18n:location.vale-studio}}",
+          "DefaultArrivalTile": { "X": 12, "Y": 18 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeStudio", "Type": "StardewValley.Locations.DecoratableLocation" }
         }
       }
     },
@@ -87,7 +92,16 @@
         "blinxxy.MuseArt_Vale.hall.unshown": "{{i18n:vale.hall.unshown}}",
         "blinxxy.MuseArt_Vale.hall.frame_rack": "{{i18n:vale.hall.frame_rack}}",
         "blinxxy.MuseArt_Vale.hall.dancing_grass": "{{i18n:vale.hall.dancing_grass}}",
-        "blinxxy.MuseArt_Vale.hall.ledger": "{{i18n:vale.hall.ledger}}"
+        "blinxxy.MuseArt_Vale.hall.ledger": "{{i18n:vale.hall.ledger}}",
+        "blinxxy.MuseArt_Vale.studio.unfinished": "{{i18n:vale.studio.unfinished}}",
+        "blinxxy.MuseArt_Vale.studio.note": "{{i18n:vale.studio.note}}",
+        "blinxxy.MuseArt_Vale.studio.sketches": "{{i18n:vale.studio.sketches}}",
+        "blinxxy.MuseArt_Vale.studio.backward": "{{i18n:vale.studio.backward}}",
+        "blinxxy.MuseArt_Vale.studio.window": "{{i18n:vale.studio.window}}",
+        "blinxxy.MuseArt_Vale.studio.trestle": "{{i18n:vale.studio.trestle}}",
+        "blinxxy.MuseArt_Vale.studio.cot": "{{i18n:vale.studio.cot}}",
+        "blinxxy.MuseArt_Vale.studio.washstand": "{{i18n:vale.studio.washstand}}",
+        "blinxxy.MuseArt_Vale.studio.trunk": "{{i18n:vale.studio.trunk}}"
       }
     },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHouse", "FromFile": "assets/ValeHouse.tmx" },
@@ -96,6 +110,7 @@
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeFern", "FromFile": "assets/ValeFern.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeEmmett", "FromFile": "assets/ValeEmmett.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio", "FromFile": "assets/ValeStudio.tmx" },
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeWallpapers", "FromFile": "assets/ValeWallpapers.png" },
     {
       "Action": "EditData",

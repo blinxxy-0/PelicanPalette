@@ -3963,69 +3963,74 @@
         <property name="Action" type="string" value="Warp 7 19 blinxxy.MuseArt_ValeAtelier" />
       </properties>
     </object>
-    <object id="23" name="TileData" x="1264" y="256" width="16" height="16">
+    <object id="23" name="TileData" x="1168" y="608" width="16" height="16">
+      <properties>
+        <property name="Action" type="string" value="Warp 12 18 blinxxy.MuseArt_ValeStudio" />
+      </properties>
+    </object>
+    <object id="24" name="TileData" x="1264" y="256" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
-    <object id="24" name="TileData" x="1264" y="304" width="16" height="16">
+    <object id="25" name="TileData" x="1264" y="304" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
-    <object id="25" name="TileData" x="1280" y="256" width="16" height="16">
+    <object id="26" name="TileData" x="1280" y="256" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
-    <object id="26" name="TileData" x="1280" y="304" width="16" height="16">
+    <object id="27" name="TileData" x="1280" y="304" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
-    <object id="27" name="TileData" x="1408" y="928" width="16" height="16">
+    <object id="28" name="TileData" x="1408" y="928" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
-    <object id="28" name="TileData" x="1408" y="976" width="16" height="16">
+    <object id="29" name="TileData" x="1408" y="976" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
-    <object id="29" name="TileData" x="1424" y="928" width="16" height="16">
+    <object id="30" name="TileData" x="1424" y="928" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
-    <object id="30" name="TileData" x="1424" y="976" width="16" height="16">
+    <object id="31" name="TileData" x="1424" y="976" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot" />
       </properties>
     </object>
   </objectgroup>
   <objectgroup id="15" name="Paths" visible="false">
-    <object id="31" name="TileData" x="1408" y="48" width="16" height="16">
+    <object id="32" name="TileData" x="1408" y="48" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 628" />
       </properties>
     </object>
-    <object id="32" name="TileData" x="1408" y="144" width="16" height="16">
+    <object id="33" name="TileData" x="1408" y="144" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 629" />
       </properties>
     </object>
-    <object id="33" name="TileData" x="1440" y="96" width="16" height="16">
+    <object id="34" name="TileData" x="1440" y="96" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 631" />
       </properties>
     </object>
-    <object id="34" name="TileData" x="1472" y="48" width="16" height="16">
+    <object id="35" name="TileData" x="1472" y="48" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 633" />
       </properties>
     </object>
-    <object id="35" name="TileData" x="1488" y="144" width="16" height="16">
+    <object id="36" name="TileData" x="1488" y="144" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 633" />
       </properties>

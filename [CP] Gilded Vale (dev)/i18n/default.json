@@ -6,6 +6,7 @@
   "location.vale-hall": "The Exhibition Hall",
   "location.vale-fern": "Fern's Cottage",
   "location.vale-emmett": "Emmett's Cottage",
+  "location.vale-studio": "The Old Studio",
   "vale.hall.mural": "The Vale, painted by the artists who lived here, one long summer. Each of them added one thing. The paint is flaking now.",
   "vale.hall.jade_hills": "'Jade Hills.' Oil on canvas, painted from the overlook. The artist's name has worn off the frame.",
   "vale.hall.eco_hill": "'A Night On Eco-Hill.' The first painting ever hung in this hall, says the old catalogue.",
@@ -33,5 +34,14 @@
   "vale.hall.unshown": "A sculpture that never made it out to the gallery.",
   "vale.hall.frame_rack": "Empty frames, saved for paintings nobody has painted yet.",
   "vale.hall.dancing_grass": "'Dancing Grass.' Too tall for the gallery's walls, so it hangs back here.",
-  "vale.hall.ledger": "The Hall's ledger: every painting ever shown here, in the same careful handwriting."
+  "vale.hall.ledger": "The Hall's ledger: every painting ever shown here, in the same careful handwriting.",
+  "vale.studio.unfinished": "An unfinished painting of the Vale at sunset. Half of it is still pencil lines. Nobody knows who painted it.",
+  "vale.studio.note": "A folded note in a careful hand. It isn't addressed to anyone.",
+  "vale.studio.sketches": "Charcoal studies for the painting on the easel: the valley, a figure, a pair of hands, over and over.",
+  "vale.studio.backward": "A painting turned to face the wall. Someone hung it that way, and never turned it back.",
+  "vale.studio.window": "The tall north window, grey with dust. Painters chose this studio for its light.",
+  "vale.studio.trestle": "A trestle crusted with years of paint, in every colour the Vale has.",
+  "vale.studio.cot": "A bed with a thin, worn mattress. Whoever worked here slept here too.",
+  "vale.studio.washstand": "A cracked jug in a dry basin.",
+  "vale.studio.trunk": "A trunk, locked. The key is nowhere to be found."
 }
