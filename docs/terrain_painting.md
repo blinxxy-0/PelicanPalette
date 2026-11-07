@@ -136,3 +136,15 @@ A cell's four corners can't tell a straight bank from a step in a diagonal from 
 3. Paint with `paint_ground`. Reuse `vale_terrain.Table`; don't hand-pick tile ids except the rules above.
 4. For anything vanilla doesn't have, PixelLab inpaint into a bare render, keeping only the new object's own pixels so the ground stays seasonal.
 5. Check every season, in sections, against vanilla, then in game (section 9), **before showing the user.**
+
+## Paved lanes (cobble), added 2026-11-06
+
+The user found dirt paths everywhere "kinda jank", so the village is paved with Pelican Town's own cobble. Timberline Falls uses the same cobble for its footpaths.
+
+- **The terrain class.** Cobble is class `C`. Its plain tiles are `COBBLE` in tools/vale_terrain.py, on the town sheet: 2776, 2777, 2808 and 2809 make a 2 × 2 block of stones, with 2681, 2686, 2810, 3035 and 3036 as worn variants. The curbed edges and corners are learned from Town like any other edge.
+- **Two pieces are pinned.** The learner can't place these two (in Town they only sit beside pieces it doesn't know), so `COBBLE_PIN` in build_vale.py fixes them: the plain top edge (GGCC) is 2651, and the top-right corner (GGCG) is 2650.
+- **Plain cobble is tiled, not picked.** It is laid by (x % 2, y % 2) from that 2 × 2 block, with about 10% worn stones. Picking the commonest tile repeats one stone everywhere.
+- **Lanes are rectangles of grid corners** (`lane()`). The game has no diagonal or ragged cobble. A lane 3 corners wide (2 full tiles plus curbs) is centred on a flight of stairs at sx+2.
+- **Cobble never touches dirt or sand.** The curbs meet grass, so any S corner next to a C becomes G. Trails start a step away from the paving, as in Town.
+- **Seasons come free.** spring_town swaps to its seasonal versions, and winter keeps the cobble with snowy curbs.
+- **Asphalt.** The Bus Stop's road pieces (outdoors sheet 1028–1057) are straight and horizontal only. Timberline makes its turns from rotated copies of them (Tiled flip flags) plus its own sheet. A Vale road with turns would need our own sheet built the same way.

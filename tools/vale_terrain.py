@@ -34,6 +34,10 @@ TOWN_SHEETS = {"spring_outdoorsTileSheet": (1, 25, 1975), "paths": (1976, 4, 64)
                "spring_outdoorsTileSheet2": (4344, 16, 1120), "spring_Shadows": (5464, 19, 475),
                "spring_Waterfalls": (5939, 36, 900)}
 GROUND_SHEETS = ("spring_outdoorsTileSheet", "spring_outdoorsTileSheet2")
+# Pelican Town's cobbled paving (the square and its lanes), on the town sheet: its plain
+# tiles are cobble (C), so its curbed edges and corners are learned like any other edge.
+# (the user, 2026-11-06: dirt paths everywhere are "kinda jank"; the village gets paving.)
+COBBLE = {2776, 2777, 2808, 2809, 2681, 2686, 2810, 3035, 3036}
 LAYERS = ("Back", "Buildings")
 
 
@@ -49,7 +53,8 @@ def corner_class(rgb):
 
 
 def pure_tiles(exports):
-    """Town gid -> class, for ground tiles all of one terrain (four corners and centre agree)."""
+    """Town gid -> class, for ground tiles all of one terrain (four corners and centre agree),
+    and the town sheet's plain cobble."""
     out = {}
     for sheet in GROUND_SHEETS:
         first, cols, _ = TOWN_SHEETS[sheet]
@@ -65,6 +70,7 @@ def pure_tiles(exports):
                     cls.add(corner_class(tuple(sum(c[i] for c in ps) // len(ps) for i in range(3))))
                 if len(cls) == 1 and "?" not in cls:
                     out[first + ty * cols + tx] = cls.pop()
+    out.update((gid, "C") for gid in COBBLE)
     return out
 
 

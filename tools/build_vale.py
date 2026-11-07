@@ -36,17 +36,32 @@ from render_tmx import layer_data
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "art"))
 from vanillafy import selout
 
-PICKS_DIR = "art/gilded_vale/buildings/vale_buildings_v2"
-SHEET = "GildedValeBuildings.png"
+ART = "art/gilded_vale"
+# The building sheet is seasonal: the game swaps any sheet named spring_* for its
+# summer_, fall_ and winter_ siblings (docs/terrain_painting.md, section 2). Summer and
+# fall are the spring art; winter takes each piece's winter version where it has one.
+SHEET = "spring_GildedValeBuildings.png"
 SHEET_COLS = 16
-# name: (pick, left tile x, bottom tile y, solid rows)
+# name: (art, left tile x, bottom tile y, solid rows); art under ART, without .png
 PICKS = {
-    "vale_house": ("vale_house_s3_0", 23, 19, 3),
-    "pottery": ("pottery_s3_3", 43, 18, 3),
-    "atelier": ("atelier_s1_0", 70, 23, 3),
-    "hall": ("exhibition_hall_s3_0", 38, 39, 3),
-    "fern": ("fern_cottage_s2_0", 9, 38, 3),
+    "vale_house": ("buildings/vale_buildings_v2/vale_house_s3_0", 23, 19, 3),
+    "pottery": ("buildings/vale_buildings_v2/pottery_s3_3", 43, 18, 3),
+    "atelier": ("buildings/vale_buildings_v2/atelier_s1_0", 70, 23, 3),
+    "hall": ("buildings/vale_buildings_v2/exhibition_hall_s3_0", 38, 39, 3),
+    "fern": ("buildings/vale_buildings_v2/fern_cottage_s2_0", 9, 38, 3),
+    "emmett": ("buildings/vale_buildings_v3/emmett_cottage_s2_1", 14, 61, 3),     # the user's pick, 2026-11-06
 }
+# Each piece's winter version, where it has one (PixelLab colour-only edits of the pick).
+WINTER = {
+    "vale_house": "buildings/vale_winter_v2/vale_house_winter_0",
+    "pottery": "buildings/vale_winter_v2/pottery_winter_0",
+    "atelier": "buildings/vale_winter_v2/atelier_winter_0",
+    "hall": "buildings/vale_winter_v2/exhibition_hall_winter_0",
+    "fern": "buildings/vale_winter_v2/fern_cottage_winter_0",
+}
+# The amphitheatre (the user's pick s1, 2026-11-06): PixelLab inpaint into the lower
+# cliff (tools/art/vale_inpaint.py), its art covering map tiles x 31-43, y 46-55.
+AMPHITHEATRE = ("amphitheatre/amph_s1_0", 31, 46)
 
 W, H = 96, 76
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
@@ -135,9 +150,7 @@ def main():
 
     # Buildings: plain solid boxes on their footprints (the roofs come with the art).
     boxes = {
-        "bus": (10, 2, 8, 3),
         "studios_1": (68, 36, 5, 3), "studios_2": (75, 36, 5, 3), "studios_3": (82, 36, 5, 3),
-        "emmett": (16, 56, 6, 3),
     }
     for x, y, w, h in boxes.values():
         fill("Buildings", x, y, x + w, y + h, wall)
@@ -151,7 +164,7 @@ def main():
     for y in range(H):
         for x in range(W):
             edge = x < 5 or x > 90 or y < 2 or y > 72
-            if edge and (x + y) % 2 == 0 and tree_ok(x, y) and not (y in (5, 6, 7, 8) and x < 10):
+            if edge and (x + y) % 2 == 0 and tree_ok(x, y) and not (3 <= y <= 12 and x < 6):       # the high street runs out west, clear of the woods
                 g["Paths"][y][x] = paths_first + rnd.choice((9, 10, 11))
 
     props = {"Outdoors": "T", "Spring_Objects": "T", "Summer_Objects": "T", "Fall_Objects": "T", "Winter_Objects": "T",
@@ -214,6 +227,9 @@ LOG_DECK = (780, 781, 782, 783)          # the log footbridge: left end, middle,
 # bank's commonest piece is a wedge that repeated as a sawtooth (the user's
 # screenshot); this is the mirror of the west bank's (5177, 284).
 SHORE_PIN = {("W", "S", "W", "S"): (5178, 285), ("S", "W", "S", "W"): (5177, 284)}
+# Cobble edges the learner can't place (in Town they only sit beside pieces it doesn't
+# know): the plain top edge, and the top-right corner, the mirror of 2648 (2026-11-06).
+COBBLE_PIN = {("G", "G", "C", "C"): (2651, 0), ("G", "G", "C", "G"): (2650, 0)}
 LILY_PADS = set(range(1294, 1298)) | set(range(1319, 1323))   # shore overlays with a lily pad (they lined up along banks)
 
 
@@ -311,6 +327,7 @@ def paint_ground(g, exports):
     from vale_terrain import Table
     table = Table(exports)
     GROUND.update(table.corners)
+    GROUND.update({stack: pat for pat, stack in COBBLE_PIN.items()})
     rnd = random.Random(11)
     V = [["G"] * (W + 1) for _ in range(H + 1)]
 
@@ -474,35 +491,67 @@ def paint_ground(g, exports):
             V[y][x] = "S"
 
     # Paths: ragged strokes of dirt.
+    # Dirt is for the wild trails only; the village itself is paved (lanes below).
     for pts, r in (
-        ([(0, 7), (12, 7), (22, 6.5), (36, 6.5), (54, 7), (57, 13), (57, 21)], 1.6),   # the road, along to the upper bridge (clear of the inn's roof)
-        ([(21, 8), (21, 20.5), (32, 21.5), (32, 26)], 1.1),                            # round the inn to its door and the stairs
-        ([(47, 19.5), (57, 19.5)], 1.0),                                                 # the pottery's door across to the bridge path
-        ([(65, 22), (69, 24.5), (80, 24.5), (80, 26)], 1.1),                         # Lupini's side: the atelier, its stairs
-        ([(32, 35.4), (32, 41.5), (36, 41.5)], 1.2),                                   # stairs to the plaza
-        ([(56, 42), (65, 42), (82, 41.5)], 1.2),                                         # the middle bridge, to the Old Studios
-        ([(80, 35.4), (80, 41.5)], 1.0),                                             # Lupini's stairs down to the Old Studios
-        ([(82, 41.5), (86, 44), (86, 46)], 1.0),                                   # and on to the east stairs
-        ([(31.5, 41.5), (13, 40), (13, 38.6)], 1.0),                                                 # to Fern's door and the sculpture garden
-        ([(46, 44), (52, 45.5), (52, 46)], 1.0),                                                   # the plaza to the top of the lower stairs
-        ([(52, 55.4), (52, 56), (44, 57), (38, 57.5), (22, 58.5)], 1.1),                           # from their foot to the amphitheatre and Emmett's
-        ([(86, 55.4), (86.5, 64)], 1.0),                                                 # the east stairs down to the overlook
-        ([(10, 7), (6.5, 14), (6.5, 20)], 0.9),                                          # the Painter's clearing
+        ([(57, 19), (57, 23)], 1.2),                                  # the upper bridge's west approach, off the lane
+        ([(64.5, 21.5), (65.5, 21.5)], 1.0),                          # and its east one
+        ([(54.5, 41.5), (56, 41.5)], 1.0),                            # the middle bridge's approaches
+        ([(65, 41.5), (66, 41.5)], 1.0),
+        ([(52, 55.4), (52, 56), (47, 56.5)], 1.1),                    # the lower stairs' foot, along the lake's rim
+        ([(86, 55.4), (86.5, 64)], 1.0),                              # the east stairs down to the overlook
+        ([(10, 11), (6.5, 14), (6.5, 20)], 0.9),                      # the Painter's clearing
     ):
         stroke(pts, r, "S")
-    area(36, 40, 55, 45, "S")                                                            # the plaza, clear of the cliff
-    # Each flight's approaches: the stairs' width, centred on them, stopping just short
-    # of the steps with a ragged end like any path's (the user, 2026-11-04).
+    # Each lower flight's approaches: the stairs' width, centred on them, stopping just
+    # short of the steps with a ragged end like any path's (the user, 2026-11-04). The
+    # upper flights are paved right up to the steps, as the Town square's stairs are.
     for sx, top in STAIR_SPOTS:
-        stroke([(sx + 2, top - 4), (sx + 2, top - 2)], 1.5, "S")        # ending just short of the top step, ragged
-        stroke([(sx + 2, top + 7.4), (sx + 2, top + 9)], 1.5, "S")      # and starting just past the bottom one
+        if top == CLIFF_B:
+            stroke([(sx + 2, top + 7.4), (sx + 2, top + 9)], 1.5, "S")      # starting just past the bottom step
+
+    # The paved village (Pelican Town's cobble, tools/vale_terrain.py COBBLE): straight
+    # lanes and squares with curbed edges, as the Town square has; the game has no
+    # diagonal or ragged cobble, so every lane is a rectangle of grid corners.
+    def lane(x0, y0, x1, y1):
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                V[y][x] = "C"
+    for box in (
+        (4, 3, 19, 9),          # the bus square, where Pam's bus stops (drawn in C#, as in the Desert)
+        (0, 6, 54, 9),          # the high street, in from the west road
+        (52, 6, 54, 21),        # down past the pottery
+        (44, 19, 54, 21),       # to the pottery's door
+        (20, 9, 22, 22),        # round to the inn
+        (20, 20, 34, 22),       # the inn's front
+        (31, 20, 33, 29),       # down to the west stairs
+        (67, 24, 82, 26),       # the atelier's front, from the upper bridge's bank
+        (79, 24, 81, 29),       # Lupini's stairs
+        (31, 33, 33, 41),       # the foot of the west stairs
+        (31, 40, 54, 46),       # the plaza before the Exhibition Hall
+        (11, 40, 31, 42),       # west to Fern's
+        (11, 38, 13, 41),       # her door
+        (68, 40, 88, 42),       # east of the middle bridge: the Old Studios' row
+        (79, 33, 81, 41),       # the foot of Lupini's stairs
+        (85, 40, 87, 49),       # on to the east stairs
+        (51, 45, 53, 49),       # the plaza to the lower stairs
+        (22, 56, 45, 58),       # the amphitheatre's forecourt
+        (22, 56, 24, 64),       # down past Emmett's cottage
+        (14, 62, 24, 64),       # to his door
+    ):
+        lane(*box)
+    # Cobble and dirt never touch in the game (its curbs meet grass): a strip of grass
+    # parts them, so a trail starts a step away from the paving, as the Town square's do.
+    for y in range(H + 1):
+        for x in range(W + 1):
+            if V[y][x] == "S" and any(V[j][i] == "C" for i, j in around(x, y, 1)):
+                V[y][x] = "G"
 
     # Darker grass: soft patches, kept two tiles from dirt and water.
     dark = noise(7, 21)
     for y in range(H + 1):
         for x in range(W + 1):
             near_cliff = any(top - 2 <= y <= top + 9 for top in (CLIFF_A, CLIFF_B))   # plain grass round cliffs and their shadow
-            if V[y][x] == "G" and dark(x, y) >= 0.6 and not near_cliff and not any(V[j][i] in "SW" for i, j in around(x, y, 2)):
+            if V[y][x] == "G" and dark(x, y) >= 0.6 and not near_cliff and not any(V[j][i] in "SWC" for i, j in around(x, y, 2)):
                 V[y][x] = "D"
 
     # No lone corners: a single corner of one terrain inside another (a tuft of grass
@@ -520,7 +569,7 @@ def paint_ground(g, exports):
             for x in range(W):
                 tl, tr, bl, br = V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1]
                 if tl == br and tr == bl and tl != tr:
-                    keep = "W" if "W" in (tl, tr) else ("S" if "S" in (tl, tr) else "G")
+                    keep = next(c for c in "WSCG" if c in (tl, tr))
                     V[y][x] = V[y][x + 1] = V[y + 1][x] = V[y + 1][x + 1] = keep
 
     misses = collections.Counter()
@@ -530,11 +579,19 @@ def paint_ground(g, exports):
             plain = len(set(pat)) == 1
             # Plain ground keeps to its main tile (grass with its tufts), so it
             # doesn't speckle; edges vary among the game's common pieces.
-            if plain:
+            if pat == ("C",) * 4:
+                # The square's paving: a 2 x 2 block of stones repeated (rows of 2776 2777
+                # over 2808 2809), with the odd worn stone, as in the Town square.
+                r = rnd.random()
+                stack = ((2681 if r < 0.08 else 2810 if r < 0.1 else
+                          (2776, 2777, 2808, 2809)[(x % 2) + 2 * (y % 2)]), 0)
+            elif plain:
                 bare = [c for c in table.by_pattern.get(pat, []) if c[0][1] == 0][:2 if pat == ("G",) * 4 else 1]
                 stack = bare[0][0] if len(bare) == 1 or rnd.random() < bare[0][1] / (bare[0][1] + bare[1][1]) else bare[1][0]
             elif pat in SHORE_PIN:
                 stack = SHORE_PIN[pat]
+            elif pat in COBBLE_PIN:
+                stack = COBBLE_PIN[pat]
             elif "W" in pat:
                 # Shores: the plain version where the game has one (the commonest east
                 # bank carries a lily pad, which lined up in a row), else its overlay.
@@ -834,22 +891,62 @@ def lay_stairs(g, im, sx, sy, x, top):
             g["Back2" if i in (1, 2) else "Buildings2"][ty][tx] = gid
 
 
+def tile_piece(im):
+    """A piece cropped to its art, padded to whole tiles (bottom and centre kept),
+    alpha made hard, outlines softened."""
+    im = im.crop(im.getbbox())
+    a = im.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
+    im.putalpha(a)
+    cols, rows = -(-im.width // 16), -(-im.height // 16)
+    tile = Image.new("RGBA", (cols * 16, rows * 16))
+    tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
+    return selout(tile)
+
+
+def amphitheatre_art(path):
+    """The painted amphitheatre with the ground round it dropped: grass, path and the
+    cliff's rock connected to the edge of the painting go, so the map's own seasonal
+    ground and our cliff show through (as for the stairs); only stone and stage stay."""
+    im = Image.open(path).convert("RGBA")
+    px = im.load()
+    w, h = im.size
+
+    def ground(c):
+        r, g, b, a = c
+        return a and ((g > r + 12 and g > b + 12) or (r > 170 and r > g + 25 and g > b + 40) or b < r * 0.3)
+    seen, stack = set(), [(x, y) for x in range(w) for y in (0, h - 1)] + [(x, y) for y in range(h) for x in (0, w - 1)]
+    while stack:
+        x, y = stack.pop()
+        if (x, y) in seen or not (0 <= x < w and 0 <= y < h) or not ground(px[x, y]):
+            continue
+        seen.add((x, y))
+        stack += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+    for x, y in seen:
+        px[x, y] = (0, 0, 0, 0)
+    return im
+
+
 def place_buildings(g, assets):
-    """The picked buildings: cropped to their art, padded to whole tiles (bottom and
-    centre kept), outlines softened, packed on SHEET, then laid on the map."""
-    pieces = []
+    """The picked buildings, the stairs and the amphitheatre: packed on the seasonal
+    sheets (spring/summer/fall the same, winter with each piece's winter version),
+    then laid on the map."""
+    pieces = []          # (name, spring image, winter image, left, bottom, solid)
     if not os.environ.get("VALE_NO_STAIRS"):
-        pieces.append(("stairs", stairs_art(), None, None, None))
-    for name, (pick, left, bottom, solid) in PICKS.items():
-        im = Image.open(os.path.join(PICKS_DIR, pick + ".png")).convert("RGBA")
-        im = im.crop(im.getbbox())
-        im = Image.eval(im, lambda v: v)  # copy
-        a = im.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
-        im.putalpha(a)
-        cols, rows = -(-im.width // 16), -(-im.height // 16)
-        tile = Image.new("RGBA", (cols * 16, rows * 16))
-        tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
-        pieces.append((name, selout(tile), left, bottom, solid))
+        st = stairs_art()
+        pieces.append(("stairs", st, st, None, None, None))
+    for name, (art, left, bottom, solid) in PICKS.items():
+        spring = tile_piece(Image.open(os.path.join(ART, art + ".png")).convert("RGBA"))
+        winter = spring
+        if name in WINTER and os.path.exists(os.path.join(ART, WINTER[name] + ".png")):
+            winter = tile_piece(Image.open(os.path.join(ART, WINTER[name] + ".png")).convert("RGBA"))
+            if winter.size != spring.size:
+                print("winter art for", name, "doesn't match its spring size; using spring")
+                winter = spring
+        pieces.append((name, spring, winter, left, bottom, solid))
+    amph = None
+    if os.path.exists(os.path.join(ART, AMPHITHEATRE[0] + ".png")):
+        amph = amphitheatre_art(os.path.join(ART, AMPHITHEATRE[0] + ".png"))
+        pieces.append(("amphitheatre", amph, amph, AMPHITHEATRE[1], AMPHITHEATRE[2], None))
     slots, x, y, row_h = [], 0, 0, 0
     for _, im, *_ in pieces:
         cols, rows = im.width // 16, im.height // 16
@@ -858,15 +955,35 @@ def place_buildings(g, assets):
         slots.append((x, y))
         x += cols
         row_h = max(row_h, rows)
-    sheet = Image.new("RGBA", (SHEET_COLS * 16, (y + row_h) * 16))
-    for (_, im, *_), (sx, sy) in zip(pieces, slots):
-        sheet.alpha_composite(im, (sx * 16, sy * 16))
-    sheet.save(os.path.join(assets, SHEET))
-    for (name, im, left, bottom, solid), (sx, sy) in zip(pieces, slots):
+    sheets = {season: Image.new("RGBA", (SHEET_COLS * 16, (y + row_h) * 16)) for season in ("spring", "winter")}
+    for (_, spring, winter, *_), (sx, sy) in zip(pieces, slots):
+        sheets["spring"].alpha_composite(spring, (sx * 16, sy * 16))
+        sheets["winter"].alpha_composite(winter, (sx * 16, sy * 16))
+    for season in ("spring", "summer", "fall"):
+        sheets["spring"].save(os.path.join(assets, SHEET.replace("spring_", season + "_")))
+    sheets["winter"].save(os.path.join(assets, SHEET.replace("spring_", "winter_")))
+    old = os.path.join(assets, "GildedValeBuildings.png")
+    if os.path.exists(old):
+        os.remove(old)      # (the sheet before it was seasonal)
+    for (name, im, _, left, bottom, solid), (sx, sy) in zip(pieces, slots):
         cols, rows = im.width // 16, im.height // 16
         if name == "stairs":
             for x, top in STAIR_SPOTS:
                 lay_stairs(g, im, sx, sy, x, top)
+            continue
+        if name == "amphitheatre":
+            # Over the cliff and under the farmer (Buildings2); where it fully covers a
+            # tile, the cliff's collision comes off, so the tiers walk down to the stage.
+            for j in range(rows):
+                for i in range(cols):
+                    t = im.crop((i * 16, j * 16, i * 16 + 16, j * 16 + 16))
+                    if t.getbbox() is None:
+                        continue
+                    tx, ty = left + i, bottom + j
+                    g["Buildings2"][ty][tx] = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
+                    if all(a == 255 for a in t.getchannel("A").getdata()):
+                        g["Buildings"][ty][tx] = g["Front"][ty][tx] = 0
+            print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {bottom}-{bottom + rows - 1}")
             continue
         top = bottom - rows + 1
         for j in range(rows):
@@ -883,7 +1000,7 @@ def place_buildings(g, assets):
                     g["Front2"][ty][tx] = gid
         print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {top}-{bottom}")
     global BUILD_SHEET_H
-    BUILD_SHEET_H = sheet.height
+    BUILD_SHEET_H = sheets["spring"].height
 
 
 BUILD_FIRST = 20000

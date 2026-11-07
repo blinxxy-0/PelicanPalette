@@ -1,0 +1,51 @@
+{
+ "batch": "vale_buildings_v3",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_usage": "Stardew Valley building pixel art: palette, outline weight, how the roofs are shaded in rows of tiles or shingles with light ridges, dark gable edges and deep shadow under the eaves, and the high top-down front camera where the roof fills over half the building",
+  "reference_usage": "camera, silhouette and roof planes: the lighter roof colour is roof facing up toward the viewer, the darker is roof facing forward, the darkest band is the shadow under the eaves; keep this outline, these openings, and the roof taking more than half the height"
+ },
+ "jobs": {
+  "emmett_cottage_s1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/emmett_cottage_guide.png",
+   "description": "A travelling folk musician's small cottage in Stardew Valley pixel art: a warm wren-brown wooden shingle roof in rows with light ridges, a fieldstone chimney, cream plaster walls with dark timber, small paned windows, a weathered wooden door, a rough plank bench beside the door with a fiddle case on it, a lantern. STRICTLY FRONT-FACING like every Stardew Valley building: the front wall seen square-on and flat, no side walls visible, not turned or rotated, no three-quarter or isometric angle; the roof seen from above and in front, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 128,
+    "height": 128
+   }
+  },
+  "emmett_cottage_s2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/emmett_cottage_guide.png",
+   "description": "A travelling folk musician's small cottage in Stardew Valley pixel art: a warm wren-brown wooden shingle roof in rows with light ridges, a fieldstone chimney, cream plaster walls with dark timber, small paned windows, a weathered wooden door, a rough plank bench beside the door with a fiddle case on it, a lantern. STRICTLY FRONT-FACING like every Stardew Valley building: the front wall seen square-on and flat, no side walls visible, not turned or rotated, no three-quarter or isometric angle; the roof seen from above and in front, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 2,
+   "image_size": {
+    "width": 128,
+    "height": 128
+   }
+  },
+  "old_studio_s1": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/old_studio_guide.png",
+   "description": "An old, empty artists' studio in Stardew Valley pixel art, a little run-down but sturdy: a grey-green slate roof with a large slanted north-light window boarded over with planks, pale stone walls with moss at the base, a big front window boarded up with crossed planks, a narrow wooden door, a faded painted sign board above the door with no text. STRICTLY FRONT-FACING like every Stardew Valley building: the front wall seen square-on and flat, no side walls visible, not turned or rotated, no three-quarter or isometric angle; the roof seen from above and in front, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 1,
+   "image_size": {
+    "width": 96,
+    "height": 128
+   }
+  },
+  "old_studio_s2": {
+   "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/shop_exterior/town_style.png",
+   "reference_image": "C:/Users/blinx/Desktop/MuseStardew/art/gilded_vale/buildings/old_studio_guide.png",
+   "description": "An old, empty artists' studio in Stardew Valley pixel art, a little run-down but sturdy: a grey-green slate roof with a large slanted north-light window boarded over with planks, pale stone walls with moss at the base, a big front window boarded up with crossed planks, a narrow wooden door, a faded painted sign board above the door with no text. STRICTLY FRONT-FACING like every Stardew Valley building: the front wall seen square-on and flat, no side walls visible, not turned or rotated, no three-quarter or isometric angle; the roof seen from above and in front, a steep front-gabled roof whose ridge runs back away from the viewer, two big shingled roof planes (lit on the left, shaded on the right) filling about 60% of the height. Building only, nothing around it, no ground, no text, transparent background.",
+   "seed": 2,
+   "image_size": {
+    "width": 96,
+    "height": 128
+   }
+  }
+ }
+}

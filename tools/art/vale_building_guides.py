@@ -89,6 +89,9 @@ def chimney(d, x, y, w=10, h=26, col=CHIM):
 
 
 def save(img, name):
+    # the whole roof must be on the canvas: a ridge running off the top came back cut off
+    top = img.getbbox()[1]
+    assert top >= 2, f"{name}: the guide's roof touches the top of its canvas"
     os.makedirs(OUT, exist_ok=True)
     img.save(os.path.join(OUT, name + "_guide.png"))
     print(name, img.size)
@@ -179,6 +182,33 @@ def fern_cottage():  # 10 x 9 tiles: a thatched front-gable cottage and a glass 
     save(img, "fern_cottage")
 
 
+def emmett_cottage():  # 8 x 8 tiles: a small wren-brown front gable, a stone chimney, a bench by the door
+    img = Image.new("RGBA", (128, 144)); d = ImageDraw.Draw(img)        # 9 tiles tall, so the ridge fits
+    brown = (128, 92, 62)
+    chimney(d, 90, 30, 12, 26, (150, 146, 138))
+    peak, _, _ = gable(d, 60, 46, 90, 143, brown, wall=(222, 206, 176))
+    window(d, 54, peak + 8, 12, 10)
+    window(d, 22, 104); window(d, 86, 104)
+    door(d, 53, 143, 14, 26)
+    d.rectangle([20, 132, 44, 137], fill=BEAM)
+    save(img, "emmett_cottage")
+
+
+def old_studio():  # 6 x 9 tiles: an empty artists' studio, a big north-light window boarded up
+    # (9 tiles tall, not 8: the roof's ridge ran off the top of an 8-tile canvas and
+    # every candidate came back with its tip cut off, the user, 2026-11-06)
+    img = Image.new("RGBA", (96, 144)); d = ImageDraw.Draw(img)
+    slate = (104, 110, 104)
+    peak, ridge_end, plane = gable(d, 48, 42, 88, 143, slate, wall=(200, 190, 170))
+    assert ridge_end >= 4, ridge_end
+    d.polygon([plane(0.2, 0.25), plane(0.8, 0.25), plane(0.8, 0.7), plane(0.2, 0.7)], fill=(150, 120, 80))
+    d.rectangle([22, 100, 74, 120], fill=(150, 120, 80), outline=BEAM)
+    for y in (104, 112):
+        d.line([(20, y), (76, y + 4)], fill=BEAM, width=2)
+    door(d, 41, 143, 14, 22)
+    save(img, "old_studio")
+
+
 if __name__ == "__main__":
-    for f in (vale_house, exhibition_hall, atelier, pottery, fern_cottage):
+    for f in (vale_house, exhibition_hall, atelier, pottery, fern_cottage, emmett_cottage, old_studio):
         f()

@@ -37,3 +37,6 @@ release/nexus/preview.html
 
 # The dev copies of the game (tools/test): Mods folders, PIDs, suite output.
 .devgame/
+
+# Other people's mods, for reference only (e.g. Timberline Falls and its requirements): never commit.
+reference_mods/
