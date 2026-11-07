@@ -1,0 +1,171 @@
+{
+ "batch": "atelier_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle, pixel scale and colours of this room's furniture: front-facing from slightly above, wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "north_window_1": {
+   "image_size": {
+    "width": 80,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wide many-paned artist's studio window set in a wall, five tiles wide and two tall, white-painted wooden frame with a grid of small glass panes showing pale blue daylight sky, a little ivy creeping over one top corner",
+   "seed": 500
+  },
+  "north_window_2": {
+   "image_size": {
+    "width": 80,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wide many-paned artist's studio window set in a wall, five tiles wide and two tall, white-painted wooden frame with a grid of small glass panes showing pale blue daylight sky, a little ivy creeping over one top corner",
+   "seed": 501
+  },
+  "easel_big_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden artist's easel standing on the floor holding a half-finished abstract colourful painting on canvas, a small wooden stool in front of it, paint splashes on the floor",
+   "seed": 502
+  },
+  "easel_big_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden artist's easel standing on the floor holding a half-finished abstract colourful painting on canvas, a small wooden stool in front of it, paint splashes on the floor",
+   "seed": 503
+  },
+  "paint_table_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small wooden side table covered in paint: a wooden palette with blobs of colour, squeezed paint tubes, a jar of brushes, rags",
+   "seed": 504
+  },
+  "paint_table_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small wooden side table covered in paint: a wooden palette with blobs of colour, squeezed paint tubes, a jar of brushes, rags",
+   "seed": 505
+  },
+  "brush_table_1": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a long wooden work table, three tiles wide, crowded with glass jars of paint brushes, bottles of oil and turpentine, rolled canvas, sketchbooks and rags",
+   "seed": 506
+  },
+  "brush_table_2": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a long wooden work table, three tiles wide, crowded with glass jars of paint brushes, bottles of oil and turpentine, rolled canvas, sketchbooks and rags",
+   "seed": 507
+  },
+  "canvas_stack_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a few blank stretched canvases of different sizes leaning against each other on the floor, seen from the back and the front, wooden frames",
+   "seed": 508
+  },
+  "canvas_stack_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a few blank stretched canvases of different sizes leaning against each other on the floor, seen from the back and the front, wooden frames",
+   "seed": 509
+  },
+  "bust_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a white plaster classical bust sculpture of a head on a short wooden plinth, used for drawing practice",
+   "seed": 510
+  },
+  "bust_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a white plaster classical bust sculpture of a head on a short wooden plinth, used for drawing practice",
+   "seed": 511
+  },
+  "display_easel_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall dark wooden gallery display easel holding a framed abstract painting in a gold frame, blue and ochre swirls",
+   "seed": 512
+  },
+  "display_easel_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall dark wooden gallery display easel holding a framed abstract painting in a gold frame, blue and ochre swirls",
+   "seed": 513
+  },
+  "bench_1": {
+   "image_size": {
+    "width": 48,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a long plain wooden gallery bench without a back, three tiles wide and one tile tall, seen from the front",
+   "seed": 514
+  },
+  "bench_2": {
+   "image_size": {
+    "width": 48,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a long plain wooden gallery bench without a back, three tiles wide and one tile tall, seen from the front",
+   "seed": 515
+  },
+  "hat_stand_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden coat and hat stand with a wide straw sun hat and an indigo painter's smock stained with paint hanging on it",
+   "seed": 516
+  },
+  "hat_stand_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden coat and hat stand with a wide straw sun hat and an indigo painter's smock stained with paint hanging on it",
+   "seed": 517
+  },
+  "empty_hook_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: an empty brass picture hook nail on a wall with a faint paler rectangle outline on the wall where a painting used to hang, very subtle, mostly transparent",
+   "seed": 518
+  },
+  "empty_hook_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: an empty brass picture hook nail on a wall with a faint paler rectangle outline on the wall where a painting used to hang, very subtle, mostly transparent",
+   "seed": 519
+  }
+ }
+}

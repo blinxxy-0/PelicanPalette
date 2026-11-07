@@ -169,9 +169,9 @@ BUILDINGS = {
         zones=[(2, 17, 19, 20, "parquet")],
         wall=103, walls={"hall": 76},        # plain plaster in the studio; the hall a gallery's deep red
         picks={"empty_hook": "art/gilded_vale/interiors/atelier/empty_hook", **{k: "art/gilded_vale/interiors/atelier/atelier_v1/" + v for k, v in {
-            "north_window": "north_window_1_0", "easel_big": "easel_big_1_0", "paint_table": "paint_table_1_0",
-            "brush_table": "brush_table_1_0", "canvas_stack": "canvas_stack_1_0", "bust": "bust_1_0",
-            "display_easel": "display_easel_1_0", "bench": "bench_1_0", "hat_stand": "hat_stand_1_0",
+            "north_window": "north_window_1_0", "easel_big": "easel_big_1_0", "paint_table": "paint_table_1_5",
+            "brush_table": "brush_table_1_8", "canvas_stack": "canvas_stack_1_0", "bust": "bust_1_0",
+            "display_easel": "display_easel_1_27", "bench": "../bench_clean", "hat_stand": "hat_stand_1_3",
             "chest": "../../pottery/pottery_v1/chest_1_9"}.items()}},
         lights=[(5, 6), (11, 7), (18, 6), (3, 10), (15, 10), (5, 18), (11, 18), (16, 18)],
         pieces=[
@@ -191,8 +191,8 @@ BUILDINGS = {
             # this week's painting on a display easel, his hat stand by the door
             ("painting_4", 3, 14), ("painting_5", 6, 14), ("empty_hook", 9, 14),
             ("painting_6", 13, 14), ("painting_7", 16, 14),
-            ("bench", 12, 18), ("display_easel", 17, 17), ("hat_stand", 8, 18),
-            ("plant", 2, 17), ("plant_b", 19, 19), ("canvas_stack#2", 2, 19),
+            ("rug", 11, 17, 6, 3), ("bench", 12, 18), ("display_easel", 17, 17), ("hat_stand", 8, 18),
+            ("plant", 2, 17), ("plant_b", 19, 18), ("canvas_stack#2", 3, 18),
         ],
         notes=["Lupini's atelier: one floor plan, like Leah's cottage. The front door opens into the hall.",
                "The hall: his canon paintings on the wall, the empty hook of the one on his boat this week,",
@@ -586,7 +586,7 @@ def build(name, exports, assets):
             if key == "display_easel":
                 for j in range(2):                  # Red Eagle on it, over its canvas
                     for i in range(2):
-                        g["Front2"][py + j][px + i] = FURN + EASEL_PAINTING + 32 * j + i
+                        g["Front2"][py + 1 + j][px + i] = FURN + EASEL_PAINTING + 32 * j + i
 
     tile_props = [("Buildings", d_, rooms[lower]["t"] + 2, "Action", "Door") for _, lower, d_ in spec["doors"]]
     ox, oy = spec["outside"]

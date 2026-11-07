@@ -31,17 +31,42 @@
           "DisplayName": "{{i18n:location.vale-pottery}}",
           "DefaultArrivalTile": { "X": 8, "Y": 21 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValePottery", "Type": "StardewValley.Locations.DecoratableLocation" }
+        },
+        "blinxxy.MuseArt_ValeAtelier": {
+          "DisplayName": "{{i18n:location.vale-atelier}}",
+          "DefaultArrivalTile": { "X": 7, "Y": 19 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeAtelier", "Type": "StardewValley.Locations.DecoratableLocation" }
         }
       }
     },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHouse", "FromFile": "assets/ValeHouse.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValePottery", "FromFile": "assets/ValePottery.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeAtelier", "FromFile": "assets/ValeAtelier.tmx" },
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeWallpapers", "FromFile": "assets/ValeWallpapers.png" },
     {
       "Action": "EditData",
       "Target": "Data/AdditionalWallpaperFlooring",
       "Entries": {
         "blinxxy.MuseArt_ValeWallpapers": { "Id": "blinxxy.MuseArt_ValeWallpapers", "Texture": "Mods/blinxxy.MuseArt/ValeWallpapers", "IsFlooring": false, "Count": 1 }
+      }
+    },
+    // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
+    // its stops (ArtStudio/Vale/ValeBus.cs is the bus without it). Open once the route's
+    // letter has come and the bus is mended, as for the Desert.
+    {
+      "Action": "EditData",
+      "Target": "Mods/Pathoschild.CentralStation/Stops",
+      "When": { "HasMod": "Pathoschild.CentralStation" },
+      "Entries": {
+        "{{ModId}}_GildedVale": {
+          "DisplayName": "{{i18n:location.gilded-vale}}",
+          "ToLocation": "blinxxy.MuseArt_GildedVale",
+          "ToTile": { "X": 3, "Y": 8 },
+          "ToFacingDirection": "down",
+          "Network": "Bus",
+          "Cost": 300,
+          "Condition": "PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen, PLAYER_HAS_MAIL Host ccVault"
+        }
       }
     }
   ]
