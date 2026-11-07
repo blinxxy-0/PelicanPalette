@@ -264,8 +264,10 @@ internal sealed class PotteryMenu : IClickableMenu
             int y = Base - (i + 1) * RowPx;
             int outer = (int)(pot.R[i] * UnitPx);
             int inner = (int)((pot.R[i] - pot.T[i]) * UnitPx);
-            // left: cut through, showing the wall
-            Fill(b, Cx - outer, y, outer - inner, RowPx, clay);
+            // left: cut through, showing the wall, tinted by how good its thickness is
+            float fit = PotJudge.WallFit(pot.T[i], i, pot.Rows);
+            Color wall = fit >= 0.99f ? clay : pot.T[i] < PotJudge.ThinWall ? Color.Lerp(clay, Color.OrangeRed, 1f - fit * 0.6f) : Color.Lerp(clay, new Color(90, 70, 160), 1f - fit * 0.6f);
+            Fill(b, Cx - outer, y, outer - inner, RowPx, wall);
             Fill(b, Cx - inner, y, inner, RowPx, Hollow);
             // right: the outside, turning
             Fill(b, Cx, y, outer, RowPx, clay);
@@ -347,6 +349,9 @@ internal sealed class PotteryMenu : IClickableMenu
                 Fill(b, x + 2, y + 2, (int)((w - 4) * _pot.Patience), 14, _pot.Patience < 0.25f ? Color.OrangeRed : Color.SeaGreen);
                 y += 28;
                 Text(_rules.Regen > 0.5f ? "Simplified: it never tires." : "Pause and it firms up again.");
+                var live = PotJudge.Judge(_pot, _shape, _centring);
+                Text($"Shape {live.Shape:P0}  Walls {live.Walls:P0}");
+                Text("The cut-away wall goes red where it's thin, blue where it's heavy.", Ink * 0.75f);
                 Button("done", "Finished");
                 break;
             case Stage.Results:
@@ -355,6 +360,9 @@ internal sealed class PotteryMenu : IClickableMenu
                     Text("It collapsed. " + _pot.CollapseReason);
                 Text($"{r.Stars:0.#} stars", Color.DarkGoldenrod, Game1.dialogueFont);
                 Text($"Shape {r.Shape:P0}\nWalls {r.Walls:P0}\nCentring {r.Centring:P0}");
+                if (!_pot.Collapsed)
+                    foreach (string tip in PotJudge.Tips(_pot, _shape, r))
+                        Text(tip, Ink * 0.8f);
                 Button("again", "Throw again");
                 Button("next", "Next shape");
                 break;

@@ -227,6 +227,23 @@ internal sealed record PotResult(float Shape, float Walls, float Centring, float
 
 internal static class PotJudge
 {
+    public const float ThinWall = 1.5f;
+
+    // The thickness a good wall has at a row: never under 1.5, and no heavier than 3.4,
+    // except the foot (thick, trimmed later) and the rim (compressed, firm). (The user,
+    // 2026-11-07, was stuck at 3.5 stars: the first judge wanted one even thickness from
+    // foot to rim, which pulling never gives and no potter aims for.)
+    public static float HeavyWall(int row, int rows) => row < 2 ? 4.6f : row >= rows - 2 ? 4.2f : 3.4f;
+
+    // 1 for a good wall, falling off either side.
+    public static float WallFit(float t, int row, int rows)
+    {
+        float hi = HeavyWall(row, rows);
+        if (t < ThinWall) return Math.Clamp(1f - (ThinWall - t) / 0.5f, 0f, 1f);
+        if (t > hi) return Math.Clamp(1f - (t - hi) / 1.5f, 0f, 1f);
+        return 1f;
+    }
+
     public static PotResult Judge(ClayPot pot, PotShape shape, float centring)
     {
         if (pot.Collapsed)
@@ -243,15 +260,43 @@ internal static class PotJudge
         float iou = union > 0 ? inter / union : 0f;
         // (a silhouette 70% right is a poor pot: stretch the top of the range)
         float shapeScore = Math.Clamp((iou - 0.55f) / 0.4f, 0f, 1f);
-        // Walls: even, and fine without being too thin
-        var t = pot.T.Take(pot.Rows).ToArray();
-        float mean = t.Average();
-        float sd = MathF.Sqrt(t.Average(x => (x - mean) * (x - mean)));
-        float even = Math.Clamp(1f - sd / mean * 2.5f, 0f, 1f);
-        float fine = Math.Clamp(1f - MathF.Abs(mean - PotShape.GoodWall) / 2.5f, 0f, 1f);
-        float walls = 0.5f * even + 0.5f * fine;
-        float overall = (0.65f * shapeScore + 0.35f * walls) * (0.85f + 0.15f * centring);
+        // Walls: every row a good thickness, changing smoothly up the pot
+        int rows = pot.Rows;
+        float fine = Enumerable.Range(0, rows).Average(i => WallFit(pot.T[i], i, rows));
+        float smooth = rows > 3 ? Math.Clamp(1f - (float)Enumerable.Range(2, rows - 2).Average(i => MathF.Abs(pot.T[i] - pot.T[i - 1])) / 0.9f, 0f, 1f) : 1f;
+        float walls = 0.6f * fine + 0.4f * smooth;
+        float overall = (0.7f * shapeScore + 0.3f * walls) * (0.85f + 0.15f * centring);
         return new PotResult(shapeScore, walls, centring, overall, MathF.Round(overall * 10f) / 2f);
+    }
+
+    // What cost the most, in a potter's words: up to two tips.
+    public static string[] Tips(ClayPot pot, PotShape shape, PotResult r)
+    {
+        var tips = new System.Collections.Generic.List<string>();
+        string Part(int i, int rows) => i < rows / 3 ? "low down" : i < 2 * rows / 3 ? "in the middle" : "near the top";
+        if (r.Shape < 0.95f)
+        {
+            if (pot.Rows < shape.Rows - 1)
+                tips.Add("It's shorter than the outline: pull up more before you shape it.");
+            else if (pot.Rows > shape.Rows + 1)
+                tips.Add("It's taller than the outline: stop pulling sooner.");
+            else
+            {
+                int worst = Enumerable.Range(0, Math.Min(pot.Rows, shape.Rows)).OrderByDescending(i => MathF.Abs(pot.R[i] - shape.R[i])).First();
+                tips.Add($"It's too {(pot.R[worst] > shape.R[worst] ? "wide" : "narrow")} {Part(worst, shape.Rows)}.");
+            }
+        }
+        int thin = Enumerable.Range(0, pot.Rows).FirstOrDefault(i => pot.T[i] < ThinWall, -1);
+        int heavy = Enumerable.Range(0, pot.Rows).FirstOrDefault(i => pot.T[i] > HeavyWall(i, pot.Rows) + 0.3f, -1);
+        if (thin >= 0)
+            tips.Add($"The wall's thin {Part(thin, pot.Rows)}: pull less there.");
+        if (heavy >= 0)
+            tips.Add($"The wall's heavy {Part(heavy, pot.Rows)}: pull up through it to thin it before you shape it. Pressing in thickens a wall.");
+        if (r.Centring < 0.9f)
+            tips.Add("It ran a little off-centre: hold the lump longer at the start.");
+        if (tips.Count == 0)
+            tips.Add(r.Stars >= 5f ? "A potter's pot." : "Smoother walls: long, slow pulls from the foot to the rim.");
+        return tips.Take(2).ToArray();
     }
 }
 #endif
