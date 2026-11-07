@@ -121,6 +121,19 @@ ART = {
     "stump_stool":   (1, 1, 1),     # a mossy tree stump for a stool
     "fern_pot":      (1, 2, 1),     # a big fern in an old bucket
     "crate_table":   (1, 1, 1),     # an upturned crate for a side table, a candle and a mug
+    # the Old Studio's
+    "dusty_window":  (5, 2, 0),     # a tall studio window, cracked panes, cobwebs, grey light
+    "pinned_sketches": (3, 2, 0),   # charcoal sketches for the unfinished painting, pinned up, curling
+    "backward_painting": (2, 2, 0), # a painting hung facing the wall: its stretcher, a torn label
+    "cobweb":        (1, 1, 0),     # in a wall's corner
+    "unfinished_easel": (2, 3, 1),  # the unfinished painting (Lupini's 6-heart event), a stool before it
+    "note_table":    (2, 2, 1),     # a little table: the note, a dried-up palette, brushes stiff in a jar
+    "paint_trestle": (3, 2, 1),     # a long trestle crusted with old paint
+    "sheeted_chair": (1, 2, 1),     # a chair under a dust sheet
+    "sheeted_chair_b": (1, 2, 1),
+    "leaves":        (1, 1, -2),    # dead leaves blown in under the door
+    "old_cot":       (2, 3, 2),     # a narrow iron cot, a thin mattress, a folded blanket
+    "washstand":     (2, 3, 1),     # a jug in a basin, a little mirror
     # the inn's, reused
     "wardrobe":      (2, 3, 1), "nightstand": (1, 2, 1), "writing_desk": (2, 2, 1), "sketch_wall": (2, 2, 0),
 }
@@ -145,6 +158,14 @@ BED = (2, 4)                        # the Saloon's spare bed
 # The game's rugs that 9-slice (townInterior_2, their top-left tile): ("rug", x, y, w, h)
 RUGS = {"rug": 2761,                # Haley's red one
         "rug_brown": 2753}          # the brown patterned one
+
+# Emmett's pieces (some also in the Old Studio)
+EMMETT_PICKS = {k: "art/gilded_vale/interiors/emmett/" + v for k, v in {
+    "pinned_maps": "emmett_v1/pinned_maps_1_6", "instrument_stand": "emmett_v1/instrument_stand_1_8",
+    "music_stand": "emmett_v1/music_stand_1_2", "coat_rack": "emmett_v1/coat_rack_1_0",
+    "moss_wall": "emmett_v1/moss_wall_1_1", "moss_patch": "moss_patch",
+    "stump_stool": "emmett_v1/stump_stool_1_0", "fern_pot": "emmett_v1/fern_pot_1_0",
+    "crate_table": "emmett_v1/crate_table_1_0"}.items()}
 
 BUILDINGS = {
     # Tobin's pottery (map doc, section 5: "like the Blacksmith. The workshop and kiln at
@@ -377,7 +398,8 @@ BUILDINGS = {
         # plain cream plaster, as outside (the user, 2026-11-07: the interior should reflect
         # the cottage's plaster and beams; and moss: "a rougher more homey guy")
         wall=103,
-        picks={},
+        picks={"chest": "art/gilded_vale/interiors/pottery/pottery_v1/chest_1_9",
+               **EMMETT_PICKS},
         lights=[(4, 15), (9, 15), (13, 15), (4, 6)],
         pieces=[
             # by the fire: logs, his armchair turned to it on a rug, a pouf for a guest
@@ -405,6 +427,59 @@ BUILDINGS = {
                "Behind, through a door: the nook under the eaves, one small window like the gable's, his bed and the trunk he travelled with.",
                "Moss creeps down the plaster in places and grows in the corners of the floor; a fern in an old bucket in each room.",
                "Orange outline = new PixelLab piece. Dotted line = walkway."]),
+
+    # The big Old Studio (map doc, sections 1, 5 and 8; lupini_brief.md: boarded up until
+    # Lupini's 6-heart event, the unfinished painting, its sketches and a note; a painting
+    # hung backward). Stone outside with a north skylight, a lower wing to the east: the
+    # studio, and the artist's back room in the wing.
+    "studio": dict(
+        title="The Old Studio", location="blinxxy.MuseArt_ValeStudio", tmx="ValeStudio.tmx",
+        W=24, H=23, outside=(73, 38),
+        rooms={"back":   dict(a=14, b=21, t=0, f=8, label="The back room"),
+               "studio": dict(a=1, b=21, t=9, f=19, label="The studio")},
+        doors=[("back", "studio", 17)],
+        front=("studio", 12),
+        zones=[],
+        wall=12, walls={"back": 103},           # bare stone, as outside; the back room plastered
+        picks={"chest": "art/gilded_vale/interiors/pottery/pottery_v1/chest_1_9",
+               "canvas_stack": "art/gilded_vale/interiors/atelier/atelier_v1/canvas_stack_1_5",
+               **{k: EMMETT_PICKS[k] for k in ("moss_wall", "moss_patch", "fern_pot")},
+               # no new PixelLab (the user, 2026-11-07: saving it for the characters): spare candidates
+               # of earlier batches, edited or drawn by tools/art/vale_studio_art.py
+               **{k: "art/gilded_vale/interiors/studio/" + k for k in (
+                   "dusty_window", "pinned_sketches", "backward_painting", "cobweb", "unfinished_easel", "note_table",
+                   "leaves")},
+               "paint_trestle": "art/gilded_vale/interiors/atelier/atelier_v1/brush_table_1_13",
+               "sheeted_chair": "art/gilded_vale/interiors/hall/hall_v3/sheeted_statue_1_4",
+               "sheeted_chair_b": "art/gilded_vale/interiors/hall/hall_v3/sheeted_statue_1_6",
+               "washstand": "art/gilded_vale/interiors/vale_house/vale_house_v2/washstand_1_2"},
+        lights=[(7, 15), (12, 16), (17, 15), (4, 18), (17, 5)],
+        pieces=[
+            # the back wall: the tall window (its light where the easel stands), the sketches
+            # pinned up, the painting hung backward; ivy and cobwebs getting in
+            ("moss_wall", 2, 10), ("dusty_window", 4, 10), ("pinned_sketches", 10, 10),
+            ("backward_painting", 13, 10), ("cobweb", 20, 10), ("cobweb#2", 1, 10),
+            # in the window's light: the unfinished painting on its easel; the note on a little
+            # table beside it; the old paint trestle; canvases left leaning
+            ("unfinished_easel", 5, 14), ("note_table", 9, 15), ("paint_trestle", 15, 14),
+            ("canvas_stack", 2, 16), ("sheeted_chair", 19, 15), ("sheeted_chair_b", 20, 17),
+            ("fern_pot", 1, 13),
+            # leaves blown in under the door, moss in the corners
+            ("leaves", 11, 18), ("leaves#2", 13, 17), ("leaves#3", 14, 18), ("moss_patch", 1, 18),
+            ("moss_patch#2", 21, 13), ("moss_patch#3", 4, 13),
+            # the back room: the artist's cot, a washstand, a trunk, a small window
+            ("washstand", 14, 2), ("window", 17, 1), ("bed", 19, 4), ("chest", 15, 7),
+            ("cobweb#3", 21, 1), ("leaves#4", 18, 7), ("moss_patch#4", 14, 4),
+        ],
+        describe={"unfinished_easel": "unfinished", "note_table": "note", "pinned_sketches": "sketches",
+                  "backward_painting": "backward", "dusty_window": "window", "paint_trestle": "trestle",
+                  "bed": "cot", "washstand": "washstand", "chest": "trunk"},
+        notes=["The big Old Studio: one floor plan, bare stone walls as outside. The front door opens into the studio.",
+               "Boarded up for years until Lupini's 6-heart event: the tall window lights the unfinished painting on its easel,",
+               "the note on a little table beside it, the sketches for it pinned to the wall, a painting hung facing the wall.",
+               "An old paint trestle, canvases left leaning, chairs under dust sheets; ivy and cobwebs, leaves blown in.",
+               "Behind, in the east wing, through a door: the artist's back room (a cot, a washstand, a trunk).",
+               "Right-click the painting, the note, the sketches and the rest to read about them. Orange = new PixelLab piece."]),
 }
 
 # the game's floorings (walls_and_floors) for floors that aren't planks or Sam's tiles

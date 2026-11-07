@@ -1,0 +1,155 @@
+{
+ "batch": "emmett_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle (straight front view from slightly above, never angled), pixel scale and colours of this room's furniture: wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "pinned_maps_1": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: several old worn paper maps of different sizes pinned to a wall with tacks, red string running between pinned towns, a few scribbled notes, three tiles wide and two tall",
+   "seed": 1500
+  },
+  "pinned_maps_2": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: several old worn paper maps of different sizes pinned to a wall with tacks, red string running between pinned towns, a few scribbled notes, three tiles wide and two tall",
+   "seed": 1501
+  },
+  "instrument_stand_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden fiddle on a small stand with its bow, beside it a battered concertina and a little clay ocarina on a low stool, on the floor",
+   "seed": 1502
+  },
+  "instrument_stand_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden fiddle on a small stand with its bow, beside it a battered concertina and a little clay ocarina on a low stool, on the floor",
+   "seed": 1503
+  },
+  "music_stand_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a thin iron music stand with handwritten sheet music on it, some lines crossed out",
+   "seed": 1504
+  },
+  "music_stand_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a thin iron music stand with handwritten sheet music on it, some lines crossed out",
+   "seed": 1505
+  },
+  "coat_rack_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden coat rack with a long travel-worn brown coat and a faded red neckerchief hanging on it",
+   "seed": 1506
+  },
+  "coat_rack_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden coat rack with a long travel-worn brown coat and a faded red neckerchief hanging on it",
+   "seed": 1507
+  },
+  "moss_wall_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: green moss and a little trailing ivy creeping down a plaster wall from the ceiling, a vertical strip, mostly transparent around it",
+   "seed": 1508
+  },
+  "moss_wall_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: green moss and a little trailing ivy creeping down a plaster wall from the ceiling, a vertical strip, mostly transparent around it",
+   "seed": 1509
+  },
+  "moss_patch_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small soft patch of green moss growing flat on wooden floorboards, seen from above, mostly transparent around it",
+   "seed": 1510
+  },
+  "moss_patch_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small soft patch of green moss growing flat on wooden floorboards, seen from above, mostly transparent around it",
+   "seed": 1511
+  },
+  "stump_stool_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a short tree stump used as a stool, its sides covered in green moss",
+   "seed": 1512
+  },
+  "stump_stool_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a short tree stump used as a stool, its sides covered in green moss",
+   "seed": 1513
+  },
+  "fern_pot_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a big leafy green fern growing in an old dented metal bucket",
+   "seed": 1514
+  },
+  "fern_pot_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a big leafy green fern growing in an old dented metal bucket",
+   "seed": 1515
+  },
+  "crate_table_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small upturned wooden crate used as a side table with a lit candle and a tin mug on it",
+   "seed": 1516
+  },
+  "crate_table_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle, its front edge level with the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small upturned wooden crate used as a side table with a lit candle and a tin mug on it",
+   "seed": 1517
+  }
+ }
+}
