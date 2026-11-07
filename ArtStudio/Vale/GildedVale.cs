@@ -1,5 +1,6 @@
 #if DEBUG
 using ArtStudio.Painting;
+using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -11,8 +12,10 @@ internal static class GildedVale
 {
     public const string PaintSpotAction = ModEntry.Id + "_PaintSpot";
 
-    public static void Register(IModHelper helper)
+    public static void Register(IModHelper helper, Harmony harmony, IMonitor monitor)
     {
+        ValeBus.Register(helper, harmony, monitor);
+
         // Lupini's painting spots: sit at one and paint the view in front of it,
         // as at an easel you set down yourself (the user, 2026-11-07: "can we
         // make the palettes usable?").

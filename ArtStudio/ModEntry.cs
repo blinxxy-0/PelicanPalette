@@ -82,7 +82,7 @@ public class ModEntry : Mod
         DevTools.Register(helper, Monitor);
 
 #if DEBUG
-        Vale.GildedVale.Register(helper);
+        Vale.GildedVale.Register(helper, harmony, Monitor);
 
         // F8 opens the easel anywhere, but only in debug builds and only once
         // switched on with museart_devkeys: play-testing a debug build should
