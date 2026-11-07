@@ -1,0 +1,203 @@
+{
+ "batch": "pottery_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle, pixel scale and colours of this room's furniture: front-facing from slightly above, wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "kiln_1": {
+   "image_size": {
+    "width": 64,
+    "height": 96
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a potter's brick kiln built into a wall, four tiles wide and six tall: a squat arched kiln of warm red-brown bricks with a small iron firebox door glowing orange at the bottom and a stoking hole, its tall square brick chimney flue rising straight up from the top to the very top of the picture, soot stains, filling the whole picture",
+   "seed": 300
+  },
+  "kiln_2": {
+   "image_size": {
+    "width": 64,
+    "height": 96
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a potter's brick kiln built into a wall, four tiles wide and six tall: a squat arched kiln of warm red-brown bricks with a small iron firebox door glowing orange at the bottom and a stoking hole, its tall square brick chimney flue rising straight up from the top to the very top of the picture, soot stains, filling the whole picture",
+   "seed": 301
+  },
+  "wheel_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden potter's kick wheel, a round flat wheel head with a wet terracotta clay pot being thrown on it, a splash pan round it, a wooden frame and a little three-legged stool behind it, clay smears",
+   "seed": 302
+  },
+  "wheel_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden potter's kick wheel, a round flat wheel head with a wet terracotta clay pot being thrown on it, a splash pan round it, a wooden frame and a little three-legged stool behind it, clay smears",
+   "seed": 303
+  },
+  "drying_rack_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden rack of slatted shelves standing against a wall, its shelves full of pale grey unfired clay pots, bowls and jugs drying, two tiles wide and three tall",
+   "seed": 304
+  },
+  "drying_rack_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden rack of slatted shelves standing against a wall, its shelves full of pale grey unfired clay pots, bowls and jugs drying, two tiles wide and three tall",
+   "seed": 305
+  },
+  "pot_shelf_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden display shelf standing against a wall, full of finished glazed pottery for sale: terracotta jugs, slate blue bowls, creamy white vases and plates, two tiles wide and three tall",
+   "seed": 306
+  },
+  "pot_shelf_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden display shelf standing against a wall, full of finished glazed pottery for sale: terracotta jugs, slate blue bowls, creamy white vases and plates, two tiles wide and three tall",
+   "seed": 307
+  },
+  "glaze_shelf_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden shelf standing against a wall holding glass jars and pots of coloured pottery glaze, dipping buckets on the bottom shelf, drips of glaze, two tiles wide and three tall",
+   "seed": 308
+  },
+  "glaze_shelf_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall wooden shelf standing against a wall holding glass jars and pots of coloured pottery glaze, dipping buckets on the bottom shelf, drips of glaze, two tiles wide and three tall",
+   "seed": 309
+  },
+  "sales_counter_1": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small wooden shop counter, three tiles wide, with a tin cash box, a few small glazed bowls and a ledger on top",
+   "seed": 310
+  },
+  "sales_counter_2": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small wooden shop counter, three tiles wide, with a tin cash box, a few small glazed bowls and a ledger on top",
+   "seed": 311
+  },
+  "clay_sacks_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: two burlap sacks of potter's clay stacked one on the other, grey-brown clay showing at the open top",
+   "seed": 312
+  },
+  "clay_sacks_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: two burlap sacks of potter's clay stacked one on the other, grey-brown clay showing at the open top",
+   "seed": 313
+  },
+  "planters_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a stack of terracotta flower pots and planters of different sizes on the floor, nested and stacked",
+   "seed": 314
+  },
+  "planters_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a stack of terracotta flower pots and planters of different sizes on the floor, nested and stacked",
+   "seed": 315
+  },
+  "slip_bucket_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small wooden bucket of grey clay slip water with a sponge",
+   "seed": 316
+  },
+  "slip_bucket_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small wooden bucket of grey clay slip water with a sponge",
+   "seed": 317
+  },
+  "price_board_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small black chalkboard hanging on a wall with prices chalked on it and a little drawing of a jug",
+   "seed": 318
+  },
+  "price_board_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small black chalkboard hanging on a wall with prices chalked on it and a little drawing of a jug",
+   "seed": 319
+  },
+  "chest_1": {
+   "image_size": {
+    "width": 32,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a low wooden blanket chest with iron corners and a folded wool blanket on top, two tiles wide and one tall",
+   "seed": 320
+  },
+  "chest_2": {
+   "image_size": {
+    "width": 32,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a low wooden blanket chest with iron corners and a folded wool blanket on top, two tiles wide and one tall",
+   "seed": 321
+  },
+  "urns_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: two big glazed storage jars, one terracotta and one slate blue, standing on the floor with cork lids",
+   "seed": 322
+  },
+  "urns_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: two big glazed storage jars, one terracotta and one slate blue, standing on the floor with cork lids",
+   "seed": 323
+  }
+ }
+}

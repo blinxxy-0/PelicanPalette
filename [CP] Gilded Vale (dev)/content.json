@@ -25,10 +25,17 @@
           "DisplayName": "{{i18n:location.vale-house}}",
           "DefaultArrivalTile": { "X": 15, "Y": 28 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeHouse", "Type": "StardewValley.Locations.DecoratableLocation" }
+        },
+        // The other buildings (tools/build_vale_buildings.py)
+        "blinxxy.MuseArt_ValePottery": {
+          "DisplayName": "{{i18n:location.vale-pottery}}",
+          "DefaultArrivalTile": { "X": 8, "Y": 21 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValePottery", "Type": "StardewValley.Locations.DecoratableLocation" }
         }
       }
     },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHouse", "FromFile": "assets/ValeHouse.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValePottery", "FromFile": "assets/ValePottery.tmx" },
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeWallpapers", "FromFile": "assets/ValeWallpapers.png" },
     {
       "Action": "EditData",

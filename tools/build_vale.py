@@ -106,6 +106,7 @@ SEASONAL = {
 # Doors into the interiors: door tile -> "x y Location" (where you arrive inside).
 DOORS = {
     (28, 19): "15 28 blinxxy.MuseArt_ValeHouse", (29, 19): "15 28 blinxxy.MuseArt_ValeHouse",   # Bea's inn, its double door
+    (44, 17): "8 21 blinxxy.MuseArt_ValePottery",                                                # Tobin's pottery
 }
 # The amphitheatre (the user's pick s1, 2026-11-06): PixelLab inpaint into the lower
 # cliff (tools/art/vale_inpaint.py), its art covering map tiles x 31-43, y 46-55.
