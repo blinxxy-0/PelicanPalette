@@ -54,19 +54,28 @@ PIECES = {
     # the tea room: the guest book by the stairs' doorway, Bea's china, her counter against
     # the back wall by the kitchen with the teapots on a shelf above it (the user, 2026-11-07:
     # the counter "up towards the right", off the carpet and out of the middle)
-    "guestbook_case": ((11, 18), 1), "sketch_wall": ((9, 17), 0),
+    "guestbook_case": ((11, 18), 1),
     "china_dresser": ((17, 18), 1), "teapot_shelf": ((19, 17), 0), "tea_counter": ((19, 19), 2),
     # the tea tables, every one on a rug (the user: "some on carpet and some not doesn't make sense")
     "tea_table": ((11, 22), 1), "tea_table#2": ((11, 25), 1), "tea_table#3": ((18, 23), 1), "tea_table#4": ((18, 26), 1),
-    # the hall: the inn's piano, and the pictures the artists left
-    "piano": ((9, 11), 1), "sketch_wall#5": ((3, 10), 0), "sketch_wall#6": ((19, 10), 0),
+    # the hall: the inn's piano
+    "piano": ((9, 11), 1),
     # the guest room
     "wardrobe": ((3, 2), 1), "easel": ((5, 2), 1), "nightstand": ((7, 4), 1), "writing_desk": ((3, 5), 1),
-    "sketch_wall#2": ((8, 1), 0),
-    # the artists' room (locked till Bea's 10 hearts)
-    "easel#2": ((14, 2), 1), "sketch_wall#3": ((16, 1), 0),
+    # the artists' room (locked till Bea's 10 hearts): their canvases racked against the wall,
+    # two easels mid-work, a stack of blank canvases, a rug to catch the drips
+    "rack_canvases": ((13, 2), 1), "easel_lighthouse": ((16, 3), 1), "easel_sunset": ((16, 6), 1),
+    "stack_canvases": ((13, 6), 1),
     # Bea's room
-    "wardrobe#2": ((22, 2), 1), "nightstand#2": ((25, 4), 1), "writing_desk#2": ((22, 6), 1), "sketch_wall#4": ((24, 1), 0),
+    "wardrobe#2": ((22, 2), 1), "nightstand#2": ((25, 4), 1), "writing_desk#2": ((22, 6), 1),
+    # The paintings on the walls: the ones painted for the art shop's gallery, each once
+    # (the user, 2026-11-07: "more painting variety", not the same sketches over and over)
+    "painting_snow_cabin": ((5, 17), 0), "painting_sunset_sea": ((9, 17), 0),          # the snug
+    "painting_lighthouse": ((3, 10), 0), "painting_tree": ((17, 10), 0),               # the hall
+    "painting_cabin": ((22, 10), 0),
+    "painting_river": ((8, 1), 0),                                                       # the guest room, over the bed
+    "painting_mosaic": ((17, 1), 0),                                                     # the artists' room
+    "painting_flowers": ((26, 1), 0),                                                    # Bea's, over her bed
 }
 # The game's own furniture, tile for tile as its houses lay it (townInterior, gids from 1;
 # townInterior_2 from 2177). Each piece is its rows, top first; each row names its layers:
@@ -84,6 +93,16 @@ VANILLA = {
     "clock":        [{"F": [550]}, {"B": [582]}],                                   # Josh's
     "hall_table":   [{"B": [485, 486], "F": [335, 482]}, {"B": [517, 518]}],       # Josh's, a plant and a photo on it
     "logs":         [{"B": [897]}],
+    # the kids' corner (Jas's and Vincent's things): the big blue bear, a dollhouse, a teddy,
+    # a toy, and a little pedestal table for a tea party of their own
+    "bear":         [{"F": [1281, 1282]}, {"B": [1313, 1314]}],
+    "dollhouse":    [{"F": [1284, 1285]}, {"B": [1316, 1317]}],
+    "kids_table":   [{"F": [1217]}, {"B": [1249]}],
+    "teddy":        [{"B": [545]}],
+    "toy":          [{"B": [1315]}],
+    # small framed pictures, hung on the wall rows
+    "pic_landscape": [{"F": [176]}], "pic_portraits": [{"F": [177]}], "pic_round": [{"F": [178]}],
+    "pic_flower":   [{"F": [208]}], "pic_meadow": [{"F": [210]}], "pic_photo": [{"F": [246]}], "pic_pink": [{"F": [247]}],
     # Haley's kitchen, from the wall down: cupboards and the window shelf, the counters,
     # the stove, the sink and the fridge, a mat in front
     "kitchen":      [{"F": [531, 532, 257, 567, 568, 257]},
@@ -100,19 +119,32 @@ FURNISH = [
     # table, an armchair turned to it, a pouf, a lamp (the user: "a communal area for hanging out")
     ("logs", 4, 20), ("couch", 5, 19), ("floor_lamp", 8, 19), ("coffee_table", 5, 21),
     ("pouf", 4, 22), ("armchair_w", 8, 21), ("plant", 1, 22), ("plant_b", 9, 27), ("pouf", 6, 24),
+    ("pic_portraits", 7, 17),
+    # the kids' corner below it, for visitors' children (the user, 2026-11-07)
+    ("bear", 1, 25), ("kids_table", 4, 26), ("pouf", 3, 27), ("pouf", 5, 27), ("dollhouse", 6, 26),
+    ("teddy", 3, 28), ("toy", 7, 28),
     # the tea room
-    ("plant", 13, 19), ("plant_b", 22, 27),
+    ("plant", 13, 19), ("plant_b", 22, 27), ("pic_photo", 13, 17), ("pic_meadow", 22, 17),
     # the kitchen
     ("kitchen", 23, 17), ("dining", 24, 23), ("plant", 29, 27),
     # the hall
     ("hall_table", 3, 12), ("plant", 8, 12), ("clock", 12, 12), ("hall_table", 17, 12),
     ("plant_b", 21, 12), ("hall_table", 22, 12), ("plant", 27, 12),
+    ("pic_landscape", 8, 10), ("pic_round", 12, 10), ("pic_pink", 21, 10), ("pic_portraits", 27, 10),
+    # the bedrooms
+    ("pic_landscape", 7, 2), ("pic_flower", 24, 2), ("pic_photo", 15, 1),
 ]
-BEDS = {"guest": (8, 4), "artists": (16, 4), "bea": (26, 4)}   # the Saloon's spare bed, top-left
+BEDS = {"guest": (8, 4), "artists": (17, 4), "bea": (26, 4)}   # the Saloon's spare bed, top-left
 SLEEP_IN = "guest"
-RUGS = [(4, 21, 5, 4), (10, 21, 4, 7), (17, 23, 4, 6)]          # Haley's red rug, 9-sliced: x, y, w, h
+RUGS = [(4, 21, 5, 4), (10, 21, 4, 7), (17, 23, 4, 6), (2, 26, 6, 3), (14, 5, 3, 3)]          # Haley's red rug, 9-sliced: x, y, w, h
 FIREPLACE_X = 2
 LIGHTS = [(5, 4), (15, 4), (24, 4), (4, 12), (18, 12), (8, 20), (2, 21), (12, 24), (19, 25), (26, 24)]
+# Pieces painted for the art shop (its gallery's paintings, the easels and canvases), cut
+# from its sheet into the Vale's own (where furniture.json says build_shop_furniture.py packed them)
+SHOP_SHEET = "[CP] Pelican Palette/assets/ArtShopFurniture.png"
+SHOP_PIECES_JSON = "art/shop_interior/furniture.json"
+SHOP_DIR = "art/gilded_vale/interiors/vale_house/from_shop"
+FROM_SHOP = [k.split("#")[0] for k in PIECES if k.startswith(("painting_", "easel_", "rack_", "stack_"))]
 EXTRA_ART = {}
 SHEET = "ValeHouseInterior.png"
 
@@ -124,7 +156,14 @@ def main():
         for x in range(W):
             g["Back"][y][x] = g["Buildings"][y][x] = 1            # the void round the house
 
-    # the furniture sheet (the inn's PixelLab pieces, and Margot's kitchen pieces)
+    # the furniture sheet (the inn's PixelLab pieces, and the art shop's)
+    import json
+    shop, where = Image.open(SHOP_SHEET).convert("RGBA"), json.load(open(SHOP_PIECES_JSON))
+    os.makedirs(SHOP_DIR, exist_ok=True)
+    for name in FROM_SHOP:
+        p = where[name]
+        shop.crop((p["x"] * 16, p["y"] * 16, (p["x"] + p["w"]) * 16, (p["y"] + p["h"]) * 16)).save(os.path.join(SHOP_DIR, name + ".png"))
+        EXTRA_ART[name] = os.path.join(SHOP_DIR, name + ".png")
     bvi.PICKS.update({k: os.path.relpath(v, bvi.ART)[:-4].replace("\\", "/") for k, v in EXTRA_ART.items()})
     sheet, slots = bvi.pack(bvi.ART)
     furn_first = T2 + 1312
