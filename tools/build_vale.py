@@ -529,7 +529,7 @@ def paint_ground(g, exports):
         (31, 33, 33, 41),       # the foot of the west stairs
         (31, 40, 54, 46),       # the plaza before the Exhibition Hall
         (11, 40, 31, 42),       # west to Fern's
-        (11, 38, 13, 41),       # her door
+        (11, 39, 13, 41),       # her door
         (68, 40, 88, 42),       # east of the middle bridge: the Old Studios' row
         (79, 33, 81, 41),       # the foot of Lupini's stairs
         (85, 40, 87, 49),       # on to the east stairs
@@ -900,15 +900,22 @@ def lay_stairs(g, im, sx, sy, x, top):
             g["Back2" if i in (1, 2) else "Buildings2"][ty][tx] = gid
 
 
-def tile_piece(im):
-    """A piece cropped to its art, padded to whole tiles (bottom and centre kept),
-    alpha made hard, outlines softened."""
+# A building's base ends where the paving's curb begins: the cobble top edge (2651)
+# has grass in its top 10 rows and the curb's shadow from row 10, so the art is lifted
+# 6 px off the bottom of its last row. Set flush, the stone base sat over the curb
+# (the user, 2026-11-06: the inn "overlapping the road").
+LIFT = 6
+
+
+def tile_piece(im, lift=0):
+    """A piece cropped to its art, padded to whole tiles (centred, its bottom lift px
+    above the last row's bottom), alpha made hard, outlines softened."""
     im = im.crop(im.getbbox())
     a = im.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
     im.putalpha(a)
-    cols, rows = -(-im.width // 16), -(-im.height // 16)
+    cols, rows = -(-im.width // 16), -(-(im.height + lift) // 16)
     tile = Image.new("RGBA", (cols * 16, rows * 16))
-    tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
+    tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height - lift))
     return selout(tile)
 
 
@@ -973,10 +980,10 @@ def place_buildings(g, assets):
         st = stairs_art()
         pieces.append(("stairs", st, st, None, None, None))
     for name, (art, left, bottom, solid) in PICKS.items():
-        spring = tile_piece(Image.open(os.path.join(ART, art + ".png")).convert("RGBA"))
+        spring = tile_piece(Image.open(os.path.join(ART, art + ".png")).convert("RGBA"), LIFT)
         winter = spring
         if name in WINTER and os.path.exists(os.path.join(ART, WINTER[name] + ".png")):
-            winter = tile_piece(Image.open(os.path.join(ART, WINTER[name] + ".png")).convert("RGBA"))
+            winter = tile_piece(Image.open(os.path.join(ART, WINTER[name] + ".png")).convert("RGBA"), LIFT)
             if winter.size != spring.size:
                 print("winter art for", name, "doesn't match its spring size; using spring")
                 winter = spring
