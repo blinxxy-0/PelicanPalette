@@ -35,10 +35,12 @@ VANILLA = {
     "hall_table":   [{"B": [485, 486], "F": [335, 482]}, {"B": [517, 518]}],
     "logs":         [{"B": [897]}],
     "kitchen":      [{"F": [531, 532, 257, 567, 568, 257]},
-                     {"F": [563, 564, 289, 0, 571, 289], "B": [0, 0, 570, 0, 0, 0]},
+                     {"F": [563, 564, 289, 0, 0, 289]},
                      {"B": [599, 600, 601, 602, 603, 489], "F": [0, 0, 0, 0, 0, 514]},
                      {"B": [631, 632, 633, 634, 635, 521], "B2": [0, 0, 0, 0, 2305, 2305]},
                      {"B2": [2337, 2337, 2337, 2337, 2337, 0]}],
+    # (in the Vale's houses without 570 and 571, the bits of Haley's wall cupboard over the
+    # stove and fridge: on our walls they hung as stray boxes, the user, 2026-11-07)
     "dining":       [{"F": [0, 473, 474, 475, 0]},
                      {"F": [683, 366, 367, 333, 747], "B": [0, 505, 506, 507, 0]},
                      {"B": [715, 537, 538, 539, 779]}],
@@ -66,11 +68,41 @@ ART = {
     "urns":          (2, 2, 1),     # big storage jars, finished orders waiting
     "price_board":   (2, 2, 0),     # chalked prices, on the wall
     "chest":         (2, 1, 1),     # a blanket chest at the bed's foot
+    "tool_board":    (2, 2, 0),     # his ribs, wires and loop tools on pegs
+    "clay_basket":   (1, 1, 1),
+    "stool":         (1, 1, 1),
+    "big_vase":      (1, 2, 1),     # slate blue, dried grass in it
+    "packing_crate": (2, 2, 1),     # an order packed in straw
+    # the atelier's
+    "north_window":  (5, 2, 0),     # a big many-paned studio window on the north wall
+    "easel_big":     (2, 3, 1),     # his easel, a half-finished canvas on it, the stool
+    "paint_table":   (2, 2, 1),     # a palette, paint tubes, jars of brushes
+    "brush_table":   (3, 2, 1),     # a long table of jars, rags, rolled canvas
+    "canvas_stack":  (2, 2, 1),     # blank canvases leaning against each other
+    "bust":          (1, 2, 1),     # a plaster bust on a plinth, for drawing
+    "display_easel": (2, 3, 1),     # a gallery easel with a framed painting
+    "bench":         (3, 1, 1),     # a long plain gallery bench
+    "hat_stand":     (1, 2, 1),     # his straw hat and smock on it
+    "empty_hook":    (1, 2, 0),     # a nail and a paler square of wallpaper
     # the inn's, reused
     "wardrobe":      (2, 3, 1), "nightstand": (1, 2, 1), "writing_desk": (2, 2, 1), "sketch_wall": (2, 2, 0),
 }
+# The game's own Lupini paintings (Data/Furniture 1838-1854, 2 x 2 on TileSheets/furniture,
+# which the map loads straight from the game as ../TileSheets/furniture). Eight hang in his
+# atelier; Red Eagle stands on the hall's display easel; one a week is on his boat.
+LUPINI = {"painting_1": 1844,       # Clouds
+          "painting_2": 1842,       # Solar Kingdom
+          "painting_3": 1840,       # Portrait of a Mermaid
+          "painting_4": 1854,       # Land of Clay (painted at Tobin's clay pit)
+          "painting_5": 1848,       # Three Trees
+          "painting_6": 1850,       # The Serpent
+          "painting_7": 1852,       # Tropical Fish #173
+          "painting_8": 1846}       # 1000 Years From Now
+EASEL_PAINTING = 1838               # Red Eagle
 BED = (2, 4)                        # the Saloon's spare bed
-RUG = "rug"                         # Haley's red rug, 9-sliced: ("rug", x, y, w, h)
+# The game's rugs that 9-slice (townInterior_2, their top-left tile): ("rug", x, y, w, h)
+RUGS = {"rug": 2761,                # Haley's red one
+        "rug_brown": 2753}          # the brown patterned one
 
 BUILDINGS = {
     # Tobin's pottery (map doc, section 5: "like the Blacksmith. The workshop and kiln at
@@ -89,13 +121,14 @@ BUILDINGS = {
         pieces=[
             # the shop corner by the door: his ware for sale, the counter
             ("pot_shelf", 2, 13), ("pot_shelf_b", 4, 13), ("price_board", 6, 12),
-            ("sales_counter", 3, 17), ("planters", 1, 20), ("plant", 6, 20),
+            ("rug_brown", 2, 16, 5, 4), ("sales_counter", 3, 17), ("stool", 2, 18), ("big_vase", 1, 16),
+            ("planters", 1, 20), ("plant", 6, 20), ("packing_crate", 9, 20),
             # the workshop: the kiln with hardwood stacked by it, the drying rack,
             # the wheels in front (Tobin's, and the one he teaches you on), the
             # wedging table, clay in sacks, glazes
-            ("drying_rack", 11, 13), ("kiln", 13, 11), ("logs", 17, 15), ("logs#2", 18, 15),
+            ("drying_rack", 11, 13), ("kiln", 13, 11), ("logs", 17, 15), ("logs#2", 18, 15), ("tool_board", 17, 12),
             ("glaze_shelf", 22, 13),
-            ("wheel", 13, 18), ("slip_bucket", 15, 19), ("wheel#2", 17, 18),
+            ("wheel", 13, 18), ("slip_bucket", 15, 19), ("wheel#2", 17, 18), ("clay_basket", 12, 19),
             ("work_table", 21, 19), ("clay_sacks", 24, 17), ("clay_sacks#2", 24, 19),
             ("urns", 11, 20), ("plant_b", 19, 20),
             # his kitchen and parlour
@@ -107,10 +140,14 @@ BUILDINGS = {
         ],
         wall=65, walls={"kitchen": 75, "bedroom": 100},     # the game's wallpapers: limewashed brick, plaster, stripes
         picks={k: "art/gilded_vale/interiors/pottery/pottery_v1/" + v for k, v in {
-            "kiln": "kiln_2_6", "wheel": "wheel_1_28", "drying_rack": "drying_rack_1_14", "pot_shelf": "pot_shelf_1_1",
+            "kiln": "kiln_2_6", "drying_rack": "drying_rack_1_14", "pot_shelf": "pot_shelf_1_1",
             "pot_shelf_b": "pot_shelf_1_17", "glaze_shelf": "glaze_shelf_1_0", "sales_counter": "sales_counter_2_0",
             "clay_sacks": "clay_sacks_1_0", "planters": "planters_1_6", "slip_bucket": "slip_bucket_2_8", "price_board": "price_board_1_33",
-            "chest": "chest_1_9", "urns": "urns_2_1"}.items()},
+            "chest": "chest_1_9", "urns": "urns_2_1",
+            # (the user, 2026-11-07: the first wheels stood at an angle; these face the front)
+            "wheel": "../pottery_v2/wheel_1_0", "tool_board": "../pottery_v2/tool_board_1_5",
+            "clay_basket": "../pottery_v2/clay_basket_1_5", "stool": "../pottery_v2/stool_1_1",
+            "big_vase": "../pottery_v2/big_vase_1_0", "packing_crate": "../pottery_v2/packing_crate_1_1"}.items()},
         lights=[(5, 5), (21, 5), (4, 17), (9, 19), (14, 16), (18, 20), (22, 17)],
         notes=["Tobin's pottery: one floor plan. Each square is a tile; the front door is at the bottom.",
                "The workshop is the front: his shop corner by the door (his ware on shelves, the counter);",
@@ -118,11 +155,56 @@ BUILDINGS = {
                "two wheels before it (his, and the one he teaches you on), the wedging table, clay sacks, glazes.",
                "Behind, through doors: his kitchen and parlour (west) and his bedroom (east).",
                "Orange outline = new PixelLab piece; the rest are the game's own. Dotted line = walkway."]),
+
+    # Lupini's atelier (map doc, section 5: "like Leah's cottage. One big room, a north
+    # window, his nine canon paintings on the walls"; lupini_brief.md). Eight hang; the
+    # ninth's hook is empty, the week it's on his boat at the Night Market.
+    "atelier": dict(
+        title="Lupini's atelier", location="blinxxy.MuseArt_ValeAtelier", tmx="ValeAtelier.tmx",
+        W=22, H=24, outside=(73, 23),
+        rooms={"studio": dict(a=1, b=20, t=0, f=12, label="The studio"),
+               "hall":   dict(a=2, b=19, t=13, f=20, label="The hall")},
+        doors=[("studio", "hall", 11)],
+        front=("hall", 7),
+        zones=[(2, 17, 19, 20, "parquet")],
+        wall=103, walls={"hall": 76},        # plain plaster in the studio; the hall a gallery's deep red
+        picks={"empty_hook": "art/gilded_vale/interiors/atelier/empty_hook", **{k: "art/gilded_vale/interiors/atelier/atelier_v1/" + v for k, v in {
+            "north_window": "north_window_1_0", "easel_big": "easel_big_1_0", "paint_table": "paint_table_1_0",
+            "brush_table": "brush_table_1_0", "canvas_stack": "canvas_stack_1_0", "bust": "bust_1_0",
+            "display_easel": "display_easel_1_0", "bench": "bench_1_0", "hat_stand": "hat_stand_1_0",
+            "chest": "../../pottery/pottery_v1/chest_1_9"}.items()}},
+        lights=[(5, 6), (11, 7), (18, 6), (3, 10), (15, 10), (5, 18), (11, 18), (16, 18)],
+        pieces=[
+            # the studio's back wall: the fireplace, the north window over the easel, paintings
+            ("fireplace", 2, 1), ("painting_1", 5, 1), ("north_window", 8, 1),
+            ("painting_2", 14, 1), ("painting_3", 17, 1),
+            # by the fire: the couch with its back to the wall, the coffee table, an
+            # armchair turned to it, all on one rug; a lamp
+            ("rug", 3, 5, 6, 4), ("couch", 4, 3), ("coffee_table", 4, 5), ("armchair_w", 7, 5),
+            ("floor_lamp", 8, 3), ("logs", 1, 6),
+            # under the north light: the easel with his stool, the paint table, canvases
+            ("easel_big", 10, 4), ("paint_table", 12, 6), ("canvas_stack", 1, 10),
+            ("brush_table", 13, 9), ("bust", 19, 10), ("plant", 6, 10), ("plant_b", 20, 4),
+            # his corner: the bed under two paintings, the nightstand, a trunk at its foot
+            ("nightstand", 17, 3), ("bed", 18, 4), ("chest", 18, 8),
+            # the hall: the rest of the paintings, the empty hook, a bench to sit and look,
+            # this week's painting on a display easel, his hat stand by the door
+            ("painting_4", 3, 14), ("painting_5", 6, 14), ("empty_hook", 9, 14),
+            ("painting_6", 13, 14), ("painting_7", 16, 14),
+            ("bench", 12, 18), ("display_easel", 17, 17), ("hat_stand", 8, 18),
+            ("plant", 2, 17), ("plant_b", 19, 19), ("canvas_stack#2", 2, 19),
+        ],
+        notes=["Lupini's atelier: one floor plan, like Leah's cottage. The front door opens into the hall.",
+               "The hall: his canon paintings on the wall, the empty hook of the one on his boat this week,",
+               "a bench to sit and look, a display easel with another, his hat stand by the door.",
+               "Through the door, the studio: the easel under the big north window, paint and brush tables,",
+               "the fireside (couch, coffee table, armchair on one rug), and his bed under two paintings.",
+               "Paintings are the game's own Lupini paintings. Orange outline = new PixelLab piece. Dotted line = walkway."]),
 }
 
 # the game's floorings (walls_and_floors) for floors that aren't planks or Sam's tiles
-FLOORINGS = {"flagstones": 10, "terracotta": 21}
-FLOOR_COLOURS = {"planks": (196, 140, 82), "flagstones": (150, 146, 138), "terracotta": (186, 98, 60), "kitchen tiles": (200, 214, 226),
+FLOORINGS = {"flagstones": 10, "terracotta": 21, "parquet": 16}
+FLOOR_COLOURS = {"planks": (196, 140, 82), "flagstones": (150, 146, 138), "terracotta": (186, 98, 60), "parquet": (150, 90, 50), "kitchen tiles": (200, 214, 226),
                  "carpet": (150, 70, 70), "straw": (214, 190, 110), "glass": (170, 210, 190)}
 
 
@@ -140,10 +222,12 @@ def solid_cells(spec):
 
 def footprint(p):
     key = p[0].split("#")[0]
-    if key == "rug":
+    if key in RUGS:
         return p[3], p[4], 0
     if key == "bed":
         return BED[0], BED[1], 3
+    if key in LUPINI:
+        return 2, 2, 0
     if key in VANILLA:
         rows = VANILLA[key]
         w = max(len(g) for r in rows for g in r.values())
@@ -253,13 +337,13 @@ def plan(name, out):
         d.text((2, y * T + 1), str(y), fill=(255, 255, 0), font=font)
 
     # rugs first, then the furniture
-    for p in sorted(spec["pieces"], key=lambda p: p[0] != "rug"):
+    for p in sorted(spec["pieces"], key=lambda p: p[0] not in RUGS):
         key = p[0].split("#")[0]
         x, y = p[1], p[2]
         w, h, s = footprint(p)
         new = key in ART
-        if key == "rug":
-            box(x, y, w, h, fill=(160, 40, 40, 150), outline=(110, 20, 20), width=2)
+        if key in RUGS:
+            box(x, y, w, h, fill=(160, 40, 40, 150) if key == "rug" else (170, 110, 50, 150), outline=(110, 20, 20), width=2)
         else:
             if h > s:
                 box(x, y, w, h - s, fill=(60, 60, 90, 70))
@@ -366,6 +450,7 @@ def build(name, exports, assets):
              if any(p[0].split("#")[0] == k for p in spec["pieces"])}
     sheet, slots, shade = pack(picks)
     furn_first = WF + 16 * 43
+    FURN = furn_first + (sheet.width // 16) * (sheet.height // 16)       # the game's furniture sheet
     sheet_name = spec["tmx"][:-4] + "Interior.png"
     sheet.save(os.path.join(assets, sheet_name))
 
@@ -444,10 +529,10 @@ def build(name, exports, assets):
     saloon = read(os.path.join(exports, "Saloon.tmx"))
     for p in spec["pieces"]:
         key, px, py = p[0].split("#")[0], p[1], p[2]
-        if key == "rug":
+        if key in RUGS:
             w, h = p[3], p[4]
             for j in range(h):
-                row = 2761 if j == 0 else 2825 if j == h - 1 else 2793
+                row = RUGS[key] + 32 * (0 if j == 0 else 2 if j == h - 1 else 1)
                 for i in range(w):
                     g["Back2"][py + j][px + i] = row + (0 if i == 0 else 3 if i == w - 1 else (1 if i < w - 2 else 2))
         elif key == "bed":
@@ -458,6 +543,11 @@ def build(name, exports, assets):
                         gid = data[(bmr.BED_FROM[1] + j) * lw + bmr.BED_FROM[0] + i]
                         if gid:
                             g[layer][py + j][px + i] = gid
+        elif key in LUPINI:
+            n = LUPINI[key]
+            for j in range(2):
+                for i in range(2):
+                    g["Front2" if g["Front"][py + j][px + i] else "Front"][py + j][px + i] = FURN + n + 32 * j + i
         elif key in VANILLA:
             for j, row in enumerate(VANILLA[key]):
                 for code, gids in row.items():
@@ -493,6 +583,10 @@ def build(name, exports, assets):
                         g["Buildings"][y][x] = gid
                     else:
                         g["Front2" if g["Front"][y][x] else "Front"][y][x] = gid
+            if key == "display_easel":
+                for j in range(2):                  # Red Eagle on it, over its canvas
+                    for i in range(2):
+                        g["Front2"][py + j][px + i] = FURN + EASEL_PAINTING + 32 * j + i
 
     tile_props = [("Buildings", d_, rooms[lower]["t"] + 2, "Action", "Door") for _, lower, d_ in spec["doors"]]
     ox, oy = spec["outside"]
@@ -504,6 +598,8 @@ def build(name, exports, assets):
     tilesets = [("indoor", 1, "townInterior", 512, 1088), ("indoor2", T2, "townInterior_2", 512, 656),
                 ("zz_wallsfloors", WF, "walls_and_floors", 256, 688),
                 ("z_blinxxy.MuseArt_" + sheet_name[:-4], furn_first, sheet_name, sheet.width, sheet.height)]
+    if any(p[0] in LUPINI or p[0] == "display_easel" for p in spec["pieces"]):
+        tilesets.append(("zz_furniture", FURN, "../TileSheets/furniture", 512, 1488))
     write_raw(os.path.join(assets, spec["tmx"]), W, H, g, props, tilesets, tile_props, bmr.LAYERS)
     print("wrote", spec["tmx"], f"{W}x{H}")
     # the walkways, on the built map: from the front door's mat to every room (a door's

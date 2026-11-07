@@ -1,0 +1,107 @@
+{
+ "batch": "pottery_v2",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle (straight front view from slightly above, never angled), pixel scale and colours of this room's furniture: wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "wheel_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a potter's wheel seen square-on from the front: a low wooden bench box with a round grey wheel head on top holding a wet terracotta pot, a splash pan round it, a small wooden stool beside it, clay smears, symmetric front view",
+   "seed": 700
+  },
+  "wheel_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a potter's wheel seen square-on from the front: a low wooden bench box with a round grey wheel head on top holding a wet terracotta pot, a splash pan round it, a small wooden stool beside it, clay smears, symmetric front view",
+   "seed": 701
+  },
+  "tool_board_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden pegboard hanging on a wall with potter's tools on pegs: wire cutters, wooden ribs, loop tools, sponges, a pair of calipers",
+   "seed": 702
+  },
+  "tool_board_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a wooden pegboard hanging on a wall with potter's tools on pegs: wire cutters, wooden ribs, loop tools, sponges, a pair of calipers",
+   "seed": 703
+  },
+  "clay_basket_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small woven basket full of grey balls of potter's clay",
+   "seed": 704
+  },
+  "clay_basket_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small woven basket full of grey balls of potter's clay",
+   "seed": 705
+  },
+  "stool_1": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small round three-legged wooden stool",
+   "seed": 706
+  },
+  "stool_2": {
+   "image_size": {
+    "width": 16,
+    "height": 16
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a small round three-legged wooden stool",
+   "seed": 707
+  },
+  "big_vase_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall glazed floor vase, slate blue with a cream band, holding dried pampas grass",
+   "seed": 708
+  },
+  "big_vase_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: a tall glazed floor vase, slate blue with a cream band, holding dried pampas grass",
+   "seed": 709
+  },
+  "packing_crate_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: an open wooden crate packed with straw and wrapped glazed bowls and jugs ready to ship, a few more on the straw",
+   "seed": 710
+  },
+  "packing_crate_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen straight from the front and slightly above, never at an angle or in perspective, its front edge parallel to the bottom of the picture like every piece of furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm colours, dark coloured (not black) outlines: an open wooden crate packed with straw and wrapped glazed bowls and jugs ready to ship, a few more on the straw",
+   "seed": 711
+  }
+ }
+}
