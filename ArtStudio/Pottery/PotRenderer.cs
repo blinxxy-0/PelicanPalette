@@ -12,13 +12,13 @@ namespace ArtStudio.Pottery;
 // four screen pixels), shaded as a cylinder lit from the upper left, with a
 // wet sheen, turning rings, outlines a darker shade of the clay beside them,
 // and the right half cut away to show the wall. Behind it, Tobin's workshop
-// wall and his kick wheel, and your hands on the clay (PixelLab, styled on
-// his pottery's kiln: art/pottery/, assets/pottery/).
+// wall and his kick wheel (PixelLab, styled on his pottery's kiln:
+// art/pottery/, assets/pottery/).
 internal sealed record Sprite(int W, int H, Color[] Px);
 
 internal static class PotteryArt
 {
-    public static Sprite? Workshop, Wheel, HandLeft, HandRight, HandsCupped;
+    public static Sprite? Workshop, Wheel;
     // the wheel head's middle, in the wheel sprite (where a pot's foot stands)
     public const int WheelHeadX = 38, WheelHeadY = 6, WheelHeadLeft = 17, WheelHeadRight = 59, WheelHeadBottom = 8;
     private static bool _loaded;
@@ -44,9 +44,6 @@ internal static class PotteryArt
         }
         Workshop = Get("workshop");
         Wheel = Get("wheel");
-        HandLeft = Get("hand_left");
-        HandRight = Get("hand_right");
-        HandsCupped = Get("hands_cupped");
     }
 }
 
@@ -141,29 +138,6 @@ internal sealed class PotRenderer : IDisposable
                 if (c.A > 127)
                     _px[ty * Width + tx] = new Color(c.R, c.G, c.B);
             }
-        }
-    }
-
-    // A hand, its forearm carried on up out of the top of the scene (the sprite's top
-    // row, the arm's cross-section, repeated), so it reaches in from above.
-    private void BlitArm(Sprite s, int x0, int y0)
-    {
-        Blit(s, x0, y0);
-        // the arm's cross-section: the first row that's a whole forearm, not its outline's edge
-        int arm = 0;
-        for (int y = 0; y < s.H / 2; y++)
-        {
-            int opaque = 0;
-            for (int x = 0; x < s.W; x++)
-                if (s.Px[y * s.W + x].A > 127) opaque++;
-            if (opaque >= 8) { arm = y; break; }
-        }
-        for (int x = 0; x < s.W; x++)
-        {
-            Color c = s.Px[arm * s.W + x];
-            if (c.A <= 127) continue;
-            for (int y = 0; y < y0 + arm; y++)
-                Set(x0 + x, y, new Color(c.R, c.G, c.B));
         }
     }
 
@@ -411,38 +385,19 @@ internal sealed class PotRenderer : IDisposable
             Set(x, top, Chalk);
     }
 
-    // Your hands: cupped over the lump while centring, at the pot's sides while throwing.
+    // Where you're working: two small chalk ticks just outside the pot at that height. (No
+    // hands: the user, 2026-11-07, "those hands look bad and block the object".) Centring
+    // needs no mark: the mouse is the hand.
     private void Hand(float row, Color c, ClayPot? pot, float handX)
     {
-        if (PotteryArt.HandLeft is { } left && PotteryArt.HandRight is { } right && PotteryArt.HandsCupped is { } cupped)
-        {
-            if (!float.IsNaN(handX))
-            {
-                BlitArm(cupped, (int)handX - cupped.W / 2, FootY - cupped.H + 4);
-                return;
-            }
-            int hy = (int)MathF.Round(FootY - (row + 0.5f) * RowPx);
-            float pr = pot != null && pot.Rows > 0 ? pot.R[Math.Clamp((int)row, 0, pot.Rows - 1)] * UnitPx : 20f;
-            int top = hy - (int)(left.H * 0.68f);
-            BlitArm(left, (int)(CentreX - pr) + 5 - left.W, top);
-            BlitArm(right, (int)(CentreX + pr) - 5, top);
+        if (!float.IsNaN(handX) || pot == null || pot.Rows == 0)
             return;
-        }
         int y = (int)MathF.Round(FootY - (row + 0.5f) * RowPx);
-        if (!float.IsNaN(handX))
+        float r = pot.R[Math.Clamp((int)row, 0, pot.Rows - 1)] * UnitPx;
+        for (int k = 0; k < 4; k++)
         {
-            int hx = (int)handX;
-            for (int yy = FootY - 34; yy < FootY - 2; yy++)
-                Set(hx, yy, new Color(255, 236, 214));
-            return;
-        }
-        float r = pot != null && pot.Rows > 0 ? pot.R[Math.Clamp((int)row, 0, pot.Rows - 1)] * UnitPx : 20f;
-        for (int k = 0; k < 7; k++)
-        {
-            Set((int)(CentreX - r) - 3 - k, y, c);
-            Set((int)(CentreX + r) + 3 + k, y, c);
-            Set((int)(CentreX - r) - 3 - k, y + 1, Color.Lerp(c, Color.Black, 0.3f));
-            Set((int)(CentreX + r) + 3 + k, y + 1, Color.Lerp(c, Color.Black, 0.3f));
+            Set((int)(CentreX - r) - 3 - k, y, Chalk);
+            Set((int)(CentreX + r) + 3 + k, y, Chalk);
         }
     }
 }
