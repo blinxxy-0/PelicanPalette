@@ -1,0 +1,153 @@
+"""Builds the Gilded Vale's interiors (1.4, in development; the dev pack only).
+
+Each room is a decoratable shell cut from the game's own Shed, widened by
+repeating its middle columns and rows (as tools/build_margot_room.py does for
+Margot's rooms), so its walls are straight, three tiles tall, and the game
+papers and floors them itself (WallID / FloorID; Data/Locations makes each a
+DecoratableLocation). Furniture is PixelLab art made for each room
+(art/gilded_vale/interiors/<room>/), outlines recoloured, packed on one sheet.
+
+  ValeHouse.tmx         Bea's inn, downstairs: the tea room. Along the back
+                        wall the stairs up, the bookcase of her great-aunt's
+                        guest books (her 4-heart event), sketches the
+                        artists gave, her tea counter, the teapot shelf, the
+                        china dresser, the fireplace with two armchairs (the
+                        residents' evenings); tea tables, and a piano for
+                        Emmett. The front door out to the Vale.
+  ValeHouseUpstairs.tmx the guest room, up the stairs: the bed you can sleep in
+                        (Bed and TouchAction Sleep; the map lets you wake up
+                        there). Bea's rooms and the artists' room to come.
+  ValeHouseInterior.png the furniture, on one sheet.
+  ValeWallpapers.png    the rooms' wallpapers (Data/AdditionalWallpaperFlooring).
+
+Usage: build_vale_interiors.py <exports dir> "[CP] Gilded Vale (dev)/assets"
+"""
+import os, sys
+from PIL import Image
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "art"))
+from build_shop_interior import read
+from build_spouse_areas import to_sheet
+from vanillafy import selout
+import build_margot_room as bmr
+
+ART = "art/gilded_vale/interiors/vale_house/vale_house_v1"
+SHEET = "ValeHouseInterior.png"
+SHEET_COLS = 16
+# name: the picked candidate (2026-11-07)
+PICKS = {"tea_counter": "tea_counter_1_1", "teapot_shelf": "teapot_shelf_1_1", "china_dresser": "china_dresser_1_0",
+         "fireplace": "fireplace_2_0", "armchair": "armchair_1_0", "tea_table": "tea_table_2_4",
+         "guestbook_case": "guestbook_case_1_0", "stairs_up": "stairs_up_1_0", "sketch_wall": "sketch_wall_1_2",
+         "piano": "piano_1_1"}
+WALLPAPERS = ["wallpaper_1_2"]
+VALE = "blinxxy.MuseArt_GildedVale"
+INN_DOOR = (28, 19)                  # the inn's door on the Vale map (build_vale.py vale_house)
+# Rooms: the Shed's columns and rows they keep (repeats widen it), their door
+# out, lights, and each piece: (x, y of its top-left tile, solid bottom rows;
+# 0 on the wall, drawn over it; -1 underfoot, as the stairs).
+ROOMS = {
+    "ValeHouse": dict(
+        # widened by the Shed's plain columns (2-3, 8-9): the others carry the door's frame
+        cols=[0, 1, 2, 3, 2, 3, 2, 3, 4, 5, 6, 7, 8, 9, 8, 9, 8, 9, 10, 11, 12],
+        rows=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13],
+        exit=(10, 12), warp=f"{VALE} {INN_DOOR[0]} {INN_DOOR[1] + 1}",
+        up=((1, 4), (2, 4)),           # the foot of the stairs: up to the guest room
+        lights=[(4, 5), (10, 5), (16, 5), (10, 9), (18, 4)], wallpaper=0,
+        pieces={"stairs_up": ((1, 2), -1), "guestbook_case": ((4, 2), 1), "sketch_wall": ((6, 1), 0),
+                "tea_counter": ((8, 2), 2), "teapot_shelf": ((12, 1), 0), "china_dresser": ((15, 2), 1),
+                "fireplace": ((17, 2), 1), "armchair": ((15, 6), 1), "armchair#2": ((18, 6), 1),
+                "tea_table": ((4, 7), 1), "tea_table#2": ((8, 9), 1), "tea_table#3": ((12, 7), 1),
+                "piano": ((1, 8), 1)}),
+    "ValeHouseUpstairs": dict(
+        cols=list(range(13)), rows=[0, 1, 2, 3, 4, 5, 6, 7, 12, 13],
+        exit=(6, 9), down=True, lights=[(3, 4), (9, 4), (6, 7)], wallpaper=0, bed=(9, 2),
+        pieces={"armchair": ((1, 6), 1), "sketch_wall": ((4, 1), 0), "tea_table": ((2, 3), 1)}),
+}
+
+
+def pack(art):
+    images, slots, x, y, row_h = {}, {}, 0, 0, 0
+    for name, pick in PICKS.items():
+        im = Image.open(os.path.join(art, pick + ".png")).convert("RGBA")
+        im = im.crop(im.getbbox())
+        cols, rows = -(-im.width // 16), -(-im.height // 16)
+        tile = Image.new("RGBA", (cols * 16, rows * 16))
+        tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
+        images[name] = selout(tile)
+        if x + cols > SHEET_COLS:
+            x, y, row_h = 0, y + row_h, 0
+        slots[name] = (x, y, cols, rows)
+        x += cols
+        row_h = max(row_h, rows)
+    sheet = Image.new("RGBA", (SHEET_COLS * 16, (y + row_h) * 16))
+    for name, (sx, sy, _, _) in slots.items():
+        sheet.alpha_composite(images[name], (sx * 16, sy * 16))
+    return sheet, {n: (sy * SHEET_COLS + sx, c, r) for n, (sx, sy, c, r) in slots.items()}
+
+
+def furnish(grid, slots, room, saloon):
+    for key, ((px, py), solid) in room["pieces"].items():
+        first, cols, rows = slots[key.split("#")[0]]
+        for j in range(rows):
+            for i in range(cols):
+                if solid < 0:
+                    # underfoot (the stairs): the rows over the wall draw above its trim,
+                    # the floor row is walked on (its warp takes you up)
+                    layer = "Front2" if py + j <= 3 else "Back2"
+                elif j >= rows - solid:
+                    layer = "Buildings"
+                else:
+                    layer = "Front" if not grid["Front"][py + j][px + i] else "Front2"
+                grid[layer][py + j][px + i] = (SHEET, first + j * SHEET_COLS + i)
+    if "bed" in room:                   # the Saloon's spare bed, as in Margot's room
+        sets, layers = saloon[0], saloon[1]
+        for layer in ("Buildings", "Front"):
+            lw, data = layers[layer]
+            for j in range(4):
+                for i in range(2):
+                    gid = data[(bmr.BED_FROM[1] + j) * lw + bmr.BED_FROM[0] + i]
+                    if gid:
+                        grid[layer][room["bed"][1] + j][room["bed"][0] + i] = to_sheet(gid, sets)
+
+
+def main():
+    exports, assets = sys.argv[1], sys.argv[2]
+    shed = read(os.path.join(exports, "Shed.tmx"))
+    saloon = read(os.path.join(exports, "Saloon.tmx"))
+    sheet, slots = pack(ART)
+    sheet.save(os.path.join(assets, SHEET))
+    papers = Image.new("RGBA", (256, 48))
+    for i, name in enumerate(WALLPAPERS):
+        papers.alpha_composite(Image.open(os.path.join(ART, name + ".png")).convert("RGBA").crop((0, 0, 16, 48)), (i * 16, 0))
+    papers.save(os.path.join(assets, "ValeWallpapers.png"))
+    tilesets = [("indoor", 1, "townInterior", 512, 1088),
+                ("walls_and_floors", 2177, "walls_and_floors", 256, 688),
+                ("z_blinxxy.MuseArt_ValeHouseInterior", 2865, SHEET, sheet.width, sheet.height)]
+    up, down = ROOMS["ValeHouse"]["up"], ROOMS["ValeHouseUpstairs"]
+    for name, room in ROOMS.items():
+        grid = bmr.shell(shed, room)
+        furnish(grid, slots, room, saloon)
+        w, h = len(room["cols"]), len(room["rows"])
+        tile_props = [(x, bmr.WALL_ROW, "WallID", "Wall") for x in range(1, w - 1)]
+        tile_props += [(x, y, "FloorID", "Floor") for y in range(3, h - 1) for x in range(1, w - 1)]
+        warps = []
+        if name == "ValeHouse":
+            warps.append(f"{room['exit'][0]} {room['exit'][1]} {room['warp']}")
+            warps += [f"{x} {y} blinxxy.MuseArt_ValeHouseUpstairs {down['exit'][0]} {down['exit'][1] - 1}" for x, y in up]
+        else:
+            warps.append(f"{room['exit'][0]} {room['exit'][1]} blinxxy.MuseArt_ValeHouse {up[0][0] + 1} {up[0][1] + 1}")
+        props = {"WallIDs": f"Wall blinxxy.MuseArt_ValeWallpapers:{room['wallpaper']}", "FloorIDs": "Floor 0",
+                 "Warp": " ".join(warps), "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in room["lights"])}
+        if "bed" in room:
+            # A real night's stay, as on Ginger Island: the bed's tiles put you to
+            # bed, and the map lets you wake up here (paying Bea is the C# mod's, later).
+            bx, by = room["bed"]
+            tile_props += [(bx + i, by + j, "TouchAction", "Sleep") for i in range(2) for j in (2, 3)]
+            props["AllowWakeUpWithoutBed"] = "T"
+        bmr.write(os.path.join(assets, name + ".tmx"), grid, w, h, props, tilesets, tile_props)
+        print("wrote", name + ".tmx", f"{w}x{h}")
+
+
+if __name__ == "__main__":
+    main()

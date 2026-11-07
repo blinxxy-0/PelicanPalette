@@ -1,0 +1,189 @@
+{
+ "batch": "vale_house_v1",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle, pixel scale and colours of this room's furniture: front-facing from slightly above, wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "tea_counter_1": {
+   "image_size": {
+    "width": 64,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: the innkeeper's long wooden tea counter, four tiles wide: a polished wooden counter with panelled front, on top a tiered cake stand under a glass dome, a brass till, a row of three china teapots and a little vase of wildflowers",
+   "seed": 71
+  },
+  "tea_counter_2": {
+   "image_size": {
+    "width": 64,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: the innkeeper's long wooden tea counter, four tiles wide: a polished wooden counter with panelled front, on top a tiered cake stand under a glass dome, a brass till, a row of three china teapots and a little vase of wildflowers",
+   "seed": 75
+  },
+  "teapot_shelf_1": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a wall-mounted wooden plate shelf, three tiles wide, crowded with mismatched china teapots, teacups on hooks and tins of tea, hung on a wall",
+   "seed": 77
+  },
+  "teapot_shelf_2": {
+   "image_size": {
+    "width": 48,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a wall-mounted wooden plate shelf, three tiles wide, crowded with mismatched china teapots, teacups on hooks and tins of tea, hung on a wall",
+   "seed": 81
+  },
+  "china_dresser_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a tall painted cream wooden kitchen dresser, two tiles wide and three tall, its open shelves lined with blue-and-white plates and stacked teacups, two drawers and a cupboard below",
+   "seed": 83
+  },
+  "china_dresser_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a tall painted cream wooden kitchen dresser, two tiles wide and three tall, its open shelves lined with blue-and-white plates and stacked teacups, two drawers and a cupboard below",
+   "seed": 87
+  },
+  "fireplace_1": {
+   "image_size": {
+    "width": 48,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a cosy stone fireplace, three tiles wide and three tall, with a crackling fire in the hearth, a wooden mantelpiece holding a clock, candles and a small framed painting, a basket of logs beside it",
+   "seed": 89
+  },
+  "fireplace_2": {
+   "image_size": {
+    "width": 48,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a cosy stone fireplace, three tiles wide and three tall, with a crackling fire in the hearth, a wooden mantelpiece holding a clock, candles and a small framed painting, a basket of logs beside it",
+   "seed": 93
+  },
+  "armchair_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a worn, comfy wingback armchair in faded green velvet with a knitted blanket over one arm, facing the viewer",
+   "seed": 95
+  },
+  "armchair_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a worn, comfy wingback armchair in faded green velvet with a knitted blanket over one arm, facing the viewer",
+   "seed": 99
+  },
+  "tea_table_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a small round wooden tea table with a white lace tablecloth, a teapot, two cups and a plate of scones on it, two small wooden chairs, one each side",
+   "seed": 101
+  },
+  "tea_table_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a small round wooden tea table with a white lace tablecloth, a teapot, two cups and a plate of scones on it, two small wooden chairs, one each side",
+   "seed": 105
+  },
+  "guestbook_case_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a tall old wooden bookcase, two tiles wide and three tall, its shelves full of thick old leather-bound guest books with gold lettering on the spines, a few loose sketches sticking out, a little brass plaque",
+   "seed": 107
+  },
+  "guestbook_case_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a tall old wooden bookcase, two tiles wide and three tall, its shelves full of thick old leather-bound guest books with gold lettering on the spines, a few loose sketches sticking out, a little brass plaque",
+   "seed": 111
+  },
+  "stairs_up_1": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a narrow wooden staircase with a carved banister rising up and away against the back wall to the floor above, two tiles wide and three tall, a small rug at its foot",
+   "seed": 113
+  },
+  "stairs_up_2": {
+   "image_size": {
+    "width": 32,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a narrow wooden staircase with a carved banister rising up and away against the back wall to the floor above, two tiles wide and three tall, a small rug at its foot",
+   "seed": 117
+  },
+  "sketch_wall_1": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a cluster of small framed sketches and watercolours of different sizes hung together on a wall, gifts from artists who stayed at the inn",
+   "seed": 119
+  },
+  "sketch_wall_2": {
+   "image_size": {
+    "width": 32,
+    "height": 32
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: a cluster of small framed sketches and watercolours of different sizes hung together on a wall, gifts from artists who stayed at the inn",
+   "seed": 123
+  },
+  "piano_1": {
+   "image_size": {
+    "width": 48,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: an old upright piano in dark wood, three tiles wide, a vase of dried flowers and sheet music on top, a little round stool in front",
+   "seed": 125
+  },
+  "piano_2": {
+   "image_size": {
+    "width": 48,
+    "height": 48
+   },
+   "description": "Stardew Valley interior furniture, one object alone on a transparent background, seen from the front and slightly above like the furniture in the reference room, at exactly the same pixel scale (one tile is 16 pixels), warm wood colours, dark coloured (not black) outlines: an old upright piano in dark wood, three tiles wide, a vase of dried flowers and sheet music on top, a little round stool in front",
+   "seed": 129
+  },
+  "wallpaper_1": {
+   "image_size": {
+    "width": 16,
+    "height": 48
+   },
+   "description": "a warm cream wallpaper with a small repeating pattern of tiny golden leaves and teacups, Stardew Valley interior wallpaper, seamless tile",
+   "seed": 91,
+   "no_background": false
+  },
+  "wallpaper_2": {
+   "image_size": {
+    "width": 16,
+    "height": 48
+   },
+   "description": "a soft sage green striped wallpaper with thin cream stripes and tiny gold flowers, Stardew Valley interior wallpaper, seamless tile",
+   "seed": 92,
+   "no_background": false
+  }
+ }
+}

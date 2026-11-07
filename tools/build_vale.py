@@ -103,6 +103,10 @@ SEASONAL = {
     "studio_c": {"winter": "buildings/vale_winter_v3/studio_c_winter_0"},
     "old_tree": {s: f"props/vale_tree_seasons_v1/old_tree_{s}_0" for s in ("summer", "fall", "winter")},
 }
+# Doors into the interiors: door tile -> "x y Location" (where you arrive inside).
+DOORS = {
+    (28, 19): "10 11 blinxxy.MuseArt_ValeHouse", (29, 19): "10 11 blinxxy.MuseArt_ValeHouse",   # Bea's inn, its double door
+}
 # The amphitheatre (the user's pick s1, 2026-11-06): PixelLab inpaint into the lower
 # cliff (tools/art/vale_inpaint.py), its art covering map tiles x 31-43, y 46-55.
 AMPHITHEATRE = ("amphitheatre/amph_s1_0", 31, 46)
@@ -232,6 +236,11 @@ def main():
     # Paths markers it turns into trees, bushes and grass (tools/vale_decor.py).
     from vale_decor import decor
     decor(g, GROUND, paths_first, W, H)
+    # Doors: clicking a building's door takes you in (tools/build_vale_interiors.py
+    # builds the rooms; each room's own Warp brings you back out here).
+    from vale_decor import TILE_PROPS
+    for (dx, dy), target in DOORS.items():
+        TILE_PROPS[("Buildings", dx, dy)] = {"Action": f"Warp {target}"}
 
     # Woods all round, on the Paths layer: oak (9), maple (10), pine (11).
     rnd = random.Random(1)
