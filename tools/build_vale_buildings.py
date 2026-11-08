@@ -465,14 +465,18 @@ BUILDINGS = {
             ("clock", 2, 12), ("hall_table", 10, 12), ("plant", 15, 12), ("bookcase", 19, 11),
             # in the window's light: the unfinished painting on its easel; the note on a little
             # table beside it; the old paint trestle; canvases left leaning
-            ("unfinished_easel", 5, 14), ("note_table", 9, 15), ("paint_trestle", 7, 17),
-            ("canvas_stack", 2, 16), ("sheeted_chair", 21, 15), ("sheeted_chair_b", 20, 17),
+            # (the user, 2026-11-07: the trestle and the note's table back against the wall, the
+            # canvases leaning on the west wall: canvases on the floor always lean on something)
+            ("unfinished_easel", 5, 14), ("paint_trestle", 5, 12), ("note_table", 8, 12),
+            ("canvas_stack", 1, 15), ("sheeted_chair", 21, 15), ("sheeted_chair_b", 20, 17),
+            # the long table the painters ate at, its chairs round it, on a rug
+            ("rug#3", 6, 16, 7, 3), ("dining", 7, 16),
             # where the painters sat: the coffee table, an armchair and a pouf on one rug, a lamp
             ("rug", 14, 15, 6, 4), ("coffee_table", 15, 15), ("armchair_w", 18, 15), ("pouf", 14, 17),
             ("floor_lamp", 20, 13), ("plant_b", 1, 17),
             ("fern_pot", 1, 13),
             # leaves blown in under the door, moss in the corners
-            ("leaves", 11, 18), ("leaves#2", 13, 17), ("leaves#3", 11, 16), ("moss_patch", 1, 18),
+            ("leaves", 4, 18), ("leaves#2", 13, 17), ("leaves#3", 13, 14), ("moss_patch", 1, 18),
             ("moss_patch#2", 21, 13), ("moss_patch#3", 4, 13),
             # the back room: the artist's cot, a washstand, a trunk, a small window
             ("washstand", 14, 2), ("window", 17, 1), ("bed", 19, 4), ("chest", 15, 7),
