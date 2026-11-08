@@ -244,6 +244,35 @@
           "Condition": "PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen, PLAYER_HAS_MAIL Host ccVault"
         }
       }
+    },
+    // CJB Cheats Menu's Warps tab, when it's installed: a Gilded Vale section with the bus
+    // stop (where the bus lets you off, ValeBus.cs StepOff) and the tile outside each
+    // building's front door (where its exit puts you, the Warp in each interior's map),
+    // listed after CJB's own sections (Order 100-700). Check them in a debug build with
+    // museart_cjbwarps.
+    {
+      "Action": "EditData",
+      "Target": "Mods/CJBok.CheatsMenu/WarpSections",
+      "When": { "HasMod": "CJBok.CheatsMenu" },
+      "Entries": {
+        "{{ModId}}_GildedVale": { "Id": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.gilded-vale}}", "Order": 800 }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Mods/CJBok.CheatsMenu/Warps",
+      "When": { "HasMod": "CJBok.CheatsMenu" },
+      "Entries": {
+        "{{ModId}}_BusStop": { "Id": "{{ModId}}_BusStop", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:warp.bus-stop}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "3, 8", "Order": -1 },
+        "{{ModId}}_ValeHouse": { "Id": "{{ModId}}_ValeHouse", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-house}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "28, 20" },
+        "{{ModId}}_Pottery": { "Id": "{{ModId}}_Pottery", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-pottery}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "44, 18" },
+        "{{ModId}}_Atelier": { "Id": "{{ModId}}_Atelier", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-atelier}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "73, 24" },
+        "{{ModId}}_Hall": { "Id": "{{ModId}}_Hall", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-hall}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "44, 40" },
+        "{{ModId}}_Fern": { "Id": "{{ModId}}_Fern", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-fern}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "12, 39" },
+        "{{ModId}}_Seedhouse": { "Id": "{{ModId}}_Seedhouse", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:warp.seedhouse}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "17, 39" },
+        "{{ModId}}_Emmett": { "Id": "{{ModId}}_Emmett", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-emmett}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "19, 62" },
+        "{{ModId}}_Studio": { "Id": "{{ModId}}_Studio", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-studio}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "73, 39" }
+      }
     }
   ]
 }

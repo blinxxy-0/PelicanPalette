@@ -8,6 +8,10 @@
   "location.vale-emmett": "Emmett's Cottage",
   "location.vale-studio": "The Old Studio",
 
+  // CJB Cheats Menu's Warps tab (content.json); the buildings use their location names.
+  "warp.bus-stop": "Bus Stop",
+  "warp.seedhouse": "Fern's Seedhouse",
+
   // The world map (data/vale_worldmap.json): hover tooltips, a name and a line each.
   "worldmap.vale-house": "The Vale House\nTea, cake and a room for the night, from Bea",
   "worldmap.tea-garden": "The Tea Garden\nWhere Bea grows the tea",
