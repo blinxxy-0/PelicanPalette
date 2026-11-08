@@ -23,7 +23,7 @@ internal static class ValeResidents
     // A room for the night (docs/bea_brief.md): paid at Bea's counter, good until you
     // wake. The guest bed (TouchAction Sleep) says the room's booked until then.
     public const int RoomPrice = 200;
-    private const string RoomNightKey = ModEntry.Id + "/ValeRoomNight";
+    internal const string RoomNightKey = ModEntry.Id + "/ValeRoomNight";
     // Bea's 10-heart event will give you the artists' room for free (to come): this mail flag.
     public const string ArtistsRoomMail = ModEntry.Id + "_ValeArtistsRoom";
 
@@ -99,7 +99,7 @@ internal static class ValeResidents
         });
     }
 
-    private static void BookRoom(Farmer who, NPC? bea)
+    internal static void BookRoom(Farmer who, NPC? bea)
     {
         string line;
         if (BookedTonight(who) || who.mailReceived.Contains(ArtistsRoomMail))
@@ -124,7 +124,7 @@ internal static class ValeResidents
         who.mailReceived.Contains(ArtistsRoomMail)
         || (who.modData.TryGetValue(RoomNightKey, out string day) && day == Game1.Date.TotalDays.ToString());
 
-    private static bool TouchActionPrefix(GameLocation __instance, string[] action)
+    internal static bool TouchActionPrefix(GameLocation __instance, string[] action)
     {
         if (__instance.Name != ValeHouse || action.Length == 0 || !string.Equals(action[0], "Sleep", StringComparison.OrdinalIgnoreCase))
             return true;
