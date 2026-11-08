@@ -7,7 +7,7 @@
 - **Pronouns:** she/her.
 - **Marriage:** yes, by any farmer, like Sable and Margot.
 - **Age:** late twenties.
-- **Birthday:** Summer 6 (free in vanilla; to check against SVE).
+- **Birthday:** Summer 15, the height of the meadow (free in vanilla, the mod and Stardew Valley Expanded; moved from Summer 6, which is SVE's Martin's, 2026-11-08).
 - **Home:** a cottage and seedhouse beside the sculpture garden.
 - **Role in the mod:**
   - tends the Vale's gardens, meadows and the overgrown sculpture garden

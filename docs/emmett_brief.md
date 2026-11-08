@@ -7,7 +7,7 @@
 - **Pronouns:** he/him.
 - **Marriage:** yes, by any farmer.
 - **Age:** mid-thirties.
-- **Birthday:** Spring 9, the week he first arrived in the Vale (free in vanilla; to check against SVE).
+- **Birthday:** Spring 9, the week he first arrived in the Vale (free in vanilla, the mod and Stardew Valley Expanded: checked 2026-11-08).
 - **Home:** a small cottage beside the old amphitheatre.
 - **Role in the mod:**
   - the Vale's music: the amphitheatre and the evenings by the fire at the Vale House
