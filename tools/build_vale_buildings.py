@@ -48,6 +48,7 @@ VANILLA = {
     "work_table":   [{"F": [908, 909]}, {"B": [940, 941]}],                         # the clinic's plain table
     "anvil":        [{"B": [934, 935]}, {"B": [966, 967]}],                         # Clint's
     "window":       [{"F": [226]}, {"F": [258]}],                                   # on the wallpaper
+    "sconce":       [{"F": [827]}],                                                 # a wall lamp (as by the game's doors)
     # the brick fireplace (Haley's, the Saloon's), built into a back wall: x, t+1
     "fireplace":    [{"F": [667, 668]}, {"F": [699, 700]}, {"F": [731, 732]}, {"B": [763, 764]}, {"B": [795, 796]}],
     "fireplace_stone": [{"F": [669, 670]}, {"F": [701, 702]}, {"F": [733, 734]}, {"B": [765, 766]}, {"B": [797, 798]}],
@@ -117,6 +118,7 @@ ART = {
     "music_stand":   (1, 2, 1),     # sheet music, half of it crossed out
     "coat_rack":     (1, 2, 1),     # his long travel-worn coat, the red neckerchief
     "moss_wall":     (1, 2, 0),     # moss and ivy creeping down the plaster from a beam
+    "beam":          (1, 2, 0),     # and the beam alone
     "moss_patch":    (1, 1, -2),    # moss in a corner of the floorboards
     "stump_stool":   (1, 1, 1),     # a mossy tree stump for a stool
     "fern_pot":      (1, 2, 1),     # a big fern in an old bucket
@@ -154,6 +156,7 @@ GAME_PAINTINGS = {1554: (3, 2), 1547: (3, 2), 1541: (2, 2), 1557: (2, 2), 2421: 
                   1567: (1, 2), 2329: (2, 2), 2423: (2, 2), 1802: (2, 2), 1612: (2, 2), 1606: (1, 2)}
 for _id, _wh in GAME_PAINTINGS.items():
     LUPINI[f"game_{_id}"] = _id
+TOP_ALIGNED = {"beam"}               # wall pieces that keep their height (a beam at the ceiling)
 BED = (2, 4)                        # the Saloon's spare bed
 # The game's rugs that 9-slice (townInterior_2, their top-left tile): ("rug", x, y, w, h)
 RUGS = {"rug": 2761,                # Haley's red one
@@ -165,7 +168,7 @@ EMMETT_PICKS = {k: "art/gilded_vale/interiors/emmett/" + v for k, v in {
     "music_stand": "emmett_v1/music_stand_1_2", "coat_rack": "emmett_v1/coat_rack_1_0",
     "moss_wall": "emmett_v1/moss_wall_1_1", "moss_patch": "moss_patch",
     "stump_stool": "emmett_v1/stump_stool_1_0", "fern_pot": "emmett_v1/fern_pot_1_0",
-    "crate_table": "emmett_v1/crate_table_1_0"}.items()}
+    "crate_table": "emmett_v1/crate_table_1_0", "beam": "beam"}.items()}
 
 BUILDINGS = {
     # Tobin's pottery (map doc, section 5: "like the Blacksmith. The workshop and kiln at
@@ -400,25 +403,26 @@ BUILDINGS = {
         wall=103,
         picks={"chest": "art/gilded_vale/interiors/pottery/pottery_v1/chest_1_9",
                **EMMETT_PICKS},
-        lights=[(4, 15), (9, 15), (13, 15), (4, 6)],
+        lights=[(4, 15), (9, 15), (13, 15), (4, 6), (4, 1), (6, 1)],
         pieces=[
             # by the fire: logs, his armchair turned to it on a rug, a pouf for a guest
             # by the fire: logs, his armchair turned to it on a rug, a mossy stump for a guest,
             # a crate for a side table
-            ("fireplace_stone", 2, 10), ("logs", 1, 13), ("rug", 3, 14, 4, 3), ("armchair_w", 5, 14),
-            ("stump_stool", 3, 15), ("crate_table", 7, 16),
+            ("fireplace_stone", 2, 10), ("logs", 1, 13), ("rug", 4, 14, 4, 3), ("armchair_w", 5, 14),
+            ("stump_stool", 4, 13), ("crate_table", 7, 16),
             # the maps of everywhere he's been, pinned over the desk where he writes
-            ("pinned_maps", 7, 10), ("writing_desk", 7, 13),
+            ("pinned_maps", 7, 10), ("writing_desk", 8, 12),
             # his songbooks, the window, his instruments and a music stand
-            ("bookcase", 11, 11), ("window", 14, 10), ("instrument_stand", 13, 14), ("music_stand", 11, 15),
-            ("coat_rack", 15, 13), ("fern_pot", 1, 15), ("chest", 12, 16),
+            ("bookcase", 11, 11), ("window", 14, 10), ("instrument_stand", 13, 12), ("music_stand", 10, 12),
+            ("coat_rack", 15, 13), ("fern_pot", 1, 15), ("chest", 6, 13),
             # moss: creeping down the plaster, and in the corners of the floor
-            ("moss_wall", 10, 10), ("moss_wall#2", 13, 10), ("moss_patch", 10, 13), ("moss_patch#2", 15, 16),
+            ("beam", 10, 10), ("moss_wall#2", 13, 10), ("moss_patch", 11, 14), ("moss_patch#2", 15, 16),
             ("moss_patch#3", 9, 16), ("moss_patch#4", 14, 16),
             # the nook: his bed, a lantern on the nightstand, the trunk he travelled with
             # the nook, under the eaves: one small window in the middle, like the gable's outside
-            ("bed", 6, 4), ("nightstand", 8, 3), ("window", 5, 1), ("chest#2", 2, 7), ("fern_pot#2", 2, 4),
-            ("moss_wall#3", 7, 1), ("moss_wall#4", 3, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
+            ("bed", 6, 4), ("nightstand", 8, 3), ("window", 5, 1), ("chest#2", 4, 4), ("fern_pot#2", 2, 4),
+            # lamps either side of the window, ending the ivy beams (the user, 2026-11-07)
+            ("moss_wall#3", 7, 1), ("moss_wall#4", 3, 1), ("sconce", 4, 1), ("sconce#2", 6, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
         ],
         notes=["Emmett's cottage: small, one floor plan, cream plaster walls as outside. The front door opens into his room.",
                "By the stone fireplace (under the chimney outside): his armchair turned to it on a rug, a mossy stump for a guest, a crate for a side table, logs.",
@@ -734,7 +738,9 @@ def pack(picks):
     images, slots, x, y, row_h = {}, {}, 0, 0, 0
     for name, path in picks.items():
         im = Image.open(path + ".png").convert("RGBA")
-        im = im.crop(im.getbbox())
+        bb = im.getbbox()
+        # (pieces are stood on the bottom of their cells; a few hang from the top instead)
+        im = im.crop((bb[0], 0, bb[2], im.height) if name in TOP_ALIGNED else bb)
         w, h = ART[name][:2]
         cols, rows = max(w, -(-im.width // 16)), max(h, -(-im.height // 16))
         if (cols, rows) != (w, h):

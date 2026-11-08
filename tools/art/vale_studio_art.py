@@ -179,7 +179,20 @@ def moss_patch():
     im.save(os.path.join(INT, "emmett", "moss_patch.png"))
 
 
+def beam():
+    """Emmett's ivy bracket without its ivy: the bare beam (the user, 2026-11-07: by the
+    bookcase, where the ivy hung over it)."""
+    im = load("emmett/emmett_v1/moss_wall_1_1")
+    px = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            r, g, b, a = px[x, y]
+            if a and g > r:
+                px[x, y] = (0, 0, 0, 0)
+    im.save(os.path.join(INT, "emmett", "beam.png"))
+
+
 if __name__ == "__main__":
-    for f in (moss_patch, dusty_window, pinned_sketches, unfinished_easel, note_table, backward_painting, cobweb, leaves):
+    for f in (beam, moss_patch, dusty_window, pinned_sketches, unfinished_easel, note_table, backward_painting, cobweb, leaves):
         f()
         print("wrote", f.__name__)
