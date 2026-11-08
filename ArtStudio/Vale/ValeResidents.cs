@@ -27,8 +27,9 @@ internal static class ValeResidents
     // Bea's 10-heart event will give you the artists' room for free (to come): this mail flag.
     public const string ArtistsRoomMail = ModEntry.Id + "_ValeArtistsRoom";
 
-    // Where Bea serves: the end of her tea counter (data/bea_schedule.json, 23 21).
-    private static readonly Rectangle BeaArea = new(22, 20, 3, 3);
+    // Where Bea serves: behind her tea counter (data/bea_schedule.json, 21 20), the row
+    // between it and the wall, and the kitchen tile she comes in by.
+    private static readonly Rectangle BeaArea = new(19, 20, 5, 2);
 
     // Lupini's nine canon paintings (Data/Furniture 1838-1854, every other id).
     private static readonly HashSet<string> LupiniPaintings =
@@ -67,6 +68,9 @@ internal static class ValeResidents
         harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.passOutFromTired)),
             prefix: new HarmonyMethod(typeof(ValeResidents), nameof(PassOutPrefix)));
         helper.Events.GameLoop.DayStarted += (_, _) => TuckedInMessage();
+
+        harmony.Patch(AccessTools.Method(typeof(GameLocation), nameof(GameLocation.ShowLockedDoorMessage)),
+            prefix: new HarmonyMethod(typeof(ValeResidents), nameof(LockedDoorPrefix)));
 
         helper.Events.Player.InventoryChanged += OnInventoryChanged;
     }
@@ -135,6 +139,20 @@ internal static class ValeResidents
         if (BookedTonight(Game1.player))
             return true;
         Game1.drawObjectDialogue(S("room.locked", "A card on the pillow: 'Booked. Ask Bea at the counter downstairs.'"));
+        return false;
+    }
+
+    // ---- The artists' room: not let out ----
+    // Its door (data/vale_doors.json) is "Door blinxxy.MuseArt_ArtistsRoom" until Bea's
+    // 10-heart key: no villager has that name, so the game's 2-heart rule never opens it,
+    // and its locked message would be blank. This is its card on the door instead.
+    public const string ArtistsRoomDoor = ModEntry.Id + "_ArtistsRoom";
+
+    internal static bool LockedDoorPrefix(string[] action)
+    {
+        if (action.Length < 2 || action[1] != ArtistsRoomDoor)
+            return true;
+        Game1.drawObjectDialogue(S("artists.locked", "A card pinned to the door, in Bea's hand: 'The Artists' Room. Not let out. -B'"));
         return false;
     }
 

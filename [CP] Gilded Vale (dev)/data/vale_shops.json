@@ -92,15 +92,15 @@
     },
 
     // ---- The counters ----
-    // Bea's tea counter, the row you walk up to (its front, Vale House 19-22, 21).
+    // Bea's tea counter, the row you walk up to (its front, Vale House 19-22, 22; Bea stands behind it at 21 20).
     {
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_ValeHouse",
       "MapTiles": [
-        { "Position": { "X": 19, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
-        { "Position": { "X": 20, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
-        { "Position": { "X": 21, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
-        { "Position": { "X": 22, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } }
+        { "Position": { "X": 19, "Y": 22 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
+        { "Position": { "X": 20, "Y": 22 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
+        { "Position": { "X": 21, "Y": 22 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
+        { "Position": { "X": 22, "Y": 22 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } }
       ]
     },
     // Fern's seed counter in the seedhouse (22-24, 18); she serves from behind it (23 17)
@@ -143,6 +143,7 @@
         "room.already": "{{i18n:bea.room.already}}",
         "room.money": "{{i18n:bea.room.money}}",
         "room.locked": "{{i18n:bea.room.locked}}",
+        "artists.locked": "{{i18n:bea.artists.locked}}",
         "room.tucked": "{{i18n:bea.room.tucked}}",
         "room.tucked.paid": "{{i18n:bea.room.tucked.paid}}"
       }

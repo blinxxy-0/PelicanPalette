@@ -325,6 +325,7 @@
   "bea.room.already": "You're in the room upstairs, first door on the left. The bed's made, and the roof over it is one of the good two.",
   "bea.room.money": "It's two hundred for the night. Come back when the farm's been kind to you.",
   "bea.room.locked": "A card on the pillow: 'Booked. Ask Bea at the counter downstairs.'",
+  "bea.artists.locked": "A card pinned to the door, in Bea's hand: 'The Artists' Room. Not let out. -B'",
   "bea.room.tucked": "You woke up in the guest bed. Bea must have found you on the floor and put you to bed.",
   "bea.room.tucked.paid": "You woke up in the guest bed. Bea found you on the floor and put you to bed. She took {0}g for the room.",
   "fern.shop.rows": "Plant them anywhere. Not in rows. I'll know.",

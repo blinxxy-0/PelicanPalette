@@ -53,11 +53,13 @@ KITCHEN = (23, 29)                          # the tea room's columns with the ki
 PIECES = {
     # the tea room: the guest book by the stairs' doorway, Bea's china, her counter against
     # the back wall by the kitchen with the teapots on a shelf above it (the user, 2026-11-07:
-    # the counter "up towards the right", off the carpet and out of the middle)
+    # the counter "up towards the right", off the carpet and out of the middle). The counter
+    # stands a row out from the wall so Bea serves from behind it, coming in from the
+    # kitchen (the user, 2026-11-08: she stood beside it in the kitchen, with no way behind)
     "guestbook_case": ((11, 18), 1),
-    "china_dresser": ((17, 18), 1), "teapot_shelf": ((19, 17), 0), "tea_counter": ((19, 19), 2),
+    "china_dresser": ((17, 18), 1), "teapot_shelf": ((19, 17), 0), "tea_counter": ((19, 20), 2),
     # the tea tables, every one on a rug (the user: "some on carpet and some not doesn't make sense")
-    "tea_table": ((11, 22), 1), "tea_table#2": ((11, 25), 1), "tea_table#3": ((18, 23), 1), "tea_table#4": ((18, 26), 1),
+    "tea_table": ((11, 22), 1), "tea_table#2": ((11, 25), 1), "tea_table#3": ((18, 24), 1), "tea_table#4": ((18, 27), 1),
     # the hall: the inn's piano
     "piano": ((9, 11), 1),
     # the guest room
@@ -107,11 +109,13 @@ VANILLA = {
     "pic_flower":   [{"F": [208]}], "pic_meadow": [{"F": [210]}], "pic_photo": [{"F": [246]}], "pic_pink": [{"F": [247]}],
     # Haley's kitchen, from the wall down: cupboards and the window shelf, the counters,
     # the stove, the sink and the fridge, a mat in front
-    "kitchen":      [{"F": [531, 532, 257, 567, 568, 257]},
-                     {"F": [563, 564, 289, 0, 571, 289], "B": [0, 0, 570, 0, 0, 0]},
-                     {"B": [599, 600, 601, 602, 603, 489], "F": [0, 0, 0, 0, 0, 514]},
-                     {"B": [631, 632, 633, 634, 635, 521], "B2": [0, 0, 0, 0, 2305, 2305]},
-                     {"B2": [2337, 2337, 2337, 2337, 2337, 0]}],
+    # (without Haley's side table at its end, so it fits between Bea's way in behind the
+    # counter and the wall's corner)
+    "kitchen":      [{"F": [531, 532, 257, 567, 568]},
+                     {"F": [563, 564, 289, 0, 571], "B": [0, 0, 570, 0, 0]},
+                     {"B": [599, 600, 601, 602, 603]},
+                     {"B": [631, 632, 633, 634, 635], "B2": [0, 0, 0, 0, 2305]},
+                     {"B2": [2337, 2337, 2337, 2337, 2337]}],
     "dining":       [{"F": [0, 473, 474, 475, 0]},                                   # Haley's, two chairs
                      {"F": [683, 366, 367, 333, 747], "B": [0, 505, 506, 507, 0]},
                      {"B": [715, 537, 538, 539, 779]}],
@@ -127,7 +131,8 @@ FURNISH = [
     # the tea room
     ("plant", 13, 19), ("plant_b", 22, 27),
     # the kitchen
-    ("kitchen", 23, 17), ("dining", 24, 23), ("plant", 29, 27),
+    # (a tile in from the tea room, leaving Bea's way behind her counter at 23)
+    ("kitchen", 24, 17), ("dining", 24, 23), ("plant", 29, 27),
     # the hall
     ("hall_table", 3, 12), ("plant", 8, 12), ("clock", 12, 12), ("hall_table", 17, 12),
     ("plant_b", 21, 12), ("hall_table", 22, 12), ("plant", 27, 12),
@@ -143,11 +148,11 @@ DESCRIBE = {
     "rack_canvases": "canvases", "easel_lighthouse": "lighthouse_easel", "stack_canvases": "blank_canvases",
     "writing_desk#2": "accounts", "painting_flowers": "flowers",
     ("clock", 12, 12): "clock", ("hall_table", 3, 12): "photo", ("bear", 1, 25): "bear",
-    ("dollhouse", 6, 26): "dollhouse", ("kitchen", 23, 17): "kitchen", "fireplace": "fireplace",
+    ("dollhouse", 6, 26): "dollhouse", ("kitchen", 24, 17): "kitchen", "fireplace": "fireplace",
 }
 BEDS = {"guest": (8, 4), "artists": (17, 4), "bea": (26, 4)}   # the Saloon's spare bed, top-left
 SLEEP_IN = "guest"
-RUGS = [(4, 21, 5, 4), (10, 21, 4, 7), (17, 23, 4, 6), (2, 26, 6, 3), (14, 5, 3, 3)]          # Haley's red rug, 9-sliced: x, y, w, h
+RUGS = [(4, 21, 5, 4), (10, 21, 4, 7), (17, 24, 4, 5), (2, 26, 6, 3), (14, 5, 3, 3)]          # Haley's red rug, 9-sliced: x, y, w, h
 FIREPLACE_X = 2
 LIGHTS = [(5, 4), (15, 4), (24, 4), (4, 12), (18, 12), (8, 20), (2, 21), (12, 24), (19, 25), (26, 24)]
 # Pieces painted for the art shop (its gallery's paintings, the easels and canvases), cut
