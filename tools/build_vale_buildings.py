@@ -479,7 +479,7 @@ BUILDINGS = {
             ("leaves", 4, 18), ("leaves#2", 13, 17), ("leaves#3", 13, 14), ("moss_patch", 1, 18),
             ("moss_patch#2", 21, 13), ("moss_patch#3", 4, 13),
             # the back room: the artist's cot, a washstand, a trunk, a small window
-            ("washstand", 14, 2), ("window", 17, 1), ("bed", 19, 4), ("chest", 15, 7),
+            ("washstand", 14, 2), ("window", 17, 1), ("bed", 19, 4), ("chest", 17, 4),
             ("rug#2", 16, 5, 3, 3), ("plant", 21, 4),
             ("cobweb#3", 21, 1), ("leaves#4", 21, 7), ("moss_patch#4", 14, 4),
         ],

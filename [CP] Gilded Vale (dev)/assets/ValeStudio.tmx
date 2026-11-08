@@ -77,10 +77,10 @@
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,65,80,81,81,81,81,81,81,82,69,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,65,112,113,113,113,113,113,113,114,69,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,65,4252,4253,0,0,0,81,81,146,69,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,65,4252,4253,0,4177,4178,81,81,146,69,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,65,0,0,0,0,0,357,358,536,69,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,65,0,0,0,0,0,0,0,0,69,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,65,0,4177,4178,0,0,321,322,0,69,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,65,0,0,0,0,0,321,322,0,69,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,
 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,156,0,155,0,0,0,1,1,
@@ -282,10 +282,10 @@
     <object id="34" name="TileData" x="320" y="80" width="16" height="16">
       <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio.cot" /></properties>
     </object>
-    <object id="35" name="TileData" x="240" y="112" width="16" height="16">
+    <object id="35" name="TileData" x="272" y="64" width="16" height="16">
       <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio.trunk" /></properties>
     </object>
-    <object id="36" name="TileData" x="256" y="112" width="16" height="16">
+    <object id="36" name="TileData" x="288" y="64" width="16" height="16">
       <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio.trunk" /></properties>
     </object>
   </objectgroup>
