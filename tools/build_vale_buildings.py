@@ -119,6 +119,8 @@ ART = {
     "coat_rack":     (1, 2, 1),     # his long travel-worn coat, the red neckerchief
     "moss_wall":     (1, 2, 0),     # moss and ivy creeping down the plaster from a beam
     "beam":          (1, 2, 0),     # and the beam alone
+    "beam_l": (1, 2, 0), "beam_r": (1, 2, 0),             # the beam stopping behind a lamp
+    "moss_wall_l": (1, 2, 0), "moss_wall_r": (1, 2, 0),   # the ivy at a beam's carved end
     "moss_patch":    (1, 1, -2),    # moss in a corner of the floorboards
     "stump_stool":   (1, 1, 1),     # a mossy tree stump for a stool
     "fern_pot":      (1, 2, 1),     # a big fern in an old bucket
@@ -158,7 +160,7 @@ for _id, _wh in GAME_PAINTINGS.items():
     LUPINI[f"game_{_id}"] = _id
 # wall pieces hung from the top of their cells, BEAM_DROP px down (Emmett's beams: one height, so
 # they join, clear of the ceiling's outline)
-TOP_ALIGNED = {"beam", "moss_wall"}
+TOP_ALIGNED = {"beam", "moss_wall", "beam_l", "beam_r", "moss_wall_l", "moss_wall_r"}
 BEAM_DROP = 5
 BED = (2, 4)                        # the Saloon's spare bed
 # The game's rugs that 9-slice (townInterior_2, their top-left tile): ("rug", x, y, w, h)
@@ -171,7 +173,8 @@ EMMETT_PICKS = {k: "art/gilded_vale/interiors/emmett/" + v for k, v in {
     "music_stand": "emmett_v1/music_stand_1_2", "coat_rack": "emmett_v1/coat_rack_1_0",
     "moss_wall": "emmett_v1/moss_wall_1_1", "moss_patch": "moss_patch",
     "stump_stool": "emmett_v1/stump_stool_1_0", "fern_pot": "emmett_v1/fern_pot_1_0",
-    "crate_table": "emmett_v1/crate_table_1_0", "beam": "beam"}.items()}
+    "crate_table": "emmett_v1/crate_table_1_0", "beam": "beam", "beam_l": "beam_l", "beam_r": "beam_r",
+    "moss_wall_l": "moss_wall_l", "moss_wall_r": "moss_wall_r"}.items()}
 
 BUILDINGS = {
     # Tobin's pottery (map doc, section 5: "like the Blacksmith. The workshop and kiln at
@@ -420,15 +423,15 @@ BUILDINGS = {
             ("coat_rack", 15, 13), ("fern_pot", 1, 15), ("chest", 6, 13),
             # moss: creeping down the plaster, and in the corners of the floor
             # one beam along the wall: ivy at its ends, bare wood over the bookcase (the user, 2026-11-07)
-            ("moss_wall", 10, 10), ("beam", 11, 10), ("beam#2", 12, 10), ("moss_wall#2", 13, 10), ("moss_patch", 11, 14), ("moss_patch#2", 15, 16),
+            ("moss_wall_l", 10, 10), ("beam", 11, 10), ("beam#2", 12, 10), ("moss_wall_r", 13, 10), ("moss_patch", 11, 14), ("moss_patch#2", 15, 16),
             ("moss_patch#3", 9, 16), ("moss_patch#4", 14, 16),
             # the nook: his bed, a lantern on the nightstand, the trunk he travelled with
             # the nook, under the eaves: one small window in the middle, like the gable's outside
             ("bed", 6, 4), ("nightstand", 8, 3), ("window", 5, 1), ("chest#2", 4, 4), ("fern_pot#2", 2, 4),
             # either side of the window an ivy beam, its wood running on to a lamp at each end
             # (the user, 2026-11-07); the lamp is the game's, hung over the beam's wood
-            ("beam#3", 2, 1), ("sconce", 2, 1), ("moss_wall#3", 3, 1), ("beam#4", 4, 1), ("sconce#2", 4, 1),
-            ("beam#5", 6, 1), ("sconce#3", 6, 1), ("moss_wall#4", 7, 1), ("beam#6", 8, 1), ("sconce#4", 8, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
+            ("beam_l", 2, 1), ("sconce", 2, 1), ("moss_wall#3", 3, 1), ("beam_r", 4, 1), ("sconce#2", 4, 1),
+            ("beam_l#2", 6, 1), ("sconce#3", 6, 1), ("moss_wall#4", 7, 1), ("beam_r#2", 8, 1), ("sconce#4", 8, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
         ],
         notes=["Emmett's cottage: small, one floor plan, cream plaster walls as outside. The front door opens into his room.",
                "By the stone fireplace (under the chimney outside): his armchair turned to it on a rug, a mossy stump for a guest, a crate for a side table, logs.",
@@ -746,7 +749,7 @@ def pack(picks):
         im = Image.open(path + ".png").convert("RGBA")
         bb = im.getbbox()
         # (pieces are stood on the bottom of their cells; a few hang from the top instead)
-        im = im.crop((bb[0], 0, bb[2], im.height) if name in TOP_ALIGNED else bb)
+        im = im if name in TOP_ALIGNED else im.crop(bb)       # (a beam keeps its exact place in its tile)
         w, h = ART[name][:2]
         cols, rows = max(w, -(-im.width // 16)), max(h, -(-im.height // 16))
         if (cols, rows) != (w, h):

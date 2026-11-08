@@ -192,7 +192,62 @@ def beam():
     im.save(os.path.join(INT, "emmett", "beam.png"))
 
 
+# the beam's own colours (its rows, top down)
+WOOD = {"O": (65, 22, 28), "L": (190, 120, 64), "M": (146, 84, 43), "D": (110, 55, 37), "B": (76, 44, 32),
+        "H": (226, 168, 104)}
+# a carved end for a beam: a round boss where the wood stops, a little scroll bracket under
+# it (x 0-6 of the left end; the right end is its mirror)
+FINIAL = [".OOOOO.",
+          "OLLLLLO",
+          "OLHHLLL",
+          "OLHLMMM",
+          "OLLMMDD",
+          "OMMMDDB",
+          ".ODDDO.",
+          "..OMMO.",
+          "..OLDO.",
+          "...OMDO",
+          "....OO.",
+          "...OMO.",
+          "...OO.."]
+
+
+def beam_ends():
+    """Ends for Emmett's beams (the user, 2026-11-07): in the nook the wood stops behind its
+    lamp (beam_l, beam_r: the bare beam, chopped past the lamp's middle); in his room the
+    ivy pieces at the beam's two ends get a carved finial (moss_wall_l, moss_wall_r)."""
+    bare = load("emmett/beam")
+    for name, keep in (("beam_l", range(7, 16)), ("beam_r", range(0, 9))):
+        im = bare.copy()
+        px = im.load()
+        for y in range(im.height):
+            for x in range(im.width):
+                if x not in keep:
+                    px[x, y] = (0, 0, 0, 0)
+        edge = keep[0] if name == "beam_l" else keep[-1]
+        for y in range(6):
+            if px[edge, y][3]:
+                px[edge, y] = WOOD["O"] + (255,)          # the cut end, outlined
+        im.save(os.path.join(INT, "emmett", name + ".png"))
+    ivy = load("emmett/emmett_v1/moss_wall_1_1")
+    for name, mirror in (("moss_wall_l", False), ("moss_wall_r", True)):
+        im = ivy.transpose(Image.FLIP_LEFT_RIGHT) if mirror else ivy.copy()
+        px = im.load()
+        for y in range(13):
+            for x in range(7):
+                r, g, b, a = px[x, y]
+                if a and not g > r:                       # the wood there goes (the ivy stays)
+                    px[x, y] = (0, 0, 0, 0)
+        for y, row in enumerate(FINIAL):
+            for x, c in enumerate(row):
+                if c != ".":
+                    px[x, y] = WOOD[c] + (255,)
+        if mirror:
+            im = im.transpose(Image.FLIP_LEFT_RIGHT)
+        im.save(os.path.join(INT, "emmett", name + ".png"))
+
+
 if __name__ == "__main__":
-    for f in (beam, moss_patch, dusty_window, pinned_sketches, unfinished_easel, note_table, backward_painting, cobweb, leaves):
+    for f in (beam, beam_ends, moss_patch, dusty_window, pinned_sketches, unfinished_easel, note_table, backward_painting, cobweb, leaves):
         f()
         print("wrote", f.__name__)
