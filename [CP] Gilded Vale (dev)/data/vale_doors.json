@@ -1,0 +1,57 @@
+// The residents' own rooms lock to strangers, as vanilla villagers' bedrooms do: the
+// door's "Action Door <name>" opens once you have 2 hearts with them (and stays open
+// after, the game's doorUnlock mail). Each edit has its resident's When, so while they're
+// switched off (no art) the doors stay open for walking the interiors.
+// (The builders made these plain "Action Door" tiles; the Doors map property is theirs.)
+{
+  "Changes": [
+    // Bea's room upstairs in the Vale House (25 11). The artists' room beside it (15 11) is
+    // hers too until her 10-heart event gives you its key (that rule comes with the event).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeHouse",
+      "When": { "ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true" },
+      "MapTiles": [
+        { "Position": { "X": 25, "Y": 11 }, "Layer": "Buildings", "SetProperties": { "Action": "Door BeaThistle" } },
+        { "Position": { "X": 15, "Y": 11 }, "Layer": "Buildings", "SetProperties": { "Action": "Door BeaThistle" } }
+      ]
+    },
+    // Tobin's bedroom behind the workshop (20 13); his kitchen and parlour (9 13) stay open.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValePottery",
+      "When": { "ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true" },
+      "MapTiles": [
+        { "Position": { "X": 20, "Y": 13 }, "Layer": "Buildings", "SetProperties": { "Action": "Door TobinClay" } }
+      ]
+    },
+    // Lupini's studio, where his easel and his bed are (11 15); the hall of paintings by
+    // the front door stays open to visitors, as a gallery should.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeAtelier",
+      "When": { "ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true" },
+      "MapTiles": [
+        { "Position": { "X": 11, "Y": 15 }, "Layer": "Buildings", "SetProperties": { "Action": "Door Lupini" } }
+      ]
+    },
+    // Fern's bedroom behind the cottage (8 12).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeFern",
+      "When": { "ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true" },
+      "MapTiles": [
+        { "Position": { "X": 8, "Y": 12 }, "Layer": "Buildings", "SetProperties": { "Action": "Door FernAster" } }
+      ]
+    },
+    // Emmett's nook under the eaves (5 11).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeEmmett",
+      "When": { "ValeResidents": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true" },
+      "MapTiles": [
+        { "Position": { "X": 5, "Y": 11 }, "Layer": "Buildings", "SetProperties": { "Action": "Door EmmettWren" } }
+      ]
+    }
+  ]
+}

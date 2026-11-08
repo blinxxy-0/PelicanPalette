@@ -17,7 +17,7 @@
 ## Look
 - **Build:** small, wiry, strong from digging. Never still.
 - **Hair:** a long, messy sandy-blonde braid, with whatever she's been working in caught in it (a leaf, a burr, a petal).
-- **Face:** tanned and freckled, a gap in her front teeth, green-brown eyes.
+- **Face:** tanned and freckled, green-brown eyes, a cheeky closed-mouth grin (her portraits, 2026-11-08: the gap-toothed grin was dropped).
 - **Clothes:** mustard-yellow dungarees, patched at the knees, over a faded cornflower-blue shirt; muddy boots; a battered straw sun hat with a sprig of whatever's in flower.
 - **Details:** a trowel in her back pocket, seed packets in the front; dirt under her nails that never comes out.
 - **Palette:** mustard, cornflower and straw: a meadow in summer. Bright beside Margot's sage and Sable's teal.

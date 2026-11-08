@@ -30,6 +30,10 @@
     // counter they open on trust), and Lupini's letter opening the Vale.
     { "Action": "Include", "FromFile": "data/vale_shops.json" },
     { "Action": "Include", "FromFile": "data/vale_letter.json" },
+    // The valley's talk about the Vale, the residents' letters, and their bedroom doors.
+    { "Action": "Include", "FromFile": "data/vale_town_talk.json" },
+    { "Action": "Include", "FromFile": "data/vale_mail.json" },
+    { "Action": "Include", "FromFile": "data/vale_doors.json" },
 
     // Lupini, Tobin, Fern and Emmett join the art lovers, who like even a normal-quality
     // painting (1.4 plan, section 9; ArtStudio/Painting/ArtItems.cs DefaultArtLovers).
