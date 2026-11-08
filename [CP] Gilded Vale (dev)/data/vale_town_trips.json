@@ -1,0 +1,68 @@
+// The residents' days in Pelican Town, from their briefs: Bea at Pierre's on Thursdays,
+// Fern at Pierre's and Evelyn's on Mondays, Lupini painting in town some Saturdays
+// (spring to fall), Emmett at the Saloon some Fridays after his 4-heart event.
+//
+// A SECOND SWITCH, off by default: "ValeResidentsTownTrips" in this pack's config (on
+// top of each resident's own When). Nothing joins the Vale to the Bus Stop for an NPC
+// yet: the bus is the farmer's (ArtStudio/Vale/ValeBus.cs), so the game's pathfinding
+// finds no route out of the Vale and these days would break. Before turning it on, give
+// NPCs a way through: an NPCWarp map property on each side (the Vale's bus at 3 8 and a
+// tile by Pam's bus at the Bus Stop, one no villager walks over), or a C# hop like
+// Julian's (Social/Julian.cs moves him to the bus door). Then walk each day once: the
+// town tiles below are ones the mod's other villagers already stand on, except where noted.
+//
+// Each entry replaces that day in the resident's schedule (data/<slug>_schedule.json).
+{
+  "Changes": [
+    // Bea, Thursdays: the morning bus to town, back by 2. (Pierre's needs a tile chosen in
+    // the SeedShop in game; until then she spends the morning at the Saloon swapping
+    // recipes with Gus, which the brief also gives her.)
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/BeaThistle",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true" },
+      "Entries": {
+        "Thu": "700 Saloon 4 21 0/1130 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2"
+      }
+    },
+    // Fern, Mondays (spring to fall; in winter her winter_Mon keeps her home): the bus
+    // to town, tea and cuttings with Evelyn (where Sable takes tea on Wednesdays), home
+    // to the seedhouse after lunch. (Pierre's: a SeedShop tile to choose, as for Bea.)
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/FernAster",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true" },
+      "Entries": {
+        "Mon": "800 JoshHouse 6 20 3/1300 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2"
+      }
+    },
+    // Lupini, the first and third Saturdays (the 6th and 20th, clear of the festivals),
+    // spring to fall: painting by the river in the Forest, near where Sable paints (the
+    // nod), back on the evening bus. That's where his 2-heart event can find him.
+    // (Day-of-month keys come before rain: on a wet 6th he still goes. Fine for now.)
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/Lupini",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true" },
+      "Entries": {
+        "spring_6": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "spring_20": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "summer_6": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "summer_20": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "fall_6": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "fall_20": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2"
+      }
+    },
+    // Emmett, Fridays once he's at 4 hearts (the brief: after his 4-heart event; swap this
+    // for HasSeenEvent when the event exists): the stage in the morning, then the Saloon
+    // in the evening, where Sam's in awe of him, and the late bus home.
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/EmmettWren",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true", "Hearts:EmmettWren": "4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" },
+      "Entries": {
+        "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1400 Saloon 6 21 0/2330 blinxxy.MuseArt_ValeEmmett 6 6 2"
+      }
+    }
+  ]
+}

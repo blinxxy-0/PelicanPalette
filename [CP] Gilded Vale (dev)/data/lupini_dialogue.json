@@ -1,0 +1,91 @@
+// Lupini's dialogue (1.4). Keys follow vanilla's, as Sable's do: day names, with
+// heart levels and seasons; first days and the birthday; gift reactions.
+// Portraits (when the sheet exists): $0 neutral, $h delighted, $s tired (when he thinks nobody's looking), $u theatrical, $l touched, $a pained.
+// Voice: expansive, a little theatrical, full of colour words; calls everyone 'my friend' and means it.
+// Heart events come later (docs/lupini_brief.md). Hooks already in his lines:
+//   2 hearts, The Artist's Eye (the puddle): Thu4.
+//   4 hearts, A Place Worth Painting: Sun4 ('paint when it's fun').
+//   6 hearts, The Unfinished Painting (the Old Studio): Thu6 (the studios, full once).
+//   8 hearts, The Exhibition: fall_Sat (the Open House, no judges).
+//   10 hearts, Something Nobody Will See (the overlook at dawn): Sun8, Wed8; Sable: Sat, Sat8.
+// Julian: Mon2 (the review that made him; they meet at the Open House).
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Characters/Dialogue/Lupini", "FromFile": "data/blank.json", "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/Lupini",
+      "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"},
+      "Entries": {
+        "Introduction": "{{i18n:lupini.dialogue.Introduction}}",
+
+        // ---- Every week ----
+        "Mon": "{{i18n:lupini.dialogue.Mon}}",
+        "Tue": "{{i18n:lupini.dialogue.Tue}}",
+        "Wed": "{{i18n:lupini.dialogue.Wed}}",
+        "Thu": "{{i18n:lupini.dialogue.Thu}}",
+        "Fri": "{{i18n:lupini.dialogue.Fri}}",
+        "Sat": "{{i18n:lupini.dialogue.Sat}}",
+        "Sun": "{{i18n:lupini.dialogue.Sun}}",
+
+        // ---- As you get closer (Mon4 = from 4 hearts; the highest one you've reached wins) ----
+        "Mon2": "{{i18n:lupini.dialogue.Mon2}}",
+        "Wed2": "{{i18n:lupini.dialogue.Wed2}}",
+        "Fri2": "{{i18n:lupini.dialogue.Fri2}}",
+        "Mon4": "{{i18n:lupini.dialogue.Mon4}}",
+        "Tue4": "{{i18n:lupini.dialogue.Tue4}}",
+        "Wed4": "{{i18n:lupini.dialogue.Wed4}}",
+        "Thu4": "{{i18n:lupini.dialogue.Thu4}}",
+        "Fri4": "{{i18n:lupini.dialogue.Fri4}}",
+        "Sat4": "{{i18n:lupini.dialogue.Sat4}}",
+        "Sun4": "{{i18n:lupini.dialogue.Sun4}}",
+        "Tue6": "{{i18n:lupini.dialogue.Tue6}}",
+        "Thu6": "{{i18n:lupini.dialogue.Thu6}}",
+        "Sat6": "{{i18n:lupini.dialogue.Sat6}}",
+        "Mon8": "{{i18n:lupini.dialogue.Mon8}}",
+        "Tue8": "{{i18n:lupini.dialogue.Tue8}}",
+        "Wed8": "{{i18n:lupini.dialogue.Wed8}}",
+        "Thu8": "{{i18n:lupini.dialogue.Thu8}}",
+        "Fri8": "{{i18n:lupini.dialogue.Fri8}}",
+        "Sat8": "{{i18n:lupini.dialogue.Sat8}}",
+        "Sun8": "{{i18n:lupini.dialogue.Sun8}}",
+
+        // ---- The seasons ----
+        "spring_Mon": "{{i18n:lupini.dialogue.spring_Mon}}",
+        "spring_Thu": "{{i18n:lupini.dialogue.spring_Thu}}",
+        "summer_Tue": "{{i18n:lupini.dialogue.summer_Tue}}",
+        "summer_Fri": "{{i18n:lupini.dialogue.summer_Fri}}",
+        "fall_Wed": "{{i18n:lupini.dialogue.fall_Wed}}",
+        "fall_Sat": "{{i18n:lupini.dialogue.fall_Sat}}",
+        "winter_Tue": "{{i18n:lupini.dialogue.winter_Tue}}",
+        "winter_Sat": "{{i18n:lupini.dialogue.winter_Sat}}",
+
+        // ---- The rest of the year (first days, and their birthday) ----
+        "spring_1": "{{i18n:lupini.dialogue.spring_1}}",
+        "summer_1": "{{i18n:lupini.dialogue.summer_1}}",
+        "fall_1": "{{i18n:lupini.dialogue.fall_1}}",
+        "winter_1": "{{i18n:lupini.dialogue.winter_1}}",
+        "winter_18": "{{i18n:lupini.dialogue.winter_18}}",
+        "winter_15": "{{i18n:lupini.dialogue.nightmarket}}",
+        "winter_16": "{{i18n:lupini.dialogue.nightmarket}}",
+        "winter_17": "{{i18n:lupini.dialogue.nightmarket}}",
+
+        // ---- Gifts (the rest are the gift table's lines) ----
+        "AcceptGift_(O)348": "{{i18n:lupini.dialogue.AcceptGift_348}}",
+        "AcceptGift_(O)402": "{{i18n:lupini.dialogue.AcceptGift_402}}",
+        "AcceptGift_(O)395": "{{i18n:lupini.dialogue.AcceptGift_395}}",
+        "AcceptGift_(O)167": "{{i18n:lupini.dialogue.AcceptGift_167}}",
+        "AcceptGift_(O)330": "{{i18n:lupini.dialogue.AcceptGift_330}}",
+        "AcceptBirthdayGift_Positive": "{{i18n:lupini.dialogue.AcceptBirthdayGift_Positive}}",
+        "AcceptBirthdayGift_Negative": "{{i18n:lupini.dialogue.AcceptBirthdayGift_Negative}}"
+      }
+    },
+    // Rainy days (the game's own file for every villager).
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"},
+      "Entries": { "Lupini": "{{i18n:lupini.dialogue.rainy}}" }
+    }
+  ]
+}

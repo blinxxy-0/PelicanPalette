@@ -1,0 +1,18 @@
+// BeaThistle's days. A time is when they set off; every tile was checked walkable and
+// reachable from the door or the bus (the Vale map and the interiors as built
+// 2026-11-07). No animations yet: the sprite sheet doesn't exist, so the work
+// poses (pouring tea) go in Data/AnimationDescriptions once it does.
+{
+  // The tea counter from 8:30 (she comes down from her room upstairs), the tea
+  // garden out front on fine afternoons, the counter again as the bar in the
+  // evening, then upstairs at half past eleven. ("spring" is the game's fallback
+  // in every season; it never looks for a "default" key.)
+  "spring": "830 blinxxy.MuseArt_ValeHouse 23 21 2/1300 blinxxy.MuseArt_GildedVale 37 13 2/1630 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2",
+  // Winter and rain: the tea garden's shut, so the counter all day.
+  "winter": "830 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2",
+  "rain": "830 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2",
+  // Sunday: the tea room shuts at noon and she walks down to the lake (the
+  // lakeside bench), back for the evening.
+  "Sun": "830 blinxxy.MuseArt_ValeHouse 23 21 2/1200 blinxxy.MuseArt_GildedVale 47 60 2/1600 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2"
+  // Thursday's bus to Pelican Town for Pierre's: data/vale_town_trips.json.
+}

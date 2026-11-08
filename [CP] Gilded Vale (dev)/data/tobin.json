@@ -1,0 +1,74 @@
+// Tobin Clay (1.4): the Vale's potter. He/him; not marriageable. In 1.4 he lives
+// and works in the Vale with dialogue, a schedule and gifts; his heart events come
+// in 1.5, told through Pottery (docs/design/pottery_minigame.md). His rooms are
+// behind the workshop. See docs/tobin_brief.md.
+//
+// SWITCHED OFF until the art exists: every patch here has the same When, so
+// TobinClay only exists once the dev pack's config has ValeResidents: true AND both
+// assets/tobin/sprites.png (Characters/TobinClay) and assets/tobin/portraits.png
+// (Portraits/TobinClay) are in this pack. See data/residents.json.
+{
+  "Changes": [
+    // ---- Who he is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"},
+      "Entries": {
+        "TobinClay": {
+          "DisplayName": "{{i18n:tobin.name}}",
+          "Gender": "Male",
+          "Age": "Adult",
+          "Manner": "Neutral",
+          "SocialAnxiety": "Shy",
+          "Optimism": "Neutral",
+          "IsDarkSkinned": true,
+          "BirthSeason": "Winter",
+          "BirthDay": 5,
+          // From the Vale, not the town: no introductions quest, and not on the
+          // calendar or social page until you've met them.
+          "HomeRegion": "Other",
+          "CanBeRomanced": false,
+          // Not in the world until the Vale's route is open (the letter that opens it,
+          // ArtStudio/Vale/ValeBus.cs OpenMail). In a dev save without that letter, add
+          // the mail flag blinxxy.MuseArt_ValeOpen to see them.
+          "UnlockConditions": "PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // Not at Pelican Town's festivals yet (no festival places, no dance frames),
+          // not drawn as anyone's Winter Star secret friend while away from town, and
+          // no Ginger Island trips (no beach outfit, and the island visit starts in town).
+          "FlowerDanceCanDance": false,
+          "WinterStarParticipant": "FALSE",
+          "CanVisitIsland": "FALSE",
+          "Home": [
+            // The pottery, by his bed in the back bedroom.
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValePottery", "Tile": { "X": 22, "Y": 6 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/TobinClay", "FromFile": "assets/tobin/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"} },
+    { "Action": "Load", "Target": "Portraits/TobinClay", "FromFile": "assets/tobin/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"} },
+
+    // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
+    // Loves: Clay (a joke, but he means it), Hardwood (for the kiln), a hearty meal
+    // (Spicy Eel, Survival Burger), Coffee. Likes: minerals, gems and quartz (for
+    // glazes), cooked food, flowers (Fern's taught him). Dislikes anything flimsy or
+    // for show: gold bars, sap, broken junk. Hates trash, Joja Cola and rotten plants.
+    // Paintings: the mod's rule; he's an art lover (data/residents.json).
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"},
+      "Entries": { "TobinClay": "{{i18n:tobin.gift.love}}/330 709 226 241 395/{{i18n:tobin.gift.like}}/-12 -2 80 -7 -80/{{i18n:tobin.gift.dislike}}/336 92 170 171 172/{{i18n:tobin.gift.hate}}/168 167 747/{{i18n:tobin.gift.neutral}}/" }
+    },
+
+    // ---- A day in his life (data/tobin_schedule.json) ----
+    { "Action": "Load", "Target": "Characters/schedules/TobinClay", "FromFile": "data/tobin_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"} },
+
+    // ---- What he says ----
+    { "Action": "Include", "FromFile": "data/tobin_dialogue.json" }
+  ]
+}
