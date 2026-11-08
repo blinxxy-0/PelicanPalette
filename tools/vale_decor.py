@@ -137,15 +137,16 @@ def decor(g, ground, paths_first, W, H):
             g["Front"][y - 1][x] = top
 
     def flowers(x0, y0, x1, y1, share, ground=0.0):
-        """Wildflowers in the grass: the game's flower tufts (pink 258, blue 308) on Front,
-        and some of the grass itself its flowery tiles (152, 153)."""
+        """Wildflowers in the grass: the game's flower tufts (pink 258, blue 308) on Back2,
+        under the farmer's feet (on Front they drew over him: the user, 2026-11-08, "I can
+        walk under instead of over"), and some of the grass itself its flowery tiles (152, 153)."""
         for y in range(y0, y1 + 1):
             for x in range(x0, x1 + 1):
                 if not plain(x, y):
                     continue
                 r = rnd.random()
                 if r < share:
-                    g["Front"][y][x] = rnd.choice((258, 308))
+                    g["Back2"][y][x] = rnd.choice((258, 308))
                 elif r < share + ground and g["Back"][y][x] == 176:
                     g["Back"][y][x] = rnd.choice((152, 153))
 

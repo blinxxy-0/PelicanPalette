@@ -13,8 +13,8 @@ from render_tmx import layer_data
 PLACES = {
     "bus stop": (12, 8), "inn door": (28, 20), "tea garden tables": (37, 13), "pottery door": (46, 19),
     "clay pit": (51, 24), "atelier door": (75, 24), "Lupini's garden": (86, 18),
-    "Fern's door": (13, 39), "seedhouse door": (17, 39), "nursery bench": (23, 33), "parterre birdbath": (15, 42),
-    "parterre east statue": (25, 41), "Hall door": (44, 40), "fountain": (48, 46), "noticeboard": (41, 43),
+    "Fern's door": (13, 39), "seedhouse door": (17, 39), "nursery bench": (23, 35), "parterre birdbath": (14, 42),
+    "parterre east statue": (25, 43), "Hall door": (44, 40), "fountain": (48, 46), "noticeboard": (41, 43),
     "Old Studio (big)": (73, 39), "studio B": (84, 39), "studio C": (90, 39),
     "amphitheatre stage": (37, 56), "Emmett's door": (18, 62), "Emmett's yard": (11, 58),
     "Gilded Tree": (38, 69), "lakeside bench": (47, 60), "jetty": (48, 66), "picnic table": (90, 66),
