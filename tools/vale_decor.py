@@ -76,8 +76,13 @@ def decor(g, ground, paths_first, W, H):
         return False
 
     def fruit(x, y, tree_id):
+        # Fully grown on load and when regrown overnight ("<type> <id> <load stage>
+        # <regrow stage>"): the game regrows a missing one as a sapling (stage 2),
+        # and a sapling with a wild tree beside it is blocked, so it told the player
+        # every morning their tree "wasn't able to grow" (the user, 2026-11-08). A
+        # full-grown fruit tree never sends that (FruitTree.dayUpdate).
         if marker(x, y, SPAWN_TREE, why="fruit " + tree_id):
-            TILE_PROPS[("Paths", x, y)] = {"SpawnTree": "fruit " + tree_id}
+            TILE_PROPS[("Paths", x, y)] = {"SpawnTree": "fruit %s 4 4" % tree_id}
 
     def prop(name, x, y):
         cells = PROPS[name]

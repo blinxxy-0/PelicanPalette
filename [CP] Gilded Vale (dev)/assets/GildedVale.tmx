@@ -4012,27 +4012,27 @@
   <objectgroup id="15" name="Paths" visible="false">
     <object id="32" name="TileData" x="1408" y="48" width="16" height="16">
       <properties>
-        <property name="SpawnTree" type="string" value="fruit 628" />
+        <property name="SpawnTree" type="string" value="fruit 628 4 4" />
       </properties>
     </object>
     <object id="33" name="TileData" x="1408" y="144" width="16" height="16">
       <properties>
-        <property name="SpawnTree" type="string" value="fruit 629" />
+        <property name="SpawnTree" type="string" value="fruit 629 4 4" />
       </properties>
     </object>
     <object id="34" name="TileData" x="1440" y="96" width="16" height="16">
       <properties>
-        <property name="SpawnTree" type="string" value="fruit 631" />
+        <property name="SpawnTree" type="string" value="fruit 631 4 4" />
       </properties>
     </object>
     <object id="35" name="TileData" x="1472" y="48" width="16" height="16">
       <properties>
-        <property name="SpawnTree" type="string" value="fruit 633" />
+        <property name="SpawnTree" type="string" value="fruit 633 4 4" />
       </properties>
     </object>
     <object id="36" name="TileData" x="1488" y="144" width="16" height="16">
       <properties>
-        <property name="SpawnTree" type="string" value="fruit 633" />
+        <property name="SpawnTree" type="string" value="fruit 633 4 4" />
       </properties>
     </object>
   </objectgroup>
