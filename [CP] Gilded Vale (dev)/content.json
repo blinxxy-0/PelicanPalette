@@ -106,6 +106,19 @@
         "blinxxy.MuseArt_Vale.hall.frame_rack": "{{i18n:vale.hall.frame_rack}}",
         "blinxxy.MuseArt_Vale.hall.dancing_grass": "{{i18n:vale.hall.dancing_grass}}",
         "blinxxy.MuseArt_Vale.hall.ledger": "{{i18n:vale.hall.ledger}}",
+        "blinxxy.MuseArt_Vale.hall_closed.mural": "{{i18n:vale.hall_closed.mural}}",
+        "blinxxy.MuseArt_Vale.hall_closed.panel": "{{i18n:vale.hall_closed.panel}}",
+        "blinxxy.MuseArt_Vale.hall_closed.panel_b": "{{i18n:vale.hall_closed.panel_b}}",
+        "blinxxy.MuseArt_Vale.hall_closed.case": "{{i18n:vale.hall_closed.case}}",
+        "blinxxy.MuseArt_Vale.hall_closed.case_b": "{{i18n:vale.hall_closed.case_b}}",
+        "blinxxy.MuseArt_Vale.hall_closed.statue_round": "{{i18n:vale.hall_closed.statue_round}}",
+        "blinxxy.MuseArt_Vale.hall_closed.statue_moss": "{{i18n:vale.hall_closed.statue_moss}}",
+        "blinxxy.MuseArt_Vale.hall_closed.statue_kiln": "{{i18n:vale.hall_closed.statue_kiln}}",
+        "blinxxy.MuseArt_Vale.hall_closed.statue_heron": "{{i18n:vale.hall_closed.statue_heron}}",
+        "blinxxy.MuseArt_Vale.hall_closed.desk": "{{i18n:vale.hall_closed.desk}}",
+        "blinxxy.MuseArt_Vale.hall_closed.bench": "{{i18n:vale.hall_closed.bench}}",
+        "blinxxy.MuseArt_Vale.hall_closed.frames": "{{i18n:vale.hall_closed.frames}}",
+        "blinxxy.MuseArt_Vale.hall_closed.hook": "{{i18n:vale.hall_closed.hook}}",
         "blinxxy.MuseArt_Vale.studio.unfinished": "{{i18n:vale.studio.unfinished}}",
         "blinxxy.MuseArt_Vale.studio.note": "{{i18n:vale.studio.note}}",
         "blinxxy.MuseArt_Vale.studio.sketches": "{{i18n:vale.studio.sketches}}",
@@ -120,7 +133,12 @@
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHouse", "FromFile": "assets/ValeHouse.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValePottery", "FromFile": "assets/ValePottery.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeAtelier", "FromFile": "assets/ValeAtelier.tmx" },
-    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx" },
+    // The Exhibition Hall is closed and dusty until Lupini's 8-heart event reopens it: its
+    // closed map (ValeHallClosed.tmx, "hall_closed" in tools/build_vale_buildings.py) until the
+    // player has the mail flag blinxxy.MuseArt_ValeHallOpen, then the open hall. The flag is a
+    // placeholder: the 8-heart event (not written yet) will set it.
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHallClosed.tmx", "When": { "HasFlag |contains=blinxxy.MuseArt_ValeHallOpen": "false" } },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx", "When": { "HasFlag": "blinxxy.MuseArt_ValeHallOpen" } },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeFern", "FromFile": "assets/ValeFern.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeEmmett", "FromFile": "assets/ValeEmmett.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio", "FromFile": "assets/ValeStudio.tmx" },

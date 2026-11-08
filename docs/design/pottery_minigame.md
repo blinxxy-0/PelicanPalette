@@ -125,7 +125,17 @@ As painting was: a **prototype first**. A plain dev-only screen (`museart_potter
 - **The pressure:** the brush hand drifts, from nothing to its full reach over a couple of seconds held: Simplified 0.35 rows, Normal 1.2, Hard 2. The brush is drawn where it really is, so you correct by watching it.
 - **The design:** a base coat and two bands per shape, given as fractions of height so they fit the pot you threw. The bands are coloured marks hugging the pot's right side (the chalk line's way), and listed on the left.
 - **Judge:** each band a column at a time round the pot, its painted edges against the design's (a slice of slop free, gaps count), times neatness (glaze where the design has none). Glaze = 0.15 base + 0.85 bands. The pot's stars = 0.75 throw + 0.25 glaze. The bot, averaged over 20 per shape: a perfect hand 1.0; a hand that never corrects scores 0.97 to 1.0 on Simplified, 0.66 to 0.85 on Normal and 0.39 to 0.53 on Hard.
-- **Not yet:** a banding wheel of its own (it turns on the kick wheel for now; the art can come later), and drying and firing between throwing and glazing.
+- **Not yet:** a banding wheel of its own (it turns on the kick wheel for now; the art can come later), and drying between throwing and glazing.
+
+**Firing prototype (2026-11-07):** "Fire it" on a glazed pot's results, or `museart_pottery vase normal fire` (the bots throw and glaze it, and you fire it). `ArtStudio/Pottery/Firing.cs`.
+- **The scene:** inside the kiln, drawn wholly by code, so no new art. It has brick walls, a vignette as if through the spy hole, the pot on a kiln shelf, and a burner port every 11 pixels with its own flickering flame. Everything glows as it heats: dull red brick, then orange, with the glaze's colours lost in the glow. When it's done the kiln is shown cooled, with the glaze's own colours. A badly fired glaze is greyed, and a cracked pot shows its crack.
+- **The schedule:** 30 seconds. The heat climbs to half the peak by 9 s, soaks (holds) until 14 s, climbs to the glaze's peak by 24 s and holds. Each glaze has its own peak, from Clear (70) to Copper red (88). The soak stops one steady rhythm of fuel from following it.
+- **The fuels** (keys 1 to 3): Wood gives 8 over 3 s, Hardwood 15 over 9 s and Coal 13 over 1.5 s, against a slow leak. Draughts push the heat about: none on Simplified, more on Hard.
+- **The chart** (the left panel) is like a pyrometer's. The band runs through the whole firing, and the heat so far is plotted on it in colour (in the band, too cool, too hot). A hollow marker shows where the fire will have taken the heat in 3 s, so you feed for the future, not the present.
+- **Band** (half-width): Simplified 10, Normal 6, Hard 4. On Hard, far over the band for 1.5 s cracks the pot.
+- **Judge:** the share of time in the band, after a 2 s grace, with partial credit just outside it. The verdicts are Perfect (0.9 or more), Well fired (0.65 or more), or Underfired / Overfired. A kiln gift (a crackle, a drip, a flash) has a 50% chance on a perfect firing and 10% on a good one, and adds half a star. The pot's stars: the glaze's part is scaled by 0.7 + 0.3 × firing. A crack is 0 stars.
+- **Calibration, 10 per level:** a stoker who looks at the forecast every 2 s and adds hardwood when it's heading low scores 1.0 / 0.91 / 0.63 (Simplified / Normal / Hard). One who feeds whenever it's low, four times a second, overfeeds: 0.79 / 0.41 / 0 (cracked). Coal on a beat scores 0, and never feeding scores under 0.1.
+- **Not yet:** loading several pots, fuel from your inventory, the overnight cooling, and Tobin's firing days.
 
 ## 11. Visuals (a plan for review)
 
