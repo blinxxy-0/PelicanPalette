@@ -20,16 +20,16 @@
   "Sat": "800 blinxxy.MuseArt_GildedVale 25 41 0/1200 blinxxy.MuseArt_GildedVale 17 44 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
   // Sunday: walking the meadow and pulling weeds; the old tree.
   "Sun": "900 blinxxy.MuseArt_GildedVale 16 66 2/1300 blinxxy.MuseArt_GildedVale 38 69 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
-  // Rain: the seedhouse, potting, and at the seed counter.
-  "rain": "800 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_ValeFern 23 19 0/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Rain: the seedhouse, potting, and behind the seed counter (her shop: data/vale_shops.json).
+  "rain": "800 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_ValeFern 23 17 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
   // Winter: the seedhouse most of the day, the sculpture garden in the afternoon,
   // brushing snow off the statues (season-and-day keys, so they come before the
   // days of the week above).
-  "winter_Mon": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 19 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
-  "winter_Tue": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 19 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
-  "winter_Wed": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 19 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
-  "winter_Thu": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 19 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
-  "winter_Fri": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 19 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
-  "winter_Sat": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 19 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
-  "winter_Sun": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 19 0/2100 blinxxy.MuseArt_ValeFern 6 6 2"
+  "winter_Mon": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Tue": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Wed": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Thu": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Fri": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Sat": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Sun": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2"
 }

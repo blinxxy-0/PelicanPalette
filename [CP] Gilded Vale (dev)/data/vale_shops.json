@@ -1,0 +1,149 @@
+// The residents' shops (1.4): Bea's tea room, Fern's seed counter and Tobin's pottery
+// counter. Vanilla items for now: Tobin's own ware (bowls, vases, planters, tiles) needs
+// its art first.
+//
+// Each counter carries a tile action handled by the C# mod (ArtStudio/Vale/ValeResidents.cs):
+//   blinxxy.MuseArt_ValeShop <shop> <owner> <x y w h>: the shop opens when its owner stands
+//   in that tile area; when they're out, the shop's ClosedMessage. When the owner isn't in
+//   the world at all (the ValeResidents switch is off, or the Vale isn't open yet) it opens
+//   on trust, so the stock can be tried before the residents have art.
+//   blinxxy.MuseArt_ValeTeaCounter: Bea's counter, which also books her room for the night.
+// The counters' tiles replace the right-click descriptions the lore branch gave Fern's and
+// Tobin's counters; their ClosedMessages carry the same picture.
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "Entries": {
+        // ---- Bea's tea room: tea, the day's food, soup in its season, cake at the weekend ----
+        "blinxxy.MuseArt_ValeTeaRoom": {
+          "Owners": [
+            {
+              "Id": "Bea",
+              "Name": "BeaThistle",
+              "Dialogues": [
+                { "Id": "Tea", "Dialogue": "{{i18n:bea.shop.tea}}" },
+                { "Id": "Cups", "Dialogue": "{{i18n:bea.shop.cups}}" },
+                { "Id": "Soup", "Dialogue": "{{i18n:bea.shop.soup}}" }
+              ]
+            },
+            { "Id": "Closed", "Name": "None", "ClosedMessage": "{{i18n:bea.shop.closed}}" }
+          ],
+          "Items": [
+            { "Id": "GreenTea", "ItemId": "(O)614", "Price": 150 },
+            { "Id": "Bread", "ItemId": "(O)216", "Price": 120 },
+            { "Id": "Cookie", "ItemId": "(O)223", "Price": 150 },
+            { "Id": "FriedEgg", "ItemId": "(O)194", "Price": 100 },
+            { "Id": "Pancakes", "ItemId": "(O)211", "Price": 200 },
+            { "Id": "Salad", "ItemId": "(O)196", "Price": 220 },
+            { "Id": "ParsnipSoup", "ItemId": "(O)199", "Price": 250, "Condition": "SEASON spring" },
+            { "Id": "FruitSalad", "ItemId": "(O)610", "Price": 300, "Condition": "SEASON summer" },
+            { "Id": "PumpkinSoup", "ItemId": "(O)236", "Price": 300, "Condition": "SEASON fall" },
+            { "Id": "BeanHotpot", "ItemId": "(O)207", "Price": 250, "Condition": "SEASON winter" },
+            { "Id": "PinkCake", "ItemId": "(O)221", "Price": 600, "Condition": "DAY_OF_WEEK Saturday Sunday" }
+          ]
+        },
+        // ---- Fern's seed counter: the season's wild seeds, flower mixes, moss ----
+        "blinxxy.MuseArt_ValeSeeds": {
+          "Owners": [
+            {
+              "Id": "Fern",
+              "Name": "FernAster",
+              "Dialogues": [
+                { "Id": "Rows", "Dialogue": "{{i18n:fern.shop.rows}}" },
+                { "Id": "Moss", "Dialogue": "{{i18n:fern.shop.moss}}" },
+                { "Id": "Packets", "Dialogue": "{{i18n:fern.shop.packets}}" }
+              ]
+            },
+            { "Id": "Closed", "Name": "None", "ClosedMessage": "{{i18n:fern.shop.closed}}" }
+          ],
+          "Items": [
+            { "Id": "SpringSeeds", "ItemId": "(O)495", "Price": 70, "Condition": "SEASON spring" },
+            { "Id": "SummerSeeds", "ItemId": "(O)496", "Price": 70, "Condition": "SEASON summer" },
+            { "Id": "FallSeeds", "ItemId": "(O)497", "Price": 70, "Condition": "SEASON fall" },
+            { "Id": "WinterSeeds", "ItemId": "(O)498", "Price": 70, "Condition": "SEASON winter" },
+            { "Id": "MixedFlowerSeeds", "ItemId": "(O)MixedFlowerSeeds", "Price": 60 },
+            { "Id": "MossySeed", "ItemId": "(O)MossySeed", "Price": 250 },
+            { "Id": "Moss", "ItemId": "(O)Moss", "Price": 40 }
+          ]
+        },
+        // ---- Tobin's counter: clay, garden pots, brick (his ware comes with its art) ----
+        "blinxxy.MuseArt_ValePottery": {
+          "Owners": [
+            {
+              "Id": "Tobin",
+              "Name": "TobinClay",
+              "Dialogues": [
+                { "Id": "Shelf", "Dialogue": "{{i18n:tobin.shop.shelf}}" },
+                { "Id": "Clay", "Dialogue": "{{i18n:tobin.shop.clay}}" },
+                { "Id": "Pots", "Dialogue": "{{i18n:tobin.shop.pots}}" }
+              ]
+            },
+            { "Id": "Closed", "Name": "None", "ClosedMessage": "{{i18n:tobin.shop.closed}}" }
+          ],
+          "Items": [
+            { "Id": "Clay", "ItemId": "(O)330", "Price": 60 },
+            { "Id": "GardenPot", "ItemId": "(BC)62", "Price": 300 },
+            { "Id": "BrickFloor", "ItemId": "(O)293", "Price": 120 }
+          ]
+        }
+      }
+    },
+
+    // ---- The counters ----
+    // Bea's tea counter, the row you walk up to (its front, Vale House 19-22, 21).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeHouse",
+      "MapTiles": [
+        { "Position": { "X": 19, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
+        { "Position": { "X": 20, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
+        { "Position": { "X": 21, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } },
+        { "Position": { "X": 22, "Y": 21 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeTeaCounter" } }
+      ]
+    },
+    // Fern's seed counter in the seedhouse (22-24, 18); she serves from behind it (23 17)
+    // or from her potting bench (21 15) beside it.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeFern",
+      "MapTiles": [
+        { "Position": { "X": 22, "Y": 18 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeSeeds FernAster 20 15 6 3" } },
+        { "Position": { "X": 23, "Y": 18 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeSeeds FernAster 20 15 6 3" } },
+        { "Position": { "X": 24, "Y": 18 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeSeeds FernAster 20 15 6 3" } }
+      ]
+    },
+    // Tobin's counter by the pottery door (3-5, 18); he serves from anywhere in the workshop
+    // (the wheel, the kiln), so its whole floor is the area.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValePottery",
+      "MapTiles": [
+        { "Position": { "X": 3, "Y": 18 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValePottery TobinClay 1 15 24 8" } },
+        { "Position": { "X": 4, "Y": 18 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValePottery TobinClay 1 15 24 8" } },
+        { "Position": { "X": 5, "Y": 18 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValePottery TobinClay 1 15 24 8" } }
+      ]
+    },
+
+    // ---- The counters' and Bea's room's texts, for the C# mod ----
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeStrings", "FromFile": "data/blank.json" },
+    {
+      "Action": "EditData",
+      "Target": "Mods/blinxxy.MuseArt/ValeStrings",
+      "Entries": {
+        "counter": "{{i18n:bea.counter}}",
+        "counter.bell": "{{i18n:bea.counter.bell}}",
+        "counter.away": "{{i18n:bea.counter.away}}",
+        "counter.food": "{{i18n:bea.counter.food}}",
+        "counter.room": "{{i18n:bea.counter.room}}",
+        "counter.room.booked": "{{i18n:bea.counter.room.booked}}",
+        "counter.leave": "{{i18n:bea.counter.leave}}",
+        "room.booked": "{{i18n:bea.room.booked}}",
+        "room.already": "{{i18n:bea.room.already}}",
+        "room.money": "{{i18n:bea.room.money}}",
+        "room.locked": "{{i18n:bea.room.locked}}"
+      }
+    }
+  ]
+}

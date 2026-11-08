@@ -26,6 +26,10 @@
     { "Action": "Include", "FromFile": "data/fern.json" },
     { "Action": "Include", "FromFile": "data/emmett.json" },
     { "Action": "Include", "FromFile": "data/vale_town_trips.json" },
+    // Their shops and Bea's room for the night (not behind the switch: with nobody at a
+    // counter they open on trust), and Lupini's letter opening the Vale.
+    { "Action": "Include", "FromFile": "data/vale_shops.json" },
+    { "Action": "Include", "FromFile": "data/vale_letter.json" },
 
     // Lupini, Tobin, Fern and Emmett join the art lovers, who like even a normal-quality
     // painting (1.4 plan, section 9; ArtStudio/Painting/ArtItems.cs DefaultArtLovers).
