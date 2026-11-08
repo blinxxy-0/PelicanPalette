@@ -473,8 +473,9 @@ internal static class DevTools
             Game1.player.removeFirstOfThisItemFromInventory(ArtItems.QualifiedLinenId(CanvasKind.Medium), 999);
             var linen = ItemRegistry.Create(ArtItems.QualifiedLinenId(CanvasKind.Medium));
             linen.Stack = 2;
-            Game1.player.MaxItems = Math.Max(Game1.player.MaxItems, 36);   // the snap's bag fills a 12-slot one
-            Game1.player.addItemToInventory(linen);
+            // the snap's bag fills a new farm's 12 slots: put it straight in (over the last item if need be)
+            int slot = Game1.player.Items.IndexOf(null);
+            Game1.player.Items[slot >= 0 ? slot : Game1.player.Items.Count - 1] = linen;
         }
         yield return ("setup_linen_only", () => { LinenOnly(); var m = new EaselMenu(Game1.player); m.DevSetup(pumpkin); m.DevClickCanvas(CanvasKind.Small); return m; });
         yield return ("setup_linen_picked", () => { LinenOnly(); var m = new EaselMenu(Game1.player); m.DevSetup(pumpkin); m.DevClickCanvas(CanvasKind.Medium); return m; });
