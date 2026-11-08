@@ -1,0 +1,184 @@
+// The Gilded Vale on the world map (M): a region of its own, as Ginger Island has (and
+// Ridgeside Village does), so the map shows the Vale while you're there and the valley
+// everywhere else. The picture is 300x180 like the game's: the real Vale map traced
+// (art/gilded_vale/worldmap/), redrawn in the world map's style.
+//
+// Where things sit: the Vale's 96x76 tiles fill pixels 42,5 to 258,176 of the picture
+// (2.25 pixels a tile), so a tile x,y is pixel 42 + 2.25x, 5 + 2.25y. Inside a building
+// you're shown at its door.
+{
+  "Changes": [
+    // The picture, with a season's version where there is one.
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt/ValeWorldMap",
+      "FromFile": "assets/ValeWorldMap.png",
+      "Priority": "Low"
+    },
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt/ValeWorldMap",
+      "FromFile": "assets/ValeWorldMap_{{season}}.png",
+      "When": { "HasFile:assets/ValeWorldMap_{{season}}.png": "true" }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/WorldMap",
+      "Entries": {
+        "blinxxy.MuseArt_GildedVale": {
+          "BaseTexture": [
+            { "Id": "Default", "Texture": "Mods/blinxxy.MuseArt/ValeWorldMap" }
+          ],
+          "MapAreas": [
+            // ---- The buildings: a tooltip each, and where you're shown inside ----
+            {
+              "Id": "ValeHouse",
+              "PixelArea": { "X": 95, "Y": 23, "Width": 24, "Height": 27 },
+              "ScrollText": "{{i18n:location.vale-house}}",
+              "Tooltips": [
+                { "Id": "ValeHouse", "Text": "{{i18n:worldmap.vale-house}}" }
+              ],
+              "WorldPositions": [
+                { "Id": "ValeHouse", "LocationName": "blinxxy.MuseArt_ValeHouse", "MapPixelArea": { "X": 106, "Y": 48, "Width": 1, "Height": 1 } }
+              ]
+            },
+            {
+              "Id": "TeaGarden",
+              "PixelArea": { "X": 119, "Y": 25, "Width": 15, "Height": 23 },
+              "Tooltips": [
+                { "Id": "TeaGarden", "Text": "{{i18n:worldmap.tea-garden}}" }
+              ]
+            },
+            {
+              "Id": "Pottery",
+              "PixelArea": { "X": 135, "Y": 25, "Width": 24, "Height": 23 },
+              "ScrollText": "{{i18n:location.vale-pottery}}",
+              "Tooltips": [
+                { "Id": "Pottery", "Text": "{{i18n:worldmap.vale-pottery}}" }
+              ],
+              "WorldPositions": [
+                { "Id": "Pottery", "LocationName": "blinxxy.MuseArt_ValePottery", "MapPixelArea": { "X": 141, "Y": 43, "Width": 1, "Height": 1 } }
+              ]
+            },
+            {
+              "Id": "Atelier",
+              "PixelArea": { "X": 200, "Y": 36, "Width": 18, "Height": 23 },
+              "ScrollText": "{{i18n:location.vale-atelier}}",
+              "Tooltips": [
+                { "Id": "Atelier", "Text": "{{i18n:worldmap.vale-atelier}}" }
+              ],
+              "WorldPositions": [
+                { "Id": "Atelier", "LocationName": "blinxxy.MuseArt_ValeAtelier", "MapPixelArea": { "X": 206, "Y": 57, "Width": 1, "Height": 1 } }
+              ]
+            },
+            {
+              "Id": "Fern",
+              "PixelArea": { "X": 62, "Y": 70, "Width": 27, "Height": 23 },
+              "ScrollText": "{{i18n:location.vale-fern}}",
+              "Tooltips": [
+                { "Id": "Fern", "Text": "{{i18n:worldmap.vale-fern}}" }
+              ],
+              "WorldPositions": [
+                { "Id": "Fern", "LocationName": "blinxxy.MuseArt_ValeFern", "MapPixelArea": { "X": 75, "Y": 90, "Width": 1, "Height": 1 } }
+              ]
+            },
+            {
+              "Id": "FernGarden",
+              "PixelArea": { "X": 53, "Y": 93, "Width": 50, "Height": 18 },
+              "Tooltips": [
+                { "Id": "FernGarden", "Text": "{{i18n:worldmap.fern-garden}}" }
+              ]
+            },
+            // The Hall: closed until Lupini's 8-heart event opens it (the hall-closed
+            // work's flag, as the Hall's map Load in content.json).
+            {
+              "Id": "Hall",
+              "PixelArea": { "X": 128, "Y": 70, "Width": 29, "Height": 24 },
+              "ScrollText": "{{i18n:location.vale-hall}}",
+              "Tooltips": [
+                { "Id": "HallOpen", "Text": "{{i18n:worldmap.vale-hall.open}}", "Condition": "PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeHallOpen Any" },
+                { "Id": "HallClosed", "Text": "{{i18n:worldmap.vale-hall.closed}}", "Condition": "!PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeHallOpen Any" }
+              ],
+              "WorldPositions": [
+                { "Id": "Hall", "LocationName": "blinxxy.MuseArt_ValeHall", "MapPixelArea": { "X": 142, "Y": 93, "Width": 1, "Height": 1 } }
+              ]
+            },
+            {
+              "Id": "Plaza",
+              "PixelArea": { "X": 107, "Y": 94, "Width": 57, "Height": 17 },
+              "Tooltips": [
+                { "Id": "Plaza", "Text": "{{i18n:worldmap.plaza}}" }
+              ]
+            },
+            // The three Old Studios; Lupini's 6-heart event is in the first.
+            {
+              "Id": "OldStudios",
+              "PixelArea": { "X": 195, "Y": 70, "Width": 59, "Height": 24 },
+              "ScrollText": "{{i18n:location.vale-studio}}",
+              "Tooltips": [
+                { "Id": "OldStudios", "Text": "{{i18n:worldmap.old-studios}}" }
+              ],
+              "WorldPositions": [
+                { "Id": "Studio", "LocationName": "blinxxy.MuseArt_ValeStudio", "MapPixelArea": { "X": 206, "Y": 90, "Width": 1, "Height": 1 } }
+              ]
+            },
+            {
+              "Id": "Amphitheatre",
+              "PixelArea": { "X": 112, "Y": 111, "Width": 31, "Height": 18 },
+              "Tooltips": [
+                { "Id": "Amphitheatre", "Text": "{{i18n:worldmap.amphitheatre}}" }
+              ]
+            },
+            {
+              "Id": "Emmett",
+              "PixelArea": { "X": 62, "Y": 124, "Width": 28, "Height": 22 },
+              "ScrollText": "{{i18n:location.vale-emmett}}",
+              "Tooltips": [
+                { "Id": "Emmett", "Text": "{{i18n:worldmap.vale-emmett}}" }
+              ],
+              "WorldPositions": [
+                { "Id": "Emmett", "LocationName": "blinxxy.MuseArt_ValeEmmett", "MapPixelArea": { "X": 84, "Y": 142, "Width": 1, "Height": 1 } }
+              ]
+            },
+            {
+              "Id": "OldTree",
+              "PixelArea": { "X": 115, "Y": 137, "Width": 23, "Height": 23 },
+              "Tooltips": [
+                { "Id": "OldTree", "Text": "{{i18n:worldmap.old-tree}}" }
+              ]
+            },
+            {
+              "Id": "Lake",
+              "PixelArea": { "X": 150, "Y": 127, "Width": 90, "Height": 44 },
+              "Tooltips": [
+                { "Id": "Lake", "Text": "{{i18n:worldmap.lake}}" }
+              ]
+            },
+            {
+              "Id": "Bus",
+              "PixelArea": { "X": 30, "Y": 12, "Width": 51, "Height": 16 },
+              "Tooltips": [
+                { "Id": "Bus", "Text": "{{i18n:worldmap.bus}}" }
+              ]
+            },
+
+            // ---- The Vale itself, outdoors: its tiles spread over the picture ----
+            {
+              "Id": "GildedVale",
+              "PixelArea": { "X": 0, "Y": 0, "Width": 300, "Height": 180 },
+              "ScrollText": "{{i18n:location.gilded-vale}}",
+              "WorldPositions": [
+                {
+                  "Id": "GildedVale",
+                  "LocationName": "blinxxy.MuseArt_GildedVale",
+                  "TileArea": { "X": 0, "Y": 0, "Width": 96, "Height": 76 },
+                  "MapPixelArea": { "X": 42, "Y": 5, "Width": 216, "Height": 171 }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
