@@ -467,7 +467,7 @@ BUILDINGS = {
             # table beside it; the old paint trestle; canvases left leaning
             # (the user, 2026-11-07: the trestle and the note's table back against the wall, the
             # canvases leaning on the west wall: canvases on the floor always lean on something)
-            ("unfinished_easel", 5, 14), ("paint_trestle", 5, 12), ("note_table", 8, 12),
+            ("unfinished_easel", 4, 14), ("paint_trestle", 5, 12), ("note_table", 8, 12),
             ("canvas_stack", 1, 15), ("sheeted_chair", 21, 15), ("sheeted_chair_b", 20, 17),
             # the long table the painters ate at, its chairs round it, on a rug
             ("rug#3", 6, 16, 7, 3), ("dining", 7, 16),
