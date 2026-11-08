@@ -27,3 +27,21 @@ Rebuild:
 
     python tools/art/walk_readback.py art/vale_residents_sprites/bea_edit_b.png bea_rb.png
     python tools/art/bea_walk_fix.py bea_rb.png "[CP] Gilded Vale (dev)/assets/bea/sprites.png"
+
+## Tobin (approved by the user, 2026-11-08)
+
+The same way, from Clint's sheet: the vanilla man nearest his broad build, beard and work apron.
+
+1. `ref_walk_clint_x12.png`: Clint's walk sheet on tan, at 12x. `ref_tobin_portrait_x8.png`:
+   Tobin's approved portrait.
+2. `tobin_edit_b.png`: Higgsfield's edit (the second of two: clearer straps on his back, more
+   grey at his temples). It drew the apron's crossed straps and waist tie from behind itself.
+3. `tobin_walk_readback.png`: `tools/art/walk_readback.py`.
+4. `tobin_walk_sheet.png`: `tools/art/tobin_walk_fix.py` gives him eyes laid out as Bea's
+   (brow; lid and pupil; white and iris), where the read-back left dark smudges. That's
+   `[CP] Gilded Vale (dev)/assets/tobin/sprites.png`.
+
+Previews: `tobin_walk_vs_clint_x4.png`, `tobin_walk_preview.gif`, `tobin_faces_x9.png`.
+
+    python tools/art/walk_readback.py art/vale_residents_sprites/tobin_edit_b.png tobin_rb.png
+    python tools/art/tobin_walk_fix.py tobin_rb.png "[CP] Gilded Vale (dev)/assets/tobin/sprites.png"
