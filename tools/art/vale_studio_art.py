@@ -36,6 +36,21 @@ def dusty_window():
         for x in range(im.width):
             if px[x, y][3]:
                 px[x, y] = grey(px[x, y], 0.55)
+    # the panes: glass, not holes (the user, 2026-11-07: "the glass has bricks behind it").
+    # Whatever's transparent and not reachable from the picture's edge is inside the frame.
+    outside, todo = set(), [(x, y) for x in range(im.width) for y in (0, im.height - 1)] +                            [(x, y) for y in range(im.height) for x in (0, im.width - 1)]
+    while todo:
+        x, y = todo.pop()
+        if (x, y) in outside or not (0 <= x < im.width and 0 <= y < im.height) or px[x, y][3] > 40:
+            continue
+        outside.add((x, y))
+        todo += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+    top = im.getbbox()[1]
+    for y in range(im.height):
+        for x in range(im.width):
+            if px[x, y][3] <= 40 and (x, y) not in outside:
+                t = (y - top) / max(1, im.height - top)
+                px[x, y] = (int(196 - 40 * t), int(206 - 36 * t), int(212 - 30 * t), 255)   # grey daylight, dimmer low
     d = ImageDraw.Draw(im)
     box = im.getbbox()
     # two cracked panes: a jagged pale line each

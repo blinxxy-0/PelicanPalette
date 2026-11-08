@@ -457,18 +457,26 @@ BUILDINGS = {
         pieces=[
             # the back wall: the tall window (its light where the easel stands), the sketches
             # pinned up, the painting hung backward; ivy and cobwebs getting in
-            ("moss_wall", 2, 10), ("dusty_window", 4, 10), ("pinned_sketches", 10, 10),
+            ("dusty_window", 4, 10), ("pinned_sketches", 10, 10),
             ("backward_painting", 13, 10), ("cobweb", 20, 10), ("cobweb#2", 1, 10),
+            # the game's own furniture, left as it was (the user, 2026-11-07: "more vanilla
+            # furniture to liven up the place"): the clock that stopped, a hall table under
+            # the sketches, a bookcase, a plant by the door through
+            ("clock", 2, 12), ("hall_table", 10, 12), ("plant", 15, 12), ("bookcase", 19, 11),
             # in the window's light: the unfinished painting on its easel; the note on a little
             # table beside it; the old paint trestle; canvases left leaning
-            ("unfinished_easel", 5, 14), ("note_table", 9, 15), ("paint_trestle", 15, 14),
-            ("canvas_stack", 2, 16), ("sheeted_chair", 19, 15), ("sheeted_chair_b", 20, 17),
+            ("unfinished_easel", 5, 14), ("note_table", 9, 15), ("paint_trestle", 7, 17),
+            ("canvas_stack", 2, 16), ("sheeted_chair", 21, 15), ("sheeted_chair_b", 20, 17),
+            # where the painters sat: the coffee table, an armchair and a pouf on one rug, a lamp
+            ("rug", 14, 15, 6, 4), ("coffee_table", 15, 15), ("armchair_w", 18, 15), ("pouf", 14, 17),
+            ("floor_lamp", 20, 13), ("plant_b", 1, 17),
             ("fern_pot", 1, 13),
             # leaves blown in under the door, moss in the corners
             ("leaves", 11, 18), ("leaves#2", 13, 17), ("leaves#3", 14, 18), ("moss_patch", 1, 18),
             ("moss_patch#2", 21, 13), ("moss_patch#3", 4, 13),
             # the back room: the artist's cot, a washstand, a trunk, a small window
             ("washstand", 14, 2), ("window", 17, 1), ("bed", 19, 4), ("chest", 15, 7),
+            ("rug#2", 16, 5, 3, 3), ("plant", 21, 4),
             ("cobweb#3", 21, 1), ("leaves#4", 18, 7), ("moss_patch#4", 14, 4),
         ],
         describe={"unfinished_easel": "unfinished", "note_table": "note", "pinned_sketches": "sketches",
