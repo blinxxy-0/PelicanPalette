@@ -22,7 +22,7 @@ namespace ArtStudio.Pottery;
 // museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck]
 internal sealed class PotteryMenu : IClickableMenu
 {
-    private enum Stage { Centring, Throwing, Results }
+    private enum Stage { Centring, Throwing, Banding, Results }
 
     private const int MaxWidth = 1240, MaxHeight = 780;
     private const int Pad = 20, TopBar = 64, BottomBar = 56, SideWidth = 250;
@@ -40,6 +40,17 @@ internal sealed class PotteryMenu : IClickableMenu
     private float _wobble, _wobbleV, _centredFor, _centringTime, _centring;
     private readonly Random _random = new();
 
+    // banding (Banding.cs): the glaze on the pot, the design to match, the glaze in the
+    // brush, the banding wheel's turn, and how long the brush has been held (the hand
+    // drifts more the longer you hold)
+    private const float BandingTurn = MathF.Tau / 1.1f;     // radians a second: a turn in 1.1 s
+    private PotGlaze? _glaze;
+    private GlazeDesign? _design;
+    private GlazeResult? _glazeResult;
+    private int _glazeIdx;
+    private float _bandAngle, _holdTime, _phase1, _phase2, _lastBucket;
+    private bool _wasHeld;
+
     private readonly Dictionary<string, Rectangle> _buttons = new();
     // (snapshots only: where the mouse is pretended to be, to show the hands)
     internal Point? FakeMouse;
@@ -47,8 +58,9 @@ internal sealed class PotteryMenu : IClickableMenu
     private int MouseY => FakeMouse?.Y ?? Game1.getMouseY();
     internal Point SceneCentre(float up = 0.35f) => new(Scene.Center.X, Scene.Bottom - (int)(Scene.Height * up));
 
-    public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false, bool wreck = false)
+    public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false, bool wreck = false, bool band = false)
     {
+        bot |= band;
         _rules = rules;
         string name = Array.IndexOf(PotShape.Names, shape) >= 0 ? shape : PotShape.Names[new Random().Next(PotShape.Names.Length)];
         _pot = new ClayPot(rules);
@@ -65,6 +77,8 @@ internal sealed class PotteryMenu : IClickableMenu
         {
             Bot(_pot, _shape);
             Finish();
+            if (band)
+                StartBanding();
         }
         else if (wreck)
         {
@@ -162,7 +176,103 @@ internal sealed class PotteryMenu : IClickableMenu
         _centredFor = _centringTime = 0;
         _result = null;
         _move = ThrowMove.PullUp;
+        _glaze = null;
+        _design = null;
+        _glazeResult = null;
     }
+
+    // ---- Banding ----
+
+    private void StartBanding()
+    {
+        _glaze = new PotGlaze(_pot.Rows);
+        _design = GlazeDesign.For(_shape.Name);
+        _glazeResult = null;
+        _glazeIdx = _design.Base;
+        _wasHeld = false;
+        _stage = Stage.Banding;
+    }
+
+    // The brush's bucket on the glaze grid: it touches the pot's left edge.
+    private static float BrushBucket(float angle) => (-MathF.PI / 2f - angle) / MathF.Tau * PotGlaze.Buckets;
+
+    // How far the brush hand has wandered after holding so long: a slow sway that grows
+    // from nothing, to most of its reach in a couple of seconds.
+    private static float Drift(float reach, float hold, float p1, float p2) =>
+        reach * MathF.Min(1f, 0.35f + hold / 2f)
+        * (0.6f * (MathF.Sin(1.7f * hold + p1) - MathF.Sin(p1)) + 0.4f * (MathF.Sin(3.1f * hold + p2) - MathF.Sin(p2))) * 0.5f;
+
+    private float BrushHeight(int mouseY, bool held)
+    {
+        float h = RowAt(mouseY) + 0.5f + (held ? Drift(_rules.Drift, _holdTime, _phase1, _phase2) : 0f);
+        return Math.Clamp(h, 0f, _pot.Rows);
+    }
+
+    private void UpdateBanding(float dt, bool held)
+    {
+        _bandAngle += BandingTurn * dt;
+        if (held && !_wasHeld)
+        {
+            _holdTime = 0f;
+            _phase1 = (float)(_random.NextDouble() * MathF.Tau);
+            _phase2 = (float)(_random.NextDouble() * MathF.Tau);
+            _lastBucket = BrushBucket(_bandAngle);
+        }
+        _wasHeld = held;
+        if (!held)
+            return;
+        _holdTime += dt;
+        float now = BrushBucket(_bandAngle);
+        _glaze!.Paint(_glazeIdx, BrushHeight(Game1.getMouseY(), true), _lastBucket, now);
+        _lastBucket = now;
+    }
+
+    internal float GlazeScore => _glazeResult?.Overall ?? 0f;
+
+    private void FinishBanding()
+    {
+        _glazeResult = GlazeJudge.Judge(_glaze!, _design!);
+        _stage = Stage.Results;
+    }
+
+    // The simulation's bander, for checking the judge: dips, then paints each band with
+    // whole turns of the wheel from its bottom edge to its top. `reach` is how far its
+    // hand wanders (0: a perfect hand); it never corrects for it.
+    internal void GlazeBot(float reach, bool finish = true, int bands = int.MaxValue)
+    {
+        if (_glaze == null || _design == null)
+            return;
+        _glaze.Dip(_design.Base);
+        const float dt = 1f / 60f;
+        foreach (var band in _design.Bands.Take(bands))
+        {
+            float lo = band.From * _pot.Rows + PotGlaze.BrushRows / 2f, hi = band.To * _pot.Rows - PotGlaze.BrushRows / 2f;
+            if (hi < lo)
+                lo = hi = (lo + hi) / 2f;
+            float p1 = (float)(_random.NextDouble() * MathF.Tau), p2 = (float)(_random.NextDouble() * MathF.Tau);
+            float angle = 0f, hold = 0f;
+            for (float h = lo; ; h = MathF.Min(hi, h + 1f / PotGlaze.SlicesPerRow))
+            {
+                // a whole turn at this height
+                for (float turned = 0f; turned < MathF.Tau; turned += BandingTurn * dt)
+                {
+                    float from = BrushBucket(angle);
+                    angle += BandingTurn * dt;
+                    hold += dt;
+                    _glaze.Paint(band.Glaze, h + Drift(reach, hold, p1, p2), from, BrushBucket(angle));
+                }
+                if (h >= hi)
+                    break;
+            }
+        }
+        if (finish)
+            FinishBanding();
+    }
+
+    // The pot's stars, glaze and all: the throw counts three parts in four.
+    private float Stars => _glazeResult is { } g && _result is { } t
+        ? MathF.Round((0.75f * t.Overall + 0.25f * g.Overall) * 10f) / 2f
+        : _result?.Stars ?? 0f;
 
     public override void update(GameTime time)
     {
@@ -182,6 +292,9 @@ internal sealed class PotteryMenu : IClickableMenu
                     _pot.Rest(dt);
                 if (_pot.Collapsed)
                     Finish();
+                break;
+            case Stage.Banding:
+                UpdateBanding(dt, held);
                 break;
         }
     }
@@ -228,8 +341,12 @@ internal sealed class PotteryMenu : IClickableMenu
                 case "pull": _move = ThrowMove.PullUp; break;
                 case "press": _move = ThrowMove.PressIn; break;
                 case "out": _move = ThrowMove.LetOut; break;
-                case "done": Finish(); break;
+                case "done": if (_stage == Stage.Banding) FinishBanding(); else Finish(); break;
                 case "again": Restart(); break;
+                case "glaze": StartBanding(); break;
+                case "dip": _glaze?.Dip(_glazeIdx); break;
+                case "sponge": _glaze?.Sponge(); break;
+                case var k when k.StartsWith("g") && int.TryParse(k[1..], out int gi): _glazeIdx = gi; break;
                 case "next":
                     _shape = PotShape.Make(PotShape.Names[(Array.IndexOf(PotShape.Names, _shape.Name) + 1) % PotShape.Names.Length], _pot.Volume);
                     _art.FitTo(_shape);
@@ -243,6 +360,12 @@ internal sealed class PotteryMenu : IClickableMenu
     public override void receiveKeyPress(Keys key)
     {
         base.receiveKeyPress(key);
+        if (_stage == Stage.Banding)
+        {
+            if (key >= Keys.D1 && key < Keys.D1 + Glazes.All.Length)
+                _glazeIdx = key - Keys.D1;
+            return;
+        }
         if (key == Keys.D1) _move = ThrowMove.PullUp;
         if (key == Keys.D2) _move = ThrowMove.PressIn;
         if (key == Keys.D3) _move = ThrowMove.LetOut;
@@ -270,6 +393,7 @@ internal sealed class PotteryMenu : IClickableMenu
         {
             case Stage.Centring: DrawCentringPanel(b); break;
             case Stage.Throwing: DrawClay(b); DrawTools(b, mx, my); break;
+            case Stage.Banding: DrawDesign(b); DrawGlazes(b, mx, my); break;
             case Stage.Results: DrawAdvice(b); DrawResults(b); break;
         }
         DrawBottomBar(b, mx, my);
@@ -280,8 +404,19 @@ internal sealed class PotteryMenu : IClickableMenu
     private void DrawTopBar(SpriteBatch b)
     {
         var top = TopArea;
-        Ui.Text(b, $"Throwing: the {_shape.Name}", new Vector2(top.X, top.Y + 4));
+        bool glazing = _stage == Stage.Banding || _glazeResult != null;
+        Ui.Text(b, $"{(glazing ? "Glazing" : "Throwing")}: the {_shape.Name}", new Vector2(top.X, top.Y + 4));
         Ui.Text(b, _rules.Name, new Vector2(top.X, top.Y + 34), Game1.textColor * 0.7f);
+        if (_stage == Stage.Banding)
+        {
+            // how many of the design's bands are on, near enough
+            var live = GlazeJudge.Judge(_glaze!, _design!);
+            int done = live.BandScoresPct.Count(p => p >= 60);
+            string bands = $"Bands {done}/{_design!.Bands.Length}";
+            Ui.Text(b, bands, new Vector2(top.Right - Ui.TextWidth(bands), top.Y + 14),
+                done == _design.Bands.Length ? new Color(60, 120, 40) : Game1.textColor);
+            return;
+        }
         if (_stage != Stage.Throwing)
             return;
 
@@ -335,7 +470,10 @@ internal sealed class PotteryMenu : IClickableMenu
     private void DrawAdvice(SpriteBatch b)
     {
         var left = LeftArea;
-        string said = _pot.Collapsed ? (_pot.CollapseReason ?? "") : string.Join(" ", PotJudge.Tips(_pot, _shape, _result!));
+        string[] glazeTips = _glazeResult != null ? GlazeJudge.Tips(_glaze!, _design!, _glazeResult).Take(2).ToArray() : Array.Empty<string>();
+        string said = _pot.Collapsed ? (_pot.CollapseReason ?? "")
+            : glazeTips.Length > 0 ? string.Join(" ", glazeTips)
+            : string.Join(" ", PotJudge.Tips(_pot, _shape, _result!));
         string quote = Game1.parseText($"\"{said}\"", Game1.smallFont, left.Width - 48);
         int textH = (int)Game1.smallFont.MeasureString(quote).Y;
         var panel = new Rectangle(left.X, left.Y, left.Width, textH + 110);
@@ -349,6 +487,13 @@ internal sealed class PotteryMenu : IClickableMenu
         var scene = Scene;
         drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), scene.X - 12, scene.Y - 12, scene.Width + 24, scene.Height + 24, Color.White, 4f, false);
         bool overPot = InPotArea(mx, my);
+        if (_glaze != null && (_stage == Stage.Banding || _glazeResult != null))
+        {
+            bool held = FakeMouse == null && Mouse.GetState().LeftButton == ButtonState.Pressed;
+            _art.DrawBanding(b, scene, _spin, _bandAngle, _pot, _glaze, _design!,
+                _stage == Stage.Banding && overPot ? BrushHeight(my, held && overPot) : float.NaN, _glazeIdx);
+            return;
+        }
         Color handColor = _move switch { ThrowMove.PullUp => new Color(160, 230, 140), ThrowMove.PressIn => new Color(250, 180, 90), _ => new Color(150, 200, 250) };
         _art.DrawScene(b, scene, _spin, _stage == Stage.Centring ? null : _pot, _shape, showReference: _stage != Stage.Centring,
             lumpOffset: _wobble, handRow: RowAt(my), handColor: handColor,
@@ -394,6 +539,71 @@ internal sealed class PotteryMenu : IClickableMenu
 
     }
 
+    private static void Swatch(SpriteBatch b, Rectangle r, int glaze)
+    {
+        Color c = glaze >= 0 ? Glazes.All[glaze].Colour : new Color(206, 156, 120);
+        Ui.Fill(b, r, PotRenderer.GlazeShade(c, 3));
+        Ui.Fill(b, new Rectangle(r.X + 3, r.Y + 3, r.Width / 3, r.Height / 3), PotRenderer.GlazeShade(c, 5));
+        Ui.Outline(b, r, PotRenderer.GlazeShade(c, 0), 2);
+    }
+
+    // Left, while banding: the design to match, and how it's going.
+    private void DrawDesign(SpriteBatch b)
+    {
+        var left = LeftArea;
+        var design = _design!;
+        var panel = new Rectangle(left.X, left.Y, left.Width, 316);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "The design", panel.Center.X, panel.Y + 18);
+        int x = panel.X + 24, y = panel.Y + 60;
+        Swatch(b, new Rectangle(x, y + 2, 24, 24), design.Base);
+        Ui.Text(b, Glazes.All[design.Base].Name, new Vector2(x + 36, y));
+        Ui.Text(b, "all over", new Vector2(x + 36, y + 28), Game1.textColor * 0.7f, 0.85f);
+        y += 64;
+        foreach (var band in design.Bands)
+        {
+            Swatch(b, new Rectangle(x, y + 2, 24, 24), band.Glaze);
+            Ui.Text(b, Glazes.All[band.Glaze].Name, new Vector2(x + 36, y));
+            Ui.Text(b, GlazeDesign.Where(band), new Vector2(x + 36, y + 28), Game1.textColor * 0.7f, 0.85f);
+            y += 64;
+        }
+        var live = GlazeJudge.Judge(_glaze!, design);
+        Ui.Text(b, "Glaze", new Vector2(x, y + 4), Game1.textColor * 0.7f);
+        Ui.Text(b, I18n.Rating(live.Overall), new Vector2(x + 92, y + 4));
+
+        int hy = panel.Bottom + 16;
+        Ui.Text(b, "Banding", new Vector2(left.X + 8, hy));
+        Ui.Text(b, Game1.parseText("Dip first. A ring takes a whole turn. Your hand drifts: watch the brush.", Game1.smallFont, left.Width - 16),
+            new Vector2(left.X + 8, hy + 32), Game1.textColor * 0.75f);
+    }
+
+    // Right, while banding: the glazes (keys 1 to 6), the dip and the sponge.
+    private void DrawGlazes(SpriteBatch b, int mx, int my)
+    {
+        var right = RightArea;
+        var panel = new Rectangle(right.X, right.Y, right.Width, 358);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "Glazes", panel.Center.X, panel.Y + 18);
+        const int cell = 56, gap = 20;
+        int gx = panel.Center.X - (3 * cell + 2 * gap) / 2;
+        for (int i = 0; i < Glazes.All.Length; i++)
+        {
+            var r = new Rectangle(gx + i % 3 * (cell + gap), panel.Y + 56 + i / 3 * (cell + 10), cell, cell);
+            Ui.Button(b, r, "", selected: _glazeIdx == i, hovered: r.Contains(mx, my));
+            Swatch(b, new Rectangle(r.X + 12, r.Y + 12, cell - 24, cell - 24), i);
+            _buttons[$"g{i}"] = r;
+        }
+        var g = Glazes.All[_glazeIdx];
+        Ui.TextCentered(b, $"{_glazeIdx + 1}  {g.Name}", panel.Center.X, panel.Y + 192);
+        var dip = new Rectangle(panel.X + 20, panel.Y + 236, panel.Width - 40, 48);
+        var sponge = new Rectangle(dip.X, dip.Bottom + 10, dip.Width, 48);
+        Ui.Button(b, dip, $"Dip in {g.Name.ToLowerInvariant()}", hovered: dip.Contains(mx, my));
+        Ui.Button(b, sponge, "Sponge off bands", enabled: _glaze!.AnyBands, hovered: sponge.Contains(mx, my));
+        _buttons["dip"] = dip;
+        if (_glaze.AnyBands)
+            _buttons["sponge"] = sponge;
+    }
+
     private void DrawResults(SpriteBatch b)
     {
         var right = RightArea;
@@ -404,7 +614,7 @@ internal sealed class PotteryMenu : IClickableMenu
             Ui.Text(b, "It collapsed.", new Vector2(right.X + 8, y), new Color(170, 50, 30));
             y += 34;
         }
-        Ui.Stars(b, r.Stars, right.X + 8, y, 40, 6);
+        Ui.Stars(b, Stars, right.X + 8, y, 40, 6);
         y += 58;
         void Row(string label, string value)
         {
@@ -415,6 +625,8 @@ internal sealed class PotteryMenu : IClickableMenu
         Row("Shape", I18n.Rating(r.Shape));
         Row("Walls", I18n.Rating(r.Walls));
         Row("Centring", I18n.Rating(r.Centring));
+        if (_glazeResult is { } g)
+            Row("Glaze", I18n.Rating(g.Overall));
     }
 
     private void DrawBottomBar(SpriteBatch b, int mx, int my)
@@ -424,11 +636,12 @@ internal sealed class PotteryMenu : IClickableMenu
         {
             Stage.Centring => "Hold the mouse button on the clay and keep your hand over it.",
             Stage.Throwing => "Hold the mouse on the pot to work it at that height. Match the chalk line.",
+            Stage.Banding => "Hold the brush on the turning pot to paint a ring. Match the coloured marks.",
             _ => "",
         };
         if (line.Length > 0)
             Ui.Text(b, line, new Vector2(bottom.X, bottom.Y + 12));
-        if (_stage == Stage.Throwing)
+        if (_stage is Stage.Throwing or Stage.Banding)
         {
             var r = new Rectangle(bottom.Right - 180, bottom.Y, 180, bottom.Height);
             Ui.Button(b, r, "Finished", hovered: r.Contains(mx, my));
@@ -442,6 +655,12 @@ internal sealed class PotteryMenu : IClickableMenu
             Ui.Button(b, next, "Next shape", hovered: next.Contains(mx, my));
             _buttons["again"] = again;
             _buttons["next"] = next;
+            if (!_pot.Collapsed)
+            {
+                var glaze = new Rectangle(again.X - 220, bottom.Y, 200, bottom.Height);
+                Ui.Button(b, glaze, _glazeResult != null ? "Glaze again" : "Glaze it", hovered: glaze.Contains(mx, my));
+                _buttons["glaze"] = glaze;
+            }
         }
     }
 }
@@ -450,14 +669,14 @@ internal static class PotteryProto
 {
     public static void Register(IModHelper helper, IMonitor monitor)
     {
-        DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck] (throw: skip centring; bot: a greedy potter throws it, to check the rules; wreck: pull till it collapses)", (_, args) =>
+        DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck|band] (throw: skip centring; bot: a greedy potter throws it, to check the rules; wreck: pull till it collapses; band: the bot throws it, then you glaze it)", (_, args) =>
         {
             if (!Context.IsWorldReady)
                 return;
             string shape = args.Length > 0 ? args[0] : "";
             string rules = args.Length > 1 ? args[1] : "normal";
             PotteryArt.Load(helper);
-            Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"));
+            Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"), args.Contains("band"));
         });
         // Every stage at both common sizes, with the layout audit (overlapping or spilling text),
         // to dialogue_snapshots/pottery_*.png.
@@ -478,7 +697,25 @@ internal static class PotteryProto
                 ("results_hands", () => { var m = new PotteryMenu("jug", rules, bot: true); return m; }),
                 ("results", () => new PotteryMenu("vase", rules, bot: true)),
                 ("collapsed", () => new PotteryMenu("cup", rules, wreck: true)),
+                ("banding", () => new PotteryMenu("vase", rules, band: true)),
+                ("banding_brush", () => { var m = new PotteryMenu("vase", rules, band: true); m.GlazeBot(1.2f, finish: false, bands: 1); m.FakeMouse = m.SceneCentre(0.45f); return m; }),
+                ("results_glazed", () => { var m = new PotteryMenu("jug", rules, band: true); m.GlazeBot(1.2f); return m; }),
             };
+            // the glaze judge against the bot's hands: perfect, and wandering as Normal's and
+            // Hard's do, never corrected (the averages of 20)
+            foreach (string shape in PotShape.Names)
+                foreach (var (label, reach) in new[] { ("perfect", 0f), ("simplified", 0.35f), ("normal", 1.2f), ("hard", 2f) })
+                {
+                    float sum = 0f;
+                    for (int k = 0; k < 20; k++)
+                    {
+                        var m = new PotteryMenu(shape, rules, band: true);
+                        m.GlazeBot(reach);
+                        sum += m.GlazeScore;
+                        m.exitThisMenuNoSound();
+                    }
+                    monitor.Log($"glaze judge: {shape} {label}: {sum / 20f:0.00}", LogLevel.Info);
+                }
             var problems = new List<string>();
             foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
                 foreach (var (name, make) in stages)

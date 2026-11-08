@@ -19,13 +19,14 @@ internal sealed record PotteryRules(
     float DrainMultiplier,      // how fast handling uses up the clay's patience
     float Regen,                // patience per second back while you pause
     bool Collapse,              // walls too thin for the clay above them fall in
-    float CentringBand)         // how close your hands must stay to the lump (units)
+    float CentringBand,         // how close your hands must stay to the lump (units)
+    float Drift)                // banding: how far your brush hand wanders (rows)
 {
     public static PotteryRules For(string name) => name switch
     {
-        "simplified" => new("Simplified", 0f, 1f, false, 6f),
-        "hard" => new("Hard", 1.35f, 0.01f, true, 2.2f),
-        _ => new("Normal", 1f, 0.035f, true, 3.5f),
+        "simplified" => new("Simplified", 0f, 1f, false, 6f, 0.35f),
+        "hard" => new("Hard", 1.35f, 0.01f, true, 2.2f, 2f),
+        _ => new("Normal", 1f, 0.035f, true, 3.5f, 1.2f),
     };
 }
 

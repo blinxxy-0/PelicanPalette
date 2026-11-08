@@ -117,6 +117,163 @@ internal sealed class PotRenderer : IDisposable
         b.Draw(_texture, dest, Color.White);
     }
 
+    // Banding: the whole pot, no cut-away, in its glazes, turning; the design's bands as
+    // coloured marks hugging its right side; the brush touching its left side.
+    // `angle` is the banding wheel's turn (radians); `brushHeight` in rows from the foot
+    // (NaN: no brush).
+    public void DrawBanding(SpriteBatch b, Rectangle dest, float spin, float angle, ClayPot pot, PotGlaze glaze,
+        GlazeDesign design, float brushHeight, int brushGlaze)
+    {
+        Array.Clear(_kind);
+        Backdrop();
+        Wheel(spin);
+        GlazedPot(pot, glaze, angle);
+        Outline();
+        GlazedRim(pot, glaze, angle);
+        PanFront();
+        DesignMarks(pot, glaze, design);
+        if (!float.IsNaN(brushHeight))
+            Brush(pot, brushHeight, brushGlaze);
+        _texture.SetData(_px);
+        b.Draw(_texture, dest, Color.White);
+    }
+
+    // A glaze's six shades, darkest to lightest: shadows cooler and darker, lights warmer.
+    public static Color GlazeShade(Color c, int k)
+    {
+        var dark = new Color((int)(c.R * 0.42f), (int)(c.G * 0.44f), (int)(c.B * 0.52f + 10));
+        var light = Color.Lerp(c, new Color(255, 242, 222), 0.38f);
+        float t = k / 5f;
+        return t < 0.6f ? Color.Lerp(dark, c, t / 0.6f) : Color.Lerp(c, light, (t - 0.6f) / 0.4f);
+    }
+
+    private static readonly Color Bisque = new(206, 156, 120);       // dried, unglazed clay: pale and matte
+
+    // The bucket of the glaze grid a pixel shows: the wheel turns the pot left to right
+    // across its front, so a ring painted at the left edge comes round to face you.
+    private static int BucketAt(float u, float angle)
+    {
+        float theta = MathF.Asin(Math.Clamp(u, -1f, 1f)) - angle;
+        int k = (int)MathF.Floor(theta / MathF.Tau * PotGlaze.Buckets);
+        return ((k % PotGlaze.Buckets) + PotGlaze.Buckets) % PotGlaze.Buckets;
+    }
+
+    private void GlazedPot(ClayPot pot, PotGlaze glaze, float angle)
+    {
+        int rows = pot.Rows, cx = CentreX;
+        for (int yy = 0; yy < rows * RowPx; yy++)
+        {
+            int i = Math.Min(rows - 1, yy / RowPx);
+            float f = (yy % RowPx) / (float)RowPx;
+            float r = (i + 1 < rows ? pot.R[i] * (1 - f) + pot.R[i + 1] * f : pot.R[i]) * UnitPx;
+            int slice = Math.Min(glaze.Slices - 1, yy * PotGlaze.SlicesPerRow / RowPx);
+            int y = FootY - yy;
+            if (y < 0 || y >= Height)
+                continue;
+            for (int x = (int)MathF.Floor(cx - r); x <= (int)MathF.Ceiling(cx + r); x++)
+            {
+                float u = (x + 0.5f - cx) / MathF.Max(r, 1f);
+                if (MathF.Abs(u) > 1f || x < 0 || x >= Width)
+                    continue;
+                float n = MathF.Sqrt(MathF.Max(0f, 1f - u * u));
+                float light = 0.62f * n - 0.32f * u + 0.06f;
+                int k = Math.Clamp((int)(light * 6), 0, 5);
+                int g = glaze.At(slice, BucketAt(u, angle));
+                Color c;
+                if (g < 0)
+                {
+                    c = GlazeShade(Bisque, k);
+                    if (yy % 5 == 0 && MathF.Abs(u) < 0.9f)
+                        c = GlazeShade(Bisque, Math.Max(0, k - 1));       // the throwing rings, dry
+                }
+                else
+                {
+                    var gl = Glazes.All[g];
+                    c = GlazeShade(gl.Colour, k);
+                    if (gl.Speckled)
+                    {
+                        // iron flecks, turning with the pot
+                        int fleck = (int)MathF.Floor((MathF.Asin(Math.Clamp(u, -1f, 1f)) - angle) * 18f);
+                        if (((fleck * 73856093) ^ (yy * 19349663)) % 9 == 0)
+                            c = GlazeShade(gl.Colour, Math.Max(0, k - 3));
+                    }
+                    if (u > -0.62f && u < -0.46f)
+                        c = Color.Lerp(GlazeShade(gl.Colour, 5), Color.White, 0.55f);     // glaze shines
+                }
+                _px[y * Width + x] = c;
+                _kind[y * Width + x] = 1;
+            }
+        }
+    }
+
+    private void GlazedRim(ClayPot pot, PotGlaze glaze, float angle)
+    {
+        int top = FootY - pot.Rows * RowPx + 1;
+        float r = pot.R[pot.Rows - 1] * UnitPx, inner = (pot.R[pot.Rows - 1] - pot.T[pot.Rows - 1]) * UnitPx;
+        int g = glaze.At(glaze.Slices - 1, BucketAt(0f, angle));
+        Color lip = g < 0 ? GlazeShade(Bisque, 5) : GlazeShade(Glazes.All[g].Colour, 5);
+        int cx = CentreX;
+        for (int x = (int)(cx - r) + 1; x < cx + r - 1; x++)
+            Set(x, top, MathF.Abs(x + 0.5f - cx) < inner ? InsideDeep : lip);
+    }
+
+    // The design: each band as a short coloured line just right of the pot, following its
+    // edge, with a chalk line outside it so dark glazes show against the wall.
+    private void DesignMarks(ClayPot pot, PotGlaze glaze, GlazeDesign design)
+    {
+        int rows = pot.Rows, cx = CentreX;
+        foreach (var band in design.Bands)
+        {
+            var (from, to) = GlazeDesign.Slices(band, glaze.Slices);
+            int y0 = from * RowPx / PotGlaze.SlicesPerRow, y1 = ((to + 1) * RowPx + PotGlaze.SlicesPerRow - 1) / PotGlaze.SlicesPerRow - 1;
+            Color c = GlazeShade(Glazes.All[band.Glaze].Colour, 4);
+            for (int yy = y0; yy <= y1; yy++)
+            {
+                int i = Math.Min(rows - 1, yy / RowPx);
+                float f = (yy % RowPx) / (float)RowPx;
+                float r = (i + 1 < rows ? pot.R[i] * (1 - f) + pot.R[i + 1] * f : pot.R[i]) * UnitPx;
+                int x = (int)MathF.Ceiling(cx + r) + 3;
+                Set(x, FootY - yy, c);
+                Set(x + 1, FootY - yy, c);
+                Set(x + 2, FootY - yy, c);
+                Set(x + 3, FootY - yy, Chalk);
+            }
+        }
+    }
+
+    // The brush, its tip on the pot's left side at its height: a dab of the glaze it carries
+    // as tall as it paints, and a wooden handle reaching out to the left.
+    private void Brush(ClayPot pot, float height, int glazeIndex)
+    {
+        int rows = pot.Rows;
+        float row = Math.Clamp(height - 0.5f, 0f, rows - 1);
+        float r = pot.R[(int)row] * UnitPx;
+        int edge = (int)MathF.Floor(CentreX - r) - 1;
+        int yMid = (int)MathF.Round(FootY - height * RowPx);
+        int half = Math.Max(1, (int)(PotGlaze.BrushRows * RowPx / 2f));
+        Color baseC = glazeIndex >= 0 ? Glazes.All[glazeIndex].Colour : Chalk;
+        // the bristles, loaded with glaze, outlined a darker shade of it
+        for (int y = yMid - half - 1; y <= yMid + half + 1; y++)
+            for (int x = edge - 4; x <= edge; x++)
+            {
+                bool rim = y == yMid - half - 1 || y == yMid + half + 1 || x == edge - 4;
+                Set(x, y, rim ? GlazeShade(baseC, 0) : GlazeShade(baseC, x == edge - 3 ? 4 : 3));
+            }
+        // the ferrule, then the handle
+        for (int y = yMid - 2; y <= yMid + 2; y++)
+        {
+            Set(edge - 5, y, y == yMid - 2 ? new Color(220, 220, 228) : new Color(150, 150, 160));
+            Set(edge - 6, y, new Color(96, 96, 108));
+        }
+        for (int x = edge - 22; x <= edge - 7; x++)
+        {
+            Set(x, yMid - 2, new Color(84, 52, 34));
+            Set(x, yMid - 1, new Color(190, 140, 92));
+            Set(x, yMid, new Color(150, 104, 66));
+            Set(x, yMid + 1, new Color(84, 52, 34));
+        }
+    }
+
     private void Set(int x, int y, Color c)
     {
         if (x >= 0 && x < Width && y >= 0 && y < Height)

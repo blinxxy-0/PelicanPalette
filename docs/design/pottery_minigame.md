@@ -119,6 +119,14 @@ As painting was: a **prototype first**. A plain dev-only screen (`museart_potter
 
 **Prototype (2026-11-07):** `museart_pottery`, Debug only (`ArtStudio/Pottery/`). It has centring, throwing, four shapes and a judge. The user loved it, and was stuck at 3.5 stars until walls were judged as a potter would (a thick foot and firm rim allowed, changing smoothly), shown live, and explained on the results.
 
+**Banding prototype (2026-11-07):** "Glaze it" on the results, or `museart_pottery vase normal band` (the bot throws, you glaze). `ArtStudio/Pottery/Banding.cs`.
+- **On the wheel:** the whole pot, no cut-away, bisque until dipped. Six glazes (section 5's), keys 1 to 6. "Dip" coats it all and covers any bands. "Sponge off bands" starts the bands again.
+- **The brush:** hold it on the pot and one turn of the wheel (1.1 s) paints a ring a row wide; drag to widen. The glaze sits on a grid wrapped round the pot (three slices to a row, 32 round), so a wavy band really is wavy and its waves come round as it turns.
+- **The pressure:** the brush hand drifts, from nothing to its full reach over a couple of seconds held: Simplified 0.35 rows, Normal 1.2, Hard 2. The brush is drawn where it really is, so you correct by watching it.
+- **The design:** a base coat and two bands per shape, given as fractions of height so they fit the pot you threw. The bands are coloured marks hugging the pot's right side (the chalk line's way), and listed on the left.
+- **Judge:** each band a column at a time round the pot, its painted edges against the design's (a slice of slop free, gaps count), times neatness (glaze where the design has none). Glaze = 0.15 base + 0.85 bands. The pot's stars = 0.75 throw + 0.25 glaze. The bot, averaged over 20 per shape: a perfect hand 1.0; a hand that never corrects scores 0.97 to 1.0 on Simplified, 0.66 to 0.85 on Normal and 0.39 to 0.53 on Hard.
+- **Not yet:** a banding wheel of its own (it turns on the kick wheel for now; the art can come later), and drying and firing between throwing and glazing.
+
 ## 11. Visuals (a plan for review)
 
 The prototype is plain rectangles. The aim is a screen that sits beside the easel's as one family: the same menu frame, framed panels, gold stars and word grades. Mockup of the pot: `art/pottery/visual_mock_v1.png` (left, now; right, proposed).
