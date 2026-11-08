@@ -5,7 +5,7 @@
 //
 // Where things sit: the Vale's 96x76 tiles fill pixels 42,5 to 258,176 of the picture
 // (2.25 pixels a tile), so a tile x,y is pixel 42 + 2.25x, 5 + 2.25y. Inside a building
-// you're shown at its door.
+// you're shown on it, in the middle of its picture on the map (checked on all four seasons).
 {
   "Changes": [
     // The picture, with a season's version where there is one.
@@ -39,7 +39,7 @@
                 { "Id": "ValeHouse", "Text": "{{i18n:worldmap.vale-house}}" }
               ],
               "WorldPositions": [
-                { "Id": "ValeHouse", "LocationName": "blinxxy.MuseArt_ValeHouse", "MapPixelArea": { "X": 106, "Y": 48, "Width": 1, "Height": 1 } }
+                { "Id": "ValeHouse", "LocationName": "blinxxy.MuseArt_ValeHouse", "MapPixelArea": { "X": 107, "Y": 36, "Width": 1, "Height": 1 } }
               ]
             },
             {
@@ -57,7 +57,7 @@
                 { "Id": "Pottery", "Text": "{{i18n:worldmap.vale-pottery}}" }
               ],
               "WorldPositions": [
-                { "Id": "Pottery", "LocationName": "blinxxy.MuseArt_ValePottery", "MapPixelArea": { "X": 141, "Y": 43, "Width": 1, "Height": 1 } }
+                { "Id": "Pottery", "LocationName": "blinxxy.MuseArt_ValePottery", "MapPixelArea": { "X": 147, "Y": 36, "Width": 1, "Height": 1 } }
               ]
             },
             {
@@ -68,7 +68,7 @@
                 { "Id": "Atelier", "Text": "{{i18n:worldmap.vale-atelier}}" }
               ],
               "WorldPositions": [
-                { "Id": "Atelier", "LocationName": "blinxxy.MuseArt_ValeAtelier", "MapPixelArea": { "X": 206, "Y": 57, "Width": 1, "Height": 1 } }
+                { "Id": "Atelier", "LocationName": "blinxxy.MuseArt_ValeAtelier", "MapPixelArea": { "X": 209, "Y": 47, "Width": 1, "Height": 1 } }
               ]
             },
             {
@@ -79,7 +79,7 @@
                 { "Id": "Fern", "Text": "{{i18n:worldmap.vale-fern}}" }
               ],
               "WorldPositions": [
-                { "Id": "Fern", "LocationName": "blinxxy.MuseArt_ValeFern", "MapPixelArea": { "X": 75, "Y": 90, "Width": 1, "Height": 1 } }
+                { "Id": "Fern", "LocationName": "blinxxy.MuseArt_ValeFern", "MapPixelArea": { "X": 75, "Y": 81, "Width": 1, "Height": 1 } }
               ]
             },
             {
@@ -100,7 +100,7 @@
                 { "Id": "HallClosed", "Text": "{{i18n:worldmap.vale-hall.closed}}", "Condition": "!PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeHallOpen Any" }
               ],
               "WorldPositions": [
-                { "Id": "Hall", "LocationName": "blinxxy.MuseArt_ValeHall", "MapPixelArea": { "X": 142, "Y": 93, "Width": 1, "Height": 1 } }
+                { "Id": "Hall", "LocationName": "blinxxy.MuseArt_ValeHall", "MapPixelArea": { "X": 142, "Y": 82, "Width": 1, "Height": 1 } }
               ]
             },
             {
@@ -119,7 +119,7 @@
                 { "Id": "OldStudios", "Text": "{{i18n:worldmap.old-studios}}" }
               ],
               "WorldPositions": [
-                { "Id": "Studio", "LocationName": "blinxxy.MuseArt_ValeStudio", "MapPixelArea": { "X": 206, "Y": 90, "Width": 1, "Height": 1 } }
+                { "Id": "Studio", "LocationName": "blinxxy.MuseArt_ValeStudio", "MapPixelArea": { "X": 204, "Y": 81, "Width": 1, "Height": 1 } }
               ]
             },
             {
@@ -137,7 +137,7 @@
                 { "Id": "Emmett", "Text": "{{i18n:worldmap.vale-emmett}}" }
               ],
               "WorldPositions": [
-                { "Id": "Emmett", "LocationName": "blinxxy.MuseArt_ValeEmmett", "MapPixelArea": { "X": 84, "Y": 142, "Width": 1, "Height": 1 } }
+                { "Id": "Emmett", "LocationName": "blinxxy.MuseArt_ValeEmmett", "MapPixelArea": { "X": 80, "Y": 134, "Width": 1, "Height": 1 } }
               ]
             },
             {
