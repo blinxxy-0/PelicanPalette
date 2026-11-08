@@ -125,6 +125,7 @@
   "setup.canvas-hover.small": "Small canvas: {{size}}x{{size}}, room for {{items}} item(s).",
   "setup.canvas-hover.medium": "Medium canvas: {{size}}x{{size}}, room for {{items}} item(s).",
   "setup.canvas-hover.large": "Large canvas: {{size}}x{{size}}, room for {{items}} item(s).",
+  "setup.canvas-hover.linen": "You have {{plain}} plain and {{linen}} linen.",
   "setup.canvas-locked.small": "Small canvases unlock at Painting level {{level}}.",
   "setup.canvas-locked.medium": "Medium canvases unlock at Painting level {{level}}.",
   "setup.canvas-locked.large": "Large canvases unlock at Painting level {{level}}.",

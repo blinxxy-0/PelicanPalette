@@ -268,6 +268,21 @@ internal sealed partial class EaselMenu
 
     private int LinenCount(CanvasKind kind) => kind == CanvasKind.Small ? 0 : CountInBag(ArtItems.QualifiedLinenId(kind));
 
+    // A size's button counts its linen canvases too (the user, 2026-11-08: linen didn't show
+    // until you'd already clicked medium or large). Picking a size you only have linen for
+    // picks linen; one you have no linen for, plain.
+    private int CanvasesOfSize(CanvasKind kind) => CanvasCount(kind) + LinenCount(kind);
+
+    private void MatchLinen()
+    {
+        if (!LinenOffered)
+            _setupLinen = false;
+        else if (_needsSupplies && CanvasCount(_setupCanvas) == 0 && LinenCount(_setupCanvas) > 0)
+            _setupLinen = true;
+        else if (_needsSupplies && LinenCount(_setupCanvas) == 0 && CanvasCount(_setupCanvas) > 0)
+            _setupLinen = false;
+    }
+
     // Linen is offered for medium and large canvases, once you can make it or have some.
     private bool LinenOffered => !_setupFraming && _setupCanvas != CanvasKind.Small
         && (_level >= PaintingRules.LinenLevel || LinenCount(_setupCanvas) > 0);
@@ -319,7 +334,7 @@ internal sealed partial class EaselMenu
                     return;
                 }
                 _setupCanvas = kind;
-                if (!LinenOffered) _setupLinen = false;
+                MatchLinen();
                 Game1.playSound("smallSelect");
                 RefreshPreview();
                 return;
@@ -344,6 +359,7 @@ internal sealed partial class EaselMenu
                         _setupCanvas = kind;
                         break;
                     }
+                MatchLinen();
             }
             RefreshPreview();
             return;
@@ -400,6 +416,7 @@ internal sealed partial class EaselMenu
                 _setupItems.Add(subject);
                 if (!PaintingRules.PortraitFits(_setupCanvas) && CanvasUnlocked(CanvasKind.Medium))
                     _setupCanvas = CanvasKind.Medium;
+                MatchLinen();
             }
             RefreshPreview();
             return;
@@ -624,12 +641,13 @@ internal sealed partial class EaselMenu
             bool unlocked = CanvasUnlocked(kind);
             int size = PaintingRules.CanvasSize(kind);
             string label = !unlocked ? I18n.Get("tool.level-short", new { level = PaintingRules.CanvasUnlockLevel(kind) })
-                : _needsSupplies ? I18n.Get("setup.canvas-count", new { canvas = CanvasName(i), count = CanvasCount(kind) })
+                : _needsSupplies ? I18n.Get("setup.canvas-count", new { canvas = CanvasName(i), count = CanvasesOfSize(kind) })
                 : CanvasName(i);
             Ui.Button(b, _canvasButtons[i], label, unlocked, _setupCanvas == kind, _canvasButtons[i].Contains(mouse));
             if (_canvasButtons[i].Contains(mouse))
                 _hoverText = unlocked
                     ? I18n.Get("setup.canvas-hover." + CanvasKeys[i], new { size, items = ReferenceBuilder.MaxItems(size) })
+                        + (_needsSupplies && LinenCount(kind) > 0 ? "\n" + I18n.Get("setup.canvas-hover.linen", new { plain = CanvasCount(kind), linen = LinenCount(kind) }) : "")
                     : I18n.Get("setup.canvas-locked." + CanvasKeys[i], new { level = PaintingRules.CanvasUnlockLevel(kind) });
         }
 

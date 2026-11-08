@@ -463,6 +463,20 @@ internal static class DevTools
             return m;
         });
         yield return ("tech_linen", () => { ArtProgress.SetLevel(Game1.player, 8); var m = new EaselMenu(Game1.player); m.DevSetCanvas(CanvasKind.Medium); m.DevSetLinen(true); m.DevSetup(pumpkin); return m; });
+        // Only linen in the bag for medium (the user, 2026-11-08): the Medium button counts it,
+        // and clicking Medium picks linen.
+        static void LinenOnly()
+        {
+            ArtProgress.SetLevel(Game1.player, 8);
+            foreach (var kind in new[] { CanvasKind.Medium, CanvasKind.Large })
+                Game1.player.removeFirstOfThisItemFromInventory(ArtItems.QualifiedCanvasId(kind), 999);
+            Game1.player.removeFirstOfThisItemFromInventory(ArtItems.QualifiedLinenId(CanvasKind.Medium), 999);
+            var linen = ItemRegistry.Create(ArtItems.QualifiedLinenId(CanvasKind.Medium));
+            linen.Stack = 2;
+            Game1.player.addItemToInventory(linen);
+        }
+        yield return ("setup_linen_only", () => { LinenOnly(); var m = new EaselMenu(Game1.player); m.DevSetup(pumpkin); m.DevClickCanvas(CanvasKind.Small); return m; });
+        yield return ("setup_linen_picked", () => { LinenOnly(); var m = new EaselMenu(Game1.player); m.DevSetup(pumpkin); m.DevClickCanvas(CanvasKind.Medium); return m; });
         yield return ("toast_long", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevToast("Spark! You found Iridium Violet pigment!"); return m; });
         yield return ("toast_tool", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevToast("Dropper unlocks at Painting level 6."); return m; });
         yield return ("mix_start", () => { var m = Paint(CanvasKind.Small, parsnip); m.DevOpenMix(moss, 0, armed: false); return m; });
