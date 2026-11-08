@@ -138,6 +138,157 @@ internal sealed class PotRenderer : IDisposable
         b.Draw(_texture, dest, Color.White);
     }
 
+    // Firing: inside the kiln, as through its spy hole. Brick walls, the pot on a kiln
+    // shelf, the burners' flames under it. Everything glows as it heats: dull red brick at
+    // first, orange, then a yellow-white at the peak, the glaze's colours lost in the glow
+    // (they come back as it cools). All drawn by code. `heat` and `fire` from 0 to 1.
+    // Once it's out: `dull` greys an under- or overfired glaze, and a cracked pot shows its crack.
+    public void DrawKiln(SpriteBatch b, Rectangle dest, float time, ClayPot pot, PotGlaze glaze, float heat, float fire,
+        float dull = 0f, bool cracked = false)
+    {
+        Array.Clear(_kind);
+        KilnWalls(heat);
+        KilnShelf(heat);
+        Flames(time, fire, heat);
+        GlazedPot(pot, glaze, 0.6f);
+        Glow(heat);
+        if (dull > 0f)
+            for (int i = 0; i < _px.Length; i++)
+                if (_kind[i] == 1)
+                {
+                    Color c = _px[i];
+                    int grey = (c.R * 3 + c.G * 6 + c.B) / 10;
+                    _px[i] = Color.Lerp(c, new Color(grey, grey, (int)(grey * 0.95f)), dull);
+                }
+        Outline();
+        GlazedRim(pot, glaze, 0.6f);
+        if (cracked)
+            Crack(pot);
+        _texture.SetData(_px);
+        b.Draw(_texture, dest, Color.White);
+    }
+
+    // A crack down the pot's front from the rim, zigzagging, dark with a lit edge.
+    private void Crack(ClayPot pot)
+    {
+        int top = FootY - pot.Rows * RowPx + 1, bottom = FootY - pot.Rows * RowPx * 2 / 5;
+        int x = CentreX - (int)(pot.R[pot.Rows - 1] * UnitPx * 0.25f);
+        for (int y = top; y <= bottom; y++)
+        {
+            if ((y - top) % 3 == 2)
+                x += Hash(x, y) % 3 - 1;
+            int i = y * Width + x;
+            if (y < 0 || y >= Height || x < 1 || x >= Width - 1 || _kind[i] != 1)
+                continue;
+            _px[i] = InsideDeep;
+            _px[i + 1] = Color.Lerp(_px[i + 1], Color.White, 0.25f);
+        }
+    }
+
+    // The colour of hot things: dark red, orange, yellow, nearly white.
+    private static Color HeatColour(float h)
+    {
+        h = Math.Clamp(h, 0f, 1f);
+        return h < 0.4f ? Color.Lerp(new Color(120, 36, 24), new Color(220, 96, 40), h / 0.4f)
+             : h < 0.75f ? Color.Lerp(new Color(220, 96, 40), new Color(250, 176, 70), (h - 0.4f) / 0.35f)
+             : Color.Lerp(new Color(250, 176, 70), new Color(255, 236, 170), (h - 0.75f) / 0.25f);
+    }
+
+    private static int Hash(int x, int y) => (int)(((uint)(x * 73856093) ^ (uint)(y * 19349663)) % 1000u);
+
+    private void KilnWalls(float heat)
+    {
+        var cold = new Color(104, 58, 44);
+        Color brick = Color.Lerp(cold, HeatColour(heat * 0.72f), MathF.Min(1f, heat * 1.3f));
+        Color mortar = Color.Lerp(new Color(64, 36, 30), HeatColour(heat * 0.3f), heat * 0.8f);
+        float cxf = Width / 2f, cyf = Height / 2f;
+        for (int y = 0; y < Height; y++)
+        {
+            int course = y / 7;
+            for (int x = 0; x < Width; x++)
+            {
+                int bx = (x + (course % 2) * 8) / 16;
+                bool joint = y % 7 == 6 || (x + (course % 2) * 8) % 16 == 15;
+                Color c = joint ? mortar : brick;
+                if (!joint)
+                {
+                    int v = Hash(bx, course) % 3;
+                    c = v == 0 ? Color.Lerp(c, Color.Black, 0.12f) : v == 1 ? Color.Lerp(c, Color.White, 0.06f) : c;
+                    if (y % 7 == 0) c = Color.Lerp(c, Color.White, 0.1f);       // each brick's lit top edge
+                }
+                // darker towards the corners, as through the spy hole
+                float dx = (x - cxf) / cxf, dy = (y - cyf) / cyf;
+                float vignette = Math.Clamp((dx * dx + dy * dy - 0.45f) * 0.5f, 0f, 0.45f);
+                _px[y * Width + x] = Color.Lerp(c, new Color(30, 12, 10), vignette);
+            }
+        }
+    }
+
+    // The kiln shelf the pot stands on, on two posts down to the floor of the chamber.
+    private void KilnShelf(float heat)
+    {
+        int cx = CentreX;
+        Color top = Color.Lerp(new Color(168, 160, 150), HeatColour(heat), heat * 0.7f);
+        Color face = Color.Lerp(new Color(122, 114, 106), HeatColour(heat * 0.85f), heat * 0.7f);
+        Color dark = Color.Lerp(new Color(78, 72, 68), HeatColour(heat * 0.6f), heat * 0.6f);
+        for (int x = cx - 44; x <= cx + 44; x++)
+        {
+            Set(x, FootY + 1, top);
+            Set(x, FootY + 2, face);
+            Set(x, FootY + 3, face);
+            Set(x, FootY + 4, dark);
+        }
+        int floor = Height - 12;
+        foreach (int px in new[] { cx - 38, cx + 34 })
+            for (int y = FootY + 5; y < floor; y++)
+                for (int x = px; x < px + 5; x++)
+                    Set(x, y, x == px ? dark : x == px + 4 ? dark : face);
+    }
+
+    // The burners' flames along the chamber's floor, as tall as the fire is fierce.
+    private void Flames(float time, float fire, float heat)
+    {
+        int floor = Height - 12;
+        Color bed = Color.Lerp(new Color(40, 22, 18), HeatColour(heat * 0.5f), 0.5f);
+        for (int y = floor; y < Height; y++)
+            for (int x = 0; x < Width; x++)
+                Set(x, y, (y - floor) % 4 == 0 ? Color.Lerp(bed, Color.Black, 0.2f) : bed);
+        if (fire <= 0.01f)
+            return;
+        // a tongue of flame from each burner port, each flickering on its own
+        for (int port = 0, px0 = 6; px0 < Width - 3; port++, px0 += 11)
+        {
+            float n = 0.5f + 0.3f * MathF.Sin(port * 1.7f + time * 9f) + 0.2f * MathF.Sin(port * 2.9f - time * 13f);
+            int h = (int)(3f + fire * (10f + 14f * n));
+            for (int k = 0; k < h; k++)
+            {
+                float u = k / (float)Math.Max(1, h);                  // 0 at the root, 1 at the tip
+                int half = (int)MathF.Round(4.5f * (1f - u) * (1f - 0.35f * u));
+                float sway = MathF.Sin(time * 7f + port + k * 0.4f) * u * 1.5f;
+                for (int dx = -half; dx <= half; dx++)
+                {
+                    bool core = Math.Abs(dx) < half - 1 && u < 0.6f;
+                    Color c = core ? new Color(255, 232, 150) : u < 0.65f ? new Color(250, 150, 50) : new Color(214, 70, 34);
+                    Set(px0 + dx + (int)sway, floor + 1 - k, c);
+                }
+            }
+            for (int dx = -2; dx <= 2; dx++)
+                Set(px0 + dx, floor + 1, new Color(36, 30, 30));      // the port
+        }
+    }
+
+    // Hot clay and glaze glow: their colours pulled towards the heat's.
+    private void Glow(float heat)
+    {
+        Color glow = HeatColour(heat);
+        float amount = Math.Clamp((heat - 0.15f) / 0.85f, 0f, 1f) * 0.55f;
+        if (amount <= 0f)
+            return;
+        for (int i = 0; i < _px.Length; i++)
+            if (_kind[i] == 1)
+                _px[i] = Color.Lerp(_px[i], glow, amount);
+    }
+
     // A glaze's six shades, darkest to lightest: shadows cooler and darker, lights warmer.
     public static Color GlazeShade(Color c, int k)
     {

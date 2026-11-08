@@ -22,7 +22,7 @@ namespace ArtStudio.Pottery;
 // museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck]
 internal sealed class PotteryMenu : IClickableMenu
 {
-    private enum Stage { Centring, Throwing, Banding, Results }
+    private enum Stage { Centring, Throwing, Banding, Firing, Results }
 
     private const int MaxWidth = 1240, MaxHeight = 780;
     private const int Pad = 20, TopBar = 64, BottomBar = 56, SideWidth = 250;
@@ -51,6 +51,10 @@ internal sealed class PotteryMenu : IClickableMenu
     private float _bandAngle, _holdTime, _phase1, _phase2, _lastBucket;
     private bool _wasHeld;
 
+    // firing (Firing.cs): the kiln, and how it came out
+    private Kiln? _kiln;
+    private FiringResult? _fireResult;
+
     private readonly Dictionary<string, Rectangle> _buttons = new();
     // (snapshots only: where the mouse is pretended to be, to show the hands)
     internal Point? FakeMouse;
@@ -58,8 +62,9 @@ internal sealed class PotteryMenu : IClickableMenu
     private int MouseY => FakeMouse?.Y ?? Game1.getMouseY();
     internal Point SceneCentre(float up = 0.35f) => new(Scene.Center.X, Scene.Bottom - (int)(Scene.Height * up));
 
-    public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false, bool wreck = false, bool band = false)
+    public PotteryMenu(string shape, PotteryRules rules, bool skipCentring = false, bool bot = false, bool wreck = false, bool band = false, bool fire = false)
     {
+        band |= fire;
         bot |= band;
         _rules = rules;
         string name = Array.IndexOf(PotShape.Names, shape) >= 0 ? shape : PotShape.Names[new Random().Next(PotShape.Names.Length)];
@@ -79,6 +84,11 @@ internal sealed class PotteryMenu : IClickableMenu
             Finish();
             if (band)
                 StartBanding();
+            if (fire)
+            {
+                GlazeBot(0f);
+                StartFiring();
+            }
         }
         else if (wreck)
         {
@@ -179,6 +189,8 @@ internal sealed class PotteryMenu : IClickableMenu
         _glaze = null;
         _design = null;
         _glazeResult = null;
+        _kiln = null;
+        _fireResult = null;
     }
 
     // ---- Banding ----
@@ -188,6 +200,8 @@ internal sealed class PotteryMenu : IClickableMenu
         _glaze = new PotGlaze(_pot.Rows);
         _design = GlazeDesign.For(_shape.Name);
         _glazeResult = null;
+        _kiln = null;
+        _fireResult = null;
         _glazeIdx = _design.Base;
         _wasHeld = false;
         _stage = Stage.Banding;
@@ -269,10 +283,82 @@ internal sealed class PotteryMenu : IClickableMenu
             FinishBanding();
     }
 
-    // The pot's stars, glaze and all: the throw counts three parts in four.
-    private float Stars => _glazeResult is { } g && _result is { } t
-        ? MathF.Round((0.75f * t.Overall + 0.25f * g.Overall) * 10f) / 2f
-        : _result?.Stars ?? 0f;
+    // ---- Firing ----
+
+    private void StartFiring()
+    {
+        _kiln = new Kiln(_glaze?.Base ?? -1, _rules, _random);
+        _fireResult = null;
+        _stage = Stage.Firing;
+    }
+
+    private void FinishFiring()
+    {
+        _fireResult = FiringJudge.Judge(_kiln!, _random);
+        _stage = Stage.Results;
+    }
+
+    internal float FireScore => _fireResult?.Score ?? 0f;
+
+    // The simulation's stokers, for checking the firing: "steady" looks at the forecast
+    // every two seconds and adds hardwood if it's heading low (as a player watching the
+    // marker would); "eager" feeds wood or hardwood four times a second whenever it's
+    // heading low (it overfeeds); "coal" throws coal in on a beat; "none" never feeds it.
+    internal void FireBot(string mode, float until = Kiln.Duration, bool finish = true)
+    {
+        if (_kiln == null)
+            return;
+        const float dt = 1f / 60f;
+        float next = 0f;
+        while (!_kiln.Done && _kiln.Time < until)
+        {
+            if (_kiln.Time >= next)
+            {
+                float want = _kiln.Target(_kiln.Time + 3f);
+                switch (mode)
+                {
+                    case "eager":
+                        // feeds for where it'll be when this fuel has burnt
+                        float gap = _kiln.Target(_kiln.Time + 4f) - _kiln.Forecast(4f);
+                        if (gap > 2f)
+                            _kiln.Add(gap > 8f ? Fuel.Hardwood : Fuel.Wood);
+                        next += 0.25f;
+                        break;
+                    case "steady":
+                        if (_kiln.Forecast(3f) < want)
+                            _kiln.Add(Fuel.Hardwood);
+                        next += 2f;
+                        break;
+                    case "coal":
+                        _kiln.Add(Fuel.Coal);
+                        next += 1.2f;
+                        break;
+                    default:
+                        next = float.MaxValue;
+                        break;
+                }
+            }
+            _kiln.Step(dt);
+        }
+        if (finish && _kiln.Done)
+            FinishFiring();
+    }
+
+    // The pot's stars, glaze and all: the throw counts three parts in four, the glaze one,
+    // and the firing sets how much of the glaze's comes through (a kiln gift adds half a star).
+    private float Stars
+    {
+        get
+        {
+            if (_fireResult is { Verdict: "Cracked" })
+                return 0f;
+            if (_glazeResult is not { } g || _result is not { } t)
+                return _result?.Stars ?? 0f;
+            float glaze = g.Overall * (_fireResult is { } f ? 0.7f + 0.3f * f.Score : 1f);
+            float stars = MathF.Round((0.75f * t.Overall + 0.25f * glaze) * 10f) / 2f;
+            return MathF.Min(5f, stars + (_fireResult?.Gift != null ? 0.5f : 0f));
+        }
+    }
 
     public override void update(GameTime time)
     {
@@ -295,6 +381,11 @@ internal sealed class PotteryMenu : IClickableMenu
                 break;
             case Stage.Banding:
                 UpdateBanding(dt, held);
+                break;
+            case Stage.Firing:
+                _kiln!.Step(dt);
+                if (_kiln.Done)
+                    FinishFiring();
                 break;
         }
     }
@@ -344,6 +435,10 @@ internal sealed class PotteryMenu : IClickableMenu
                 case "done": if (_stage == Stage.Banding) FinishBanding(); else Finish(); break;
                 case "again": Restart(); break;
                 case "glaze": StartBanding(); break;
+                case "fire": StartFiring(); break;
+                case "wood": _kiln?.Add(Fuel.Wood); break;
+                case "hard": _kiln?.Add(Fuel.Hardwood); break;
+                case "coal": _kiln?.Add(Fuel.Coal); break;
                 case "dip": _glaze?.Dip(_glazeIdx); break;
                 case "sponge": _glaze?.Sponge(); break;
                 case var k when k.StartsWith("g") && int.TryParse(k[1..], out int gi): _glazeIdx = gi; break;
@@ -360,6 +455,15 @@ internal sealed class PotteryMenu : IClickableMenu
     public override void receiveKeyPress(Keys key)
     {
         base.receiveKeyPress(key);
+        if (_stage == Stage.Firing)
+        {
+            if (key >= Keys.D1 && key < Keys.D1 + Kiln.Fuels.Length)
+            {
+                _kiln!.Add((Fuel)(key - Keys.D1));
+                Game1.playSound("woodyStep");
+            }
+            return;
+        }
         if (_stage == Stage.Banding)
         {
             if (key >= Keys.D1 && key < Keys.D1 + Glazes.All.Length)
@@ -394,6 +498,7 @@ internal sealed class PotteryMenu : IClickableMenu
             case Stage.Centring: DrawCentringPanel(b); break;
             case Stage.Throwing: DrawClay(b); DrawTools(b, mx, my); break;
             case Stage.Banding: DrawDesign(b); DrawGlazes(b, mx, my); break;
+            case Stage.Firing: DrawFiringChart(b); DrawFuel(b, mx, my); break;
             case Stage.Results: DrawAdvice(b); DrawResults(b); break;
         }
         DrawBottomBar(b, mx, my);
@@ -404,9 +509,17 @@ internal sealed class PotteryMenu : IClickableMenu
     private void DrawTopBar(SpriteBatch b)
     {
         var top = TopArea;
+        bool firing = _stage == Stage.Firing || _fireResult != null;
         bool glazing = _stage == Stage.Banding || _glazeResult != null;
-        Ui.Text(b, $"{(glazing ? "Glazing" : "Throwing")}: the {_shape.Name}", new Vector2(top.X, top.Y + 4));
+        Ui.Text(b, $"{(firing ? "Firing" : glazing ? "Glazing" : "Throwing")}: the {_shape.Name}", new Vector2(top.X, top.Y + 4));
         Ui.Text(b, _rules.Name, new Vector2(top.X, top.Y + 34), Game1.textColor * 0.7f);
+        if (_stage == Stage.Firing)
+        {
+            int left = (int)MathF.Ceiling(Kiln.Duration - _kiln!.Time);
+            string time = $"{left / 60}:{left % 60:00} to go";
+            Ui.Text(b, time, new Vector2(top.Right - Ui.TextWidth(time), top.Y + 14));
+            return;
+        }
         if (_stage == Stage.Banding)
         {
             // how many of the design's bands are on, near enough
@@ -472,6 +585,8 @@ internal sealed class PotteryMenu : IClickableMenu
         var left = LeftArea;
         string[] glazeTips = _glazeResult != null ? GlazeJudge.Tips(_glaze!, _design!, _glazeResult).Take(2).ToArray() : Array.Empty<string>();
         string said = _pot.Collapsed ? (_pot.CollapseReason ?? "")
+            : _fireResult != null && (_fireResult.Verdict != "Perfect" || _fireResult.Gift != null || glazeTips.Length == 0)
+                ? FiringJudge.Tip(_kiln!, _fireResult) + (glazeTips.Length > 0 ? " " + glazeTips[0] : "")
             : glazeTips.Length > 0 ? string.Join(" ", glazeTips)
             : string.Join(" ", PotJudge.Tips(_pot, _shape, _result!));
         string quote = Game1.parseText($"\"{said}\"", Game1.smallFont, left.Width - 48);
@@ -487,6 +602,17 @@ internal sealed class PotteryMenu : IClickableMenu
         var scene = Scene;
         drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), scene.X - 12, scene.Y - 12, scene.Width + 24, scene.Height + 24, Color.White, 4f, false);
         bool overPot = InPotArea(mx, my);
+        if (_kiln != null && _glaze != null)
+        {
+            // cooled when it's done: the glaze's own colours, the kiln opened
+            bool hot = _stage == Stage.Firing;
+            _art.DrawKiln(b, scene, _spin / 9f, _pot, _glaze,
+                hot ? Math.Clamp((_kiln.Heat - Kiln.StartHeat) / 75f, 0f, 1f) : 0f,
+                hot ? Math.Clamp(_kiln.Power / 6f, 0f, 1f) : 0f,
+                dull: _fireResult is { Verdict: "Underfired" or "Overfired" } ? 0.4f : 0f,
+                cracked: _fireResult is { Verdict: "Cracked" });
+            return;
+        }
         if (_glaze != null && (_stage == Stage.Banding || _glazeResult != null))
         {
             bool held = FakeMouse == null && Mouse.GetState().LeftButton == ButtonState.Pressed;
@@ -604,14 +730,88 @@ internal sealed class PotteryMenu : IClickableMenu
             _buttons["sponge"] = sponge;
     }
 
+    // Left, while firing: the firing's chart, as a pyrometer draws it. The band climbs
+    // to the peak and holds; the heat so far is the line; "now" moves across.
+    private void DrawFiringChart(SpriteBatch b)
+    {
+        var left = LeftArea;
+        var kiln = _kiln!;
+        float ahead = kiln.Forecast(3f);
+        var panel = new Rectangle(left.X, left.Y, left.Width, 336);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "The firing", panel.Center.X, panel.Y + 18);
+        var chart = new Rectangle(panel.X + 22, panel.Y + 58, panel.Width - 44, 190);
+        Ui.Fill(b, chart, new Color(70, 46, 34));
+        int Y(float heat) => chart.Bottom - (int)(Math.Clamp(heat / 100f, 0f, 1f) * chart.Height);
+        for (int x = 0; x < chart.Width; x += 2)
+        {
+            float t = x / (float)chart.Width * Kiln.Duration;
+            float mid = kiln.Target(t);
+            int top = Y(mid + kiln.Band), bottom = Y(mid - kiln.Band);
+            Ui.Fill(b, new Rectangle(chart.X + x, top, 2, Math.Max(2, bottom - top)), new Color(110, 170, 80) * 0.8f);
+        }
+        foreach (var p in kiln.Trace)
+        {
+            int x = chart.X + (int)(p.X / Kiln.Duration * chart.Width);
+            float d = p.Y - kiln.Target(p.X);
+            Color c = MathF.Abs(d) <= kiln.Band ? new Color(255, 236, 170) : d < 0 ? new Color(130, 170, 240) : new Color(240, 90, 60);
+            Ui.Fill(b, new Rectangle(x - 2, Y(p.Y) - 2, 4, 4), c);
+        }
+        int now = chart.X + (int)(kiln.Time / Kiln.Duration * chart.Width);
+        // where the fire is taking it, three seconds on: a hollow marker ahead of the line
+        if (kiln.Time + 3f < Kiln.Duration)
+        {
+            int fx = chart.X + (int)((kiln.Time + 3f) / Kiln.Duration * chart.Width), fy = Y(ahead);
+            Ui.Outline(b, new Rectangle(fx - 4, fy - 4, 9, 9), Color.White * 0.85f, 2);
+        }
+        Ui.Fill(b, new Rectangle(now - 1, chart.Y, 2, chart.Height), Color.White * 0.5f);
+        Ui.Outline(b, chart, new Color(40, 25, 15), 2);
+
+        float off = kiln.Heat - kiln.Target(kiln.Time);
+        bool inBand = MathF.Abs(off) <= kiln.Band;
+        string state = inBand ? "In the band" : off < 0 ? "Too cool" : "Too hot";
+        Ui.TextCentered(b, state, panel.Center.X, chart.Bottom + 14,
+            inBand ? new Color(60, 120, 40) : off < 0 ? new Color(50, 80, 170) : new Color(170, 50, 30));
+
+        string heading = ahead > kiln.Heat + 1.5f ? "The fire is lifting it" : ahead < kiln.Heat - 1.5f ? "It's cooling" : "Holding steady";
+        Ui.TextCentered(b, heading, panel.Center.X, chart.Bottom + 44, Game1.textColor * 0.7f, 0.85f);
+    }
+
+    // Right, while firing: the fuels (keys 1 to 3).
+    private void DrawFuel(SpriteBatch b, int mx, int my)
+    {
+        var right = RightArea;
+        var kiln = _kiln!;
+        var panel = new Rectangle(right.X, right.Y, right.Width, 250);
+        Ui.Paper(b, panel);
+        Ui.TextCentered(b, "Fuel", panel.Center.X, panel.Y + 18);
+        string[] keys = { "wood", "hard", "coal" };
+        int y = panel.Y + 56;
+        for (int i = 0; i < Kiln.Fuels.Length; i++)
+        {
+            var r = new Rectangle(panel.X + 20, y, panel.Width - 40, 48);
+            Ui.Button(b, r, $"{i + 1}  {Kiln.Fuels[i].Name}", hovered: r.Contains(mx, my));
+            _buttons[keys[i]] = r;
+            y += 58;
+        }
+        int hy = panel.Bottom + 16;
+        foreach (var fuel in Kiln.Fuels)
+        {
+            string line = Game1.parseText($"{fuel.Name}: {fuel.Hint.ToLowerInvariant()}", Game1.smallFont, right.Width - 16);
+            Ui.Text(b, line, new Vector2(right.X + 8, hy), Game1.textColor * 0.75f, 1f);
+            hy += (int)Game1.smallFont.MeasureString(line).Y + 6;
+        }
+        Ui.Text(b, $"In the fire: {kiln.Burning}", new Vector2(right.X + 8, hy + 6));
+    }
+
     private void DrawResults(SpriteBatch b)
     {
         var right = RightArea;
         var r = _result!;
         int y = right.Y + 4;
-        if (_pot.Collapsed)
+        if (_pot.Collapsed || _fireResult is { Verdict: "Cracked" })
         {
-            Ui.Text(b, "It collapsed.", new Vector2(right.X + 8, y), new Color(170, 50, 30));
+            Ui.Text(b, _pot.Collapsed ? "It collapsed." : "It cracked.", new Vector2(right.X + 8, y), new Color(170, 50, 30));
             y += 34;
         }
         Ui.Stars(b, Stars, right.X + 8, y, 40, 6);
@@ -627,6 +827,8 @@ internal sealed class PotteryMenu : IClickableMenu
         Row("Centring", I18n.Rating(r.Centring));
         if (_glazeResult is { } g)
             Row("Glaze", I18n.Rating(g.Overall));
+        if (_fireResult is { } f)
+            Row("Firing", f.Verdict);
     }
 
     private void DrawBottomBar(SpriteBatch b, int mx, int my)
@@ -637,6 +839,7 @@ internal sealed class PotteryMenu : IClickableMenu
             Stage.Centring => "Hold the mouse button on the clay and keep your hand over it.",
             Stage.Throwing => "Hold the mouse on the pot to work it at that height. Match the chalk line.",
             Stage.Banding => "Hold the brush on the turning pot to paint a ring. Match the coloured marks.",
+            Stage.Firing => "Feed the fire (1, 2, 3) to keep the heat in the band as it climbs.",
             _ => "",
         };
         if (line.Length > 0)
@@ -660,6 +863,12 @@ internal sealed class PotteryMenu : IClickableMenu
                 var glaze = new Rectangle(again.X - 220, bottom.Y, 200, bottom.Height);
                 Ui.Button(b, glaze, _glazeResult != null ? "Glaze again" : "Glaze it", hovered: glaze.Contains(mx, my));
                 _buttons["glaze"] = glaze;
+                if (_glazeResult != null)
+                {
+                    var fire = new Rectangle(glaze.X - 220, bottom.Y, 200, bottom.Height);
+                    Ui.Button(b, fire, _fireResult != null ? "Fire again" : "Fire it", hovered: fire.Contains(mx, my));
+                    _buttons["fire"] = fire;
+                }
             }
         }
     }
@@ -669,14 +878,14 @@ internal static class PotteryProto
 {
     public static void Register(IModHelper helper, IMonitor monitor)
     {
-        DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck|band] (throw: skip centring; bot: a greedy potter throws it, to check the rules; wreck: pull till it collapses; band: the bot throws it, then you glaze it)", (_, args) =>
+        DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck|band|fire] (throw: skip centring; bot: a greedy potter throws it, to check the rules; wreck: pull till it collapses; band: the bot throws it, then you glaze it; fire: the bots throw and glaze it, then you fire it)", (_, args) =>
         {
             if (!Context.IsWorldReady)
                 return;
             string shape = args.Length > 0 ? args[0] : "";
             string rules = args.Length > 1 ? args[1] : "normal";
             PotteryArt.Load(helper);
-            Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"), args.Contains("band"));
+            Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"), args.Contains("band"), args.Contains("fire"));
         });
         // Every stage at both common sizes, with the layout audit (overlapping or spilling text),
         // to dialogue_snapshots/pottery_*.png.
@@ -700,7 +909,25 @@ internal static class PotteryProto
                 ("banding", () => new PotteryMenu("vase", rules, band: true)),
                 ("banding_brush", () => { var m = new PotteryMenu("vase", rules, band: true); m.GlazeBot(1.2f, finish: false, bands: 1); m.FakeMouse = m.SceneCentre(0.45f); return m; }),
                 ("results_glazed", () => { var m = new PotteryMenu("jug", rules, band: true); m.GlazeBot(1.2f); return m; }),
+                ("firing_early", () => { var m = new PotteryMenu("vase", rules, fire: true); m.FireBot("steady", until: 6f, finish: false); return m; }),
+                ("firing", () => { var m = new PotteryMenu("vase", rules, fire: true); m.FireBot("steady", until: 22f, finish: false); return m; }),
+                ("results_fired", () => { var m = new PotteryMenu("jug", rules, fire: true); m.FireBot("steady"); return m; }),
+                ("results_cracked", () => { var m = new PotteryMenu("cup", PotteryRules.For("hard"), fire: true); m.FireBot("coal"); return m; }),
             };
+            // the firing against the bots' stoking, on each difficulty (the averages of 10)
+            foreach (string level in new[] { "simplified", "normal", "hard" })
+                foreach (string mode in new[] { "steady", "eager", "coal", "none" })
+                {
+                    float sum = 0f;
+                    for (int k = 0; k < 10; k++)
+                    {
+                        var m = new PotteryMenu(PotShape.Names[k % 4], PotteryRules.For(level), fire: true);
+                        m.FireBot(mode);
+                        sum += m.FireScore;
+                        m.exitThisMenuNoSound();
+                    }
+                    monitor.Log($"firing: {level} {mode}: {sum / 10f:0.00}", LogLevel.Info);
+                }
             // the glaze judge against the bot's hands: perfect, and wandering as Normal's and
             // Hard's do, never corrected (the averages of 20)
             foreach (string shape in PotShape.Names)
