@@ -22,7 +22,7 @@
           "SocialAnxiety": "Neutral",
           "Optimism": "Positive",
           "BirthSeason": "Summer",
-          "BirthDay": 6,
+          "BirthDay": 15,
           // From the Vale, not the town: no introductions quest, and not on the
           // calendar or social page until you've met them.
           "HomeRegion": "Other",

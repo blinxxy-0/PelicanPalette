@@ -7,7 +7,7 @@
 - **Pronouns:** he/him (decided 2026-11-03).
 - **Marriage:** no. Friendship to 10 hearts, like Julian.
 - **Age:** about fifty, Julian's age. Famous for twenty years.
-- **Birthday:** Winter 18, the day after the Night Market closes, when he's home again (free in vanilla; to check against SVE).
+- **Birthday:** Winter 18, the day after the Night Market closes, when he's home again (free in vanilla, the mod and Stardew Valley Expanded: checked 2026-11-08).
 - **Home:** his atelier in the Gilded Vale, over the lake.
 - **Role in the mod:**
   - the Night Market's painter, exactly as in canon

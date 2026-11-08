@@ -20,9 +20,15 @@
     //   The Bus Stop: the bus's side just right of its door (23 9, solid: no villager ever
     //   steps on it), from the tile in front of it; they arrive in the Vale where you step
     //   off its bus (3 8).
+    //   Late, after other mods' Bus Stop edits: Stardew Valley Expanded replaces the whole
+    //   NPCWarp property ("22 8 Custom_DayEnd_WarpRoom 3 3 23 8 Custom_DayEnd_WarpRoom 3 3",
+    //   its Locations/MapPatches.json), which would wipe this out if it ran after us. Its
+    //   Bus Stop keeps the bus where vanilla has it: 23 9 is solid and 23 10 reachable there
+    //   too (checked on SVE's own map, 2026-11-08), and 23 9 isn't one of its warp tiles.
     {
       "Action": "EditMap",
       "Target": "Maps/BusStop",
+      "Priority": "Late",
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true" },
       "TextOperations": [
         { "Operation": "Append", "Target": [ "MapProperties", "NPCWarp" ], "Value": "23 9 blinxxy.MuseArt_GildedVale 3 8", "Delimiter": " " }
@@ -31,7 +37,8 @@
     //   The Vale: its bus's door (3 7, above the tile you step off on); they arrive at the
     //   Bus Stop in front of the bus (23 10). (A resident whose walk crossed 3 7 would be
     //   whisked to town, but nobody's day takes them past the bus except to board it.)
-    //   With Stardew Valley Expanded, check the Bus Stop tiles: SVE redraws that map.
+    //   The town tiles below were checked on SVE's own maps too (its SeedShop, Saloon,
+    //   JoshHouse and Forest, 2026-11-08): all walkable and reachable.
     {
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_GildedVale",

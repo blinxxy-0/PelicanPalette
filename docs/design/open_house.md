@@ -12,7 +12,7 @@ Stardew has two kinds of festival:
 
 ## The day
 
-- **When:** Fall 7, 9am to 6pm, every year. On the calendar ("Open House", the Vale's gold tree as its icon: an icon to draw). A note in the mail on Fall 6, from Bea: the programme.
+- **When:** Fall 7, 9am to 6pm, every year. (With Stardew Valley Expanded: no SVE festival that day, its Community Day and Joja Day being the 22nd; Fall 7 is SVE's Morgan's birthday, which an open day doesn't get in the way of. Checked 2026-11-08.) On the calendar ("Open House", the Vale's gold tree as its icon: an icon to draw). A note in the mail on Fall 6, from Bea: the programme.
 - **Where:** the plaza under the old tree, at its most golden; the Exhibition Hall (if Lupini's 8-heart event has opened it); the amphitheatre in the afternoon.
 - **Map for the day:** a festival version of the plaza (`MapReplacements` in the passive festival's data, as the Night Market swaps the beach): bunting from the old tree, lanterns, trestle tables, a refreshments stall, the display easels. Vanilla props where the game has them (the Fair's and the Night Market's tables, lanterns and bunting), so little new art.
 - **Rain:** it goes ahead. The refreshments move into the Vale House, and Emmett plays in the Hall (or the Vale House, if the Hall's still closed).

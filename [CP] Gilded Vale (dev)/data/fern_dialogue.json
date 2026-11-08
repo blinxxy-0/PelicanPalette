@@ -67,7 +67,7 @@
         "summer_1": "{{i18n:fern.dialogue.summer_1}}",
         "fall_1": "{{i18n:fern.dialogue.fall_1}}",
         "winter_1": "{{i18n:fern.dialogue.winter_1}}",
-        "summer_6": "{{i18n:fern.dialogue.summer_6}}",
+        "summer_15": "{{i18n:fern.dialogue.summer_15}}",
 
         // ---- Gifts (the rest are the gift table's lines) ----
         "AcceptGift_(O)347": "{{i18n:fern.dialogue.AcceptGift_347}}",
