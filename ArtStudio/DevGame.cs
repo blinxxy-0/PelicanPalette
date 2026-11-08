@@ -204,6 +204,7 @@ internal static class DevGame
         DevTools.AddCommand(helper, "museart_modetest", "The easel's mode button: cycling, saving, and the rules it sets. Then 'museart_modetest restore'.", (_, args) => ModeTest(monitor, args));
         DevTools.AddCommand(helper, "museart_blanktest", "A painting with no picture (as CJB Item Spawner makes): names, gift tastes, price, drawing, consigning, varnishing.", (_, _) => BlankTest(monitor));
         DevTools.AddCommand(helper, "museart_cjbtest", "CJB Cheats Menu: the Painting skill button and professions on its Skills tab. Stages: (none) or 'at <level>', 'click', 'check', 'profession'.", (_, args) => CjbTest(helper, monitor, args));
+        DevTools.AddCommand(helper, "museart_cjbwarps", "CJB Cheats Menu warps added by our packs. Stages: (none) lists the warp data and opens the Warps tab; 'go <warp name>' clicks a warp; 'scroll <n>' scrolls the tab down; 'check <location> <x> <y> [door target]' checks where you landed.", (_, args) => CjbWarps(helper, monitor, args));
         DevTools.AddCommand(helper, "museart_trapdoortest", "Sable's room under the shop: the trapdoor's lock (2 hearts, or the key to the town), Sable's way down, and a trip down. Then 'museart_trapdoortest down', then 'check'.", (_, args) => TrapdoorTest(monitor, args));
         DevTools.AddCommand(helper, "museart_polytest", "Sable as one of several spouses (Polyamory Sweet): the 14-heart event and the shop's trust.", (_, _) => PolyTest(monitor));
         DevTools.AddCommand(helper, "museart_automatetest", "Automate and the Varnishing Cabinet (needs Automate). Run it, then 'museart_automatetest check' and 'museart_automatetest cured' a few seconds apart.", (_, args) => AutomateTest(monitor, args));
@@ -744,6 +745,79 @@ internal static class DevGame
                 Check(monitor, "ticking Gallerist gives you the profession", PaintingSkill.Has(who, PaintingSkill.Instance.Gallerist));
                 gallerist?.receiveLeftClick(gallerist.bounds.X + 4, gallerist.bounds.Y + 4);
                 Check(monitor, "unticking takes it away", !PaintingSkill.Has(who, PaintingSkill.Instance.Gallerist));
+                return;
+            }
+        }
+    }
+
+    // The warps our packs add to CJB Cheats Menu (Mods/CJBok.CheatsMenu/Warps and
+    // WarpSections, edited by the Content Patcher packs): what's in the data, what the
+    // Warps tab shows, and that clicking one lands you on a walkable tile at the door.
+    private static void CjbWarps(IModHelper helper, IMonitor monitor, string[] args)
+    {
+        if (!Context.IsWorldReady) return;
+        System.Collections.Generic.List<OptionsElement> Options() =>
+            HarmonyLib.Traverse.Create(Game1.activeClickableMenu).Field("Options").GetValue<System.Collections.IList>()?.Cast<OptionsElement>().ToList() ?? new();
+        switch (args.FirstOrDefault())
+        {
+            case null:
+            {
+                var cjb = helper.ModRegistry.Get(Integrations.CjbCheatsIntegration.ModId);
+                Check(monitor, "CJB Cheats Menu is installed", cjb != null);
+                if (cjb == null) return;
+                foreach (var (asset, model) in new[] { ("Mods/CJBok.CheatsMenu/WarpSections", "WarpSectionContentModel"), ("Mods/CJBok.CheatsMenu/Warps", "WarpContentModel") })
+                {
+                    try
+                    {
+                        var type = typeof(System.Collections.Generic.List<>).MakeGenericType(HarmonyLib.AccessTools.TypeByName("CJBCheatsMenu.Framework.ContentModels." + model));
+                        var data = (System.Collections.IList)typeof(IGameContentHelper).GetMethod(nameof(IGameContentHelper.Load), new[] { typeof(string) })!
+                            .MakeGenericMethod(type).Invoke(helper.GameContent, new object[] { asset })!;
+                        foreach (object entry in data)
+                        {
+                            string json = System.Text.Json.JsonSerializer.Serialize(entry, entry.GetType(), new System.Text.Json.JsonSerializerOptions { IncludeFields = true });
+                            if (model == "WarpSectionContentModel" || json.Contains("blinxxy"))
+                                monitor.Log($"{asset}: {json}", LogLevel.Info);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        monitor.Log($"{asset}: couldn't read it: {ex.GetBaseException().Message}", LogLevel.Error);
+                    }
+                }
+                var mod = HarmonyLib.Traverse.Create(cjb).Property("Mod").GetValue<object>();
+                var tabType = HarmonyLib.AccessTools.TypeByName("CJBCheatsMenu.Framework.MenuTab");
+                var tab = Enum.Parse(tabType, Enum.GetNames(tabType).First(n => n.Contains("Warp")));
+                HarmonyLib.AccessTools.Method(mod.GetType(), "OpenCheatsMenu", new[] { tabType, typeof(bool) }).Invoke(mod, new[] { tab, (object)true });
+                foreach (var option in Options())
+                    monitor.Log($"Warps tab: {option.GetType().Name} '{option.label}'", LogLevel.Info);
+                return;
+            }
+            case "go":
+            {
+                string name = string.Join(' ', args.Skip(1));
+                var option = Options().FirstOrDefault(o => o.label == name);
+                Check(monitor, $"the Warps tab has '{name}'", option != null);
+                if (option == null) return;
+                var bounds = HarmonyLib.Traverse.Create(option).Field("SetButtonBounds").GetValue<Rectangle?>() ?? option.bounds;
+                option.receiveLeftClick(bounds.Center.X, bounds.Center.Y);
+                return;
+            }
+            case "scroll":     // down the open Warps tab, for a screenshot of the lower sections
+                for (int i = 0; i < int.Parse(args[1]); i++)
+                    Game1.activeClickableMenu?.receiveScrollWheelAction(-1);
+                return;
+            case "check":
+            {
+                var who = Game1.player;
+                var here = who.currentLocation;
+                int x = int.Parse(args[2]), y = int.Parse(args[3]);
+                Check(monitor, $"landed in {args[1]} at {x},{y}", here.Name == args[1] && who.TilePoint == new Point(x, y), $"{here.Name} {who.TilePoint.X},{who.TilePoint.Y}");
+                Check(monitor, "on a walkable tile", here.isTilePassable(new xTile.Dimensions.Location(x, y), Game1.viewport) && !here.IsTileOccupiedBy(new Vector2(x, y), CollisionMask.All, CollisionMask.Farmers));
+                if (args.Length > 4)
+                {
+                    string door = here.doesTileHaveProperty(x, y - 1, "Action", "Buildings") ?? "none";
+                    Check(monitor, $"right below the door to {args[4]}", door.Contains("Warp") && door.Split(' ').Contains(args[4]), door);
+                }
                 return;
             }
         }
