@@ -1,0 +1,45 @@
+// The valley talks about the Gilded Vale (1.4): conversation topics, so each person says
+// their line once, the next time you talk to them, without touching their everyday lines.
+//   blinxxy.MuseArt_ValeOpened: from the morning Lupini's letter arrives, for a season (so
+//     Julian, who visits the 22nd to the 24th, has a visit inside it).
+//   blinxxy.MuseArt_ValeVisited: after your first step off the bus in the Vale, for two weeks.
+// Who says what follows the residents' briefs: Gus and Bea swap recipes, Sable and Lupini
+// nod, Leah went once and never went back (her story, 1.5), Evelyn and Caroline trade with
+// Fern, Clint talks kilns with Tobin, Robin buys his planters, Sam's in awe of Emmett, and
+// Julian has forgotten the review that made Lupini.
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/TriggerActions",
+      "Entries": {
+        "blinxxy.MuseArt_ValeOpenedTalk": {
+          "Id": "blinxxy.MuseArt_ValeOpenedTalk",
+          "Trigger": "DayStarted",
+          "Condition": "PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeOpen Any",
+          "Actions": [ "AddConversationTopic blinxxy.MuseArt_ValeOpened 28" ]
+        },
+        "blinxxy.MuseArt_ValeVisitedTalk": {
+          "Id": "blinxxy.MuseArt_ValeVisitedTalk",
+          "Trigger": "LocationChanged",
+          "Condition": "LOCATION_NAME Here blinxxy.MuseArt_GildedVale",
+          "Actions": [ "AddConversationTopic blinxxy.MuseArt_ValeVisited 14" ]
+        }
+      }
+    },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Pam", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.pam.opened}}", "blinxxy.MuseArt_ValeVisited": "{{i18n:town.pam.visited}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Lewis", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.lewis.opened}}", "blinxxy.MuseArt_ValeVisited": "{{i18n:town.lewis.visited}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Gus", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.gus.opened}}", "blinxxy.MuseArt_ValeVisited": "{{i18n:town.gus.visited}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Sable", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.sable.opened}}", "blinxxy.MuseArt_ValeVisited": "{{i18n:town.sable.visited}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Elliott", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.elliott.opened}}", "blinxxy.MuseArt_ValeVisited": "{{i18n:town.elliott.visited}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Leah", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.leah.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Evelyn", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.evelyn.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Caroline", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.caroline.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Clint", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.clint.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Robin", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.robin.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Sam", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.sam.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/Haley", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.haley.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/JulianVane", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.julian.opened}}" } },
+    { "Action": "EditData", "Target": "Characters/Dialogue/MargotPell", "Entries": { "blinxxy.MuseArt_ValeOpened": "{{i18n:town.margot.opened}}" } }
+  ]
+}
