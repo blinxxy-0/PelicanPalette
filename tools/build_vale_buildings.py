@@ -472,12 +472,12 @@ BUILDINGS = {
             ("floor_lamp", 20, 13), ("plant_b", 1, 17),
             ("fern_pot", 1, 13),
             # leaves blown in under the door, moss in the corners
-            ("leaves", 11, 18), ("leaves#2", 13, 17), ("leaves#3", 14, 18), ("moss_patch", 1, 18),
+            ("leaves", 11, 18), ("leaves#2", 13, 17), ("leaves#3", 11, 16), ("moss_patch", 1, 18),
             ("moss_patch#2", 21, 13), ("moss_patch#3", 4, 13),
             # the back room: the artist's cot, a washstand, a trunk, a small window
             ("washstand", 14, 2), ("window", 17, 1), ("bed", 19, 4), ("chest", 15, 7),
             ("rug#2", 16, 5, 3, 3), ("plant", 21, 4),
-            ("cobweb#3", 21, 1), ("leaves#4", 18, 7), ("moss_patch#4", 14, 4),
+            ("cobweb#3", 21, 1), ("leaves#4", 21, 7), ("moss_patch#4", 14, 4),
         ],
         describe={"unfinished_easel": "unfinished", "note_table": "note", "pinned_sketches": "sketches",
                   "backward_painting": "backward", "dusty_window": "window", "paint_trestle": "trestle",
@@ -901,6 +901,9 @@ def build(name, exports, assets):
                     gid = furn_first + first + j * SHEET_COLS + i
                     x, y = px + i, py + j
                     if solid == -2:
+                        if g["Back2"][y][x]:
+                            # (a decal and a rug share Back2: the decal would cut a hole in the rug)
+                            raise SystemExit(f"{p[0]} at {x},{y} lands on a rug or mat")
                         g["Back2"][y][x] = gid
                     elif j >= rows - solid:
                         if g["Buildings"][y][x] and y in walls:
