@@ -1,0 +1,33 @@
+// Letters from the residents as you befriend them (1.4), the way the valley's villagers
+// send recipes and small gifts: each at 3 hearts (750 friendship points), the morning
+// after you reach it, on the Vale's own letter paper. Lupini's is a postcard from his boat
+// on the first night of the Night Market, once you're friends (2 hearts).
+//   Bea: her breakfast hash browns (the recipe). Tobin: ten of his clay, with glaze notes.
+//   Fern: a packet of flower mix. Emmett: an amethyst, "for the throat", and a verse.
+// Tobin's letter waits for 1.5's Pottery to mean more; for now it's clay and a joke.
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/mail",
+      "Entries": {
+        "blinxxy.MuseArt_BeaLetter": "[letterbg Mods/blinxxy.MuseArt/ValeLetter 0]{{i18n:bea.letter}}%item cookingRecipe Hashbrowns %%[#]{{i18n:bea.letter.title}}",
+        "blinxxy.MuseArt_TobinLetter": "[letterbg Mods/blinxxy.MuseArt/ValeLetter 0]{{i18n:tobin.letter}}%item id (O)330 10 %%[#]{{i18n:tobin.letter.title}}",
+        "blinxxy.MuseArt_FernLetter": "[letterbg Mods/blinxxy.MuseArt/ValeLetter 0]{{i18n:fern.letter}}%item id (O)MixedFlowerSeeds 10 %%[#]{{i18n:fern.letter.title}}",
+        "blinxxy.MuseArt_EmmettLetter": "[letterbg Mods/blinxxy.MuseArt/ValeLetter 0]{{i18n:emmett.letter}}%item id (O)66 1 %%[#]{{i18n:emmett.letter.title}}",
+        "blinxxy.MuseArt_LupiniPostcard": "[letterbg Mods/blinxxy.MuseArt/ValeLetter 0]{{i18n:lupini.postcard}}[#]{{i18n:lupini.postcard.title}}"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/TriggerActions",
+      "Entries": {
+        "blinxxy.MuseArt_BeaLetter": { "Id": "blinxxy.MuseArt_BeaLetter", "Trigger": "DayStarted", "Condition": "PLAYER_FRIENDSHIP_POINTS Current BeaThistle 750", "Actions": [ "AddMail Current blinxxy.MuseArt_BeaLetter now" ] },
+        "blinxxy.MuseArt_TobinLetter": { "Id": "blinxxy.MuseArt_TobinLetter", "Trigger": "DayStarted", "Condition": "PLAYER_FRIENDSHIP_POINTS Current TobinClay 750", "Actions": [ "AddMail Current blinxxy.MuseArt_TobinLetter now" ] },
+        "blinxxy.MuseArt_FernLetter": { "Id": "blinxxy.MuseArt_FernLetter", "Trigger": "DayStarted", "Condition": "PLAYER_FRIENDSHIP_POINTS Current FernAster 750", "Actions": [ "AddMail Current blinxxy.MuseArt_FernLetter now" ] },
+        "blinxxy.MuseArt_EmmettLetter": { "Id": "blinxxy.MuseArt_EmmettLetter", "Trigger": "DayStarted", "Condition": "PLAYER_FRIENDSHIP_POINTS Current EmmettWren 750", "Actions": [ "AddMail Current blinxxy.MuseArt_EmmettLetter now" ] },
+        "blinxxy.MuseArt_LupiniPostcard": { "Id": "blinxxy.MuseArt_LupiniPostcard", "Trigger": "DayStarted", "Condition": "SEASON winter, DAY_OF_MONTH 15, PLAYER_FRIENDSHIP_POINTS Current Lupini 500", "Actions": [ "AddMail Current blinxxy.MuseArt_LupiniPostcard now" ] }
+      }
+    }
+  ]
+}

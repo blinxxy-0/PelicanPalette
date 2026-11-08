@@ -7,7 +7,7 @@
 - **Pronouns:** he/him (decided 2026-11-03).
 - **Marriage:** no. Friendship to 10 hearts, like Julian.
 - **Age:** about fifty, Julian's age. Famous for twenty years.
-- **Birthday:** Winter 18, the day after the Night Market closes, when he's home again (free in vanilla; to check against SVE).
+- **Birthday:** Winter 18, the day after the Night Market closes, when he's home again (free in vanilla, the mod and Stardew Valley Expanded: checked 2026-11-08).
 - **Home:** his atelier in the Gilded Vale, over the lake.
 - **Role in the mod:**
   - the Night Market's painter, exactly as in canon
@@ -17,15 +17,15 @@
 ## Canon to keep
 - **The boat:** he sells one painting a night at the Night Market, Winter 15 to 17, 1,200g, nine paintings on a three-year cycle. None of that changes.
 - **His paintings:** the nine canon paintings (among them "Clouds", "1000 Years From Now", "Three Trees", "The Serpent", "Tropical Fish #173", "Land of Clay") hang in his atelier, except the one he's selling that week.
-- **To check before drawing him:** whether the game draws a figure on his boat. If it does, his sprite and portrait must match it.
+- **His look is the game's:** he follows the Night Market painter as the game draws him (the user, 2026-11-08, with his portraits). The Look below was rewritten to match; the first draft's long grey hair, smock and straw hat are gone.
 
 ## Look
-- **Build:** tall, loose-limbed, with a painter's slight stoop. He moves slowly and stops often, to look at things.
-- **Hair:** long and iron-grey, tied back with whatever's to hand (often a strip of rag). A short grey beard.
-- **Face:** weathered and tanned from painting outdoors. Deep-set, pale grey eyes, always narrowed a little against the light.
-- **Clothes:** an indigo painter's smock worn soft, stained ochre and white at the cuffs; a wide straw hat for painting outdoors; old sandals, even in autumn.
-- **Details:** a brush behind his ear and one in his hand. A charcoal stick in his breast pocket, which leaves a grey smudge on the smock.
-- **Palette:** indigo, ochre and chalk white: the colours of his skies. Bolder than Sable's teal and rust, softer than Julian's charcoal.
+- **Build:** tall, with a painter's slight stoop. He moves slowly and stops often, to look at things.
+- **Hair:** mostly bald, with short brown hair at the sides. A brown moustache and a short beard.
+- **Face:** weathered from painting outdoors, behind round glasses he looks over when he's judging the light.
+- **Clothes:** a dark plum suit jacket and a red bow tie, the same in the studio as at the Night Market: he dresses for the work as if it were a show.
+- **Details:** a brush in his hand, and a charcoal stick in his breast pocket, which leaves a grey smudge on the plum.
+- **Palette:** plum, brown and a red bow tie. Richer than Sable's teal and rust, warmer than Julian's charcoal.
 - **Not like Linus or the Wizard:** Linus is wild and shy; the Wizard robed and mysterious. Lupini is grand, a little vain, and very easy to talk to.
 
 ## Backstory

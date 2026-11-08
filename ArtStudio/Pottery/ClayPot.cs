@@ -20,13 +20,15 @@ internal sealed record PotteryRules(
     float Regen,                // patience per second back while you pause
     bool Collapse,              // walls too thin for the clay above them fall in
     float CentringBand,         // how close your hands must stay to the lump (units)
-    float Drift)                // banding: how far your brush hand wanders (rows)
+    float Drift,                // banding: how far your brush hand wanders (rows)
+    float KilnBand,             // firing: the band's half-width (on the kiln gauge's 0 to 100)
+    bool KilnCrack)             // firing: far too hot for too long cracks the pot
 {
     public static PotteryRules For(string name) => name switch
     {
-        "simplified" => new("Simplified", 0f, 1f, false, 6f, 0.35f),
-        "hard" => new("Hard", 1.35f, 0.01f, true, 2.2f, 2f),
-        _ => new("Normal", 1f, 0.035f, true, 3.5f, 1.2f),
+        "simplified" => new("Simplified", 0f, 1f, false, 6f, 0.35f, 10f, false),
+        "hard" => new("Hard", 1.35f, 0.01f, true, 2.2f, 2f, 4f, true),
+        _ => new("Normal", 1f, 0.035f, true, 3.5f, 1.2f, 6f, false),
     };
 }
 

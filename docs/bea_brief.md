@@ -7,7 +7,7 @@
 - **Pronouns:** she/her.
 - **Marriage:** no. Friendship to 10 hearts.
 - **Age:** about forty.
-- **Birthday:** Spring 22 (free in vanilla; to check against SVE).
+- **Birthday:** Spring 22 (free in vanilla, the mod and Stardew Valley Expanded: checked 2026-11-08).
 - **Home and work:** the Vale House, the Vale's inn and tea room. She lives in the rooms upstairs.
 - **Role in the mod:**
   - the Vale's social hub: the inn, the tea room, the noticeboard

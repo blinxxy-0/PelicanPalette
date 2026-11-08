@@ -1,0 +1,82 @@
+// TobinClay's dialogue (1.4). Keys follow vanilla's, as Sable's do: day names, with
+// heart levels and seasons; first days and the birthday; gift reactions.
+// Portraits (when the sheet exists): $0 neutral, $h the laugh that cracks his face, $s sad, $u dry, $l quietly pleased, $a cross.
+// Voice: short sentences, long pauses, one good joke a conversation.
+// No heart events in 1.4: they're 1.5's, through Pottery (docs/tobin_brief.md).
+// Hooks in his lines: Sat4 ('clay hands', the wheel at 2 hearts), Tue8 (the kiln,
+// your first piece at 4), Sat6 (his work seen; the Exhibition Hall plinth at 10).
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Characters/Dialogue/TobinClay", "FromFile": "data/blank.json", "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/TobinClay",
+      "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"},
+      "Entries": {
+        "Introduction": "{{i18n:tobin.dialogue.Introduction}}",
+
+        // ---- Every week ----
+        "Mon": "{{i18n:tobin.dialogue.Mon}}",
+        "Tue": "{{i18n:tobin.dialogue.Tue}}",
+        "Wed": "{{i18n:tobin.dialogue.Wed}}",
+        "Thu": "{{i18n:tobin.dialogue.Thu}}",
+        "Fri": "{{i18n:tobin.dialogue.Fri}}",
+        "Sat": "{{i18n:tobin.dialogue.Sat}}",
+        "Sun": "{{i18n:tobin.dialogue.Sun}}",
+
+        // ---- As you get closer (Mon4 = from 4 hearts; the highest one you've reached wins) ----
+        "Mon2": "{{i18n:tobin.dialogue.Mon2}}",
+        "Wed2": "{{i18n:tobin.dialogue.Wed2}}",
+        "Fri2": "{{i18n:tobin.dialogue.Fri2}}",
+        "Mon4": "{{i18n:tobin.dialogue.Mon4}}",
+        "Tue4": "{{i18n:tobin.dialogue.Tue4}}",
+        "Wed4": "{{i18n:tobin.dialogue.Wed4}}",
+        "Thu4": "{{i18n:tobin.dialogue.Thu4}}",
+        "Fri4": "{{i18n:tobin.dialogue.Fri4}}",
+        "Sat4": "{{i18n:tobin.dialogue.Sat4}}",
+        "Sun4": "{{i18n:tobin.dialogue.Sun4}}",
+        "Tue6": "{{i18n:tobin.dialogue.Tue6}}",
+        "Thu6": "{{i18n:tobin.dialogue.Thu6}}",
+        "Sat6": "{{i18n:tobin.dialogue.Sat6}}",
+        "Mon8": "{{i18n:tobin.dialogue.Mon8}}",
+        "Tue8": "{{i18n:tobin.dialogue.Tue8}}",
+        "Wed8": "{{i18n:tobin.dialogue.Wed8}}",
+        "Thu8": "{{i18n:tobin.dialogue.Thu8}}",
+        "Fri8": "{{i18n:tobin.dialogue.Fri8}}",
+        "Sat8": "{{i18n:tobin.dialogue.Sat8}}",
+        "Sun8": "{{i18n:tobin.dialogue.Sun8}}",
+
+        // ---- The seasons ----
+        "spring_Wed": "{{i18n:tobin.dialogue.spring_Wed}}",
+        "spring_Sat": "{{i18n:tobin.dialogue.spring_Sat}}",
+        "summer_Mon": "{{i18n:tobin.dialogue.summer_Mon}}",
+        "summer_Thu": "{{i18n:tobin.dialogue.summer_Thu}}",
+        "fall_Tue": "{{i18n:tobin.dialogue.fall_Tue}}",
+        "fall_Fri": "{{i18n:tobin.dialogue.fall_Fri}}",
+        "winter_Wed": "{{i18n:tobin.dialogue.winter_Wed}}",
+        "winter_Sat": "{{i18n:tobin.dialogue.winter_Sat}}",
+
+        // ---- The rest of the year (first days, and their birthday) ----
+        "spring_1": "{{i18n:tobin.dialogue.spring_1}}",
+        "summer_1": "{{i18n:tobin.dialogue.summer_1}}",
+        "fall_1": "{{i18n:tobin.dialogue.fall_1}}",
+        "winter_1": "{{i18n:tobin.dialogue.winter_1}}",
+        "winter_5": "{{i18n:tobin.dialogue.winter_5}}",
+
+        // ---- Gifts (the rest are the gift table's lines) ----
+        "AcceptGift_(O)330": "{{i18n:tobin.dialogue.AcceptGift_330}}",
+        "AcceptGift_(O)709": "{{i18n:tobin.dialogue.AcceptGift_709}}",
+        "AcceptGift_(O)395": "{{i18n:tobin.dialogue.AcceptGift_395}}",
+        "AcceptBirthdayGift_Positive": "{{i18n:tobin.dialogue.AcceptBirthdayGift_Positive}}",
+        "AcceptBirthdayGift_Negative": "{{i18n:tobin.dialogue.AcceptBirthdayGift_Negative}}"
+      }
+    },
+    // Rainy days (the game's own file for every villager).
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"},
+      "Entries": { "TobinClay": "{{i18n:tobin.dialogue.rainy}}" }
+    }
+  ]
+}

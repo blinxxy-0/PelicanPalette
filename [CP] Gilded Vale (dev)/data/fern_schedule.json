@@ -1,0 +1,35 @@
+// FernAster's days. A time is when they set off; every tile was checked walkable and
+// reachable from the door or the bus (the Vale map and the interiors as built
+// 2026-11-07). No animations yet: the sprite sheet doesn't exist, so the work
+// poses (potting, kneeling in the beds) go in Data/AnimationDescriptions once it does.
+{
+  // Fine days: the gardens and meadows, a different corner each day, morning and
+  // afternoon; home to the seedhouse's potting bench at 5; bed at 9 (gardener's hours).
+  // Monday: the parterre and the meadow (her bus to Pelican Town, for Pierre's and
+  // Evelyn's garden, is in data/vale_town_trips.json).
+  "Mon": "800 blinxxy.MuseArt_GildedVale 15 42 2/1200 blinxxy.MuseArt_GildedVale 16 66 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Tuesday: the nursery bench, then the parterre's east statue.
+  "Tue": "800 blinxxy.MuseArt_GildedVale 23 34 2/1200 blinxxy.MuseArt_GildedVale 25 41 0/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Wednesday: the meadow, then the old tree.
+  "Wed": "800 blinxxy.MuseArt_GildedVale 16 66 2/1200 blinxxy.MuseArt_GildedVale 38 69 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Thursday: Lupini's overgrown garden (the ivy on his window), then the plaza.
+  "Thu": "800 blinxxy.MuseArt_GildedVale 86 18 3/1200 blinxxy.MuseArt_GildedVale 48 46 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Friday: flowers up to the Vale House's tea garden first, then the meadow.
+  "Fri": "800 blinxxy.MuseArt_GildedVale 37 13 2/1100 blinxxy.MuseArt_GildedVale 20 66 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Saturday: the sculpture garden, all day.
+  "Sat": "800 blinxxy.MuseArt_GildedVale 25 41 0/1200 blinxxy.MuseArt_GildedVale 17 44 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Sunday: walking the meadow and pulling weeds; the old tree.
+  "Sun": "900 blinxxy.MuseArt_GildedVale 16 66 2/1300 blinxxy.MuseArt_GildedVale 38 69 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Rain: the seedhouse, potting, and behind the seed counter (her shop: data/vale_shops.json).
+  "rain": "800 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_ValeFern 23 17 2/1700 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  // Winter: the seedhouse most of the day, the sculpture garden in the afternoon,
+  // brushing snow off the statues (season-and-day keys, so they come before the
+  // days of the week above).
+  "winter_Mon": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Tue": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Wed": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Thu": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Fri": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Sat": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2",
+  "winter_Sun": "900 blinxxy.MuseArt_ValeFern 21 15 0/1300 blinxxy.MuseArt_GildedVale 25 41 0/1600 blinxxy.MuseArt_ValeFern 23 17 2/2100 blinxxy.MuseArt_ValeFern 6 6 2"
+}

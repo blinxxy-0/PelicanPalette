@@ -1,0 +1,97 @@
+// FernAster's dialogue (1.4). Keys follow vanilla's, as Sable's do: day names, with
+// heart levels and seasons; first days and the birthday; gift reactions.
+// Portraits (when the sheet exists): $0 neutral, $h laughing, $s worried, $u her cheeky closed-mouth grin, $l shy, $a stubborn.
+// Voice: plain and warm, blunt to people and kind to plants; talks to them mid-conversation.
+// Heart events come later (docs/fern_brief.md). Hooks already in her lines:
+//   2 hearts, the bees in the meadow: Sun4.
+//   4 hearts, the heritage society and the moss: Thu, Fri4.
+//   6 hearts, your farm (a packet of wild seeds): Mon2, Sat8 (the rows).
+//   8 hearts, the night vine in the seedhouse: Wed4, Wed8, Tue6 (what she's afraid of).
+//   10 hearts, one path through the sculpture garden: Tue8.
+// Romance: datable (CanBeRomanced). Her marriage isn't built yet (spouse room, patio,
+// wedding, married lines, events to 14 hearts), so in a test save don't give her a
+// Mermaid's Pendant: the game would start a wedding with nothing behind it.
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Characters/Dialogue/FernAster", "FromFile": "data/blank.json", "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/FernAster",
+      "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"},
+      "Entries": {
+        "Introduction": "{{i18n:fern.dialogue.Introduction}}",
+
+        // ---- Every week ----
+        "Mon": "{{i18n:fern.dialogue.Mon}}",
+        "Tue": "{{i18n:fern.dialogue.Tue}}",
+        "Wed": "{{i18n:fern.dialogue.Wed}}",
+        "Thu": "{{i18n:fern.dialogue.Thu}}",
+        "Fri": "{{i18n:fern.dialogue.Fri}}",
+        "Sat": "{{i18n:fern.dialogue.Sat}}",
+        "Sun": "{{i18n:fern.dialogue.Sun}}",
+
+        // ---- As you get closer (Mon4 = from 4 hearts; the highest one you've reached wins) ----
+        "Mon2": "{{i18n:fern.dialogue.Mon2}}",
+        "Wed2": "{{i18n:fern.dialogue.Wed2}}",
+        "Fri2": "{{i18n:fern.dialogue.Fri2}}",
+        "Mon4": "{{i18n:fern.dialogue.Mon4}}",
+        "Tue4": "{{i18n:fern.dialogue.Tue4}}",
+        "Wed4": "{{i18n:fern.dialogue.Wed4}}",
+        "Thu4": "{{i18n:fern.dialogue.Thu4}}",
+        "Fri4": "{{i18n:fern.dialogue.Fri4}}",
+        "Sat4": "{{i18n:fern.dialogue.Sat4}}",
+        "Sun4": "{{i18n:fern.dialogue.Sun4}}",
+        "Tue6": "{{i18n:fern.dialogue.Tue6}}",
+        "Thu6": "{{i18n:fern.dialogue.Thu6}}",
+        "Sat6": "{{i18n:fern.dialogue.Sat6}}",
+        "Mon8": "{{i18n:fern.dialogue.Mon8}}",
+        "Tue8": "{{i18n:fern.dialogue.Tue8}}",
+        "Wed8": "{{i18n:fern.dialogue.Wed8}}",
+        "Thu8": "{{i18n:fern.dialogue.Thu8}}",
+        "Fri8": "{{i18n:fern.dialogue.Fri8}}",
+        "Sat8": "{{i18n:fern.dialogue.Sat8}}",
+        "Sun8": "{{i18n:fern.dialogue.Sun8}}",
+
+        // ---- The seasons ----
+        "spring_Tue": "{{i18n:fern.dialogue.spring_Tue}}",
+        "spring_Fri": "{{i18n:fern.dialogue.spring_Fri}}",
+        "summer_Wed": "{{i18n:fern.dialogue.summer_Wed}}",
+        "summer_Sat": "{{i18n:fern.dialogue.summer_Sat}}",
+        "fall_Mon": "{{i18n:fern.dialogue.fall_Mon}}",
+        "fall_Thu": "{{i18n:fern.dialogue.fall_Thu}}",
+        "winter_Wed": "{{i18n:fern.dialogue.winter_Wed}}",
+        "winter_Sat": "{{i18n:fern.dialogue.winter_Sat}}",
+
+        // ---- The rest of the year (first days, and their birthday) ----
+        "spring_1": "{{i18n:fern.dialogue.spring_1}}",
+        "summer_1": "{{i18n:fern.dialogue.summer_1}}",
+        "fall_1": "{{i18n:fern.dialogue.fall_1}}",
+        "winter_1": "{{i18n:fern.dialogue.winter_1}}",
+        "summer_15": "{{i18n:fern.dialogue.summer_15}}",
+
+        // ---- Gifts (the rest are the gift table's lines) ----
+        "AcceptGift_(O)347": "{{i18n:fern.dialogue.AcceptGift_347}}",
+        "AcceptGift_(O)Moss": "{{i18n:fern.dialogue.AcceptGift_Moss}}",
+        "AcceptGift_(O)402": "{{i18n:fern.dialogue.AcceptGift_402}}",
+        "AcceptBirthdayGift_Positive": "{{i18n:fern.dialogue.AcceptBirthdayGift_Positive}}",
+        "AcceptBirthdayGift_Negative": "{{i18n:fern.dialogue.AcceptBirthdayGift_Negative}}",
+
+        // ---- Romance: the bouquet, the pendant (not yet), dating ----
+        "AcceptBouquet": "{{i18n:fern.dialogue.AcceptBouquet}}",
+        "RejectBouquet_VeryLowHearts": "{{i18n:fern.dialogue.RejectBouquet_VeryLowHearts}}",
+        "RejectBouquet_LowHearts": "{{i18n:fern.dialogue.RejectBouquet_LowHearts}}",
+        "RejectBouquet": "{{i18n:fern.dialogue.RejectBouquet}}",
+        "RejectMermaidPendant": "{{i18n:fern.dialogue.RejectMermaidPendant}}",
+        "RejectMermaidPendant_NeedHouseUpgrade": "{{i18n:fern.dialogue.RejectMermaidPendant_NeedHouseUpgrade}}",
+        "dating_FernAster": "{{i18n:fern.dialogue.dating_FernAster}}"
+      }
+    },
+    // Rainy days (the game's own file for every villager).
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"},
+      "Entries": { "FernAster": "{{i18n:fern.dialogue.rainy}}" }
+    }
+  ]
+}

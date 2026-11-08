@@ -1,0 +1,54 @@
+// The Gilded Vale's five residents (1.4): Bea Thistle the innkeeper, Tobin Clay the
+// potter, Lupini the painter, Fern Aster the gardener and Emmett Wren the fiddler.
+// Their briefs: docs/bea_brief.md, tobin_brief.md, lupini_brief.md, fern_brief.md,
+// emmett_brief.md. Each has <name>.json (who they are, gifts, the schedule's Load),
+// <name>_dialogue.json and <name>_schedule.json.
+//
+// ---- THEY'RE SWITCHED OFF ----
+// None of them has art yet, so none of them spawns. Each one's patches all share one
+// When, and that resident turns on only when all three hold:
+//   1. this pack's config has  "ValeResidents": true  (off by default; ConfigSchema in
+//      content.json; set it in config.json in the deployed pack's folder, which Content
+//      Patcher writes there on the first launch, or in Generic Mod Config Menu);
+//   2. the sprite sheet is in this pack:    assets/<slug>/sprites.png   -> Characters/<Name>
+//   3. the portrait sheet is in this pack:  assets/<slug>/portraits.png -> Portraits/<Name>
+//      slug -> Name:  bea -> BeaThistle,  tobin -> TobinClay,  lupini -> Lupini,
+//                     fern -> FernAster,  emmett -> EmmettWren
+// So the switch can be on while the art comes in one resident at a time: each turns on
+// as their two sheets land. In the world they also wait for the Vale's route to open
+// (UnlockConditions: the mail flag blinxxy.MuseArt_ValeOpen).
+// Their trips to Pelican Town have a second switch: data/vale_town_trips.json.
+{
+  "Changes": [
+    { "Action": "Include", "FromFile": "data/bea.json" },
+    { "Action": "Include", "FromFile": "data/tobin.json" },
+    { "Action": "Include", "FromFile": "data/lupini.json" },
+    { "Action": "Include", "FromFile": "data/fern.json" },
+    { "Action": "Include", "FromFile": "data/emmett.json" },
+    { "Action": "Include", "FromFile": "data/vale_town_trips.json" },
+    // Their shops and Bea's room for the night (not behind the switch: with nobody at a
+    // counter they open on trust), and Lupini's letter opening the Vale.
+    { "Action": "Include", "FromFile": "data/vale_shops.json" },
+    { "Action": "Include", "FromFile": "data/vale_letter.json" },
+    // The valley's talk about the Vale, the residents' letters, and their bedroom doors.
+    { "Action": "Include", "FromFile": "data/vale_town_talk.json" },
+    { "Action": "Include", "FromFile": "data/vale_mail.json" },
+    { "Action": "Include", "FromFile": "data/vale_doors.json" },
+
+    // Lupini, Tobin, Fern and Emmett join the art lovers, who like even a normal-quality
+    // painting (1.4 plan, section 9; ArtStudio/Painting/ArtItems.cs DefaultArtLovers).
+    // Bea doesn't. (When these become real, add them to DefaultArtLovers and the wiki's
+    // Gifting Paintings page too.)
+    {
+      "Action": "EditData",
+      "Target": "Mods/blinxxy.MuseArt/ArtLovers",
+      "When": { "ValeResidents": "true" },
+      "Entries": {
+        "Lupini": "the Night Market's painter",
+        "TobinClay": "a potter, who knows the care in a made thing",
+        "FernAster": "a gardener who presses flowers and loves colour",
+        "EmmettWren": "a fiddler who collects the songs of every town"
+      }
+    }
+  ]
+}

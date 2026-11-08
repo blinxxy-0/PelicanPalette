@@ -7,7 +7,7 @@
 - **Pronouns:** he/him.
 - **Marriage:** no. Friendship to 10 hearts, from 1.5.
 - **Age:** mid-forties.
-- **Birthday:** Winter 5, when the kiln keeps the workshop the warmest house in the Vale (free in vanilla; to check against SVE).
+- **Birthday:** Winter 5, when the kiln keeps the workshop the warmest house in the Vale (free in vanilla, the mod and Stardew Valley Expanded: checked 2026-11-08).
 - **Home and work:** the pottery: the workshop at the front, with the kiln, his rooms behind.
 - **Role in the mod:**
   - **1.4:** sells his ceramics (decorative furniture: bowls, vases, planters, tiles) and clay; makes the Vale House's cups and the plaza's planters

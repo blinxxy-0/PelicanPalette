@@ -1,0 +1,97 @@
+// EmmettWren's dialogue (1.4). Keys follow vanilla's, as Sable's do: day names, with
+// heart levels and seasons; first days and the birthday; gift reactions.
+// Portraits (when the sheet exists): $0 neutral, $h grinning, $s quiet, $u his crooked grin, $l caught out, $a put out.
+// Voice: easy and rhythmic, a storyteller; rhymes by accident; changes the subject with a song.
+// Heart events come later (docs/emmett_brief.md). Hooks already in his lines:
+//   2 hearts, the amphitheatre (how he came): Wed, spring_Fri.
+//   4 hearts, the riverside (songs from ordinary people): Tue4.
+//   6 hearts, clearing the amphitheatre: Wed4, fall_Tue.
+//   8 hearts, his song about the Vale by the fire: Mon8, Fri8.
+//   10 hearts, the bag he packs every spring: Tue6, spring_1.
+// Romance: datable (CanBeRomanced). His marriage isn't built yet (spouse room, patio,
+// wedding, married lines, events to 14 hearts), so in a test save don't give him a
+// Mermaid's Pendant: the game would start a wedding with nothing behind it.
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Characters/Dialogue/EmmettWren", "FromFile": "data/blank.json", "When": {"ValeResidents": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/EmmettWren",
+      "When": {"ValeResidents": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true"},
+      "Entries": {
+        "Introduction": "{{i18n:emmett.dialogue.Introduction}}",
+
+        // ---- Every week ----
+        "Mon": "{{i18n:emmett.dialogue.Mon}}",
+        "Tue": "{{i18n:emmett.dialogue.Tue}}",
+        "Wed": "{{i18n:emmett.dialogue.Wed}}",
+        "Thu": "{{i18n:emmett.dialogue.Thu}}",
+        "Fri": "{{i18n:emmett.dialogue.Fri}}",
+        "Sat": "{{i18n:emmett.dialogue.Sat}}",
+        "Sun": "{{i18n:emmett.dialogue.Sun}}",
+
+        // ---- As you get closer (Mon4 = from 4 hearts; the highest one you've reached wins) ----
+        "Mon2": "{{i18n:emmett.dialogue.Mon2}}",
+        "Wed2": "{{i18n:emmett.dialogue.Wed2}}",
+        "Fri2": "{{i18n:emmett.dialogue.Fri2}}",
+        "Mon4": "{{i18n:emmett.dialogue.Mon4}}",
+        "Tue4": "{{i18n:emmett.dialogue.Tue4}}",
+        "Wed4": "{{i18n:emmett.dialogue.Wed4}}",
+        "Thu4": "{{i18n:emmett.dialogue.Thu4}}",
+        "Fri4": "{{i18n:emmett.dialogue.Fri4}}",
+        "Sat4": "{{i18n:emmett.dialogue.Sat4}}",
+        "Sun4": "{{i18n:emmett.dialogue.Sun4}}",
+        "Tue6": "{{i18n:emmett.dialogue.Tue6}}",
+        "Thu6": "{{i18n:emmett.dialogue.Thu6}}",
+        "Sat6": "{{i18n:emmett.dialogue.Sat6}}",
+        "Mon8": "{{i18n:emmett.dialogue.Mon8}}",
+        "Tue8": "{{i18n:emmett.dialogue.Tue8}}",
+        "Wed8": "{{i18n:emmett.dialogue.Wed8}}",
+        "Thu8": "{{i18n:emmett.dialogue.Thu8}}",
+        "Fri8": "{{i18n:emmett.dialogue.Fri8}}",
+        "Sat8": "{{i18n:emmett.dialogue.Sat8}}",
+        "Sun8": "{{i18n:emmett.dialogue.Sun8}}",
+
+        // ---- The seasons ----
+        "spring_Tue": "{{i18n:emmett.dialogue.spring_Tue}}",
+        "spring_Fri": "{{i18n:emmett.dialogue.spring_Fri}}",
+        "summer_Wed": "{{i18n:emmett.dialogue.summer_Wed}}",
+        "summer_Sun": "{{i18n:emmett.dialogue.summer_Sun}}",
+        "fall_Tue": "{{i18n:emmett.dialogue.fall_Tue}}",
+        "fall_Thu": "{{i18n:emmett.dialogue.fall_Thu}}",
+        "winter_Mon": "{{i18n:emmett.dialogue.winter_Mon}}",
+        "winter_Fri": "{{i18n:emmett.dialogue.winter_Fri}}",
+
+        // ---- The rest of the year (first days, and their birthday) ----
+        "spring_1": "{{i18n:emmett.dialogue.spring_1}}",
+        "summer_1": "{{i18n:emmett.dialogue.summer_1}}",
+        "fall_1": "{{i18n:emmett.dialogue.fall_1}}",
+        "winter_1": "{{i18n:emmett.dialogue.winter_1}}",
+        "spring_9": "{{i18n:emmett.dialogue.spring_9}}",
+
+        // ---- Gifts (the rest are the gift table's lines) ----
+        "AcceptGift_(O)281": "{{i18n:emmett.dialogue.AcceptGift_281}}",
+        "AcceptGift_(O)303": "{{i18n:emmett.dialogue.AcceptGift_303}}",
+        "AcceptGift_(O)236": "{{i18n:emmett.dialogue.AcceptGift_236}}",
+        "AcceptBirthdayGift_Positive": "{{i18n:emmett.dialogue.AcceptBirthdayGift_Positive}}",
+        "AcceptBirthdayGift_Negative": "{{i18n:emmett.dialogue.AcceptBirthdayGift_Negative}}",
+
+        // ---- Romance: the bouquet, the pendant (not yet), dating ----
+        "AcceptBouquet": "{{i18n:emmett.dialogue.AcceptBouquet}}",
+        "RejectBouquet_VeryLowHearts": "{{i18n:emmett.dialogue.RejectBouquet_VeryLowHearts}}",
+        "RejectBouquet_LowHearts": "{{i18n:emmett.dialogue.RejectBouquet_LowHearts}}",
+        "RejectBouquet": "{{i18n:emmett.dialogue.RejectBouquet}}",
+        "RejectMermaidPendant": "{{i18n:emmett.dialogue.RejectMermaidPendant}}",
+        "RejectMermaidPendant_NeedHouseUpgrade": "{{i18n:emmett.dialogue.RejectMermaidPendant_NeedHouseUpgrade}}",
+        "dating_EmmettWren": "{{i18n:emmett.dialogue.dating_EmmettWren}}"
+      }
+    },
+    // Rainy days (the game's own file for every villager).
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "When": {"ValeResidents": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true"},
+      "Entries": { "EmmettWren": "{{i18n:emmett.dialogue.rainy}}" }
+    }
+  ]
+}
