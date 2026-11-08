@@ -9,7 +9,7 @@
 // takes either.)
 //
 // Its paper is the Vale's own: ivory parchment with gold kintsugi cracks and ivy, drawn
-// with Higgsfield (art/gilded_vale/letter/; the user picks among the candidates there).
+// with Higgsfield (art/gilded_vale/letter/: candidate B1, the user's pick, 2026-11-08).
 // A 1.6 letter background is 320x180, used here at index 0.
 {
   "Changes": [
