@@ -3,65 +3,93 @@
 // (spring to fall), Emmett at the Saloon some Fridays after his 4-heart event.
 //
 // A SECOND SWITCH, off by default: "ValeResidentsTownTrips" in this pack's config (on
-// top of each resident's own When). Nothing joins the Vale to the Bus Stop for an NPC
-// yet: the bus is the farmer's (ArtStudio/Vale/ValeBus.cs), so the game's pathfinding
-// finds no route out of the Vale and these days would break. Before turning it on, give
-// NPCs a way through: an NPCWarp map property on each side (the Vale's bus at 3 8 and a
-// tile by Pam's bus at the Bus Stop, one no villager walks over), or a C# hop like
-// Julian's (Social/Julian.cs moves him to the bus door). Then walk each day once: the
-// town tiles below are ones the mod's other villagers already stand on, except where noted.
+// top of each resident's own When). Turn it on to test them; changing it needs the save
+// reloaded, since the game works out its NPC routes when a save loads.
 //
-// Each entry replaces that day in the resident's schedule (data/<slug>_schedule.json).
+// Each schedule entry replaces that day in the resident's schedule
+// (data/<slug>_schedule.json). A time is when they set off. The walk between the Vale's
+// bus and town is long: about two hours from the Vale to Pierre's, more to the Forest.
+// Every town tile was checked walkable on the game's maps, and the Saloon, Forest and
+// Evelyn's tiles are ones the mod's other villagers already stand on.
 {
   "Changes": [
-    // Bea, Thursdays: the morning bus to town, back by 2. (Pierre's needs a tile chosen in
-    // the SeedShop in game; until then she spends the morning at the Saloon swapping
-    // recipes with Gus, which the brief also gives her.)
+    // ---- The way through: an NPC-only warp at each bus ----
+    // The game already does this for the Desert: the Bus Stop's NPCWarp "22 8 Desert 18 27"
+    // is the bus door, and a villager headed for the Desert walks up to it and is gone.
+    // The farmer never uses these warps (npcOnly), so the Vale's ticket and bus are untouched.
+    //   The Bus Stop: the bus's side just right of its door (23 9, solid: no villager ever
+    //   steps on it), from the tile in front of it; they arrive in the Vale where you step
+    //   off its bus (3 8).
+    {
+      "Action": "EditMap",
+      "Target": "Maps/BusStop",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true" },
+      "TextOperations": [
+        { "Operation": "Append", "Target": [ "MapProperties", "NPCWarp" ], "Value": "23 9 blinxxy.MuseArt_GildedVale 3 8", "Delimiter": " " }
+      ]
+    },
+    //   The Vale: its bus's door (3 7, above the tile you step off on); they arrive at the
+    //   Bus Stop in front of the bus (23 10). (A resident whose walk crossed 3 7 would be
+    //   whisked to town, but nobody's day takes them past the bus except to board it.)
+    //   With Stardew Valley Expanded, check the Bus Stop tiles: SVE redraws that map.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_GildedVale",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true" },
+      "MapProperties": { "NPCWarp": "3 7 BusStop 23 10" }
+    },
+
+    // ---- Their days in town ----
+    // Bea, Thursdays: the morning bus to Pierre's (open from 9), browsing the seed and
+    // flour shelves, and back to the tea counter by 2. (Rainy Thursdays she stays in:
+    // rain comes before the days of the week.)
     {
       "Action": "EditData",
       "Target": "Characters/schedules/BeaThistle",
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true" },
       "Entries": {
-        "Thu": "700 Saloon 4 21 0/1130 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2"
+        "Thu": "730 SeedShop 12 20 0/1200 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2"
       }
     },
-    // Fern, Mondays (spring to fall; in winter her winter_Mon keeps her home): the bus
-    // to town, tea and cuttings with Evelyn (where Sable takes tea on Wednesdays), home
-    // to the seedhouse after lunch. (Pierre's: a SeedShop tile to choose, as for Bea.)
+    // Fern, Mondays (spring to fall; in winter her winter_Mon keeps her home): Pierre's
+    // seed shelves, then tea and cuttings with Evelyn (where Sable takes tea on
+    // Wednesdays), and home to the seedhouse for the afternoon.
     {
       "Action": "EditData",
       "Target": "Characters/schedules/FernAster",
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true" },
       "Entries": {
-        "Mon": "800 JoshHouse 6 20 3/1300 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2"
+        "Mon": "730 SeedShop 13 23 0/1100 JoshHouse 6 20 3/1330 blinxxy.MuseArt_ValeFern 21 15 0/2100 blinxxy.MuseArt_ValeFern 6 6 2"
       }
     },
     // Lupini, the first and third Saturdays (the 6th and 20th, clear of the festivals),
     // spring to fall: painting by the river in the Forest, near where Sable paints (the
-    // nod), back on the evening bus. That's where his 2-heart event can find him.
-    // (Day-of-month keys come before rain: on a wet 6th he still goes. Fine for now.)
+    // nod), back on the afternoon bus for his evening at the Vale House. That's where his
+    // 2-heart event can find him. (Day-of-month keys come before rain: on a wet 6th he
+    // still goes. Fine for now.)
     {
       "Action": "EditData",
       "Target": "Characters/schedules/Lupini",
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true" },
       "Entries": {
-        "spring_6": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
-        "spring_20": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
-        "summer_6": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
-        "summer_20": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
-        "fall_6": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
-        "fall_20": "800 Forest 84 40 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1900 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2"
+        "spring_6": "700 Forest 84 40 2/1500 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "spring_20": "700 Forest 84 40 2/1500 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "summer_6": "700 Forest 84 40 2/1500 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "summer_20": "700 Forest 84 40 2/1500 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "fall_6": "700 Forest 84 40 2/1500 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+        "fall_20": "700 Forest 84 40 2/1500 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2"
       }
     },
     // Emmett, Fridays once he's at 4 hearts (the brief: after his 4-heart event; swap this
     // for HasSeenEvent when the event exists): the stage in the morning, then the Saloon
-    // in the evening, where Sam's in awe of him, and the late bus home.
+    // for the evening (it opens at noon), by Sable's table, where Sam's in awe of him, and
+    // the last bus home at 10.
     {
       "Action": "EditData",
       "Target": "Characters/schedules/EmmettWren",
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true", "Hearts:EmmettWren": "4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" },
       "Entries": {
-        "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1400 Saloon 6 21 0/2330 blinxxy.MuseArt_ValeEmmett 6 6 2"
+        "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1430 Saloon 6 21 0/2200 blinxxy.MuseArt_ValeEmmett 6 6 2"
       }
     }
   ]
