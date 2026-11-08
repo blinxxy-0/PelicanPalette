@@ -91,3 +91,30 @@ Leah's own sheet, recoloured, with a hat drawn on: `tools/art/fern_walk_build.py
 Previews: `fern_walk_vs_leah_x5.png`, `fern_walk_preview.gif`.
 
     python tools/art/fern_walk_build.py art/vale_residents_sprites/ref_walk_leah_x12.png "[CP] Gilded Vale (dev)/assets/fern/sprites.png"
+
+## Emmett (approved by the user, 2026-11-08)
+
+Alex's own sheet, recoloured, with his hair, beard and bandana drawn by hand:
+`tools/art/emmett_walk_build.py`.
+
+- `emmett_edit_a.png`: Higgsfield's edit of Alex's sheet into Emmett
+  (`ref_emmett_portrait_x8.png` for who he is). It read back noisy, a patchy coat and
+  smeared faces (`emmett_rb_vs_alex_x4.png`), so as with Fern it's only the guide.
+- `emmett_walk_sheet.png`: Alex's sheet (`ref_walk_alex.png`; lean, a jacket) with
+  - his eyes blue (Alex's are already lid, pupil, white, iris), the jacket a worn brown coat
+    open over a drawn oatmeal waistcoat, dark trousers, scuffed boots;
+  - his hair drawn after his portrait, in its colours (the user: Alex's "is boring and
+    doesnt reflect the portrait"): shaggy, a messy fringe, locks to his jaw;
+  - his head a pixel higher with a row more of face, for a beard with its outline (the
+    user), a moustache in a lighter brown where the user dotted it, so it reads apart from
+    the beard;
+  - his red bandana (the user: "missing the bandana"): pointed in front, knotted behind,
+    and in profile under his beard, its point draped over his chest;
+  - facing left is facing right mirrored.
+
+  That's `[CP] Gilded Vale (dev)/assets/emmett/sprites.png`.
+
+Previews: `emmett_walk_vs_portrait_x5.png`, `emmett_walk_vs_alex_x5.png`,
+`emmett_face_closeup_x14.png`, `emmett_walk_preview.gif`.
+
+    python tools/art/emmett_walk_build.py art/vale_residents_sprites/ref_walk_alex.png "[CP] Gilded Vale (dev)/assets/emmett/sprites.png"
