@@ -26,26 +26,47 @@ from PIL import Image
 SOLID = {
     "parterre": [
         (5, 39, 5, 39),         # the west wall's top post
-        (6, 41, 6, 43),         # the west statue, head to plinth
+        (6, 43, 6, 43),         # the west statue's plinth
         (8, 40, 11, 41), (8, 44, 11, 45),       # the west hedged beds
         (19, 40, 23, 41), (19, 44, 23, 45),     # the east hedged beds
-        (15, 41, 16, 43),       # the birdbath
-        (16, 44, 16, 45),       # the south statue
-        (25, 41, 25, 42),       # the east statue
+        (15, 43, 16, 43),       # the birdbath's foot
+        (15, 45, 16, 45),       # the south statue's plinth
+        (25, 42, 25, 42),       # the east statue's plinth
     ],
     "tea": [
         (34, 10, 34, 18), (40, 10, 40, 18),     # the hedges down each side
         (35, 18, 36, 19), (38, 18, 40, 19),     # the hedges either side of the south gap
-        (35, 10, 35, 11), (37, 10, 37, 11),     # the rose arch's posts
+        (35, 11, 35, 11), (37, 11, 37, 11),     # the rose arch's posts, at their feet
     ],
     "nursery": [
         (22, 33, 24, 34),       # the potting bench
         (25, 34, 25, 34),       # the potted plant by it
-        (26, 36, 27, 37),       # the compost heap (its art runs 2 px into x 28)
+        (26, 37, 27, 37),       # the compost heap's foot (its art runs 2 px into x 28)
     ],
 }
 WALK = {
     "nursery": [(25, 36, 25, 37)],      # bare grass by the east cold frame
+}
+# feature: [boxes] drawn over the farmer and walkable: the tops of tall things. Only a
+# thing's foot takes up ground; its top is on Front, as the game's lamp posts are (the
+# user, 2026-11-08: "the top half of that structure doesn't need to take up tile space",
+# after a solid statue head closed the walk between the birdbath and the south statue).
+# A Front tile sorts by its own row, so it covers whoever stands on it or just above it,
+# and anyone in front of the foot draws over it.
+FRONT = {
+    "parterre": [
+        (6, 41, 6, 42),         # the west statue
+        (15, 41, 16, 42),       # the birdbath's bowl
+        (15, 44, 16, 44),       # the south statue
+        (25, 41, 25, 41),       # the east statue
+    ],
+    "tea": [(35, 10, 35, 10), (37, 10, 37, 10)],    # the rose arch's posts
+    "nursery": [
+        (26, 36, 27, 36),       # the compost heap's top: you walk behind it, between it and
+                                # the wheelbarrow (the user, 2026-11-08)
+        (27, 34, 28, 34),       # the wheelbarrow's handles
+        (20, 36, 21, 36), (23, 36, 24, 36),     # the cold frames' raised lids
+    ],
 }
 # feature: (x0, y0, x1, y1) map tiles whose winter art is the spring art, snowed on
 WINTER_KEEP = {"nursery": (26, 36, 28, 37)}
@@ -61,11 +82,13 @@ def tiles(boxes):
 
 
 def apply_walk(name, walk, left, top):
-    """walk: {(i, j) in the piece: walkable} from vale_feature.walkable()."""
-    for value, table in ((False, SOLID), (True, WALK)):
+    """walk: {(i, j) in the piece: walkable} from vale_feature.walkable(). FRONT tiles
+    go in walk["front_tiles"] (map tiles), which build_vale.py lays on Front."""
+    for value, table in ((False, SOLID), (True, WALK), (True, FRONT)):
         for x, y in tiles(table.get(name, ())):
             if (x - left, y - top) in walk:
                 walk[(x - left, y - top)] = value
+    walk["front_tiles"] = set(tiles(FRONT.get(name, ())))
 
 
 def mirror(name, im, left, top):
@@ -135,7 +158,16 @@ def _patch(assets):
                     moved.append((name, x, y, dst))
                 elif not own(g[dst][y][x]):
                     print("not moved", name, x, y, src, "->", dst, g["Back2"][y][x], g["Buildings"][y][x])
-    for n in ("Back2", "Buildings"):
+    g["Front"] = [row.rstrip(",").split(",") for row in span("Front").group(1).split(chr(10))]
+    for name, boxes in FRONT.items():
+        for x, y in tiles(boxes):
+            src = next((k for k in ("Buildings", "Back2") if own(g[k][y][x])), None)
+            if src and g["Front"][y][x] == "0":
+                g["Front"][y][x], g[src][y][x] = g[src][y][x], "0"
+                moved.append((name, x, y, "Front"))
+            elif not own(g["Front"][y][x]):
+                print("not moved to Front", name, x, y)
+    for n in ("Back2", "Buildings", "Front"):
         m = span(n)
         text = text[:m.start(1)] + ",\n".join(",".join(r) for r in g[n]) + text[m.end(1):]
     open(path, "w", encoding="utf-8", newline="\n").write(text)

@@ -1271,7 +1271,7 @@ def place_buildings(g, assets):
                     gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
                     # Never over the map's own ground pieces (a shore's rock edge on
                     # Buildings stays, and the art goes above it on Buildings2).
-                    if ty < walk.get("front_above", -1):
+                    if ty < walk.get("front_above", -1) or (tx, ty) in walk.get("front_tiles", ()):
                         g["Front"][ty][tx] = gid           # over the farmer, who walks under it
                     elif g["Buildings"][ty][tx]:
                         g["Buildings2"][ty][tx] = gid
@@ -1281,7 +1281,7 @@ def place_buildings(g, assets):
                         g["Buildings"][ty][tx] = gid
                     g["Paths"][ty][tx] = 0
             print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {bottom}-{bottom + rows - 1},",
-                  sum(1 for v in walk.values() if not v), "solid")
+                  sum(1 for k, v in walk.items() if isinstance(k, tuple) and not v), "solid")
             continue
         if name == "amphitheatre":
             # Over the cliff and under the farmer (Buildings2); where it fully covers a
