@@ -64,6 +64,10 @@ internal static class ValeResidents
         harmony.Patch(AccessTools.Method(typeof(GameLocation), nameof(GameLocation.performTouchAction), new[] { typeof(string[]), typeof(Vector2) }),
             prefix: new HarmonyMethod(typeof(ValeResidents), nameof(TouchActionPrefix)));
 
+        harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.passOutFromTired)),
+            prefix: new HarmonyMethod(typeof(ValeResidents), nameof(PassOutPrefix)));
+        helper.Events.GameLoop.DayStarted += (_, _) => TuckedInMessage();
+
         helper.Events.Player.InventoryChanged += OnInventoryChanged;
     }
 
@@ -132,6 +136,46 @@ internal static class ValeResidents
             return true;
         Game1.drawObjectDialogue(S("room.locked", "A card on the pillow: 'Booked. Ask Bea at the counter downstairs.'"));
         return false;
+    }
+
+    // ---- Passing out in the Vale House: Bea puts you to bed ----
+    // Out on your feet at 2am in the inn (the user, 2026-11-08: paid for the room, got in at
+    // 1:50, and fell asleep on the floor) shouldn't bring Harvey's or Joja's bill. The map is
+    // PassOutSafe, so the game sends no letter and takes no gold. This wakes you in the guest
+    // bed, not back at the farm, and charges the room if you hadn't booked it.
+    private static readonly Point GuestBed = new(8, 6);
+    internal const string TuckedInKey = ModEntry.Id + "/ValeTuckedIn";
+
+    internal static void PassOutPrefix(Farmer who)
+    {
+        try
+        {
+            if (!who.IsLocalPlayer || who.currentLocation?.Name != ValeHouse)
+                return;
+            who.lastSleepLocation.Value = ValeHouse;
+            who.lastSleepPoint.Value = GuestBed;
+            int paid = 0;
+            if (!BookedTonight(who))
+            {
+                paid = Math.Min(RoomPrice, who.Money);
+                who.Money -= paid;
+            }
+            who.modData[TuckedInKey] = paid.ToString();
+        }
+        catch (Exception)
+        {
+            // never stand between the player and the end of the day
+        }
+    }
+
+    private static void TuckedInMessage()
+    {
+        if (!Game1.player.modData.TryGetValue(TuckedInKey, out string paid))
+            return;
+        Game1.player.modData.Remove(TuckedInKey);
+        string text = paid == "0" ? S("room.tucked", "You woke up in the guest bed. Bea must have found you on the floor and put you to bed.")
+            : string.Format(S("room.tucked.paid", "You woke up in the guest bed. Bea found you on the floor and put you to bed. She took {0}g for the room."), paid);
+        Game1.addHUDMessage(new HUDMessage(text) { noIcon = true, timeLeft = 6000 });
     }
 
     // ---- A Lupini painting from the Night Market (his letter opening the Vale) ----

@@ -142,7 +142,9 @@
         "room.booked": "{{i18n:bea.room.booked}}",
         "room.already": "{{i18n:bea.room.already}}",
         "room.money": "{{i18n:bea.room.money}}",
-        "room.locked": "{{i18n:bea.room.locked}}"
+        "room.locked": "{{i18n:bea.room.locked}}",
+        "room.tucked": "{{i18n:bea.room.tucked}}",
+        "room.tucked.paid": "{{i18n:bea.room.tucked.paid}}"
       }
     }
   ]

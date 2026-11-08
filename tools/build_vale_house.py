@@ -351,6 +351,8 @@ def main():
     props = {"Warp": f"{d} {f + 2} {VALE} {INN_DOOR[0]} {INN_DOOR[1] + 1}",
              "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in LIGHTS),
              "AllowWakeUpWithoutBed": "T",
+             # passing out here costs no clinic bill: Bea puts you to bed (ValeResidents.PassOutPrefix)
+             "PassOutSafe": "T",
              # the game makes a tile a door only if this lists it (x y, sheet 1, tile 120), as Haley's map does
              "Doors": " ".join(f"{d_} {ROOMS[lower]['t'] + 2} 1 120" for _, lower, d_ in DOORS)}
     tilesets = [("indoor", 1, "townInterior", 512, 1088), ("indoor2", T2, "townInterior_2", 512, 656),
