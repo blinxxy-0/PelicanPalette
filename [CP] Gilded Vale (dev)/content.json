@@ -208,7 +208,7 @@
     // closed map (ValeHallClosed.tmx, "hall_closed" in tools/build_vale_buildings.py) until the
     // player has the mail flag blinxxy.MuseArt_ValeHallOpen, then the open hall. The flag is a
     // placeholder: the 8-heart event (not written yet) will set it.
-    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHallClosed.tmx", "When": { "HasFlag |contains=blinxxy.MuseArt_ValeHallOpen": "false" } },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHallClosed.tmx", "Priority": "Low" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx", "When": { "HasFlag": "blinxxy.MuseArt_ValeHallOpen" } },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeFern", "FromFile": "assets/ValeFern.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeEmmett", "FromFile": "assets/ValeEmmett.tmx" },
