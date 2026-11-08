@@ -128,6 +128,12 @@
         "blinxxy.MuseArt_Vale.studio.cot": "{{i18n:vale.studio.cot}}",
         "blinxxy.MuseArt_Vale.studio.washstand": "{{i18n:vale.studio.washstand}}",
         "blinxxy.MuseArt_Vale.studio.trunk": "{{i18n:vale.studio.trunk}}",
+        "blinxxy.MuseArt_Vale.studio.rules": "{{i18n:vale.studio.rules}}",
+        // the Old Studios outside (tools/vale_studio_signs.py): the weathered sign, and the plaques
+        "blinxxy.MuseArt_Vale.studios.sign": "{{i18n:vale.studios.sign}}",
+        "blinxxy.MuseArt_Vale.studios.plaque_1": "{{i18n:vale.studios.plaque_1}}",
+        "blinxxy.MuseArt_Vale.studios.plaque_2": "{{i18n:vale.studios.plaque_2}}",
+        "blinxxy.MuseArt_Vale.studios.plaque_3": "{{i18n:vale.studios.plaque_3}}",
         "blinxxy.MuseArt_Vale.pottery.kiln": "{{i18n:vale.pottery.kiln}}",
         "blinxxy.MuseArt_Vale.pottery.hardwood": "{{i18n:vale.pottery.hardwood}}",
         "blinxxy.MuseArt_Vale.pottery.wheel": "{{i18n:vale.pottery.wheel}}",
