@@ -71,3 +71,23 @@ Previews: `lupini_walk_vs_ingame_x5.png`, `lupini_walk_preview.gif`.
 
     python tools/art/walk_readback.py art/vale_residents_sprites/lupini_edit_b.png lupini_rb.png
     python tools/art/lupini_walk_build.py art/vale_residents_sprites/ref_lupini_ingame_x16.png lupini_rb.png "[CP] Gilded Vale (dev)/assets/lupini/sprites.png"
+
+## Fern (approved by the user, 2026-11-08)
+
+Leah's own sheet, recoloured, with a hat drawn on: `tools/art/fern_walk_build.py`.
+
+- `fern_edit_b.png`: Higgsfield's edit of Leah's sheet into Fern (`ref_fern_portrait_x8.png`
+  for who she is). It looked right at full size, but read back as one orange smudge
+  (`fern_rb_vs_leah_x4.png`): her straw, blonde, mustard and tan are all alike at 16x32. So
+  it's only the guide for her hat and dungarees. (`tools/art/walk_readback.py --char-only`
+  came from trying: colours chosen from the character alone, by octree.)
+- `fern_walk_sheet.png`: Leah's sheet (`ref_walk_leah_x12.png`, she has Fern's braid and
+  small build) with her hair sandy blonde, her skin tanned, green-brown eyes, the green top
+  a cornflower shirt, the trousers mustard dungarees (a low bib and straps in front, crossed
+  straps behind), brown boots; a straw sun hat with a band and a white flower, set two rows
+  low so less of Leah's hair shows (the user); facing left is facing right mirrored.
+  That's `[CP] Gilded Vale (dev)/assets/fern/sprites.png`.
+
+Previews: `fern_walk_vs_leah_x5.png`, `fern_walk_preview.gif`.
+
+    python tools/art/fern_walk_build.py art/vale_residents_sprites/ref_walk_leah_x12.png "[CP] Gilded Vale (dev)/assets/fern/sprites.png"

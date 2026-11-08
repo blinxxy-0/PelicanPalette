@@ -7,12 +7,18 @@ meets the air. Its grid is forced rather than found: these edits don't keep a cl
 Bea's walk sheet: bea_edit_b.png (Higgsfield's edit of Leah's sheet), then
 tools/art/bea_walk_fix.py for her eyes and the back of her apron.
 
-Usage: walk_readback.py <generated 768x1536.png> <out 64x128.png> [colours=24]"""
+With --char-only the colours are chosen from the character's pixels alone, so a big tan
+background can't crowd out a small colour (Fern's blue shirt came out orange without it), and by octree, which keeps a small colour
+that median cut merges away.
+
+Usage: walk_readback.py <generated 768x1536.png> <out 64x128.png> [colours=24] [--char-only]"""
 import sys, collections
 import numpy as np
 from PIL import Image
-src, out = sys.argv[1], sys.argv[2]
-k = int(sys.argv[3]) if len(sys.argv) > 3 else 24
+args = [x for x in sys.argv[1:] if not x.startswith("--")]
+char_only = "--char-only" in sys.argv
+src, out = args[0], args[1]
+k = int(args[2]) if len(args) > 2 else 24
 P = 12
 g = np.asarray(Image.open(src).convert("RGB")).astype(int)
 H, W = g.shape[0] // P, g.shape[1] // P
@@ -40,7 +46,11 @@ for y in range(H):
         if mask[y, x] and sum(mask[yy, xx] for yy, xx in ((y-1, x), (y+1, x), (y, x-1), (y, x+1))
                               if 0 <= yy < H and 0 <= xx < W) <= 1:
             mask[y, x] = False
-q = Image.fromarray(a.astype(np.uint8)).quantize(colors=k, method=Image.Quantize.MEDIANCUT)
+src_q = a.copy()
+if char_only:
+    src_q[~mask] = np.median(a[mask], axis=0)       # the background takes a colour she has
+q = Image.fromarray(src_q.astype(np.uint8)).quantize(
+    colors=k, method=Image.Quantize.FASTOCTREE if char_only else Image.Quantize.MEDIANCUT)
 pal = np.array(q.getpalette()[:k * 3]).reshape(k, 3)
 qa = pal[np.asarray(q)]
 rgba = np.zeros((H, W, 4), np.uint8)
