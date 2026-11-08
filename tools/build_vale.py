@@ -257,6 +257,10 @@ def main():
             edge = x < 5 or x > 90 or y < 2 or y > 72
             if edge and (x + y) % 2 == 0 and tree_ok(x, y) and not (3 <= y <= 12 and x < 6):       # the high street runs out west, clear of the woods
                 g["Paths"][y][x] = paths_first + rnd.choice((9, 10, 11))
+    # No trees on or against a building, none hiding its front, and nothing spawning on
+    # its door's approach (the user, 2026-11-08: trees walled in the east Old Studio).
+    from vale_yards import clear
+    clear(g, paths_first, TILE_PROPS, W, H)
 
     props = {"Outdoors": "T", "Spring_Objects": "T", "Summer_Objects": "T", "Fall_Objects": "T", "Winter_Objects": "T",
              "BrookSounds": f"{RIVER_X + 4} 3 0",
