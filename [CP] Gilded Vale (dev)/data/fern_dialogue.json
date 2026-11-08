@@ -1,6 +1,6 @@
 // FernAster's dialogue (1.4). Keys follow vanilla's, as Sable's do: day names, with
 // heart levels and seasons; first days and the birthday; gift reactions.
-// Portraits (when the sheet exists): $0 neutral, $h laughing, $s worried, $u her gap-toothed grin, $l shy, $a stubborn.
+// Portraits (when the sheet exists): $0 neutral, $h laughing, $s worried, $u her cheeky closed-mouth grin, $l shy, $a stubborn.
 // Voice: plain and warm, blunt to people and kind to plants; talks to them mid-conversation.
 // Heart events come later (docs/fern_brief.md). Hooks already in her lines:
 //   2 hearts, the bees in the meadow: Sun4.

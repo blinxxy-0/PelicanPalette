@@ -2,7 +2,7 @@
 
 The 2- to 10-heart events for Bea, Lupini, Fern and Emmett (1.4; the 6- to 10-heart ones are further down, after "What building these needs"), from their briefs (`docs/bea_brief.md`, `docs/lupini_brief.md`, `docs/fern_brief.md`, `docs/emmett_brief.md`). Tobin's events are 1.5's, through Pottery. Nothing here is built: the events need the residents' sprite sheets, and the scripts need your approval first.
 
-Portrait codes are the ones their dialogue already uses: `$0` neutral, `$h` happy, `$s` sad, `$u` each one's own face (Bea's dry half-smile, Lupini's theatrical look, Fern's gap-toothed grin, Emmett's crooked grin), `$l` touched or caught out, `$a` cross. Bea's sheet also has `$6` surprised.
+Portrait codes are the ones their dialogue already uses: `$0` neutral, `$h` happy, `$s` sad, `$u` each one's own face (Bea's dry half-smile, Lupini's theatrical look, Fern's cheeky closed-mouth grin, Emmett's crooked grin), `$l` touched or caught out, `$a` cross. Bea's sheet also has `$6` surprised.
 
 **When they can happen:** in the Vale, where that resident is at that time on their schedule (`[CP] Gilded Vale (dev)/data/<name>_schedule.json`), so nobody has to be moved for them. Each 4-heart event needs the 2-heart one before it. Event IDs follow the mod's: `blinxxy.MuseArt_Bea2h`, `blinxxy.MuseArt_Bea4h` and so on. A choice that's remembered is a mail flag, as Julian's and Margot's are.
 
@@ -56,7 +56,7 @@ Portrait codes are the ones their dialogue already uses: `$0` neutral, `$h` happ
 **Trigger:** you're on the high street by the Vale's sign between 9am and noon, on a fine day after a rainy one, with 2+ hearts. (With the town trips switched on, a second version can play by the river in the Forest on his Saturday there.)
 
 **Scene:**
-- Lupini is crouched over a puddle in the road, sketchbook on his knee, straw hat pushed back. He doesn't look up. `$u` "Don't step in it. You'll ruin it."
+- Lupini is crouched over a puddle in the road, sketchbook on his knee, glasses pushed down his nose. He doesn't look up. `$u` "Don't step in it. You'll ruin it."
 - "Go on. What am I drawing?"
 - **Choice:**
   - "The puddle?" → `$h` "Everyone says that. Wrong. Try again." (the choice comes round once more, without this answer)
