@@ -1232,6 +1232,11 @@ def place_buildings(g, assets):
             arts["winter"] = im.copy()
         keep_winter(name, im, arts["winter"], left, top)   # (Fern's compost heap, snowed on)
         mirror(name, arts["winter"], left, top)
+        # the tops of tall things (vale_feature_fixes.py FRONT), lifted out to lay on
+        # Front over the farmer; the path round them stays in the feature, underfoot
+        from vale_feature_fixes import split_front
+        for k, (fx, fy, lifted) in enumerate(split_front(name, arts, left, top)):
+            pieces.append((f"featurefront:{name}:{k}", lifted, fx, fy, None))
         pieces.append(("feature:" + name, arts, left, top, walk))
     slots, x, y, row_h = [], 0, 0, 0
     for _, arts, *_ in pieces:
@@ -1271,7 +1276,7 @@ def place_buildings(g, assets):
                     gid = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
                     # Never over the map's own ground pieces (a shore's rock edge on
                     # Buildings stays, and the art goes above it on Buildings2).
-                    if ty < walk.get("front_above", -1) or (tx, ty) in walk.get("front_tiles", ()):
+                    if ty < walk.get("front_above", -1):
                         g["Front"][ty][tx] = gid           # over the farmer, who walks under it
                     elif g["Buildings"][ty][tx]:
                         g["Buildings2"][ty][tx] = gid
@@ -1282,6 +1287,12 @@ def place_buildings(g, assets):
                     g["Paths"][ty][tx] = 0
             print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {bottom}-{bottom + rows - 1},",
                   sum(1 for k, v in walk.items() if isinstance(k, tuple) and not v), "solid")
+            continue
+        if name.startswith("featurefront:"):
+            for j in range(rows):
+                for i in range(cols):
+                    if im.crop((i * 16, j * 16, i * 16 + 16, j * 16 + 16)).getbbox() is not None:
+                        g["Front"][bottom + j][left + i] = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
             continue
         if name == "amphitheatre":
             # Over the cliff and under the farmer (Buildings2); where it fully covers a

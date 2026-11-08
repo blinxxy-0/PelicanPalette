@@ -74,6 +74,62 @@ WINTER_KEEP = {"nursery": (26, 36, 28, 37)}
 MIRROR = {"tea": [((34, 10, 34, 18), 40)]}
 
 
+# FRONT tiles that stand on the gravel path: only the thing itself goes on Front, the
+# path round it stays underfoot on Back2 (the user, 2026-11-08: walking south behind the
+# east statue, "blue path texture gets picked up and you can weirdly walk behind it").
+SPLIT = {
+    "parterre": FRONT["parterre"],
+    "nursery": [(20, 36, 21, 36), (23, 36, 24, 36)],
+}
+
+
+def sand(c):
+    """The gravel paths in the spring art."""
+    return c[3] and c[0] > 140 and c[0] - c[2] > 60 and c[1] > 80
+
+
+def snow(c):
+    return c[3] and min(c[:3]) > 175 and c[2] >= c[0] - 5
+
+
+def ground_mask(spring, art, season):
+    """{(x, y)} px of a tile that are path, not the thing: gravel in spring (summer and
+    fall share its pixels); in winter only where spring had gravel and winter has snow,
+    so a statue's snowcap and the winter art's own outline stay with the statue."""
+    sp, ar = spring.load(), art.load()
+    return {(x, y) for y in range(spring.height) for x in range(spring.width)
+            if sand(sp[x, y]) and (season != "winter" or snow(ar[x, y]))}
+
+
+def split_front(name, arts, left, top):
+    """In a feature's season arts (px), lifts each FRONT box's thing out of the art: it
+    returns [(x0, y0, {season: image})] to lay on Front, and leaves the path behind."""
+    out = []
+    split = set(tiles(SPLIT.get(name, ())))
+    for x0, y0, x1, y1 in FRONT.get(name, ()):
+        box = ((x0 - left) * 16, (y0 - top) * 16, (x1 - left + 1) * 16, (y1 - top + 1) * 16)
+        spring = arts["spring"].crop(box)
+        lifted = {}
+        for season, im in arts.items():
+            part = im.crop(box)
+            keep = Image.new("RGBA", part.size)
+            for tx, ty in tiles([(x0, y0, x1, y1)]):
+                c = ((tx - x0) * 16, (ty - y0) * 16, (tx - x0) * 16 + 16, (ty - y0) * 16 + 16)
+                g = ground_mask(spring.crop(c), part.crop(c), season) if (tx, ty) in split else set()
+                pt, kt = part.crop(c), Image.new("RGBA", (16, 16))
+                pp, kp = pt.load(), kt.load()
+                for y in range(16):
+                    for x in range(16):
+                        if (x, y) not in g:
+                            kp[x, y], pp[x, y] = pp[x, y], (0, 0, 0, 0)
+                keep.paste(kt, c[:2])
+                part.paste(pt, c[:2])
+            im.paste(part, box[:2])
+            lifted[season] = keep
+        out.append((x0, y0, lifted))
+    return out
+
+
 def tiles(boxes):
     for x0, y0, x1, y1 in boxes:
         for y in range(y0, y1 + 1):
@@ -83,12 +139,11 @@ def tiles(boxes):
 
 def apply_walk(name, walk, left, top):
     """walk: {(i, j) in the piece: walkable} from vale_feature.walkable(). FRONT tiles
-    go in walk["front_tiles"] (map tiles), which build_vale.py lays on Front."""
+    walk: their tops are lifted onto Front by split_front."""
     for value, table in ((False, SOLID), (True, WALK), (True, FRONT)):
         for x, y in tiles(table.get(name, ())):
             if (x - left, y - top) in walk:
                 walk[(x - left, y - top)] = value
-    walk["front_tiles"] = set(tiles(FRONT.get(name, ())))
 
 
 def mirror(name, im, left, top):
@@ -137,6 +192,10 @@ def keep_winter(name, spring, winter, left, top):
 # --- applying it to the committed map in place ------------------------------------------
 
 FEATURE_FIRST = 20000
+
+
+def span_in(text, name):
+    return re.search(r'<layer id="\d+" name="' + name + r'"[^>]*>\s*<data encoding="csv">\n(.*?)\n\s*</data>', text, re.S)
 
 
 def _patch(assets):
@@ -193,6 +252,48 @@ def _patch(assets):
             sheets["winter"].paste(t, (sx, sy))
         print("winter art kept for", name, len(slots), "tiles")
     sheets["winter"].save(os.path.join(assets, "winter_GildedValeBuildings.png"))
+    # the FRONT tiles on the path: their path part to a new tile, underfoot on Back2
+    seasons = ("spring", "summer", "fall", "winter")
+    sh = {se: Image.open(os.path.join(assets, se + "_GildedValeBuildings.png")).convert("RGBA") for se in seasons}
+    work = []
+    for name, boxes in SPLIT.items():
+        for x, y in tiles(boxes):
+            v = g["Front"][y][x]
+            if own(v) and g["Back2"][y][x] == "0" and g["Buildings"][y][x] == "0":
+                i = int(v) - FEATURE_FIRST
+                c = ((i % cols) * 16, (i // cols) * 16, (i % cols) * 16 + 16, (i // cols) * 16 + 16)
+                if ground_mask(sh["spring"].crop(c), sh["spring"].crop(c), "spring"):
+                    work.append((name, x, y, c))
+    if work:
+        H0 = sh["spring"].height
+        for se in seasons:
+            big = Image.new("RGBA", (sh[se].width, H0 + 16 * ((len(work) + cols - 1) // cols)))
+            big.paste(sh[se], (0, 0))
+            sh[se] = big
+        for k, (name, x, y, c) in enumerate(work):
+            n = H0 // 16 * cols + k
+            nc = ((n % cols) * 16, (n // cols) * 16)
+            spring = sh["spring"].crop(c)
+            for se in seasons:
+                t = sh[se].crop(c)
+                gm = ground_mask(spring, t, se)
+                obj, grd = t.copy(), Image.new("RGBA", (16, 16))
+                op, gp = obj.load(), grd.load()
+                for (px, py) in gm:
+                    gp[px, py], op[px, py] = op[px, py], (0, 0, 0, 0)
+                sh[se].paste(obj, c[:2])
+                sh[se].paste(grd, nc)
+            g["Back2"][y][x] = str(FEATURE_FIRST + n)
+            print(f"{name} {x},{y}: the path round it underfoot (tile {FEATURE_FIRST + n})")
+        for se in seasons:
+            sh[se].save(os.path.join(assets, se + "_GildedValeBuildings.png"))
+        text = open(path, encoding="utf-8").read()
+        m = span_in(text, "Back2")
+        text = text[:m.start(1)] + ",\n".join(",".join(r) for r in g["Back2"]) + text[m.end(1):]
+        H1 = sh["spring"].height
+        text = re.sub(r'(<tileset firstgid="20000" [^>]*tilecount=")\d+(")', lambda mm: mm.group(1) + str(H1 // 16 * cols) + mm.group(2), text)
+        text = re.sub(r'(<image source="spring_GildedValeBuildings.png" width="\d+" height=")\d+(")', lambda mm: mm.group(1) + str(H1) + mm.group(2), text)
+        open(path, "w", encoding="utf-8", newline="\n").write(text)
     # the mirrored columns, in every season's sheet
     for season in ("spring", "summer", "fall", "winter"):
         sp = os.path.join(assets, season + "_GildedValeBuildings.png")
