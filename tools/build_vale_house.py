@@ -132,6 +132,19 @@ FURNISH = [
     ("hall_table", 3, 12), ("plant", 8, 12), ("clock", 12, 12), ("hall_table", 17, 12),
     ("plant_b", 21, 12), ("hall_table", 22, 12), ("plant", 27, 12),
 ]
+# What right-clicking a piece says (as build_vale_buildings.py's describe): a PIECES name, a
+# FURNISH piece as (name, x, y), or "fireplace" -> text key, i18n vale.house.<key>, mapped
+# into Strings/StringsFromMaps as blinxxy.MuseArt_Vale.house.<key> (content.json)
+DESCRIBE = {
+    "guestbook_case": "guestbook", "china_dresser": "china", "teapot_shelf": "teapots", "tea_counter": "counter",
+    "tea_table": "tea_table", "tea_table#2": "tea_table", "tea_table#3": "tea_table", "tea_table#4": "tea_table",
+    "piano": "piano", "painting_lighthouse": "lighthouse",
+    "easel": "guest_easel", "writing_desk": "guest_desk",
+    "rack_canvases": "canvases", "easel_lighthouse": "lighthouse_easel", "stack_canvases": "blank_canvases",
+    "writing_desk#2": "accounts", "painting_flowers": "flowers",
+    ("clock", 12, 12): "clock", ("hall_table", 3, 12): "photo", ("bear", 1, 25): "bear",
+    ("dollhouse", 6, 26): "dollhouse", ("kitchen", 23, 17): "kitchen", "fireplace": "fireplace",
+}
 BEDS = {"guest": (8, 4), "artists": (17, 4), "bea": (26, 4)}   # the Saloon's spare bed, top-left
 SLEEP_IN = "guest"
 RUGS = [(4, 21, 5, 4), (10, 21, 4, 7), (17, 23, 4, 6), (2, 26, 6, 3), (14, 5, 3, 3)]          # Haley's red rug, 9-sliced: x, y, w, h
@@ -310,6 +323,31 @@ def main():
     # names, locking them, once the residents exist.)
     for upper, lower, d_ in DOORS:
         tile_props.append(("Buildings", d_, ROOMS[lower]["t"] + 2, "Action", "Door"))
+    # right-click a piece to read about it: Action Message on its solid tiles (a wall piece's:
+    # the wainscot below it, in reach). Standing pieces first, so a wall piece over one
+    # (the teapot shelf over the counter) keeps only the wainscot the other doesn't cover.
+    said, standing, hung = {(x, y) for _, x, y, k, _ in tile_props if k == "Action"}, [], []
+    for key, ((px, py), solid) in PIECES.items():
+        text = DESCRIBE.get(key)
+        if not text:
+            continue
+        _, cols, rows = slots[key.split("#")[0]]
+        if solid > 0:
+            standing.append((text, [(px + i, py + rows - 1 - j) for i in range(cols) for j in range(solid)]))
+        else:
+            r = next(r for r in ROOMS.values() if r["a"] <= px <= r["b"] and r["t"] < py <= r["t"] + 3)
+            hung.append((text, [(px + i, y) for i in range(cols) for y in (r["t"] + 2, r["t"] + 3)]))
+    for name, px, py in FURNISH:
+        text = DESCRIBE.get((name, px, py))
+        if text:
+            standing.append((text, [(px + i, py + j) for j, row in enumerate(VANILLA[name])
+                                    for i, gid in enumerate(row.get("B", [])) if gid]))
+    standing.append((DESCRIBE["fireplace"], [(FIREPLACE_X + i, tt + 4 + j) for i in range(2) for j in range(2)]))
+    for text, cells in standing + hung:
+        for x, y in cells:
+            if g["Buildings"][y][x] and (x, y) not in said:
+                said.add((x, y))
+                tile_props.append(("Buildings", x, y, "Action", f"Message blinxxy.MuseArt_Vale.house.{text}"))
     props = {"Warp": f"{d} {f + 2} {VALE} {INN_DOOR[0]} {INN_DOOR[1] + 1}",
              "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in LIGHTS),
              "AllowWakeUpWithoutBed": "T",

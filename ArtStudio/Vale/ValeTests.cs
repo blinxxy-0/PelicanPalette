@@ -215,6 +215,10 @@ internal static class ValeTests
             return;
         }
         int money = who.Money;
+        // the bed's refusal and Bea's answer each open a dialogue box, which stops you moving
+        // until it's closed; taking the box away doesn't give that back, so it's put back here
+        // (the user, 2026-11-08: "i typed the valetest command and cannot move anymore")
+        bool canMove = who.CanMove;
         bool hadNight = who.modData.TryGetValue(ValeResidents.RoomNightKey, out string night);
         bool artists = who.mailReceived.Contains(ValeResidents.ArtistsRoomMail);
         try
@@ -238,6 +242,7 @@ internal static class ValeTests
             if (artists) who.mailReceived.Add(ValeResidents.ArtistsRoomMail);
             Game1.activeClickableMenu = null;
             Game1.dialogueUp = false;
+            who.CanMove = canMove;
         }
     }
 

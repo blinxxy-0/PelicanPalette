@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="22" height="24" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="2">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="22" height="24" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="53">
   <properties>
     <property name="Warp" value="7 22 blinxxy.MuseArt_GildedVale 73 24" />
     <property name="Light" value="5 6 4 11 7 4 18 6 4 3 10 4 15 10 4 5 18 4 11 18 4 16 18 4" />
@@ -191,6 +191,159 @@
   <objectgroup id="9" name="Buildings">
     <object id="1" name="TileData" x="176" y="240" width="16" height="16">
       <properties><property name="Action" type="string" value="Door" /></properties>
+    </object>
+    <object id="2" name="TileData" x="80" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_1" /></properties>
+    </object>
+    <object id="3" name="TileData" x="80" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_1" /></properties>
+    </object>
+    <object id="4" name="TileData" x="96" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_1" /></properties>
+    </object>
+    <object id="5" name="TileData" x="96" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_1" /></properties>
+    </object>
+    <object id="6" name="TileData" x="128" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="7" name="TileData" x="128" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="8" name="TileData" x="144" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="9" name="TileData" x="144" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="10" name="TileData" x="160" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="11" name="TileData" x="160" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="12" name="TileData" x="176" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="13" name="TileData" x="176" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="14" name="TileData" x="192" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="15" name="TileData" x="192" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.window" /></properties>
+    </object>
+    <object id="16" name="TileData" x="224" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_2" /></properties>
+    </object>
+    <object id="17" name="TileData" x="224" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_2" /></properties>
+    </object>
+    <object id="18" name="TileData" x="240" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_2" /></properties>
+    </object>
+    <object id="19" name="TileData" x="240" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_2" /></properties>
+    </object>
+    <object id="20" name="TileData" x="272" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_3" /></properties>
+    </object>
+    <object id="21" name="TileData" x="272" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_3" /></properties>
+    </object>
+    <object id="22" name="TileData" x="288" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_3" /></properties>
+    </object>
+    <object id="23" name="TileData" x="288" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_3" /></properties>
+    </object>
+    <object id="24" name="TileData" x="160" y="96" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.easel" /></properties>
+    </object>
+    <object id="25" name="TileData" x="176" y="96" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.easel" /></properties>
+    </object>
+    <object id="26" name="TileData" x="192" y="112" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.paint_table" /></properties>
+    </object>
+    <object id="27" name="TileData" x="208" y="112" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.paint_table" /></properties>
+    </object>
+    <object id="28" name="TileData" x="304" y="176" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.bust" /></properties>
+    </object>
+    <object id="29" name="TileData" x="48" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_4" /></properties>
+    </object>
+    <object id="30" name="TileData" x="48" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_4" /></properties>
+    </object>
+    <object id="31" name="TileData" x="64" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_4" /></properties>
+    </object>
+    <object id="32" name="TileData" x="64" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_4" /></properties>
+    </object>
+    <object id="33" name="TileData" x="96" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_5" /></properties>
+    </object>
+    <object id="34" name="TileData" x="96" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_5" /></properties>
+    </object>
+    <object id="35" name="TileData" x="112" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_5" /></properties>
+    </object>
+    <object id="36" name="TileData" x="112" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_5" /></properties>
+    </object>
+    <object id="37" name="TileData" x="144" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.empty_hook" /></properties>
+    </object>
+    <object id="38" name="TileData" x="144" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.empty_hook" /></properties>
+    </object>
+    <object id="39" name="TileData" x="208" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_6" /></properties>
+    </object>
+    <object id="40" name="TileData" x="208" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_6" /></properties>
+    </object>
+    <object id="41" name="TileData" x="224" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_6" /></properties>
+    </object>
+    <object id="42" name="TileData" x="224" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_6" /></properties>
+    </object>
+    <object id="43" name="TileData" x="256" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_7" /></properties>
+    </object>
+    <object id="44" name="TileData" x="256" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_7" /></properties>
+    </object>
+    <object id="45" name="TileData" x="272" y="240" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_7" /></properties>
+    </object>
+    <object id="46" name="TileData" x="272" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.painting_7" /></properties>
+    </object>
+    <object id="47" name="TileData" x="192" y="288" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.bench" /></properties>
+    </object>
+    <object id="48" name="TileData" x="208" y="288" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.bench" /></properties>
+    </object>
+    <object id="49" name="TileData" x="224" y="288" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.bench" /></properties>
+    </object>
+    <object id="50" name="TileData" x="272" y="304" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.display_easel" /></properties>
+    </object>
+    <object id="51" name="TileData" x="288" y="304" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.display_easel" /></properties>
+    </object>
+    <object id="52" name="TileData" x="128" y="304" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.atelier.hat_stand" /></properties>
     </object>
   </objectgroup>
 </map>

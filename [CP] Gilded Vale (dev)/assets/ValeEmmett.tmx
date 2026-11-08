@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="18" height="21" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="2">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="18" height="21" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="24">
   <properties>
     <property name="Warp" value="10 19 blinxxy.MuseArt_GildedVale 19 62" />
     <property name="Light" value="4 15 4 9 15 4 13 15 4 4 6 4 2 1 4 4 1 4 6 1 4 8 1 4" />
@@ -170,6 +170,72 @@
   <objectgroup id="9" name="Buildings">
     <object id="1" name="TileData" x="80" y="176" width="16" height="16">
       <properties><property name="Action" type="string" value="Door" /></properties>
+    </object>
+    <object id="2" name="TileData" x="64" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.stump" /></properties>
+    </object>
+    <object id="3" name="TileData" x="112" y="256" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.crate" /></properties>
+    </object>
+    <object id="4" name="TileData" x="112" y="176" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.maps" /></properties>
+    </object>
+    <object id="5" name="TileData" x="112" y="192" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.maps" /></properties>
+    </object>
+    <object id="6" name="TileData" x="128" y="176" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.maps" /></properties>
+    </object>
+    <object id="7" name="TileData" x="128" y="192" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.maps" /></properties>
+    </object>
+    <object id="8" name="TileData" x="144" y="176" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.maps" /></properties>
+    </object>
+    <object id="9" name="TileData" x="144" y="192" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.maps" /></properties>
+    </object>
+    <object id="10" name="TileData" x="128" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.desk" /></properties>
+    </object>
+    <object id="11" name="TileData" x="144" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.desk" /></properties>
+    </object>
+    <object id="12" name="TileData" x="176" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.songbooks" /></properties>
+    </object>
+    <object id="13" name="TileData" x="192" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.songbooks" /></properties>
+    </object>
+    <object id="14" name="TileData" x="208" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.instruments" /></properties>
+    </object>
+    <object id="15" name="TileData" x="224" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.instruments" /></properties>
+    </object>
+    <object id="16" name="TileData" x="160" y="208" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.music_stand" /></properties>
+    </object>
+    <object id="17" name="TileData" x="240" y="224" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.coat" /></properties>
+    </object>
+    <object id="18" name="TileData" x="96" y="112" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.bed" /></properties>
+    </object>
+    <object id="19" name="TileData" x="96" y="80" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.bed" /></properties>
+    </object>
+    <object id="20" name="TileData" x="112" y="112" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.bed" /></properties>
+    </object>
+    <object id="21" name="TileData" x="112" y="80" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.bed" /></properties>
+    </object>
+    <object id="22" name="TileData" x="64" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.trunk" /></properties>
+    </object>
+    <object id="23" name="TileData" x="80" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.emmett.trunk" /></properties>
     </object>
   </objectgroup>
 </map>
