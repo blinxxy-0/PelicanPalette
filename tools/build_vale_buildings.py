@@ -156,7 +156,10 @@ GAME_PAINTINGS = {1554: (3, 2), 1547: (3, 2), 1541: (2, 2), 1557: (2, 2), 2421: 
                   1567: (1, 2), 2329: (2, 2), 2423: (2, 2), 1802: (2, 2), 1612: (2, 2), 1606: (1, 2)}
 for _id, _wh in GAME_PAINTINGS.items():
     LUPINI[f"game_{_id}"] = _id
-TOP_ALIGNED = {"beam"}               # wall pieces that keep their height (a beam at the ceiling)
+# wall pieces hung from the top of their cells, BEAM_DROP px down (Emmett's beams: one height, so
+# they join, clear of the ceiling's outline)
+TOP_ALIGNED = {"beam", "moss_wall"}
+BEAM_DROP = 5
 BED = (2, 4)                        # the Saloon's spare bed
 # The game's rugs that 9-slice (townInterior_2, their top-left tile): ("rug", x, y, w, h)
 RUGS = {"rug": 2761,                # Haley's red one
@@ -393,7 +396,7 @@ BUILDINGS = {
     "emmett": dict(
         title="Emmett's cottage", location="blinxxy.MuseArt_ValeEmmett", tmx="ValeEmmett.tmx",
         W=18, H=21, outside=(19, 61),
-        rooms={"nook": dict(a=2, b=8, t=0, f=8, label="The nook"),
+        rooms={"nook": dict(a=1, b=9, t=0, f=8, label="The nook"),
                "room": dict(a=1, b=15, t=9, f=17, label="Emmett's room")},
         doors=[("nook", "room", 5)],
         front=("room", 10),
@@ -403,7 +406,7 @@ BUILDINGS = {
         wall=103,
         picks={"chest": "art/gilded_vale/interiors/pottery/pottery_v1/chest_1_9",
                **EMMETT_PICKS},
-        lights=[(4, 15), (9, 15), (13, 15), (4, 6), (4, 1), (6, 1)],
+        lights=[(4, 15), (9, 15), (13, 15), (4, 6), (2, 1), (4, 1), (6, 1), (8, 1)],
         pieces=[
             # by the fire: logs, his armchair turned to it on a rug, a pouf for a guest
             # by the fire: logs, his armchair turned to it on a rug, a mossy stump for a guest,
@@ -416,13 +419,16 @@ BUILDINGS = {
             ("bookcase", 11, 11), ("window", 14, 10), ("instrument_stand", 13, 12), ("music_stand", 10, 12),
             ("coat_rack", 15, 13), ("fern_pot", 1, 15), ("chest", 6, 13),
             # moss: creeping down the plaster, and in the corners of the floor
-            ("beam", 10, 10), ("moss_wall#2", 13, 10), ("moss_patch", 11, 14), ("moss_patch#2", 15, 16),
+            # one beam along the wall: ivy at its ends, bare wood over the bookcase (the user, 2026-11-07)
+            ("moss_wall", 10, 10), ("beam", 11, 10), ("beam#2", 12, 10), ("moss_wall#2", 13, 10), ("moss_patch", 11, 14), ("moss_patch#2", 15, 16),
             ("moss_patch#3", 9, 16), ("moss_patch#4", 14, 16),
             # the nook: his bed, a lantern on the nightstand, the trunk he travelled with
             # the nook, under the eaves: one small window in the middle, like the gable's outside
             ("bed", 6, 4), ("nightstand", 8, 3), ("window", 5, 1), ("chest#2", 4, 4), ("fern_pot#2", 2, 4),
-            # lamps either side of the window, ending the ivy beams (the user, 2026-11-07)
-            ("moss_wall#3", 7, 1), ("moss_wall#4", 3, 1), ("sconce", 4, 1), ("sconce#2", 6, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
+            # either side of the window an ivy beam, its wood running on to a lamp at each end
+            # (the user, 2026-11-07); the lamp is the game's, hung over the beam's wood
+            ("beam#3", 2, 1), ("sconce", 2, 1), ("moss_wall#3", 3, 1), ("beam#4", 4, 1), ("sconce#2", 4, 1),
+            ("beam#5", 6, 1), ("sconce#3", 6, 1), ("moss_wall#4", 7, 1), ("beam#6", 8, 1), ("sconce#4", 8, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
         ],
         notes=["Emmett's cottage: small, one floor plan, cream plaster walls as outside. The front door opens into his room.",
                "By the stone fireplace (under the chimney outside): his armchair turned to it on a rug, a mossy stump for a guest, a crate for a side table, logs.",
@@ -746,7 +752,11 @@ def pack(picks):
         if (cols, rows) != (w, h):
             print(f"  {name}: art is {cols}x{rows} tiles, planned {w}x{h}")
         tile = Image.new("RGBA", (cols * 16, rows * 16))
-        tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
+        if name in TOP_ALIGNED:
+            im = im.crop((0, 0, im.width, rows * 16 - BEAM_DROP))
+            tile.alpha_composite(im, ((cols * 16 - im.width) // 2, BEAM_DROP))
+        else:
+            tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
         images[name] = selout(tile)
         if x + cols > SHEET_COLS:
             x, y, row_h = 0, y + row_h, 0
