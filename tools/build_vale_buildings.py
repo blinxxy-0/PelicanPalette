@@ -507,6 +507,91 @@ BUILDINGS = {
                "Right-click the painting, the note, the sketches and the rest to read about them. Orange = new PixelLab piece."]),
 }
 
+# art drawn to its tiles' exact size, kept in its place in them (not stood on their bottom)
+AS_DRAWN = set()
+
+# The Exhibition Hall closed: as it is until Lupini's 8-heart event reopens it ("closed and
+# dusty", map doc section 5; lupini_brief.md). Made from the open hall's spec, so its rooms,
+# walls and pieces carry over: in the gallery every display is under a dust sheet of its
+# footprint, the benches too; the paintings are down (a paler square where each hung, two
+# lots leaning sheeted against the wall), the plaques, palms and the runner gone; the mural
+# stays. Cobwebs, leaves and dust. The back room and storeroom as they are. No new PixelLab:
+# spare candidates of the hall's batches and tools/art/vale_hall_closed_art.py.
+# content.json loads it as the hall's map until the mail flag blinxxy.MuseArt_ValeHallOpen.
+HALL_CLOSED_ART = "art/gilded_vale/interiors/hall/"
+# a display -> its sheeted shape (key, art, right-click text key: vale.hall_closed.<key>)
+HALL_SHEETS = {
+    "panel":       ("sheet_panel", "closed/sheet_panel", "panel"),
+    "panel_b":     ("sheet_panel_b", "closed/sheet_panel_b", "panel_b"),
+    "bowl_case":   ("sheet_case", "hall_v1/sheeted_1_0", "case"),
+    "jug_case":    ("sheet_case_b", "hall_v1/sheeted_1_63", "case"),
+    "flower_case": ("sheet_case_c", "hall_v1/sheeted_1_12", "case_b"),
+    "leaf_case":   ("sheet_case_d", "hall_v1/sheeted_1_60", "case_b"),
+    "plinth":      ("sheet_plinth", "hall_v3/sheeted_statue_1_44", "statue_round"),
+    "plinth_b":    ("sheet_plinth_b", "hall_v3/sheeted_statue_1_52", "statue_moss"),
+    "plinth_c":    ("sheet_plinth_c", "hall_v3/sheeted_statue_1_15", "statue_kiln"),
+    "plinth_d":    ("sheet_plinth_d", "hall_v3/sheeted_statue_1_25", "statue_heron"),
+    "reception":   ("sheet_desk", "closed/sheet_desk", "desk"),
+    "bench":       ("sheet_bench", "closed/sheet_bench", "bench"),         # (by name: each its own sheet)
+    "bench#2":     ("sheet_bench_b", "closed/sheet_bench_b", "bench"),
+}
+HALL_KEEP = {"mural", "rug"}            # (the mural's rug; the runner, rug#2, is rolled up)
+
+
+def closed_hall(hall):
+    gallery_top = hall["rooms"]["gallery"]["t"]
+    pieces, describe, picks = [], {}, dict(hall["picks"])
+    for p in hall["pieces"]:
+        name, key = p[0], p[0].split("#")[0]
+        if p[2] < gallery_top:                      # the back room and storeroom: as they are
+            pieces.append(p)
+            if name in hall["describe"]:
+                describe[name] = "hall." + hall["describe"][name]
+        elif name in HALL_SHEETS or key in HALL_SHEETS:
+            sheet, art, text = HALL_SHEETS.get(name) or HALL_SHEETS[key]
+            w, h, s = ART[key]
+            bb = Image.open(HALL_CLOSED_ART + art + ".png").getbbox()
+            rows = max(h, -(-(bb[3] - bb[1]) // 16))        # a sheet taller than the display rises above it
+            ART[sheet] = (w, rows, s)
+            picks[sheet] = HALL_CLOSED_ART + art
+            pieces.append((sheet, p[1], p[2] - (rows - h)))
+            describe[sheet] = text
+        elif key in LUPINI:                         # taken down: a paler square, its nail
+            n = LUPINI[key]
+            hook = f"hook_{n}"
+            ART[hook] = (*GAME_PAINTINGS[n], 0)
+            AS_DRAWN.add(hook)
+            picks[hook] = HALL_CLOSED_ART + "closed/" + hook
+            pieces.append((hook, p[1], p[2]))
+            describe[hook] = "hook"
+        elif name in HALL_KEEP:
+            pieces.append(p)
+            if key == "mural":
+                describe[name] = "mural"
+    ART.update({"frames": (2, 2, 1), "frames_b": (2, 2, 1), "cobweb_l": (1, 1, 0), "dust": (1, 1, -2)})
+    picks.update({"frames": HALL_CLOSED_ART + "hall_v1/sheeted_1_16", "frames_b": HALL_CLOSED_ART + "hall_v1/sheeted_1_58",
+                  "cobweb": "art/gilded_vale/interiors/studio/cobweb", "cobweb_l": HALL_CLOSED_ART + "closed/cobweb_l",
+                  "leaves": "art/gilded_vale/interiors/studio/leaves", "dust": HALL_CLOSED_ART + "closed/dust"})
+    pieces += [
+        # the paintings, taken down and leaning sheeted against the wall under where two hung
+        ("frames", 16, 14), ("frames_b", 22, 14),
+        # cobwebs in the corners, the back rooms' too
+        ("cobweb_l", 1, 11), ("cobweb", 28, 11), ("cobweb#2", 19, 1), ("cobweb#3", 28, 1),
+        # leaves blown in under the front door, dust drifted along the walls
+        ("leaves", 13, 21), ("leaves#2", 16, 21), ("leaves#3", 11, 20), ("leaves#4", 15, 19),
+        ("dust", 6, 21), ("dust#2", 1, 17), ("dust#3", 28, 18), ("dust#4", 21, 21), ("dust#5", 9, 21),
+    ]
+    describe.update({"frames": "frames", "frames_b": "frames"})
+    return dict(hall, title="The Exhibition Hall, closed", tmx="ValeHallClosed.tmx", pieces=pieces,
+                describe=describe, picks=picks,
+                notes=["The Exhibition Hall closed, until Lupini's 8-heart event: the open hall's plan, put away.",
+                       "Every display under a dust sheet of its footprint; the paintings down, a paler square where each",
+                       "hung, two lots leaning sheeted against the wall; the benches sheeted; the plaques, palms and the runner gone.",
+                       "The faded mural stays. Cobwebs in the corners, leaves blown in, dust. The back rooms as they are."])
+
+
+BUILDINGS["hall_closed"] = closed_hall(BUILDINGS["hall"])
+
 # the game's floorings (walls_and_floors) for floors that aren't planks or Sam's tiles
 FLOORINGS = {"flagstones": 10, "terracotta": 21, "parquet": 16, "checker": 22, "stone tiles": 9}
 FLOOR_COLOURS = {"planks": (196, 140, 82), "flagstones": (150, 146, 138), "terracotta": (186, 98, 60), "parquet": (150, 90, 50), "checker": (200, 200, 210), "stone tiles": (220, 200, 160), "kitchen tiles": (200, 214, 226),
@@ -749,7 +834,7 @@ def pack(picks):
         im = Image.open(path + ".png").convert("RGBA")
         bb = im.getbbox()
         # (pieces are stood on the bottom of their cells; a few hang from the top instead)
-        im = im if name in TOP_ALIGNED else im.crop(bb)       # (a beam keeps its exact place in its tile)
+        im = im if name in TOP_ALIGNED or name in AS_DRAWN else im.crop(bb)   # (a beam keeps its exact place in its tile)
         w, h = ART[name][:2]
         cols, rows = max(w, -(-im.width // 16)), max(h, -(-im.height // 16))
         if (cols, rows) != (w, h):
@@ -758,6 +843,8 @@ def pack(picks):
         if name in TOP_ALIGNED:
             im = im.crop((0, 0, im.width, rows * 16 - BEAM_DROP))
             tile.alpha_composite(im, ((cols * 16 - im.width) // 2, BEAM_DROP))
+        elif name in AS_DRAWN:
+            tile.alpha_composite(im, (0, 0))
         else:
             tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
         images[name] = selout(tile)
@@ -779,7 +866,8 @@ def pack(picks):
 
 
 def message_key(building, key):
-    return f"blinxxy.MuseArt_Vale.{building}.{key}"
+    # (a key naming another building, "hall.poster", shares that building's text)
+    return f"blinxxy.MuseArt_Vale.{key if '.' in key else building + '.' + key}"
 
 
 def build(name, exports, assets):
