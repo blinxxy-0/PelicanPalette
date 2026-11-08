@@ -1,0 +1,186 @@
+"""Hand fixes to the painted features: their collision, and two bits of art.
+
+vale_feature.walkable() guesses what's solid from the painting's colours, and it guessed
+wrong in places (the user, 2026-11-08: "some objects like this fountain i can walk
+entirely on top of with no barrier", and "some invisible barriers too"):
+- walked through: the parterre's birdbath, its statues, its hedged flowerbeds and the
+  top post of its west wall; the tea garden's hedges and its rose arch's posts; Fern's
+  potting bench and the pot beside it;
+- blocked by nothing: two empty grass tiles beside Fern's cold frames;
+- Fern's compost heap is solid, and the winter repaint (vale_feature_winter.py) turned
+  it into plain snow on snow, so in winter it was an invisible wall. WINTER_KEEP puts the
+  heap back, snow on its top, its soil showing below.
+- the tea garden's east hedge was half the west one's thickness and gave out among the
+  flowers before the corner (the user, 2026-11-08: "why is the hedge so weak on the right
+  side?"). MIRROR paints the west hedge's column, flipped, down the east side.
+
+build_vale.py applies these as it lays each feature (apply_walk, keep_winter). Run this
+file on its own to apply them to the committed map in place (its rebuild doesn't
+reproduce the committed map exactly):
+    python tools/vale_feature_fixes.py "[CP] Gilded Vale (dev)/assets"
+"""
+import os, re, sys
+from PIL import Image
+
+# feature: [(x0, y0, x1, y1) map tiles, inclusive]
+SOLID = {
+    "parterre": [
+        (5, 39, 5, 39),         # the west wall's top post
+        (6, 41, 6, 43),         # the west statue, head to plinth
+        (8, 40, 11, 41), (8, 44, 11, 45),       # the west hedged beds
+        (19, 40, 23, 41), (19, 44, 23, 45),     # the east hedged beds
+        (15, 41, 16, 43),       # the birdbath
+        (16, 44, 16, 45),       # the south statue
+        (25, 41, 25, 42),       # the east statue
+    ],
+    "tea": [
+        (34, 10, 34, 18), (40, 10, 40, 18),     # the hedges down each side
+        (35, 18, 36, 19), (38, 18, 40, 19),     # the hedges either side of the south gap
+        (35, 10, 35, 11), (37, 10, 37, 11),     # the rose arch's posts
+    ],
+    "nursery": [
+        (22, 33, 24, 34),       # the potting bench
+        (25, 34, 25, 34),       # the potted plant by it
+        (26, 36, 27, 37),       # the compost heap (its art runs 2 px into x 28)
+    ],
+}
+WALK = {
+    "nursery": [(25, 36, 25, 37)],      # bare grass by the east cold frame
+}
+# feature: (x0, y0, x1, y1) map tiles whose winter art is the spring art, snowed on
+WINTER_KEEP = {"nursery": (26, 36, 28, 37)}
+# feature: [((x0, y0, x1, y1) map tiles, x of the column it's copied to, flipped)]
+MIRROR = {"tea": [((34, 10, 34, 18), 40)]}
+
+
+def tiles(boxes):
+    for x0, y0, x1, y1 in boxes:
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                yield x, y
+
+
+def apply_walk(name, walk, left, top):
+    """walk: {(i, j) in the piece: walkable} from vale_feature.walkable()."""
+    for value, table in ((False, SOLID), (True, WALK)):
+        for x, y in tiles(table.get(name, ())):
+            if (x - left, y - top) in walk:
+                walk[(x - left, y - top)] = value
+
+
+def mirror(name, im, left, top):
+    """In a feature's piece image (px, any season), each MIRROR column copied across, flipped."""
+    for (x0, y0, x1, y1), dx in MIRROR.get(name, ()):
+        box = ((x0 - left) * 16, (y0 - top) * 16, (x1 - left + 1) * 16, (y1 - top + 1) * 16)
+        im.paste(im.crop(box).transpose(Image.FLIP_LEFT_RIGHT), ((dx - left) * 16, box[1]))
+
+
+def snowed(spring):
+    """The spring art with snow lying on its top: each column's top few pixels white,
+    the snow's edge a shade of the snow (never black), green gone to the soil's brown."""
+    im = spring.copy()
+    px = im.load()
+    W, H = im.size
+    LIGHT, MID, SHADE = (240, 246, 252, 255), (214, 226, 240, 255), (168, 186, 212, 255)
+    solid = lambda x, y: 0 <= x < W and 0 <= y < H and spring.getpixel((x, y))[3] > 0
+    for x in range(W):
+        for y in range(H):
+            r, g, b, a = px[x, y]
+            if a and g > r + 8 and g > b + 8:       # sprouts and moss: winter has none
+                px[x, y] = (max(60, r - 10), int(r * 0.8), int(b * 0.8), a)
+    for x in range(W):
+        ys = [y for y in range(H) if solid(x, y)]
+        if not ys:
+            continue
+        top = ys[0]
+        depth = 4 if solid(x - 1, top) or solid(x + 1, top) else 2
+        for k, y in enumerate(range(top, min(top + depth, H))):
+            if not solid(x, y):
+                break
+            edge = not solid(x - 1, y) or not solid(x + 1, y) or not solid(x, y - 1)
+            px[x, y] = SHADE if k == depth - 1 else (MID if edge else LIGHT)
+    return im
+
+
+def keep_winter(name, spring, winter, left, top):
+    """In a feature's piece images (px), the WINTER_KEEP box's winter art from spring."""
+    if name not in WINTER_KEEP:
+        return
+    x0, y0, x1, y1 = WINTER_KEEP[name]
+    box = ((x0 - left) * 16, (y0 - top) * 16, (x1 - left + 1) * 16, (y1 - top + 1) * 16)
+    winter.paste(snowed(spring.crop(box)), box[:2])
+
+
+# --- applying it to the committed map in place ------------------------------------------
+
+FEATURE_FIRST = 20000
+
+
+def _patch(assets):
+    path = os.path.join(assets, "GildedVale.tmx")
+    text = open(path, encoding="utf-8").read()
+
+    def span(name):
+        return re.search(r'<layer id="\d+" name="' + name + r'"[^>]*>\s*<data encoding="csv">\n(.*?)\n\s*</data>', text, re.S)
+
+    g = {n: [row.rstrip(",").split(",") for row in span(n).group(1).split("\n")] for n in ("Back2", "Buildings")}
+    own = lambda v: FEATURE_FIRST <= int(v) < FEATURE_FIRST + 10000
+    moved = []
+    for table, src, dst in ((SOLID, "Back2", "Buildings"), (WALK, "Buildings", "Back2")):
+        for name, boxes in table.items():
+            for x, y in tiles(boxes):
+                v = g[src][y][x]
+                if own(v) and g[dst][y][x] == "0":
+                    g[dst][y][x], g[src][y][x] = v, "0"
+                    moved.append((name, x, y, dst))
+                elif not own(g[dst][y][x]):
+                    print("not moved", name, x, y, src, "->", dst, g["Back2"][y][x], g["Buildings"][y][x])
+    for n in ("Back2", "Buildings"):
+        m = span(n)
+        text = text[:m.start(1)] + ",\n".join(",".join(r) for r in g[n]) + text[m.end(1):]
+    open(path, "w", encoding="utf-8", newline="\n").write(text)
+    for name, x, y, dst in moved:
+        print(f"{name} {x},{y} -> {dst}")
+    # the winter sheet: the kept tiles' winter art, from their spring art
+    sheets = {s: Image.open(os.path.join(assets, s + "_GildedValeBuildings.png")).convert("RGBA") for s in ("spring", "winter")}
+    cols = sheets["spring"].width // 16
+    for name, (x0, y0, x1, y1) in WINTER_KEEP.items():
+        region = Image.new("RGBA", ((x1 - x0 + 1) * 16, (y1 - y0 + 1) * 16))
+        slots = {}
+        for x, y in tiles([(x0, y0, x1, y1)]):
+            v = next((int(g[n][y][x]) for n in ("Buildings", "Back2") if own(g[n][y][x])), None)
+            if v is None:
+                continue
+            i = v - FEATURE_FIRST
+            sx, sy = (i % cols) * 16, (i // cols) * 16
+            slots[(x, y)] = (sx, sy)
+            region.paste(sheets["spring"].crop((sx, sy, sx + 16, sy + 16)), ((x - x0) * 16, (y - y0) * 16))
+        snow = snowed(region)
+        for (x, y), (sx, sy) in slots.items():
+            t = snow.crop(((x - x0) * 16, (y - y0) * 16, (x - x0) * 16 + 16, (y - y0) * 16 + 16))
+            sheets["winter"].paste(t, (sx, sy))
+        print("winter art kept for", name, len(slots), "tiles")
+    sheets["winter"].save(os.path.join(assets, "winter_GildedValeBuildings.png"))
+    # the mirrored columns, in every season's sheet
+    for season in ("spring", "summer", "fall", "winter"):
+        sp = os.path.join(assets, season + "_GildedValeBuildings.png")
+        sheet = Image.open(sp).convert("RGBA")
+        n = 0
+        for name, cols_ in MIRROR.items():
+            for (x0, y0, x1, y1), dx in cols_:
+                for x, y in tiles([(x0, y0, x1, y1)]):
+                    src = next((int(g[k][y][x]) for k in ("Buildings", "Back2") if own(g[k][y][x])), None)
+                    dst = next((int(g[k][y][dx + x - x0]) for k in ("Buildings", "Back2") if own(g[k][y][dx + x - x0])), None)
+                    if src is None or dst is None:
+                        print("no tile to mirror", name, x, y)
+                        continue
+                    s_, d_ = src - FEATURE_FIRST, dst - FEATURE_FIRST
+                    t = sheet.crop(((s_ % cols) * 16, (s_ // cols) * 16, (s_ % cols) * 16 + 16, (s_ // cols) * 16 + 16))
+                    sheet.paste(t.transpose(Image.FLIP_LEFT_RIGHT), ((d_ % cols) * 16, (d_ // cols) * 16))
+                    n += 1
+        sheet.save(sp)
+        print("mirrored", n, "tiles in", season)
+
+
+if __name__ == "__main__":
+    _patch(sys.argv[1])

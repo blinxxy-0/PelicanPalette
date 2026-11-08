@@ -29,13 +29,17 @@ internal static class ValeGrounds
         helper.Events.GameLoop.DayStarted += (_, _) => Sweep(monitor, LogLevel.Trace);
         DevTools.AddCommand(helper, "museart_vale_clear",
             "Clears trees, bushes and debris off the Gilded Vale's buildings and door approaches (it also runs every morning). "
-            + "'museart_vale_clear plant x,y x,y ...' plants grown oaks first (to rebuild an old save's trees); 'museart_vale_clear test' checks the sweep.",
+            + "'museart_vale_clear plant x,y x,y ...' plants grown oaks first (to rebuild an old save's trees); 'museart_vale_clear test' checks the sweep; 'museart_vale_clear pos px py' puts the farmer at a pixel spot.",
             (_, args) =>
             {
                 if (args.FirstOrDefault() == "plant")
                     Plant(args.Skip(1));
                 else if (args.FirstOrDefault() == "test")
                     Test(monitor);
+                else if (args.FirstOrDefault() == "pos" && args.Length == 3)
+                    // the farmer at an exact pixel spot, as mid-step (to look at depth: a
+                    // head through a roof only shows between tiles)
+                    Game1.player.Position = new Vector2(float.Parse(args[1]), float.Parse(args[2]));
                 else
                     Sweep(monitor, LogLevel.Info);
             });
