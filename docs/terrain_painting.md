@@ -183,3 +183,11 @@ tools/art/vale_road.py draws the road and its turning circle from the Bus Stop's
 - **Routes.** tools/vale_routes.py runs a path search from the bus to 26 key places. Run it after every build; "0 blocked" is the bar.
 - **Lupini's painting spots.** They are placed by `reachable_spot()`: on open grass, with ground in front to stand on (paving allowed), clear of every piece, feature and the `RESERVED` yards in vale_decor.py.
 - **Props copied from vanilla take every layer**, Back included. The fountain's basin floor is on Back; without it, the paving showed through in winter.
+
+## Keeping buildings clear (2026-11-08)
+
+The user found the east Old Studio walled in by trees, some growing inside it. Two causes, two fixes:
+
+- **The map.** The woods-round-the-edge rule and the decor pass checked only the tile a tree went on, never how near a building it was. An oak's canopy is 3 tiles wide and 6 tall over its trunk. `tools/vale_yards.py` now runs at the end of build_vale.py. No trees go on a building, within 2 tiles of its sides, or in the 5 rows in front of it (a tile wider each side). The footprint and the 3 rows in front (the door's approach) get no bushes or long grass either. Those tiles also get NoSpawn `All` and `blinxxy.MuseArt_KeepClear` on Back, and the rest of the zone gets NoSpawn `Tree`. Nothing grows out of a wall or fence post.
+- **Saves.** A save keeps every tree it ever planted, even after the map moves. `ArtStudio/Vale/ValeGrounds.cs` sweeps the Vale on load and every morning. It removes trees, bushes, stumps and debris where the map now says nothing may stand, and anything in a wall or in water. Things the player placed stay. `museart_vale_clear` runs it on demand; `museart_vale_clear test` checks it.
+- **The build doesn't reproduce the committed map exactly** (the river and grass come out a little different). To change only the zones, patch the committed map in place: `python tools/vale_yards.py "[CP] Gilded Vale (dev)/assets/GildedVale.tmx"`.
