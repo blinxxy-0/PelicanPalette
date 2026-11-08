@@ -92,7 +92,7 @@
     },
 
     // ---- The counters ----
-    // Bea's tea counter, the row you walk up to (its front, Vale House 19-22, 22; Bea stands behind it at 21 20).
+    // Bea's tea counter, the row you walk up to (its front, Vale House 19-22, 22; Bea stands behind it at 21 21).
     {
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_ValeHouse",

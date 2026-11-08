@@ -27,7 +27,7 @@ internal static class ValeResidents
     // Bea's 10-heart event will give you the artists' room for free (to come): this mail flag.
     public const string ArtistsRoomMail = ModEntry.Id + "_ValeArtistsRoom";
 
-    // Where Bea serves: behind her tea counter (data/bea_schedule.json, 21 20), the row
+    // Where Bea serves: behind her tea counter (data/bea_schedule.json, 21 21), the row
     // between it and the wall, and the kitchen tile she comes in by.
     private static readonly Rectangle BeaArea = new(19, 20, 5, 2);
 

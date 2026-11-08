@@ -57,7 +57,7 @@ PIECES = {
     # stands a row out from the wall so Bea serves from behind it, coming in from the
     # kitchen (the user, 2026-11-08: she stood beside it in the kitchen, with no way behind)
     "guestbook_case": ((11, 18), 1),
-    "china_dresser": ((17, 18), 1), "teapot_shelf": ((19, 17), 0), "tea_counter": ((19, 20), 2),
+    "china_dresser": ((17, 18), 1), "teapot_shelf": ((19, 17), 0), "tea_counter": ((19, 20), 1),
     # the tea tables, every one on a rug (the user: "some on carpet and some not doesn't make sense")
     "tea_table": ((11, 22), 1), "tea_table#2": ((11, 25), 1), "tea_table#3": ((18, 24), 1), "tea_table#4": ((18, 27), 1),
     # the hall: the inn's piano
@@ -288,6 +288,11 @@ def main():
                     g["Buildings"][y][x] = gid
                 else:
                     g["Front2" if g["Front"][y][x] else "Front"][y][x] = gid
+    # Bea stands in the counter's top row, behind its front, the top drawn over her (the user,
+    # 2026-11-08: a row further back she stood a whole tile behind it). Its left end stays
+    # solid, so the way behind it is the kitchen's, not the tea room's.
+    cx, cy = PIECES["tea_counter"][0]
+    g["Buildings"][cy + 1][cx], g["Front"][cy + 1][cx] = g["Front"][cy + 1][cx], 0
     # the game's own furniture
     walls = {y for r in ROOMS.values() for y in range(r["t"] + 1, r["t"] + 4)}
     for name, px, py in FURNISH:
