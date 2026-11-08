@@ -45,3 +45,29 @@ Previews: `tobin_walk_vs_clint_x4.png`, `tobin_walk_preview.gif`, `tobin_faces_x
 
     python tools/art/walk_readback.py art/vale_residents_sprites/tobin_edit_b.png tobin_rb.png
     python tools/art/tobin_walk_fix.py tobin_rb.png "[CP] Gilded Vale (dev)/assets/tobin/sprites.png"
+
+## Lupini (approved by the user, 2026-11-08)
+
+Built round his own sprite, the painter on the Night Market boat (the user: "it didn't use
+lupini's existing front sprite at all").
+
+1. `ref_lupini_ingame_x16.png`: his sprite from `night_market_tilesheet_objects`, at x16.
+   `ref_walk_harvey_x12.png`: Harvey's walk sheet at 12x (tall, glasses, moustache).
+2. `lupini_edit_b.png`: Higgsfield's edit of Harvey's sheet into Lupini, his sprite as the
+   reference (the other edit came out on a dark background the read-back can't clear).
+3. `lupini_walk_readback.png`: `tools/art/walk_readback.py`.
+4. `lupini_walk_sheet.png`: `tools/art/lupini_walk_build.py`:
+   - front: his sprite's own head and body, exactly; the edit's walking legs below (on the
+     boat his legs are one block behind the rail);
+   - facing left: the edit's body in his sprite's colours, with a head drawn from his
+     sprite (the edit's had a lump on the forehead and a nose that moved every frame);
+     plum hair receding only a little, glasses, a nose, his beard; his bow tie added;
+   - facing right: facing left mirrored, as the game's own sheets are;
+   - from behind: hair all over, a rose shine on the crown (the edit made him balder).
+
+   That's `[CP] Gilded Vale (dev)/assets/lupini/sprites.png`.
+
+Previews: `lupini_walk_vs_ingame_x5.png`, `lupini_walk_preview.gif`.
+
+    python tools/art/walk_readback.py art/vale_residents_sprites/lupini_edit_b.png lupini_rb.png
+    python tools/art/lupini_walk_build.py art/vale_residents_sprites/ref_lupini_ingame_x16.png lupini_rb.png "[CP] Gilded Vale (dev)/assets/lupini/sprites.png"
