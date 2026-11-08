@@ -1,0 +1,71 @@
+// Bea Thistle (1.4): the Vale House's innkeeper. She/her; a friend to ten
+// hearts, not marriageable. She runs the inn and tea room her great-aunt left her,
+// and lives in the rooms upstairs. See docs/bea_brief.md.
+//
+// SWITCHED OFF until the art exists: every patch here has the same When, so
+// BeaThistle only exists once the dev pack's config has ValeResidents: true AND both
+// assets/bea/sprites.png (Characters/BeaThistle) and assets/bea/portraits.png
+// (Portraits/BeaThistle) are in this pack. See data/residents.json.
+{
+  "Changes": [
+    // ---- Who she is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"},
+      "Entries": {
+        "BeaThistle": {
+          "DisplayName": "{{i18n:bea.name}}",
+          "Gender": "Female",
+          "Age": "Adult",
+          "Manner": "Neutral",
+          "SocialAnxiety": "Outgoing",
+          "Optimism": "Positive",
+          "BirthSeason": "Spring",
+          "BirthDay": 22,
+          // From the Vale, not the town: no introductions quest, and not on the
+          // calendar or social page until you've met them.
+          "HomeRegion": "Other",
+          "CanBeRomanced": false,
+          // Not in the world until the Vale's route is open (the letter that opens it,
+          // ArtStudio/Vale/ValeBus.cs OpenMail). In a dev save without that letter, add
+          // the mail flag blinxxy.MuseArt_ValeOpen to see them.
+          "UnlockConditions": "PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // Not at Pelican Town's festivals yet (no festival places, no dance frames),
+          // not drawn as anyone's Winter Star secret friend while away from town, and
+          // no Ginger Island trips (no beach outfit, and the island visit starts in town).
+          "FlowerDanceCanDance": false,
+          "WinterStarParticipant": "FALSE",
+          "CanVisitIsland": "FALSE",
+          "Home": [
+            // The Vale House, by her bed upstairs.
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeHouse", "Tile": { "X": 26, "Y": 6 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/BeaThistle", "FromFile": "assets/bea/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"} },
+    { "Action": "Load", "Target": "Portraits/BeaThistle", "FromFile": "assets/bea/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"} },
+
+    // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
+    // Loves: a good tea (Green Tea, the Tea Set), Pink Cake. Likes: fruit, flowers,
+    // honey, eggs and milk ('for the kitchen'), and anything cooked. Dislikes what
+    // makes more work: clay, sap, trash. Hates slime and algae (the plumbing).
+    // Paintings: the mod's rule, by quality. Bea isn't an art lover (1.4 plan, section 9).
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"},
+      "Entries": { "BeaThistle": "{{i18n:bea.gift.love}}/614 341 221/{{i18n:bea.gift.like}}/-79 -80 340 -5 -6 -7/{{i18n:bea.gift.dislike}}/330 92 168 169 170 171 172/{{i18n:bea.gift.hate}}/766 153/{{i18n:bea.gift.neutral}}/" }
+    },
+
+    // ---- A day in her life (data/bea_schedule.json) ----
+    { "Action": "Load", "Target": "Characters/schedules/BeaThistle", "FromFile": "data/bea_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"} },
+
+    // ---- What she says ----
+    { "Action": "Include", "FromFile": "data/bea_dialogue.json" }
+  ]
+}

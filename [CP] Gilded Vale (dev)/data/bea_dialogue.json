@@ -1,0 +1,85 @@
+// BeaThistle's dialogue (1.4). Keys follow vanilla's, as Sable's do: day names, with
+// heart levels and seasons; first days and the birthday; gift reactions.
+// Portraits (when the sheet exists): $0 neutral, $h happy, $s sad, $u her dry half-smile, $l touched, $a cross.
+// Voice: brisk and dry, a joke at the end of every complaint; warm under it.
+// Heart events come later (docs/bea_brief.md). Hooks already in her lines:
+//   2 hearts, the tea room (a coach party cancels): her Tue4/Mon4 lines on how she came here.
+//   4 hearts, the attic and the guest books: Thu4 ('an attic I haven't opened').
+//   6 hearts, the buyer from the city: Thu6 (the inn costs more than it makes).
+//   8 hearts, she cooks for herself: Mon8 ('what she'd like for dinner').
+//   10 hearts, the artists' room: her room door's lock (build_vale_house.py) and Fri4's room for the night.
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Characters/Dialogue/BeaThistle", "FromFile": "data/blank.json", "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/BeaThistle",
+      "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"},
+      "Entries": {
+        "Introduction": "{{i18n:bea.dialogue.Introduction}}",
+
+        // ---- Every week ----
+        "Mon": "{{i18n:bea.dialogue.Mon}}",
+        "Tue": "{{i18n:bea.dialogue.Tue}}",
+        "Wed": "{{i18n:bea.dialogue.Wed}}",
+        "Thu": "{{i18n:bea.dialogue.Thu}}",
+        "Fri": "{{i18n:bea.dialogue.Fri}}",
+        "Sat": "{{i18n:bea.dialogue.Sat}}",
+        "Sun": "{{i18n:bea.dialogue.Sun}}",
+
+        // ---- As you get closer (Mon4 = from 4 hearts; the highest one you've reached wins) ----
+        "Mon2": "{{i18n:bea.dialogue.Mon2}}",
+        "Wed2": "{{i18n:bea.dialogue.Wed2}}",
+        "Fri2": "{{i18n:bea.dialogue.Fri2}}",
+        "Mon4": "{{i18n:bea.dialogue.Mon4}}",
+        "Tue4": "{{i18n:bea.dialogue.Tue4}}",
+        "Wed4": "{{i18n:bea.dialogue.Wed4}}",
+        "Thu4": "{{i18n:bea.dialogue.Thu4}}",
+        "Fri4": "{{i18n:bea.dialogue.Fri4}}",
+        "Sat4": "{{i18n:bea.dialogue.Sat4}}",
+        "Sun4": "{{i18n:bea.dialogue.Sun4}}",
+        "Tue6": "{{i18n:bea.dialogue.Tue6}}",
+        "Thu6": "{{i18n:bea.dialogue.Thu6}}",
+        "Sat6": "{{i18n:bea.dialogue.Sat6}}",
+        "Mon8": "{{i18n:bea.dialogue.Mon8}}",
+        "Tue8": "{{i18n:bea.dialogue.Tue8}}",
+        "Wed8": "{{i18n:bea.dialogue.Wed8}}",
+        "Thu8": "{{i18n:bea.dialogue.Thu8}}",
+        "Fri8": "{{i18n:bea.dialogue.Fri8}}",
+        "Sat8": "{{i18n:bea.dialogue.Sat8}}",
+        "Sun8": "{{i18n:bea.dialogue.Sun8}}",
+
+        // ---- The seasons ----
+        "spring_Tue": "{{i18n:bea.dialogue.spring_Tue}}",
+        "spring_Sat": "{{i18n:bea.dialogue.spring_Sat}}",
+        "summer_Wed": "{{i18n:bea.dialogue.summer_Wed}}",
+        "summer_Sun": "{{i18n:bea.dialogue.summer_Sun}}",
+        "fall_Thu": "{{i18n:bea.dialogue.fall_Thu}}",
+        "fall_Sat": "{{i18n:bea.dialogue.fall_Sat}}",
+        "winter_Mon": "{{i18n:bea.dialogue.winter_Mon}}",
+        "winter_Fri": "{{i18n:bea.dialogue.winter_Fri}}",
+
+        // ---- The rest of the year (first days, and their birthday) ----
+        "spring_1": "{{i18n:bea.dialogue.spring_1}}",
+        "summer_1": "{{i18n:bea.dialogue.summer_1}}",
+        "fall_1": "{{i18n:bea.dialogue.fall_1}}",
+        "winter_1": "{{i18n:bea.dialogue.winter_1}}",
+        "spring_22": "{{i18n:bea.dialogue.spring_22}}",
+
+        // ---- Gifts (the rest are the gift table's lines) ----
+        "AcceptGift_(O)614": "{{i18n:bea.dialogue.AcceptGift_614}}",
+        "AcceptGift_(O)221": "{{i18n:bea.dialogue.AcceptGift_221}}",
+        "AcceptGift_(O)341": "{{i18n:bea.dialogue.AcceptGift_341}}",
+        "AcceptBirthdayGift_Positive": "{{i18n:bea.dialogue.AcceptBirthdayGift_Positive}}",
+        "AcceptBirthdayGift_Negative": "{{i18n:bea.dialogue.AcceptBirthdayGift_Negative}}"
+      }
+    },
+    // Rainy days (the game's own file for every villager).
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"},
+      "Entries": { "BeaThistle": "{{i18n:bea.dialogue.rainy}}" }
+    }
+  ]
+}

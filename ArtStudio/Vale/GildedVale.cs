@@ -15,6 +15,7 @@ internal static class GildedVale
     public static void Register(IModHelper helper, Harmony harmony, IMonitor monitor)
     {
         ValeBus.Register(helper, harmony, monitor);
+        ValeResidents.Register(helper, harmony);
 
         // Lupini's painting spots: sit at one and paint the view in front of it,
         // as at an easel you set down yourself (the user, 2026-11-07: "can we

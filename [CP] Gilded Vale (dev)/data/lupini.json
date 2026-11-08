@@ -1,0 +1,74 @@
+// Lupini (1.4): the Night Market's painter, at home in the Gilded Vale. He/him; a
+// friend to ten hearts, not marriageable. His atelier is on the bluff over the
+// lake. The Night Market boat stays exactly as the game has it (Winter 15 to 17).
+// See docs/lupini_brief.md.
+//
+// SWITCHED OFF until the art exists: every patch here has the same When, so
+// Lupini only exists once the dev pack's config has ValeResidents: true AND both
+// assets/lupini/sprites.png (Characters/Lupini) and assets/lupini/portraits.png
+// (Portraits/Lupini) are in this pack. See data/residents.json.
+{
+  "Changes": [
+    // ---- Who he is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"},
+      "Entries": {
+        "Lupini": {
+          "DisplayName": "{{i18n:lupini.name}}",
+          "Gender": "Male",
+          "Age": "Adult",
+          "Manner": "Polite",
+          "SocialAnxiety": "Outgoing",
+          "Optimism": "Neutral",
+          "BirthSeason": "Winter",
+          "BirthDay": 18,
+          // From the Vale, not the town: no introductions quest, and not on the
+          // calendar or social page until you've met them.
+          "HomeRegion": "Other",
+          "CanBeRomanced": false,
+          // Not in the world until the Vale's route is open (the letter that opens it,
+          // ArtStudio/Vale/ValeBus.cs OpenMail). In a dev save without that letter, add
+          // the mail flag blinxxy.MuseArt_ValeOpen to see them.
+          "UnlockConditions": "PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // Not at Pelican Town's festivals yet (no festival places, no dance frames),
+          // not drawn as anyone's Winter Star secret friend while away from town, and
+          // no Ginger Island trips (no beach outfit, and the island visit starts in town).
+          "FlowerDanceCanDance": false,
+          "WinterStarParticipant": "FALSE",
+          "CanVisitIsland": "FALSE",
+          "Home": [
+            // His atelier, by his bed in the studio's corner.
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeAtelier", "Tile": { "X": 18, "Y": 6 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/Lupini", "FromFile": "assets/lupini/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"} },
+    { "Action": "Load", "Target": "Portraits/Lupini", "FromFile": "assets/lupini/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"} },
+
+    // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
+    // Loves: fine wine, coffee, the Vale's wildflowers (Sweet Pea, Crocus, Summer
+    // Spangle). Likes: fruit, quartz and crystals ('for the light in them'), flowers.
+    // Dislikes: Joja Cola ('it tastes of a meeting'), clay (Tobin's given him enough),
+    // trash. Hates slime and algae.
+    // Paintings: the mod's rule; an art lover (data/residents.json), and a portrait of
+    // himself is loved, as for anyone.
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"},
+      "Entries": { "Lupini": "{{i18n:lupini.gift.love}}/348 395 402 418 593/{{i18n:lupini.gift.like}}/-79 80 82 84 86 338 -80/{{i18n:lupini.gift.dislike}}/167 330 168/{{i18n:lupini.gift.hate}}/766 153/{{i18n:lupini.gift.neutral}}/" }
+    },
+
+    // ---- A day in his life (data/lupini_schedule.json) ----
+    { "Action": "Load", "Target": "Characters/schedules/Lupini", "FromFile": "data/lupini_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"} },
+
+    // ---- What he says ----
+    { "Action": "Include", "FromFile": "data/lupini_dialogue.json" }
+  ]
+}

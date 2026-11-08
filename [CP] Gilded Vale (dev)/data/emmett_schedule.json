@@ -1,0 +1,22 @@
+// EmmettWren's days. A time is when they set off; every tile was checked walkable and
+// reachable from the door or the bus (the Vale map and the interiors as built
+// 2026-11-07). No animations yet: the sprite sheet doesn't exist, so the work
+// poses (playing the fiddle) go in Data/AnimationDescriptions once it does.
+{
+  // Mornings: practising on the amphitheatre's stage. Afternoons: out with his
+  // notebook, somewhere different each day. Evenings: the Vale House fire, playing
+  // to the room; home at half past eleven.
+  "Mon": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 20 66 2/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  "Tue": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 47 60 2/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  "Wed": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 17 44 2/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  "Thu": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 47 60 2/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  // Friday: the stage all day, and the fire early (some Fridays, after his
+  // 4-heart event, the Saloon in Pelican Town: data/vale_town_trips.json).
+  "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1700 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  // Saturday: the whole Vale end to end, to the overlook bench.
+  "Sat": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 86 27 2/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  // Sunday: slow tunes on the stage, the fire early.
+  "Sun": "1000 blinxxy.MuseArt_GildedVale 37 56 2/1700 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  // Rain: his cottage, writing at his desk under the maps; the fire late.
+  "rain": "900 blinxxy.MuseArt_ValeEmmett 8 14 0/1900 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2"
+}

@@ -1,5 +1,18 @@
 {
   "Format": "2.9.0",
+  // The residents' switches (data/residents.json). Both off: none of the five has art yet.
+  "ConfigSchema": {
+    "ValeResidents": {
+      "AllowValues": "true, false",
+      "Default": "false",
+      "Description": "The Vale's five residents. Each one also needs their art in this pack (assets/<name>/sprites.png and portraits.png) before they appear."
+    },
+    "ValeResidentsTownTrips": {
+      "AllowValues": "true, false",
+      "Default": "false",
+      "Description": "The residents' days in Pelican Town, by bus (data/vale_town_trips.json). Reload the save after changing it."
+    }
+  },
   "Changes": [
     // The Gilded Vale (1.4), in development: the map built by tools/build_vale.py
     // (painted terrain, the five buildings, PixelLab stairs; other buildings still
@@ -137,6 +150,9 @@
         "blinxxy.MuseArt_ValeWallpapers": { "Id": "blinxxy.MuseArt_ValeWallpapers", "Texture": "Mods/blinxxy.MuseArt/ValeWallpapers", "IsFlooring": false, "Count": 1 }
       }
     },
+    // The five residents (1.4): data, gifts, schedules and dialogue, switched off until
+    // their art exists (data/residents.json says what turns each one on).
+    { "Action": "Include", "FromFile": "data/residents.json" },
     // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
     // its stops (ArtStudio/Vale/ValeBus.cs is the bus without it). Open once the route's
     // letter has come and the bus is mended, as for the Desert.

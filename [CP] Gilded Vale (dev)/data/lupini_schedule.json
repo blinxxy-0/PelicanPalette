@@ -1,0 +1,34 @@
+// Lupini's days. A time is when they set off; every tile was checked walkable and
+// reachable from the door or the bus (the Vale map and the interiors as built
+// 2026-11-07). No animations yet: the sprite sheet doesn't exist, so the work
+// poses (painting from behind) go in Data/AnimationDescriptions once it does.
+{
+  // Fine days: painting outdoors at one of the Vale's painting spots (the stools
+  // and rocks with blinxxy.MuseArt_PaintSpot), a different one each day, standing
+  // beside the spot so you can still sit and paint there; back at his easel at 4;
+  // the Vale House in the evening (at the table across from Tobin); bed at 11.
+  // Monday: the clearing in the western woods.
+  "Mon": "900 blinxxy.MuseArt_GildedVale 10 16 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Tuesday: the high street, looking down over the Vale.
+  "Tue": "900 blinxxy.MuseArt_GildedVale 44 5 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Wednesday: the spot by his own atelier.
+  "Wed": "900 blinxxy.MuseArt_GildedVale 80 17 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Thursday: the wildflower meadow.
+  "Thu": "900 blinxxy.MuseArt_GildedVale 30 65 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Friday: the lake.
+  "Fri": "900 blinxxy.MuseArt_GildedVale 88 59 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Saturday: his overgrown garden, under the ivy Fern lets grow (some Saturdays,
+  // spring to fall, he paints in town instead: data/vale_town_trips.json).
+  "Sat": "900 blinxxy.MuseArt_GildedVale 86 18 3/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Sunday: at the easel, not painting; the overlook bench in the afternoon.
+  "Sun": "900 blinxxy.MuseArt_ValeAtelier 10 7 0/1400 blinxxy.MuseArt_GildedVale 86 27 2/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Rain: at the easel all day, not painting.
+  "rain": "900 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // The Night Market (Winter 15 to 17): home in the morning, then off to his boat
+  // (the game draws the boat and the figure on it). He goes to bed at 3 so he's out
+  // of sight in the Vale all evening. Hiding him like Sable at their stall
+  // (NightMarketStall.cs) can come with his events if this looks wrong.
+  "winter_15": "900 blinxxy.MuseArt_ValeAtelier 10 7 0/1500 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  "winter_16": "900 blinxxy.MuseArt_ValeAtelier 10 7 0/1500 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  "winter_17": "900 blinxxy.MuseArt_ValeAtelier 10 7 0/1500 blinxxy.MuseArt_ValeAtelier 18 6 2"
+}

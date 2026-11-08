@@ -1,0 +1,74 @@
+// Fern Aster (1.4): the Vale's gardener. She/her; marriageable by any farmer, one
+// of 1.4's two romances. Her cottage and glass seedhouse are by the sculpture
+// garden. See docs/fern_brief.md.
+//
+// SWITCHED OFF until the art exists: every patch here has the same When, so
+// FernAster only exists once the dev pack's config has ValeResidents: true AND both
+// assets/fern/sprites.png (Characters/FernAster) and assets/fern/portraits.png
+// (Portraits/FernAster) are in this pack. See data/residents.json.
+{
+  "Changes": [
+    // ---- Who she is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"},
+      "Entries": {
+        "FernAster": {
+          "DisplayName": "{{i18n:fern.name}}",
+          "Gender": "Female",
+          "Age": "Adult",
+          "Manner": "Neutral",
+          "SocialAnxiety": "Neutral",
+          "Optimism": "Positive",
+          "BirthSeason": "Summer",
+          "BirthDay": 6,
+          // From the Vale, not the town: no introductions quest, and not on the
+          // calendar or social page until you've met them.
+          "HomeRegion": "Other",
+          // Datable, as the brief says (see the note on marriage in fern_dialogue.json).
+          "CanBeRomanced": true,
+          // Not in the world until the Vale's route is open (the letter that opens it,
+          // ArtStudio/Vale/ValeBus.cs OpenMail). In a dev save without that letter, add
+          // the mail flag blinxxy.MuseArt_ValeOpen to see them.
+          "UnlockConditions": "PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // Not at Pelican Town's festivals yet (no festival places, no dance frames),
+          // not drawn as anyone's Winter Star secret friend while away from town, and
+          // no Ginger Island trips (no beach outfit, and the island visit starts in town).
+          "FlowerDanceCanDance": false,
+          "WinterStarParticipant": "FALSE",
+          "CanVisitIsland": "FALSE",
+          "Home": [
+            // Her cottage, by her bed in the back bedroom.
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeFern", "Tile": { "X": 6, "Y": 6 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/FernAster", "FromFile": "assets/fern/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"} },
+    { "Action": "Load", "Target": "Portraits/FernAster", "FromFile": "assets/fern/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"} },
+
+    // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
+    // Loves: wildflowers (Sweet Pea, Crocus, Summer Spangle), Ancient Seeds, any rare
+    // seed (Rare Seed), Moss. Likes: flowers, forage, fertiliser ('not romantic, but
+    // useful'), seeds. Dislikes Joja Cola and broken junk. Hates what poisons the
+    // ground: trash, void essence, batteries. (The Bouquet itself she accepts, as
+    // tradition: her AcceptBouquet line.)
+    // Paintings: the mod's rule; an art lover (data/residents.json).
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"},
+      "Entries": { "FernAster": "{{i18n:fern.gift.love}}/402 418 593 499 347 Moss/{{i18n:fern.gift.like}}/-80 -81 -19 -74/{{i18n:fern.gift.dislike}}/167 170 171 172/{{i18n:fern.gift.hate}}/168 769 787/{{i18n:fern.gift.neutral}}/" }
+    },
+
+    // ---- A day in her life (data/fern_schedule.json) ----
+    { "Action": "Load", "Target": "Characters/schedules/FernAster", "FromFile": "data/fern_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/fern/sprites.png": "true", "HasFile:assets/fern/portraits.png": "true"} },
+
+    // ---- What she says ----
+    { "Action": "Include", "FromFile": "data/fern_dialogue.json" }
+  ]
+}
