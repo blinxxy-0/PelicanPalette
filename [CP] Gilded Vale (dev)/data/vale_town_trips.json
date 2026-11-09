@@ -55,7 +55,7 @@
       "Target": "Characters/schedules/BeaThistle",
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true" },
       "Entries": {
-        "Thu": "730 SeedShop 12 20 0/1200 blinxxy.MuseArt_ValeHouse 23 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2"
+        "Thu": "730 SeedShop 12 20 0/1200 blinxxy.MuseArt_ValeHouse 21 21 2/2330 blinxxy.MuseArt_ValeHouse 26 6 2"
       }
     },
     // Fern, Mondays (spring to fall; in winter her winter_Mon keeps her home): Pierre's
