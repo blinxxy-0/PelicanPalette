@@ -889,6 +889,8 @@
   "item.frame.prismatic.description": "Every colour at once. Hung in a room, inspiration comes much sooner.",
   "item.frame.qi": "Qi's Frame",
   "item.frame.qi.description": "Purple and gold, with Qi's diamond. Hung in a room, paintings made there are worth much more.",
+  "item.frame.founders": "Founders' Frame",
+  "item.frame.founders.description": "An old frame from the Vale's first painters, warm as if it had just been carved. Hung in a room, inspiration comes sooner.",
   "frames.rarity.common": "common",
   "frames.rarity.uncommon": "uncommon",
   "frames.rarity.rare": "rare",

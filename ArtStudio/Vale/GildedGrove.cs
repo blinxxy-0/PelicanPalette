@@ -1,7 +1,10 @@
 #if DEBUG
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using ArtStudio.Painting;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -45,9 +48,9 @@ internal static class GildedGrove
     {
         Monitor = monitor;
         GameLocation.RegisterTileAction(FrameAction, (_, _, who, _) => OnFrame(who));
-        // Tasks 8 and 9 fill these in; until then they do nothing.
-        GameLocation.RegisterTileAction(HiddenEaselAction, (_, _, _, _) => false);
-        GameLocation.RegisterTileAction(FoundersEaselAction, (_, _, _, _) => false);
+        GameLocation.RegisterTileAction(HiddenEaselAction, (_, _, who, tile) => OnHiddenEasel(who, tile));
+        GameLocation.RegisterTileAction(FoundersEaselAction, (_, _, who, _) => OnFoundersEasel(who));
+        // Task 9 fills this in; until then it does nothing.
         GameLocation.RegisterTileAction(EchoAction, (_, _, _, _) => false);
         helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
         helper.Events.Display.RenderedWorld += OnRenderedWorld;
@@ -228,6 +231,124 @@ internal static class GildedGrove
         return true;
     }
 
+    // ---- The hidden easel ----
+
+    // Where the two easels stand: their feet, which carry the actions (tools/build_vale_grove.py PIECES).
+    public static readonly Point HiddenEaselTile = new(16, 8);
+    public static readonly Point FoundersEaselTile = new(9, 21);
+
+    // The gold light's bonus: you start one spark of the three (PaintingRules.SparksForInspired) that
+    // make a painting Inspired, so a masterpiece is a little more likely here.
+    public const int HiddenEaselSparks = 1;
+
+    // The hidden easel opens the easel itself, the one found object in the Vale that still does. It
+    // looks out over the panorama, so plein air paints the Vale from above.
+    public static bool OnHiddenEasel(Farmer who, Point tile)
+    {
+        if (!who.IsLocalPlayer || Game1.activeClickableMenu != null)
+            return false;
+        ArtHooks.OpenEasel(who, tile.ToVector2(), startingSparks: HiddenEaselSparks);
+        return true;
+    }
+
+    // ---- The Founders' easel ----
+
+    // Set for a player once they've offered the Founders' easel a masterpiece (each player once).
+    public const string FoundersFlag = ModEntry.Id + "_FoundersOffered";
+    private const string AskLine = "vale.grove.founders.ask";
+
+    // What the easel says to this player holding this item (the line's key): thanks once they've
+    // offered; the bare canvas wanted, for a framed masterpiece; the question, for a masterpiece;
+    // otherwise, that it waits for one.
+    public static string LineFor(Farmer who, Item? item) =>
+        who.mailReceived.Contains(FoundersFlag) ? "vale.grove.founders.thanks"
+        : item != null && ArtItems.IsFramed(item) && PaintingData.IsMasterpiece(item) ? "vale.grove.founders.framed"
+        : item != null && PaintingItems.IsPainting(item) && PaintingData.IsMasterpiece(item) ? AskLine
+        : "vale.grove.founders.not_masterpiece";
+
+    // The offering: a masterpiece from your bag, once. The easel takes it (it's gone, as Old Master
+    // Cannoli's berry is), and you get the Founders' Frame. False, and nothing changes, otherwise.
+    public static bool Offer(Farmer who, Item? item)
+    {
+        if (item == null || LineFor(who, item) != AskLine || !who.Items.Contains(item))
+            return false;
+        if (item.Stack > 1)
+            item.Stack--;
+        else
+            who.removeItemFromInventory(item);
+        who.mailReceived.Add(FoundersFlag);
+        var frame = ItemRegistry.Create("(O)" + ArtItems.MoreFrame("founders").ItemId);
+        if (!who.addItemToInventoryBool(frame))
+            Game1.createItemDebris(frame, who.getStandingPosition(), who.FacingDirection, who.currentLocation);
+        return true;
+    }
+
+    public static bool OnFoundersEasel(Farmer who)
+    {
+        if (!who.IsLocalPlayer)
+            return false;
+        var item = who.CurrentItem;
+        string line = LineFor(who, item);
+        if (line != AskLine)
+        {
+            Game1.drawObjectDialogue(PaintersGuide.Text(line));
+            return true;
+        }
+        who.currentLocation.createQuestionDialogue(PaintersGuide.Text(line), new[]
+        {
+            new Response("Yes", Game1.content.LoadString("Strings\\Lexicon:QuestionDialogue_Yes")),
+            new Response("No", Game1.content.LoadString("Strings\\Lexicon:QuestionDialogue_No")),
+        }, (_, answer) =>
+        {
+            if (answer == "Yes" && Offer(who, item))
+            {
+                who.currentLocation.playSound("newArtifact");
+                Game1.drawObjectDialogue(PaintersGuide.Text("vale.grove.founders.taken"));
+            }
+        });
+        return true;
+    }
+
+    // Afterwards, for that player, the easel holds a finished canvas (any canvas, not theirs). It's
+    // drawn over the empty easel from the Grove's own sheet, so each player (and each split screen)
+    // sees their own: the art sits in the column after the map's pieces, at the pieces' top row
+    // (tools/build_vale_grove.py EXTRAS). Only the canvas is drawn (the top tile and the canvas's
+    // last two rows), so a farmer standing below the easel isn't covered.
+    public static bool ShowsFinishedCanvas(Farmer who) => who.mailReceived.Contains(FoundersFlag);
+
+    private const int FinishedCanvasColumn = 7, PiecesRow = 7;
+    private static readonly Rectangle FinishedCanvasSource = new(FinishedCanvasColumn * 16, PiecesRow * 16, 16, 18);
+
+    private static Texture2D? _sheet;
+    private static string? _sheetSource;
+
+    // The Grove's own sheet, as the map loaded it (null, and said in the log, if it can't be had).
+    public static Texture2D? FinishedCanvasTexture(GameLocation? grove)
+    {
+        var tiles = grove?.Map?.TileSheets.FirstOrDefault(t => t.ImageSource?.Contains("GildedGrove") == true);
+        if (tiles == null)
+            return null;
+        if (_sheetSource != tiles.ImageSource || _sheet?.IsDisposed == true)
+        {
+            _sheetSource = tiles.ImageSource;
+            try { _sheet = Game1.content.Load<Texture2D>(tiles.ImageSource); }
+            catch (Exception ex)
+            {
+                _sheet = null;
+                Monitor?.Log($"The Grove's sheet '{tiles.ImageSource}' couldn't be loaded for the Founders' easel: {ex.Message}", LogLevel.Warn);
+            }
+        }
+        return _sheet;
+    }
+
+    private static void DrawFinishedCanvas(SpriteBatch b)
+    {
+        if (!ShowsFinishedCanvas(Game1.player) || FinishedCanvasTexture(Game1.currentLocation) is not { } sheet)
+            return;
+        var at = Game1.GlobalToLocal(Game1.viewport, new Vector2(FoundersEaselTile.X * 64, (FoundersEaselTile.Y - 1) * 64));
+        b.Draw(sheet, at, FinishedCanvasSource, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+    }
+
     // ---- The light and the motes ----
 
     private sealed class Mote
@@ -313,6 +434,7 @@ internal static class GildedGrove
     {
         if (!ShowingGrove)
             return;
+        DrawFinishedCanvas(e.SpriteBatch);
         var view = Game1.viewport;
         foreach (var m in Motes)
         {
@@ -326,6 +448,10 @@ internal static class GildedGrove
 
     public static int MoteTotal => Motes.Count;
 
-    public static IEnumerable<string> StringKeys => new[] { "vale.grove.frame" };
+    public static IEnumerable<string> StringKeys => new[]
+    {
+        "vale.grove.frame", "vale.grove.founders.ask", "vale.grove.founders.taken", "vale.grove.founders.thanks",
+        "vale.grove.founders.not_masterpiece", "vale.grove.founders.framed",
+    };
 }
 #endif

@@ -50,6 +50,10 @@ internal static class Frames
         ["dwarvish"] = (FrameRarity.Epic, FrameTrait.Thrift),
         ["prismatic"] = (FrameRarity.Legendary, FrameTrait.Sparks),
         ["qi"] = (FrameRarity.Legendary, FrameTrait.Value),
+#if DEBUG
+        // The Gilded Grove's Founders' easel (Debug only for now): the one Epic frame for Sparks.
+        ["founders"] = (FrameRarity.Epic, FrameTrait.Sparks),
+#endif
     };
 
     public static (FrameRarity Rarity, FrameTrait Trait) Of(FrameStyle style) => Styles[style.Id];

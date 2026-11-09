@@ -59,6 +59,12 @@ PIECES = {
     "echo_bram": (25, 20, "blinxxy.MuseArt_Echo bram"),
 }
 PIECE_ORDER = list(PIECES)
+# Art on the sheet that isn't laid on the map (the mod draws it), each 16 x 32, in the columns after
+# the pieces:
+#   founders_canvas: the Founders' easel with a finished canvas on it, drawn over the easel for a
+#   player who has offered it a masterpiece (GildedGrove.FinishedCanvasSource, column 7). Only the
+#   canvas is drawn (rows 0-17), so the rest must match founders_easel.
+EXTRAS = ["founders_canvas"]
 # The pool: corners of its water (grid corners), its top corners cut on 45-degree diagonals
 # (west, east), its south shore flat. (The game's pieces turn a short diagonal into a staircase on
 # the west side; a longer one there joins up.)
@@ -387,6 +393,16 @@ def piece_art(name):
                 if a and not (r > g_ + 20 and r > b + 20 and r < 200):        # keep the wood, drop the canvas
                     px[x, y] = (0, 0, 0, 0)
         im = ImageEnhance.Color(im).enhance(0.45)
+    elif name == "founders_canvas":
+        # the same easel, holding a finished canvas: a little golden landscape (any painting, not yours)
+        im = piece_art("founders_easel")
+        d = ImageDraw.Draw(im)
+        d.rectangle([2, 4, 13, 16], fill=(246, 214, 140, 255))          # gold sky
+        d.ellipse([9, 5, 12, 8], fill=(255, 244, 196, 255))             # low sun
+        d.polygon([(2, 12), (6, 9), (10, 11), (13, 9), (13, 16), (2, 16)], fill=(204, 120, 48, 255))   # fall hills
+        d.rectangle([5, 13, 10, 14], fill=(110, 150, 170, 255))         # the pool
+        d.line([(4, 8), (4, 12)], fill=(92, 52, 30, 255))               # a tree
+        d.ellipse([2, 6, 6, 9], fill=(176, 72, 34, 255))
     else:
         # an echo: loose pale linework of a figure at work (Task 9 draws the real ones)
         tint = {"echo_agnes": (240, 200, 120), "echo_hollis": (200, 160, 110), "echo_mabel": (150, 200, 230), "echo_bram": (190, 170, 150)}[name]
@@ -404,7 +420,7 @@ def build_sheet(exports):
     pan = panorama_art(exports)
     sheet = Image.new("RGBA", (SHEET_COLS * 16, (PANORAMA[3] + 2) * 16))
     sheet.paste(pan, (0, 0))
-    for i, name in enumerate(PIECE_ORDER):
+    for i, name in enumerate(PIECE_ORDER + EXTRAS):
         sheet.paste(piece_art(name), (i * 16, PANORAMA[3] * 16))
     sheet.save(os.path.join(ASSETS, SHEET))
     return sheet

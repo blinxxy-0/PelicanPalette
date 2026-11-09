@@ -54,7 +54,7 @@ From the title screen:
 The tests are the `Check(...)` calls in `ArtStudio/DevGame.cs` (and `DevMultiplayer.cs`), grouped into `museart_*test` console commands. They run in a real copy of the game. The scripts below launch it on a separate Mods folder, start a throwaway farm, and type each command into the mod's `dev_commands.txt` inbox, waiting a set number of seconds after each one. Then they pull the `[PASS]` and `[FAIL]` lines out of the SMAPI log. The waits are tuned to one PC, so a slower machine may need longer ones.
 
 - `run_dev.ps1 -Steps "command|seconds", ... [-ModsDir devmods] [-Pattern regex]` rebuilds the mod into that Mods folder, restarts the dev copy, and runs the steps. Separate several commands within one step with `;`.
-- `run_mp.ps1 -Steps "H:command|s", "C:command|s"` runs a host and a farmhand, on `devmods` and `devmods_mp`.
+- `run_mp.ps1 -Steps "H:command|s", "C:command|s"` runs a host and a farmhand, on `devmods` and `devmods_mp`, or on the folders named by `-HostMods` and `-GuestMods` (a copy of `devmods_mp` for the farmhand).
 - `suite_main.ps1` runs most of the suite on one farm. `suite_extra.ps1` runs the tests that need a fresh game each: married, CJB Cheats, each festival, and co-op. `suite_all.ps1` runs both. Results go to `suite_main_out.txt` and `suite_extra_out.txt` in the dev root.
 
 The dev root is `.devgame/` in the repository, which git ignores; set `PELICAN_DEV_ROOT` to use another folder. It holds one Mods folder per setup. The mod itself is built into each folder; the other mods aren't in the repository, so download them into these folders:

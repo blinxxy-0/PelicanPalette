@@ -175,7 +175,12 @@
         "quest.painters_guide.description": "{{i18n:quest.painters_guide.description}}",
         "quest.painters_guide.objective": "{{i18n:quest.painters_guide.objective|found=[found]}}",
         "vale.guide.item.description": "{{i18n:vale.guide.item.description}}",
-        "vale.grove.frame": "{{i18n:vale.grove.frame}}"
+        "vale.grove.frame": "{{i18n:vale.grove.frame}}",
+        "vale.grove.founders.ask": "{{i18n:vale.grove.founders.ask}}",
+        "vale.grove.founders.taken": "{{i18n:vale.grove.founders.taken}}",
+        "vale.grove.founders.thanks": "{{i18n:vale.grove.founders.thanks}}",
+        "vale.grove.founders.not_masterpiece": "{{i18n:vale.grove.founders.not_masterpiece}}",
+        "vale.grove.founders.framed": "{{i18n:vale.grove.founders.framed}}"
       }
     }
   ]

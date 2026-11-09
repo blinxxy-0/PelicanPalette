@@ -518,5 +518,10 @@
   "quest.painters_guide.description": "An old guide from the Vale House names eight places where the Vale's painters liked to sit. Find each one, and see what they saw.",
   "quest.painters_guide.objective": "{{found}} of 8 spots found",
   "vale.guide.item.description": "A thin book spotted with old paint. Right-click to turn its pages, or touch a worn stool with it.",
-  "vale.grove.frame": "A painted frame at the Grove's edge. Through it, faint as a sketch, a low stone wall and a gate. Step back into the Vale?"
+  "vale.grove.frame": "A painted frame at the Grove's edge. Through it, faint as a sketch, a low stone wall and a gate. Step back into the Vale?",
+  "vale.grove.founders.ask": "An old, empty easel, worn smooth by hands long gone. It seems to be waiting for your very best work. Leave your masterpiece on it? You won't get it back.",
+  "vale.grove.founders.taken": "The easel takes your painting gently, the way a friend takes your coat. Its colours sink into the Grove's gold. In your hands is an old frame, warm, as if it had just been carved.",
+  "vale.grove.founders.thanks": "The old easel holds a finished canvas now, glowing in the Grove's light. It isn't waiting any more. Somehow, that feels like thanks.",
+  "vale.grove.founders.not_masterpiece": "The easel waits. It wants a masterpiece, and nothing less.",
+  "vale.grove.founders.framed": "The easel won't take a painting in a frame. It wants the bare canvas. A Framer's Bench can take it out."
 }

@@ -158,6 +158,7 @@ internal sealed partial class EaselMenu
                 : PaintingRules.LightSeconds(_reference!, _level, LightMultiplier, !_rules.PauseLightWhileMixing))
             : float.PositiveInfinity;
         _nextSpark = 5f + (float)_random.NextDouble() * 4f;
+        _sparksCaught = _startingSparks;
         _stage = EaselStage.Painting;
         LayoutPainting();
         ExplainTechniques();

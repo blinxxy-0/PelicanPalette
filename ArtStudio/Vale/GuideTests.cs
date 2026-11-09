@@ -26,8 +26,11 @@ internal static class GuideTests
     {
         _helper = helper;
         DevTools.AddCommand(helper, "museart_guidetest",
-            "Checks the painters' guide's rules (no guide no find, a first find, a repeat, the eighth completes, an unknown id is refused), then the Gilded Grove: its season, the warp in and the frame home.",
+            "Checks the painters' guide's rules (no guide no find, a first find, a repeat, the eighth completes, an unknown id is refused), then the Gilded Grove: its season, its easels, the warp in and the frame home.",
             (_, _) => Run(monitor));
+        DevTools.AddCommand(helper, "museart_foundertest",
+            "Co-op checks for the Founders' easel. 'offer': this player offers a test masterpiece for real and keeps the frame and the flag. 'check': every player online has offered and holds their own Founders' Frame.",
+            (_, args) => FoundersCoop(monitor, args.FirstOrDefault() ?? ""));
     }
 
     private static void Check(IMonitor monitor, string what, bool ok, string detail = "") =>
@@ -216,6 +219,9 @@ internal static class GuideTests
                     $"water {water?.ToString() ?? "none found"} landable {wet}, walled-in {shut?.ToString() ?? "none found"} landable {walled}");
             }
 
+            if (grove != null)
+                FoundersChecks(monitor, who, grove);
+
             var bad = PaintersGuide.StringKeys.Where(k => { string t = PaintersGuide.Text(k); return t.Length == 0 || t == k; }).ToList();
             Check(monitor, "guide: every guide string resolves", bad.Count == 0,
                 bad.Count == 0 ? $"{PaintersGuide.StringKeys.Count()} strings" : "missing: " + string.Join(", ", bad));
@@ -234,6 +240,149 @@ internal static class GuideTests
         }
         if (Game1.getLocationFromName(GildedGrove.Location) != null)
             GroveWarps(monitor);
+    }
+
+    // ---- The Grove's two easels ----
+
+    // A painting made straight from its data (no easel session, so no XP or records change).
+    private static SObject TestPainting(bool masterpiece)
+    {
+        int n = Core.PaintingRules.CanvasSize(Core.CanvasKind.Small);
+        return PaintingItems.Create(new PaintingData
+        {
+            Size = n,
+            Cells = new byte[n, n],
+            Purity = new Core.Purity[n, n],
+            Subject = "(O)254",
+            Stars = 5f,
+            Painter = "Test",
+            Masterpiece = masterpiece,
+        }, Core.PaintingRules.Iridium, 1000);
+    }
+
+    private static FrameStyle? FoundersStyle => ArtItems.MoreFrames.FirstOrDefault(s => s.Id == "founders");
+
+    private static int FoundersFrames(Farmer who) =>
+        FoundersStyle is { } style ? who.Items.CountId("(O)" + style.ItemId) : 0;
+
+    // The Founders' easel's rules and the hidden easel's head start. The bag is emptied for the checks
+    // and put back after, slot for slot, with the flag, the menu and the player's place.
+    private static void FoundersChecks(IMonitor monitor, Farmer who, GameLocation grove)
+    {
+        var bag = who.Items.ToList();
+        bool hadFlag = who.mailReceived.Contains(GildedGrove.FoundersFlag);
+        var menuBefore = Game1.activeClickableMenu;
+        var placeBefore = who.currentLocation;
+        bool Flag() => who.mailReceived.Contains(GildedGrove.FoundersFlag);
+        bool Holds(Item item) => who.Items.Contains(item);
+        try
+        {
+            for (int i = 0; i < who.Items.Count; i++)
+                who.Items[i] = null;
+            who.mailReceived.Remove(GildedGrove.FoundersFlag);
+
+            var style = FoundersStyle;
+            var entry = style != null && Frames.Styles.TryGetValue(style.Id, out var e) ? e : default;
+            Check(monitor, "founders: in the frames table",
+                style != null && entry == (FrameRarity.Epic, FrameTrait.Sparks) && Frames.Of(style) == entry,
+                style == null ? "no founders style" : $"{entry.Rarity} {entry.Trait}");
+
+            var plain = TestPainting(false);
+            who.addItemToInventoryBool(plain);
+            string plainLine = GildedGrove.LineFor(who, plain), emptyLine = GildedGrove.LineFor(who, null);
+            bool r = GildedGrove.Offer(who, plain);
+            bool emptyHands = GildedGrove.Offer(who, null);
+            Check(monitor, "founders: not a masterpiece", !r && !emptyHands && Holds(plain) && FoundersFrames(who) == 0 && !Flag(),
+                $"returned {r} (empty hands {emptyHands}), kept {Holds(plain)}, frames {FoundersFrames(who)}, flag {Flag()}");
+
+            var framed = ArtHooks.Frame(TestPainting(true), ArtItems.Plain);
+            who.addItemToInventoryBool(framed);
+            string framedLine = GildedGrove.LineFor(who, framed);
+            r = GildedGrove.Offer(who, framed);
+            Check(monitor, "founders: framed", !r && Holds(framed) && FoundersFrames(who) == 0 && !Flag(),
+                $"returned {r}, kept {Holds(framed)}, frames {FoundersFrames(who)}, flag {Flag()}");
+
+            var master = TestPainting(true);
+            who.addItemToInventoryBool(master);
+            string masterLine = GildedGrove.LineFor(who, master);
+            bool canvasBefore = GildedGrove.ShowsFinishedCanvas(who);
+            r = GildedGrove.Offer(who, master);
+            Check(monitor, "founders: a masterpiece", r && !Holds(master) && FoundersFrames(who) == 1 && Flag(),
+                $"returned {r}, kept {Holds(master)}, frames {FoundersFrames(who)}, flag {Flag()}");
+
+            var second = TestPainting(true);
+            who.addItemToInventoryBool(second);
+            string thanksLine = GildedGrove.LineFor(who, second);
+            r = GildedGrove.Offer(who, second);
+            Check(monitor, "founders: only once", !r && Holds(second) && FoundersFrames(who) == 1,
+                $"returned {r}, kept {Holds(second)}, frames {FoundersFrames(who)}");
+
+            string lines = $"plain {plainLine}, empty {emptyLine}, framed {framedLine}, masterpiece {masterLine}, after {thanksLine}";
+            Check(monitor, "founders: what the easel says",
+                plainLine == "vale.grove.founders.not_masterpiece" && emptyLine == plainLine && framedLine == "vale.grove.founders.framed"
+                && masterLine == "vale.grove.founders.ask" && thanksLine == "vale.grove.founders.thanks", lines);
+
+            bool canvasAfter = GildedGrove.ShowsFinishedCanvas(who);
+            Check(monitor, "founders: the finished canvas, for that player only",
+                !canvasBefore && canvasAfter && GildedGrove.FinishedCanvasTexture(grove) != null,
+                $"before {canvasBefore}, after {canvasAfter}, art {(GildedGrove.FinishedCanvasTexture(grove) != null ? "found" : "missing")}");
+
+            // The hidden easel opens the easel with one spark already caught; other easels start at none.
+            Game1.activeClickableMenu = null;
+            who.currentLocation = grove;
+            bool opened = GildedGrove.OnHiddenEasel(who, GildedGrove.HiddenEaselTile);
+            var menu = Game1.activeClickableMenu as Menus.EaselMenu;
+            int atOpen = menu?.DevSparksCaught ?? -1;
+            menu?.DevBeginStillLife(Core.CanvasKind.Small, new[] { "(O)254" });
+            int atStart = menu?.DevSparksCaught ?? -1;
+            Game1.activeClickableMenu = null;
+            ArtHooks.OpenEasel(who);
+            int ordinary = (Game1.activeClickableMenu as Menus.EaselMenu)?.DevSparksCaught ?? -1;
+            Game1.activeClickableMenu = null;
+            Check(monitor, "hidden easel: a spark to start", opened && menu != null && atOpen == 1 && atStart == 1 && ordinary == 0,
+                $"opened {opened}, menu {menu != null}, sparks at open {atOpen}, at the start {atStart}, at another easel {ordinary}");
+        }
+        finally
+        {
+            Game1.activeClickableMenu = menuBefore;
+            who.currentLocation = placeBefore;
+            for (int i = 0; i < who.Items.Count; i++)
+                who.Items[i] = i < bag.Count ? bag[i] : null;
+            who.mailReceived.Remove(GildedGrove.FoundersFlag);
+            if (hadFlag)
+                who.mailReceived.Add(GildedGrove.FoundersFlag);
+        }
+    }
+
+    // Co-op (tools/test/run_mp.ps1): the host offers, then the farmhand; then each player has their
+    // own flag and their own frame. 'offer' keeps what it changes (a throwaway co-op farm).
+    private static void FoundersCoop(IMonitor monitor, string mode)
+    {
+        if (!Context.IsWorldReady)
+        {
+            monitor.Log("Load a save first.", LogLevel.Warn);
+            return;
+        }
+        var who = Game1.player;
+        if (mode == "offer")
+        {
+            var others = Game1.getOnlineFarmers().Where(f => f != who && f.mailReceived.Contains(GildedGrove.FoundersFlag)).Select(f => f.Name).ToList();
+            var master = TestPainting(true);
+            who.addItemToInventoryBool(master);
+            bool r = GildedGrove.Offer(who, master);
+            Check(monitor, $"founders co-op: {(Context.IsMainPlayer ? "the host" : "the farmhand")} offers",
+                r && !who.Items.Contains(master) && FoundersFrames(who) == 1 && who.mailReceived.Contains(GildedGrove.FoundersFlag),
+                $"returned {r}, frames {FoundersFrames(who)}, already offered: {(others.Count > 0 ? string.Join(", ", others) : "nobody")}");
+        }
+        else if (mode == "check")
+        {
+            var farmers = Game1.getOnlineFarmers().ToList();
+            string detail = string.Join("; ", farmers.Select(f => $"{f.Name}: flag {f.mailReceived.Contains(GildedGrove.FoundersFlag)}, frames {FoundersFrames(f)}"));
+            Check(monitor, "founders co-op: each player has their own frame",
+                farmers.Count >= 2 && farmers.All(f => f.mailReceived.Contains(GildedGrove.FoundersFlag) && FoundersFrames(f) == 1), detail);
+        }
+        else
+            monitor.Log("Usage: museart_foundertest offer|check", LogLevel.Warn);
     }
 
     // The game's own click, for each thing the hook must leave alone; true only if it leaves them all

@@ -1,10 +1,12 @@
 # Two-player dev game: restarts the two dev copies (Mods folders devmods and
-# devmods_mp under the dev root), rebuilds into both, hosts on one and joins
-# with the other, then sends each step ("H:command|seconds" for the host,
-# "C:command|seconds" for the farmhand). Never touches the player's game.
-param([string[]]$Steps = @(), [string]$Pattern = "PASS|FAIL|ERROR  Pelican|Hosting|Joined|Joining")
+# devmods_mp under the dev root, or -HostMods and -GuestMods), rebuilds into
+# both, hosts on one and joins with the other, then sends each step
+# ("H:command|seconds" for the host, "C:command|seconds" for the farmhand).
+# Never touches the player's game.
+param([string[]]$Steps = @(), [string]$Pattern = "PASS|FAIL|ERROR  Pelican|Hosting|Joined|Joining",
+    [string]$HostMods = "devmods", [string]$GuestMods = "devmods_mp")
 . "$PSScriptRoot\common.ps1"
-$roles = @{ H = "devmods"; C = "devmods_mp" }
+$roles = @{ H = $HostMods; C = $GuestMods }
 foreach ($r in $roles.Keys) { Stop-DevGame "$DevRoot\devgame_$r.pid" }
 Stop-DevGame "$DevRoot\devgame.pid"
 Set-Location $Repo
