@@ -22,6 +22,7 @@ internal static class GildedVale
         // Lupini's painting spots are found, not easels (the painters' guide design, section 4):
         // touch a stool with the guide to find its view. blinxxy.MuseArt_PaintSpot <spotId>;
         // a tile with no id does nothing. You can still paint any view with an easel you set down.
+        PaintersGuide.Monitor = monitor;
         PaintSplash.Register(helper);
         GameLocation.RegisterTileAction(PaintSpotAction, (_, args, who, _) => PaintersGuide.OnTouch(who, args));
     }

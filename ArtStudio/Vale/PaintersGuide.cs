@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace ArtStudio.Vale;
@@ -85,36 +86,55 @@ internal static class PaintersGuide
         switch (result)
         {
             case TouchResult.NoGuide:
-                Game1.drawObjectDialogue(Text("vale.guide.plain_stool", "The stool's seat is worn smooth. Someone sat here for years, looking at something."));
+                Game1.drawObjectDialogue(Text("vale.guide.plain_stool"));
                 break;
             case TouchResult.FirstFind:
                 PaintSplash.Play(spot.Palette, false, () => Game1.drawObjectDialogue(new List<string>
                 {
-                    Text($"vale.guide.spot.{id}.name", id),
-                    Text($"vale.guide.spot.{id}.line", ""),
+                    Text($"vale.guide.spot.{id}.name"),
+                    Text($"vale.guide.spot.{id}.line"),
                 }));
                 break;
             case TouchResult.Again:
-                Game1.drawObjectDialogue(Text($"vale.guide.spot.{id}.line", ""));
+                Game1.drawObjectDialogue(Text($"vale.guide.spot.{id}.line"));
                 break;
             case TouchResult.Completed:
                 PaintSplash.Play(Spots.SelectMany(s => s.Palette).ToArray(), true,
-                    () => Game1.drawObjectDialogue(Text("vale.guide.last_page", "").Split("#$b#").ToList()));
+                    () => Game1.drawObjectDialogue(Text("vale.guide.last_page").Split("#$b#").ToList()));
                 break;
         }
     }
 
-    private static string Text(string key, string fallback)
+    // The strings this code shows (all in the dev pack's ValeStrings); the checks resolve each one.
+    public static IEnumerable<string> StringKeys =>
+        Spots.SelectMany(s => new[] { $"vale.guide.spot.{s.Id}.name", $"vale.guide.spot.{s.Id}.line" })
+            .Concat(new[] { "vale.guide.plain_stool", "vale.guide.last_page" });
+
+    public static IMonitor? Monitor;
+    private static readonly HashSet<string> Warned = new();
+
+    // A missing asset or key shows the key itself, and says so once in the log, so broken
+    // wiring is visible on screen and not an empty box.
+    internal static string Text(string key)
     {
         try
         {
             var strings = Game1.content.Load<Dictionary<string, string>>("Mods/" + ModEntry.Id + "/ValeStrings");
-            return strings.TryGetValue(key, out string? text) && !string.IsNullOrWhiteSpace(text) ? text : fallback;
+            if (strings.TryGetValue(key, out string? text) && !string.IsNullOrWhiteSpace(text))
+                return text;
+            Warn(key, "has no text in Mods/" + ModEntry.Id + "/ValeStrings");
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            return fallback;
+            Warn(key, "couldn't be read: " + e.Message);
         }
+        return key;
+    }
+
+    private static void Warn(string key, string why)
+    {
+        if (Warned.Add(key))
+            Monitor?.Log($"Painters' guide string '{key}' {why}.", LogLevel.Warn);
     }
 }
 #endif

@@ -59,6 +59,16 @@ internal static class GuideTests
             try { PaintersGuide.Touch(who, "nowhere", false); }
             catch (ArgumentException) { threw = true; }
             Check(monitor, "guide: an unknown id is refused", threw);
+
+            // The tile action: an old tile with no id, or an unknown id, does nothing and says false.
+            bool noId = PaintersGuide.OnTouch(who, new[] { GildedVale.PaintSpotAction });
+            bool unknownId = PaintersGuide.OnTouch(who, new[] { GildedVale.PaintSpotAction, "nowhere" });
+            Check(monitor, "guide: the action with no id does nothing", !noId && PaintersGuide.FoundCount(who) == 8, $"returned {noId}");
+            Check(monitor, "guide: the action with an unknown id does nothing", !unknownId, $"returned {unknownId}");
+
+            var bad = PaintersGuide.StringKeys.Where(k => { string t = PaintersGuide.Text(k); return t.Length == 0 || t == k; }).ToList();
+            Check(monitor, "guide: every guide string resolves", bad.Count == 0,
+                bad.Count == 0 ? $"{PaintersGuide.StringKeys.Count()} strings" : "missing: " + string.Join(", ", bad));
         }
         finally
         {
