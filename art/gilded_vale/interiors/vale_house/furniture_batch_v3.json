@@ -1,0 +1,43 @@
+{
+ "batch": "vale_house_v3",
+ "common": {
+  "endpoint": "generate-image-v2",
+  "no_background": true,
+  "style_image": "C:/Users/blinx/Desktop/MuseStardew/art/margot/room/style_gus_room.png",
+  "style_usage": "the exact Stardew Valley interior style, camera angle, pixel scale and colours of this room's furniture: front-facing from slightly above, wood ramps, dark coloured outlines"
+ },
+ "jobs": {
+  "door_1": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior, one object alone on a transparent background, seen straight from the front like the doors in the reference room, at exactly the same pixel scale (one tile is 16 pixels), dark coloured (not black) outlines: a closed interior wooden door set in a wall, exactly one tile wide and two tiles tall, warm honey-brown panelled wood with a brass round knob, inside a thin darker wooden door frame, filling the whole picture from edge to edge",
+   "seed": 121
+  },
+  "door_2": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior, one object alone on a transparent background, seen straight from the front like the doors in the reference room, at exactly the same pixel scale (one tile is 16 pixels), dark coloured (not black) outlines: a closed interior wooden door set in a wall, exactly one tile wide and two tiles tall, warm honey-brown panelled wood with a brass round knob, inside a thin darker wooden door frame, filling the whole picture from edge to edge",
+   "seed": 122
+  },
+  "door_3": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior, one object alone on a transparent background, seen straight from the front like the doors in the reference room, at exactly the same pixel scale (one tile is 16 pixels), dark coloured (not black) outlines: a closed interior wooden door set in a wall, exactly one tile wide and two tiles tall, warm honey-brown panelled wood with a brass round knob, inside a thin darker wooden door frame, filling the whole picture from edge to edge",
+   "seed": 123
+  },
+  "door_4": {
+   "image_size": {
+    "width": 16,
+    "height": 32
+   },
+   "description": "Stardew Valley interior, one object alone on a transparent background, seen straight from the front like the doors in the reference room, at exactly the same pixel scale (one tile is 16 pixels), dark coloured (not black) outlines: a closed interior wooden door set in a wall, exactly one tile wide and two tiles tall, warm honey-brown panelled wood with a brass round knob, inside a thin darker wooden door frame, filling the whole picture from edge to edge",
+   "seed": 124
+  }
+ }
+}
