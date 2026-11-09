@@ -78,6 +78,7 @@ SEED = 85
 # above its top): full width at the step, tapering off up the bluff, never a lone corner
 # or a checkerboard.
 LANDING = [(1, 0), (2, 0), (3, 0), (1, 1), (2, 1), (3, 1), (1, 2), (2, 2), (3, 2), (2, 3), (3, 3), (2, 4)]
+FADE_WEST = {356: 355, 406: 405}   # the shading's left-end pieces (Forest (94,72) 405)
 SKIRT_WIDENS = 3             # the side's skirt widens to two tiles this many rows below its first
 
 
@@ -152,6 +153,24 @@ def lay_lip(m, ctx, x0, x1, y):
         m.g["Buildings"][y][x] = RIM_NW if x == x0 else RIM[(x - x0 - 1) % 2]
 
 
+def _clear_of_sand(V, corners, x, clear, cy):
+    """On corner row cy, the `clear` corners west of x kept clear of sand (dark grass's,
+    and a corner of grass outside it: dark grass has no piece against sand). A path
+    there moves out west by as many corners (it keeps its width), never onto water."""
+    run = [cx for cx in range(x - clear, x) if V[cy][cx] == "S"]
+    for cx in range(x - clear, x):
+        corners.setdefault((cx, cy), "G")
+        if corners[(cx, cy)] == "S":
+            corners[(cx, cy)] = "G"
+    if run:
+        west = x - clear - 1
+        while west >= 0 and V[cy][west] == "S":
+            west -= 1
+        for k in range(len(run)):
+            if west - k >= 0 and V[cy][west - k] != "W":
+                corners[(west - k, cy)] = "S"
+
+
 def lay_side(m, ctx, x, y0, y1):
     """The bluff's west side, down column x from y0 (under the corner) to y1. The side
     tile's left edge is see-through: the lower ground under it is the painter's; the
@@ -170,22 +189,8 @@ def lay_side(m, ctx, x, y0, y1):
         corners[(x, cy)] = "D" if y0 < cy <= y1 else "G"
         if b0 <= cy <= b1:
             corners[(x - 1, cy)] = "D"
-        # the corners kept clear of sand: the skirt's, and one of grass outside it; a path
-        # there moves out by as many (it keeps its width), never onto water
-        clear = 2 if b0 - 1 <= cy <= b1 + 1 else 1
-        run = [cx for cx in range(x - clear, x) if V[cy][cx] == "S"]
-        for cx in range(x - clear, x):
-            corners.setdefault((cx, cy), "G")
-            if V[cy][cx] == "S" and corners[(cx, cy)] == "S":
-                corners[(cx, cy)] = "G"
-        if run:
-            west = x - clear - 1
-            while west >= 0 and V[cy][west] == "S":
-                west -= 1
-            for k in range(len(run)):
-                if west - k >= 0 and V[cy][west - k] != "W":
-                    corners[(west - k, cy)] = "S"
-    _paint(m, ctx, corners, (x - 6, y0 - 1, x + 1, y1 + 1))
+        _clear_of_sand(V, corners, x, 2 if b0 - 1 <= cy <= b1 + 1 else 1, cy)
+    _paint(m, ctx, corners, (min(cx for cx, _ in corners) - 1, y0 - 1, x + 1, y1 + 1))
     side = side_pieces(m, ctx)
     for y in range(y0, y1 + 1):
         _clear(m, x, y)
@@ -343,8 +348,17 @@ def lay_face(m, ctx, x0, x1, top, stairs_x=None):
     # starts a row further down.
     corners = {(cx, cy): "D" if top + 4 <= cy <= top + 6 else "G"
                for cx in range(x0 + 1, x1 + 2) for cy in range(top, top + 8)}
-    corners.update({(x0, cy): "G" for cy in range(top, top + 8)})
-    V = _paint(m, ctx, corners, (x0 - 1, top - 1, x1 + 1, top + 7))
+    # Its west end melts into the ground as the Forest's does (x 93-96 y 70-74): the dark
+    # grass runs on a corner past the face's end column, under its foot, and the band's
+    # first column takes its pieces' own left-end fades (FADE_WEST: 355, 405, pale with
+    # the shade dithered in from the right, in winter too; it's 404 that goes white).
+    # With grass there, the band ended in a straight vertical side on the snow.
+    corners.update({(x0, cy): "D" if top + 4 <= cy <= top + 6 else "G" for cy in range(top, top + 8)})
+    V0 = _corners(m)
+    for cy in range(top + 3, top + 8):
+        _clear_of_sand(V0, corners, x0 + 1, 2, cy)
+    # (repaint no further west than the corners set: the lake's bank lies beyond them)
+    V = _paint(m, ctx, corners, (min(cx for cx, _ in corners) - 1, top - 1, x1 + 1, top + 7))
     pat = lambda x, y: (V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1])
     end = west_end_pieces(m, ctx)
     band = {top + 3: ("G", "G", "D", "D"), top + 4: ("D",) * 4, top + 5: ("D",) * 4}
@@ -366,11 +380,11 @@ def lay_face(m, ctx, x0, x1, top, stairs_x=None):
         m.g["Back"][top + 1][x] = m.g["Back"][top + 2][x] = GRASS
         for k, opts in enumerate(CLIFF_SHADE):
             y = top + 3 + k
-            # the main piece only (its variants go plain white in winter), and only on
+            # the main piece only (the variant 404 goes plain white in winter), and only on
             # the band's own corners: where it meets other ground the painter's edge stays
             # (on under a flight's treads too: the band runs on beneath it)
             if pat(x, y) == band[y]:
-                m.g["Back"][y][x] = opts[0]
+                m.g["Back"][y][x] = FADE_WEST.get(opts[0], opts[0]) if x == x0 + 1 else opts[0]
                 _clear(m, x, y) if y >= top + 5 else _laid(m, x, y)
 
 
