@@ -1,6 +1,6 @@
 # The Gilded Vale's own fish (design)
 
-2026-11-08. Five fish of the Vale's own for its normal outdoor water: the river, the pools under its two cascades, the waterfall basin, and the lake (`Maps/blinxxy.MuseArt_GildedVale`, `[CP] Gilded Vale (dev)/assets/GildedVale.tmx`). The map doc (`docs/design/gilded_vale_map.md`, section 2) left them for later: "Fish of the Vale's own could come later." Claude recommended the set from the lore and the user approved it ("nothing, looks good to me", 2026-11-08).
+2026-11-08. Five fish of the Vale's own for its normal outdoor water: the river, the pools under its two cascades, the waterfall basin, and the lake (`Maps/blinxxy.MuseArt_GildedVale`, `[CP] Gilded Vale (dev)/assets/GildedVale.tmx`). The map doc (`docs/design/gilded_vale_map.md`, section 2) left them for later: "Fish of the Vale's own could come later." Claude recommended the set from the lore and the user approved it ("nothing, looks good to me", 2026-11-08), then approved this document ("Approved, build it", 2026-11-08).
 
 ## Intent
 
@@ -29,7 +29,7 @@ Each fish is something the Vale's residents already talk about, so catching it f
 | **Cascade Trout** | the two cascade pools | spring, fall | rain only | 6am to 7pm | 70, dart | 120g | uncommon |
 | **Falls Sculpin** | the waterfall basin | fall, winter | any | 6pm to 2am | 55, sinker | 90g | uncommon |
 | **Lakeblue Shiner** | the lake | spring, summer | sunny only | 9am to 5pm | 45, mixed | 75g | common |
-| **Gilt Carp** | the lake | fall only | sunny only | 10am to 6pm | 80, mixed | 250g | rare (about Sandfish's odds) |
+| **Gilt Carp** | the lake | fall only | sunny only | 10am to 6pm | 80, mixed | 250g | rare (spawn chance .1, like the Stonefish, and half the location chance) |
 
 Calibrated against vanilla (Chub 35/50g, Rainbow Trout 45/65g, Woodskip 50/75g, Sandfish 65/75g, Tiger Trout 60/150g, Catfish 75/200g, Sturgeon 78/200g). Sizes, the exact chance numbers and the level/depth requirements are left to the builder, matched to those neighbours.
 
@@ -49,7 +49,7 @@ Water on the map today (the `Water` tiles on Back, read from the committed TMX):
 - **The waterfall basin:** not built yet. Session vale-map-gaps (branch `claude/infallible-jang-a66ee9`, spec `docs/superpowers/specs/2026-11-08-vale-falls-overlook-sculpture-design.md` on that branch) is building a tall fall in the north-east, its notch at about x 80 to 85, a small basin at its foot, and the river leaving west along the cliff foot. Until it lands, the basin area is the top of the river at about x 76 to 88, y 0 to 12. **Re-check the rectangle once that branch is merged.**
 - **The lake:** x 48 to 84, y 55 to 71. The overlook bluff (same session) will take its east side, so re-check that edge too.
 
-Use the 1.6 location data's `FishAreas` (one each: River, CascadePools, Basin, Lake, by `Position` rectangles, like the Forest's River and Lake) and give each `Fish` entry a `FishAreaId`. The cascade pools and the basin are inside the river's water, so their rectangles must take precedence over the river's (the builder checks how the game picks between overlapping areas, and cuts the river's rectangles round them if needed).
+**As built (`data/vale_fish.json`):** two `FishAreas`, like the Desert's: **River** with no position (the game's fallback: all water outside the other areas) and **Lake** (x 48 to 84, y 55 to 71). The cascade pools and the basin are inside the river, so instead of areas of their own, the Trout's two entries and the Sculpin's entry carry a `BobberPosition` (pools: x 59 to 64, y 28 to 36 and y 48 to 54; basin: x 76 to 88, y 0 to 12). **Seasons go on the location's entries** (`Season` or `LOCATION_SEASON`), as the game's own do: in 1.6 the game doesn't check Data/Fish's seasons for location fish (found by `museart_fishtest`). Data/Fish still sets weather, times, difficulty and size.
 
 **Vanilla fish alongside:** River, CascadePools and Basin get the game's river fish (the Forest's river list), and the Lake gets the Mountain lake's list, by season as the game has them. The Vale's own fish go in with chances so a day's fishing is mostly vanilla with the Vale's fish mixed in, and the Gilt Carp is a real find. Crab pots: freshwater, like the Forest.
 
@@ -68,7 +68,7 @@ Use the 1.6 location data's `FishAreas` (one each: River, CascadePools, Basin, L
 - **SVE:** no clashes (names checked above). Checked in a dev game with SVE (`.devgame/devmods_sve`) as well as without.
 
 ## Art
-- **Icons:** five 16×16 item sprites in the vanilla fish style, plus five aquarium sprites. **Show candidates to the user before choosing.** *(Claude's call on how they're made: drawn by hand with the free pixel tools, starting from the nearest vanilla fish (Loach from the Chub's or Bream's shape, Trout from the Rainbow Trout, Sculpin from the Stonefish's or Woodskip's, Shiner from the Anchovy's or Sardine's, Carp from the Carp) and recoloured and reshaped, so they match the game's palette and outlines. PixelLab only if those look copied, and then only after saying how many generations: about 3 candidates a fish, so about 15. The allowance is low and wanted for characters.)*
+- **Icons:** five 16×16 item sprites in the vanilla fish style, plus five aquarium sprites. **Show candidates to the user before choosing.** **Original shapes, not recolours of vanilla fish** (the user, 2026-11-08: "i dont want you to just recolor existing fish"). Drawn by `tools/art/vale_fish_icons.py` from a description of each fish (spine, body width, fins, pattern, colours), following the game's conventions: diagonal, head upper right, an outline in the fish's own darkest shade. PixelLab only if the user asks, after saying how many generations (about 3 candidates a fish, so about 15).
 - Colours from the descriptions: the Loach clay red-brown, the Trout spotted silver with a rosy side, the Sculpin mottled slate grey, the Shiner a very bright, unlikely blue, the Carp gold.
 
 ## Constraints

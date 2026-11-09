@@ -487,5 +487,17 @@
   "vale.house.lighthouse_easel": "A lighthouse, half painted. Whoever started it left in a hurry, or ran out of blue.",
   "vale.house.blank_canvases": "Blank canvases leaning on the bed's foot, waiting for whoever stays next.",
   "vale.house.accounts": "The inn's accounts, in Bea's tidy hand. The column for repairs is a good deal longer than the column for guests.",
-  "vale.house.flowers": "A painting of flowers that never wilt. Bea hung it to make a point to Fern."
+  "vale.house.flowers": "A painting of flowers that never wilt. Bea hung it to make a point to Fern.",
+
+  // The Vale's own fish (data/vale_fish.json)
+  "fish.loach.name": "Claybank Loach",
+  "fish.loach.description": "A little red fish that lives in the clay banks of the river, the same colour as the mud it hides in.",
+  "fish.trout.name": "Cascade Trout",
+  "fish.trout.description": "Leaps up the cascades when the rain swells the river. Nothing rhymes with it.",
+  "fish.sculpin.name": "Falls Sculpin",
+  "fish.sculpin.description": "Hides under the river stones below the falls, and comes out on cold nights.",
+  "fish.shiner.name": "Lakeblue Shiner",
+  "fish.shiner.description": "So blue that the painters who saw it were told they'd made it up.",
+  "fish.carp.name": "Gilt Carp",
+  "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake."
 }
