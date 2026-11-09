@@ -338,6 +338,23 @@ def test_overlook_props_inside():
         assert x >= SIDE_X + 2 and RIM_Y + 2 <= y <= FACE_TOP - 2, (x, y)
 
 
+def test_terrace_stairs_snowed():
+    # the terraces' four flights are the overlook flight's tiles, tile for tile: the stairs
+    # art in spring, summer and fall, snow on the treads in winter
+    from PIL import Image
+    from vale_overlook import FACE_TOP, STAIRS_X
+    from vale_terrace_stairs import cells
+    from vale_sculpture import Sheets
+    m = load(TMX)
+    sheets = Sheets(os.path.dirname(TMX))
+    overlook = [m.g[l][y][x] for x, y, l in cells(STAIRS_X, FACE_TOP)]
+    for sx, top in build_vale.STAIR_SPOTS:
+        assert [m.g[l][y][x] for x, y, l in cells(sx, top)] == overlook, (sx, top)
+    tread = m.g["Back2"][FACE_TOP + 2][STAIRS_X + 1]
+    crop = lambda se: sheets.im[se].crop(sheets.box(tread)).tobytes()
+    assert crop("spring") == crop("summer") == crop("fall") != crop("winter")
+
+
 def test_overlook_lake_corner():
     # the lake's east bank ends as Town's shore at x 85 does (rows 67-70): the rock run's
     # cycle carries on under the cap to its last two pieces, (5226,236) and (1230,236), then
