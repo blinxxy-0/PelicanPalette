@@ -1,0 +1,101 @@
+// Tess's counter in Studio III (1.4; docs/design/vale_newcomers.md section 5, "The counters'
+// stock"; the user's approved list, 2026-11-09): her own carved pieces, beside a selection of
+// the game's own wooden furniture, the stock growing with her heart events
+// (blinxxy.MuseArt_TessHeart<N>). No signs (the user).
+//   from the start: the rabbit, duck and fox; the game's oak, walnut and birch chairs, tables,
+//     end tables and benches, the Stump Seat, the Wood and Log Panels, the Woodcut Rug, the
+//     Totem Pole, at the game's own prices
+//   after her 4-heart event: the owl, the heron, her ash and walnut stools
+//   after her 8-heart event: the Carved Ash Frame (her own frame style: Rare, Thrift;
+//     ArtStudio/Painting/Frames.cs) and the mod's wooden frames; the game's dressers
+//   after her 10-heart event: a little Gilded Tree, after Bram's carving
+// Her pieces' art: tools/art/tess_counter_art.py -> assets/tess/carvings.png.
+// The counter opens when she's anywhere in the studio (she serves from her bench), the
+// way Tobin's does (ArtStudio/Vale/ValeResidents.cs); on trust when she isn't in the world.
+{
+  "Changes": [
+    { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/TessCarvings", "FromFile": "assets/tess/carvings.png" },
+    {
+      "Action": "EditData",
+      "Target": "Data/Furniture",
+      "Entries": {
+        // name/type/sheet size/bounding box/rotations/price/placement/display name/sprite/texture
+        "blinxxy.MuseArt_TessRabbit": "blinxxy.MuseArt_TessRabbit/decor/1 1/1 1/1/300/-1/{{i18n:tess.item.rabbit}}/0/Mods\\blinxxy.MuseArt\\TessCarvings",
+        "blinxxy.MuseArt_TessDuck": "blinxxy.MuseArt_TessDuck/decor/1 1/1 1/1/300/-1/{{i18n:tess.item.duck}}/1/Mods\\blinxxy.MuseArt\\TessCarvings",
+        "blinxxy.MuseArt_TessFox": "blinxxy.MuseArt_TessFox/decor/1 1/1 1/1/350/-1/{{i18n:tess.item.fox}}/2/Mods\\blinxxy.MuseArt\\TessCarvings",
+        "blinxxy.MuseArt_TessOwl": "blinxxy.MuseArt_TessOwl/decor/1 1/1 1/1/450/-1/{{i18n:tess.item.owl}}/3/Mods\\blinxxy.MuseArt\\TessCarvings",
+        "blinxxy.MuseArt_TessAshStool": "blinxxy.MuseArt_TessAshStool/chair/1 2/1 1/1/400/-1/{{i18n:tess.item.ash_stool}}/4/Mods\\blinxxy.MuseArt\\TessCarvings",
+        "blinxxy.MuseArt_TessWalnutStool": "blinxxy.MuseArt_TessWalnutStool/chair/1 2/1 1/1/500/-1/{{i18n:tess.item.walnut_stool}}/5/Mods\\blinxxy.MuseArt\\TessCarvings",
+        "blinxxy.MuseArt_TessHeron": "blinxxy.MuseArt_TessHeron/decor/1 2/1 1/1/800/-1/{{i18n:tess.item.heron}}/6/Mods\\blinxxy.MuseArt\\TessCarvings",
+        "blinxxy.MuseArt_TessGildedTree": "blinxxy.MuseArt_TessGildedTree/decor/1 2/1 1/1/2500/-1/{{i18n:tess.item.tree}}/7/Mods\\blinxxy.MuseArt\\TessCarvings"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Shops",
+      "Entries": {
+        "blinxxy.MuseArt_ValeWood": {
+          "Owners": [
+            {
+              "Id": "Tess",
+              "Name": "TessBrand",
+              "Dialogues": [
+                { "Id": "Animals", "Dialogue": "{{i18n:tess.shop.animals}}" },
+                { "Id": "Wood", "Dialogue": "{{i18n:tess.shop.wood}}" },
+                { "Id": "Haggle", "Dialogue": "{{i18n:tess.shop.haggle}}" }
+              ]
+            },
+            { "Id": "Closed", "Name": "None", "ClosedMessage": "{{i18n:tess.shop.closed}}" }
+          ],
+          "Items": [
+            // ---- hers ----
+            { "Id": "Rabbit", "ItemId": "(F)blinxxy.MuseArt_TessRabbit", "Price": 300 },
+            { "Id": "Duck", "ItemId": "(F)blinxxy.MuseArt_TessDuck", "Price": 300 },
+            { "Id": "Fox", "ItemId": "(F)blinxxy.MuseArt_TessFox", "Price": 350 },
+            { "Id": "Owl", "ItemId": "(F)blinxxy.MuseArt_TessOwl", "Price": 450, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart4" },
+            { "Id": "Heron", "ItemId": "(F)blinxxy.MuseArt_TessHeron", "Price": 800, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart4" },
+            { "Id": "AshStool", "ItemId": "(F)blinxxy.MuseArt_TessAshStool", "Price": 400, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart4" },
+            { "Id": "WalnutStool", "ItemId": "(F)blinxxy.MuseArt_TessWalnutStool", "Price": 500, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart4" },
+            { "Id": "AshFrame", "ItemId": "(O)blinxxy.MuseArt_AshFrame", "Price": 5000, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" },
+            { "Id": "PineFrame", "ItemId": "(O)blinxxy.MuseArt_PineFrame", "Price": 400, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" },
+            { "Id": "OakFrame", "ItemId": "(O)blinxxy.MuseArt_OakFrame", "Price": 400, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" },
+            { "Id": "BirchFrame", "ItemId": "(O)blinxxy.MuseArt_BirchFrame", "Price": 400, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" },
+            { "Id": "WalnutFrame", "ItemId": "(O)blinxxy.MuseArt_WalnutFrame", "Price": 1200, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" },
+            { "Id": "GildedTree", "ItemId": "(F)blinxxy.MuseArt_TessGildedTree", "Price": 2500, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart10" },
+            // ---- the game's own wooden furniture, at its own prices ----
+            { "Id": "OakChair", "ItemId": "(F)0", "Price": 350 },
+            { "Id": "WalnutChair", "ItemId": "(F)3", "Price": 350 },
+            { "Id": "BirchChair", "ItemId": "(F)6", "Price": 350 },
+            { "Id": "OakTable", "ItemId": "(F)1120", "Price": 750 },
+            { "Id": "WalnutTable", "ItemId": "(F)1122", "Price": 750 },
+            { "Id": "BirchTable", "ItemId": "(F)1124", "Price": 750 },
+            { "Id": "OakEndTable", "ItemId": "(F)1391", "Price": 500 },
+            { "Id": "WalnutEndTable", "ItemId": "(F)1393", "Price": 500 },
+            { "Id": "BirchEndTable", "ItemId": "(F)1395", "Price": 500 },
+            { "Id": "OakBench", "ItemId": "(F)192", "Price": 750 },
+            { "Id": "WalnutBench", "ItemId": "(F)197", "Price": 750 },
+            { "Id": "BirchBench", "ItemId": "(F)202", "Price": 750 },
+            { "Id": "StumpSeat", "ItemId": "(F)88", "Price": 2000 },
+            { "Id": "WoodPanel", "ItemId": "(F)2633", "Price": 500 },
+            { "Id": "LogPanel", "ItemId": "(F)2635", "Price": 500 },
+            { "Id": "WoodcutRug", "ItemId": "(F)1777", "Price": 800 },
+            { "Id": "TotemPole", "ItemId": "(F)1295", "Price": 750 },
+            { "Id": "OakDresser", "ItemId": "(F)704", "Price": 5000, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" },
+            { "Id": "WalnutDresser", "ItemId": "(F)709", "Price": 5000, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" },
+            { "Id": "BirchDresser", "ItemId": "(F)714", "Price": 5000, "Condition": "PLAYER_HAS_SEEN_EVENT Current blinxxy.MuseArt_TessHeart8" }
+          ]
+        }
+      }
+    },
+    // The counter (11-13, 10 in every stage of the room); she serves from anywhere in the studio.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "MapTiles": [
+        { "Position": { "X": 11, "Y": 10 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeWood TessBrand 1 4 14 8" } },
+        { "Position": { "X": 12, "Y": 10 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeWood TessBrand 1 4 14 8" } },
+        { "Position": { "X": 13, "Y": 10 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeWood TessBrand 1 4 14 8" } }
+      ]
+    }
+  ]
+}

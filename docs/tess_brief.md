@@ -134,3 +134,9 @@ Sample lines:
 - **Her NPC data** (`data/tess.json`), behind the residents' switch (`ValeResidents`, off by default).
 - **Her art** (`art/tess/README.md`): the walk sheet recoloured from Emily's; six Higgsfield portraits from the
   user's pick, no pencil in her hair (Margot has one). Spouse frames come with her marriage.
+- **Her counter** (approved 2026-11-09): `data/tess_shop.json`. Her pieces (`tools/art/tess_counter_art.py`,
+  Higgsfield, about 10.5 credits): a rabbit, duck and fox from the start; an owl, heron and ash and walnut
+  stools after 4 hearts; the Carved Ash Frame and the mod's wooden frames after 8; a little Gilded Tree after
+  10. Beside them the game's oak, walnut and birch furniture (dressers after 8). The **Carved Ash Frame** is a
+  new frame style in the main mod (Rare, Thrift; `tools/art/ash_frame.py`, its own sheet
+  `ArtStudio/assets/furniture_more.png`), sold only by her. Wiki's Frames page to update at release.

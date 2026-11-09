@@ -22,6 +22,8 @@
       }
     },
     { "Action": "Include", "FromFile": "data/tess_studio_stages.json" },
+    // Her counter (after the stages, so its action lands on whichever is loaded)
+    { "Action": "Include", "FromFile": "data/tess_shop.json" },
 
     // The door, from the day she moves in. After vale_studios.json in content.json and
     // Late: its renovated states swap the tile at (91,38), which would drop the warp.

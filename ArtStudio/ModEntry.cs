@@ -167,6 +167,8 @@ public class ModEntry : Mod
             e.LoadFromModFile<Texture2D>("assets/bigcraftables.png", AssetLoadPriority.Exclusive);
         else if (name.IsEquivalentTo(ArtItems.FurnitureTexture))
             e.LoadFromModFile<Texture2D>("assets/furniture.png", AssetLoadPriority.Exclusive);
+        else if (name.IsEquivalentTo(ArtItems.MoreFramesTexture))
+            e.LoadFromModFile<Texture2D>("assets/furniture_more.png", AssetLoadPriority.Exclusive);
     }
 
     private static CanvasKind? ParseCanvas(string arg) => arg.ToLowerInvariant() switch

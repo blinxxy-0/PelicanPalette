@@ -53,7 +53,9 @@ internal static class ArtItems
     // And the rest (1.3, section 5 of the plan; tools/art/frame_styles.py):
     // common, from Sable's shop; uncommon, as Painting levels up; legendary,
     // Qi's. What each does when it hangs is in Frames.
-    private static readonly string[] MoreFrameIds = { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi" };
+    // (1.4: "ash", the Carved Ash Frame, sold only by Tess in the Gilded Vale. furniture.png is
+    // full, so its framed paintings are on a sheet of their own: MoreFramesTexture.)
+    private static readonly string[] MoreFrameIds = { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi", "ash" };
     public static readonly FrameStyle[] MoreFrames = MoreFrameIds.Select(SetFrame).ToArray();
     private const int MoreFrameSprite = 67, MoreFrameFurniture = 35;
 
@@ -68,6 +70,10 @@ internal static class ArtItems
 
     public const string BigCraftablesTexture = "Mods/" + ModEntry.Id + "/BigCraftables";
     public const string FurnitureTexture = "Mods/" + ModEntry.Id + "/Furniture";
+    // Frames that don't fit furniture.png (tools/art/ash_frame.py): a style's 2x2 at 0, 3x3 at 2,
+    // 1x1 at 15 (5 tiles a row), five tiles across per style.
+    public const string MoreFramesTexture = "Mods/" + ModEntry.Id + "/FurnitureMore";
+    private static readonly string[] OwnSheetFrames = { "ash" };
 
     // Sprite indices in the items sheet (16 columns of 16×16).
     private const int CanvasSprite = 1, BrushSprite = 4, FrameSprite = 8, PigmentSprite = 16, TubeSprite = 48;
@@ -334,6 +340,14 @@ internal static class ArtItems
         for (int n = 0; n < MoreFrames.Length; n++)
         {
             var style = MoreFrames[n];
+            int own = System.Array.IndexOf(OwnSheetFrames, style.Id);
+            if (own >= 0)
+            {
+                string more = MoreFramesTexture.Replace('/', '\\');
+                furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{own * 5 + 15}/{more}/true";
+                furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{own * 5 + 2}/{more}/true";
+                continue;
+            }
             int small = MoreFrameFurniture + 5 * n;
             furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{small + SmallFrameRow}/{texture}/true";
             furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
