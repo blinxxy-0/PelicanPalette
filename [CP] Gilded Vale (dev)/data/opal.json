@@ -6,7 +6,6 @@
 // only exists once the dev pack's config has ValeResidents: true AND both
 // assets/opal/sprites.png (Characters/OpalCorrie) and assets/opal/portraits.png
 // (Portraits/OpalCorrie) are in this pack. See data/residents.json.
-// Gift tastes, the schedule and dialogue come with the writing (each batch approved first).
 {
   "Changes": [
     // ---- Who she is ----
@@ -52,6 +51,16 @@
       }
     },
     { "Action": "Load", "Target": "Characters/OpalCorrie", "FromFile": "assets/opal/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"} },
-    { "Action": "Load", "Target": "Portraits/OpalCorrie", "FromFile": "assets/opal/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"} }
+    { "Action": "Load", "Target": "Portraits/OpalCorrie", "FromFile": "assets/opal/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"} },
+    // ---- Gifts: love / like / dislike / hate / neutral (docs/corrie_twins_dialogue.md) ----
+    // Paintings: the mod's rule; an art lover (data/residents.json).
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"},
+      "Entries": { "OpalCorrie": "{{i18n:opal.gift.love}}/338 82 74 595 221/{{i18n:opal.gift.like}}/-2 -12 -80/{{i18n:opal.gift.dislike}}/167/{{i18n:opal.gift.hate}}/168 747 172/{{i18n:opal.gift.neutral}}/" }
+    },
+    // ---- What she says ----
+    { "Action": "Include", "FromFile": "data/opal_dialogue.json" }
   ]
 }

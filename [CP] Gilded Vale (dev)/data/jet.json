@@ -7,7 +7,6 @@
 // only exists once the dev pack's config has ValeResidents: true AND both
 // assets/jet/sprites.png (Characters/JetCorrie) and assets/jet/portraits.png
 // (Portraits/JetCorrie) are in this pack. See data/residents.json.
-// Gift tastes, the schedule and dialogue come with the writing (each batch approved first).
 {
   "Changes": [
     // ---- Who he is ----
@@ -53,6 +52,16 @@
       }
     },
     { "Action": "Load", "Target": "Characters/JetCorrie", "FromFile": "assets/jet/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"} },
-    { "Action": "Load", "Target": "Portraits/JetCorrie", "FromFile": "assets/jet/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"} }
+    { "Action": "Load", "Target": "Portraits/JetCorrie", "FromFile": "assets/jet/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"} },
+    // ---- Gifts: love / like / dislike / hate / neutral (docs/corrie_twins_dialogue.md) ----
+    // Paintings: the mod's rule; an art lover (data/residents.json).
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"},
+      "Entries": { "JetCorrie": "{{i18n:jet.gift.love}}/338 82 74 253 70/{{i18n:jet.gift.like}}/-2 -12 198 202 213 214 219 227 228 728 730/{{i18n:jet.gift.dislike}}/167 92 724 725 726/{{i18n:jet.gift.hate}}/168 747 172/{{i18n:jet.gift.neutral}}/" }
+    },
+    // ---- What he says ----
+    { "Action": "Include", "FromFile": "data/jet_dialogue.json" }
   ]
 }
