@@ -50,6 +50,10 @@
     },
     { "Action": "Load", "Target": "Characters/Lupini", "FromFile": "assets/lupini/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"} },
     { "Action": "Load", "Target": "Portraits/Lupini", "FromFile": "assets/lupini/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"} },
+    // Sitting on the overlook bench (frame 16, tools/art/vale_sit_build.py: Alex's seated pose
+    // with his own head). The offset sets him down on the seat, his feet over its front edge.
+    { "Action": "EditData", "Target": "Data/animationDescriptions", "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"},
+      "Entries": { "lupini_sit_left": "16/16/16//offset -16 24" } },
 
     // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
     // Loves: fine wine, coffee, the Vale's wildflowers (Sweet Pea, Crocus, Summer

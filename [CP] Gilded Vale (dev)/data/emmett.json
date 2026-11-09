@@ -50,6 +50,10 @@
     },
     { "Action": "Load", "Target": "Characters/EmmettWren", "FromFile": "assets/emmett/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true"} },
     { "Action": "Load", "Target": "Portraits/EmmettWren", "FromFile": "assets/emmett/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true"} },
+    // Sitting on the overlook bench (frame 16, tools/art/vale_sit_build.py: Alex's seated pose
+    // with his own head). The offset sets him down on the seat, his feet over its front edge.
+    { "Action": "EditData", "Target": "Data/animationDescriptions", "When": {"ValeResidents": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true"},
+      "Entries": { "emmett_sit_left": "16/16/16//offset -16 24" } },
 
     // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
     // Loves: a good meal (Pumpkin Soup, Fish Stew), Pale Ale, a Chanterelle ('tastes
