@@ -583,16 +583,16 @@ BUILDINGS = {
                    "glass_counter", "cutting_bench", "light_table", "mabel_bench", "glass_racks", "modern_kiln",
                    "drafting_table")},     # (the drafting table too, the user 2026-11-09: as detailed as the bench)
                "ladder": "art/gilded_vale/interiors/hall/hall_v1/ladder_1_8"},
-        lights=[(3, 3), (10, 3), (13, 4), (18, 3), (4, 9)],
+        lights=[(1, 9), (10, 3), (13, 4), (20, 9), (4, 9)],
         pieces=[
-            # (the beds a row up, their first row on the wainscot: the Saloon bed's top row is a scrap
-            # of the Saloon's own wall, which showed on the floor above them, the user 2026-11-09)
+            # (the corner columns, x 1 and 20, stay empty: the wall's diagonal corner comes down into
+            # them, and a bed there broke it, the user 2026-11-09)
             # ---- Opal's half, the west: her bed at the end, a city lamp, the glass racks
             # throwing colour on the floor, her designs pinned up over her drawing board
             # (the small window behind the racks first, so the racks stand in front of it; its
             # daylight through their glass is the colour on the floor, the user 2026-11-09)
-            ("bed", 1, 3), ("city_lamp", 3, 2), ("small_window", 4, 1), ("glass_racks", 4, 2), ("colour_pool", 4, 5),
-            ("design_sketches", 6, 1), ("drafting_table", 6, 3), ("sketch_papers", 2, 9), ("sketch_papers#2", 8, 6),
+            ("bed", 2, 4), ("city_lamp", 1, 8), ("small_window", 5, 1), ("glass_racks", 5, 2), ("colour_pool", 5, 5),
+            ("design_sketches", 2, 1), ("drafting_table", 7, 3), ("sketch_papers", 2, 9), ("sketch_papers#2", 8, 6),
             # the counter by the door, where she sells; a rug (the panels that leaned on its side went:
             # at 16 pixels wide they read as a pile of stuff, the user 2026-11-09)
             ("glass_counter", 3, 9), ("rug", 6, 8, 4, 3),
@@ -605,7 +605,7 @@ BUILDINGS = {
             # the loft, the sleek city kiln, a city lamp, his bed at the end; his cutting bench and
             # the offcuts sorted by colour, nothing on the floor
             ("light_table", 13, 3), ("ladder", 15, 2), ("modern_kiln", 16, 2),
-            ("city_lamp#2", 18, 2), ("bed#2", 19, 3),
+            ("city_lamp#2", 20, 8), ("bed#2", 18, 4),
             ("cutting_bench", 13, 8), ("offcut_bins", 19, 10),
         ],
         describe={"glass_racks": "racks", "design_sketches": "designs", "drafting_table": "drafting",

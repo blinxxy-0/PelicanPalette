@@ -109,7 +109,7 @@
       "Target": "Characters/schedules/OpalCorrie",
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true" },
       "Entries": {
-        "Sat": "800 SeedShop 12 20 0/1800 Saloon 6 21 0/2100 blinxxy.MuseArt_ValeStudio2 3 6 2"
+        "Sat": "800 SeedShop 12 20 0/1800 Saloon 6 21 0/2100 blinxxy.MuseArt_ValeStudio2 4 6 2"
       }
     }
   ]

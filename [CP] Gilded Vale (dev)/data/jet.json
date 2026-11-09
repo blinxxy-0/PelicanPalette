@@ -46,7 +46,7 @@
           "CanVisitIsland": "FALSE",
           "Home": [
             // Studio II, by his bed at the east end (tools/vale_studio2.py).
-            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 18, "Y": 6 }, "Direction": "down" }
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 17, "Y": 6 }, "Direction": "down" }
           ]
         }
       }
@@ -67,7 +67,7 @@
       "Action": "EditData",
       "Target": "Characters/schedules/JetCorrie",
       "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true", "HasFlag": "blinxxy.MuseArt_ValeHallOpen"},
-      "Entries": {"Tue": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 18 6 2", "Thu": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 18 6 2"}
+      "Entries": {"Tue": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 17 6 2", "Thu": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 17 6 2"}
     },
     // ---- What he says ----
     { "Action": "Include", "FromFile": "data/jet_dialogue.json" }

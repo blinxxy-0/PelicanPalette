@@ -344,7 +344,7 @@ def events():
 
     # ---- 10 hearts: the window (Studio II, a morning) -----------------------------------
     studio[f"blinxxy.MuseArt_Jet10h/{F(J, 10)}/Time 600 900/{mail('JetLetter')}"] = script(
-        "continue", "10 7", f"farmer 7 12 0 {J} 10 5 0 {O} 3 6 2", "skippable",
+        "continue", "10 7", f"farmer 7 12 0 {J} 10 5 0 {O} 4 6 2", "skippable",
         "pause 600", "move farmer 0 -4 0", "move farmer 2 0 1", "faceDirection farmer 0", "pause 300",
         say("Jet is sitting at Mabel's bench. You've never seen anyone sit there. Her pattern book is open at the last page; beside it, the window, finished: the Vale at dawn, the sun over the gold trees, the river."),
         f"faceDirection {J} 2",

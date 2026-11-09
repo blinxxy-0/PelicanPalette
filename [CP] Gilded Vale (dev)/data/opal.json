@@ -45,7 +45,7 @@
           "CanVisitIsland": "FALSE",
           "Home": [
             // Studio II, by her bed at the west end (tools/vale_studio2.py).
-            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 3, "Y": 6 }, "Direction": "down" }
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 4, "Y": 6 }, "Direction": "down" }
           ]
         }
       }
@@ -66,7 +66,7 @@
       "Action": "EditData",
       "Target": "Characters/schedules/OpalCorrie",
       "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true", "HasFlag": "blinxxy.MuseArt_ValeHallOpen"},
-      "Entries": {"Tue": "900 blinxxy.MuseArt_GildedVale 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 blinxxy.MuseArt_ValeStudio2 3 6 2", "Thu": "900 blinxxy.MuseArt_GildedVale 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 blinxxy.MuseArt_ValeStudio2 3 6 2"}
+      "Entries": {"Tue": "900 blinxxy.MuseArt_GildedVale 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 blinxxy.MuseArt_ValeStudio2 4 6 2", "Thu": "900 blinxxy.MuseArt_GildedVale 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 blinxxy.MuseArt_ValeStudio2 4 6 2"}
     },
     // ---- What she says ----
     { "Action": "Include", "FromFile": "data/opal_dialogue.json" }

@@ -30,8 +30,8 @@ internal static class ValeTests
         new("FernAster", "fern", ModEntry.Id + "_ValeFern", new Point(6, 6), "(O)347", "(O)769"),
         new("EmmettWren", "emmett", ModEntry.Id + "_ValeEmmett", new Point(6, 6), "(O)281", "(O)766"),
         // the Corrie twins, from Spring 1, Year 3 (Studio II, their beds at either end)
-        new("OpalCorrie", "opal", ModEntry.Id + "_ValeStudio2", new Point(3, 6), "(O)595", "(O)168"),
-        new("JetCorrie", "jet", ModEntry.Id + "_ValeStudio2", new Point(18, 6), "(O)70", "(O)168"),
+        new("OpalCorrie", "opal", ModEntry.Id + "_ValeStudio2", new Point(4, 6), "(O)595", "(O)168"),
+        new("JetCorrie", "jet", ModEntry.Id + "_ValeStudio2", new Point(17, 6), "(O)70", "(O)168"),
     };
 
     private static readonly string[] ArtLovers = { "Lupini", "TobinClay", "FernAster", "EmmettWren", "OpalCorrie", "JetCorrie" };

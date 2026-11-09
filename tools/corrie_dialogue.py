@@ -20,8 +20,8 @@ WHO = {"opal": ("OpalCorrie", "Opal"), "jet": ("JetCorrie", "Jet")}
 # Jet at the left (his dawn walk first). Rain keeps them in: rain comes before the weekdays.
 _S2, _V = "blinxxy.MuseArt_ValeStudio2", "blinxxy.MuseArt_GildedVale"
 HALL_DAYS = {
-    "OpalCorrie": {d: f"900 {_V} 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 {_S2} 3 6 2" for d in ("Tue", "Thu")},
-    "JetCorrie": {d: f"600 {_V} 19 37 3/900 {_V} 40 40 0/1700 {_S2} 16 5 0/2100 {_S2} 18 6 2" for d in ("Tue", "Thu")},
+    "OpalCorrie": {d: f"900 {_V} 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 {_S2} 4 6 2" for d in ("Tue", "Thu")},
+    "JetCorrie": {d: f"600 {_V} 19 37 3/900 {_V} 40 40 0/1700 {_S2} 16 5 0/2100 {_S2} 17 6 2" for d in ("Tue", "Thu")},
 }
 
 
