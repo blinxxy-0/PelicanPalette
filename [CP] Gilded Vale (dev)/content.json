@@ -79,6 +79,13 @@
           "DisplayName": "{{i18n:location.vale-studio}}",
           "DefaultArrivalTile": { "X": 12, "Y": 18 },
           "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeStudio", "Type": "StardewValley.Locations.DecoratableLocation" }
+        },
+        // Studio II, the Corrie twins' from Spring 1, Year 3 (tools/vale_studio2.py; its door
+        // and heart stages are data/vale_studio2.json)
+        "blinxxy.MuseArt_ValeStudio2": {
+          "DisplayName": "{{i18n:location.vale-studio2}}",
+          "DefaultArrivalTile": { "X": 7, "Y": 11 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeStudio2", "Type": "StardewValley.Locations.DecoratableLocation" }
         }
       }
     },
@@ -229,6 +236,8 @@
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeFern", "FromFile": "assets/ValeFern.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeEmmett", "FromFile": "assets/ValeEmmett.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio", "FromFile": "assets/ValeStudio.tmx" },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio2", "FromFile": "assets/ValeStudio2.tmx" },
+    { "Action": "Include", "FromFile": "data/vale_studio2.json" },
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeWallpapers", "FromFile": "assets/ValeWallpapers.png" },
     {
       "Action": "EditData",
@@ -292,7 +301,8 @@
         "{{ModId}}_Fern": { "Id": "{{ModId}}_Fern", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-fern}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "12, 39" },
         "{{ModId}}_Seedhouse": { "Id": "{{ModId}}_Seedhouse", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:warp.seedhouse}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "17, 39" },
         "{{ModId}}_Emmett": { "Id": "{{ModId}}_Emmett", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-emmett}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "19, 62" },
-        "{{ModId}}_Studio": { "Id": "{{ModId}}_Studio", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-studio}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "73, 39" }
+        "{{ModId}}_Studio": { "Id": "{{ModId}}_Studio", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-studio}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "73, 39" },
+        "{{ModId}}_Studio2": { "Id": "{{ModId}}_Studio2", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-studio2}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "86, 39" }
       }
     }
   ]

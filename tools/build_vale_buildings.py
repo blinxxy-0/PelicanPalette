@@ -139,6 +139,25 @@ ART = {
     "leaves":        (1, 1, -2),    # dead leaves blown in under the door
     "old_cot":       (2, 3, 2),     # a narrow iron cot, a thin mattress, a folded blanket
     "washstand":     (2, 3, 1),     # a jug in a basin, a little mirror
+    # Studio II, the Corrie twins' (docs/design/vale_newcomers.md, section 5); hand-drawn by
+    # tools/art/vale_corrie_art.py (no PixelLab: the user keeps it for characters)
+    "glass_racks":   (2, 3, 1),     # an upright rack of coloured sheet glass, ruby, cobalt, amber, green
+    "colour_pool":   (2, 2, -2),    # the colour the racks throw on the floor
+    "design_sketches": (3, 2, 0),   # Opal's window designs, coloured in, pinned up any old how
+    "drafting_table": (2, 2, 1),    # her tilted drawing board, a design half coloured, pencils everywhere
+    "studio_window": (4, 2, 0),     # the big studio window over Mabel's bench, plain glass
+    "mabel_window":  (4, 2, 0),     # ... with Mabel's finished design in it (Jet's 10 hearts)
+    "mabel_bench":   (2, 2, 1),     # Mabel's old bench, worn smooth, her grozing pliers laid out, kept, never used
+    "mabel_bench_used": (2, 2, 1),  # ... in use: her pattern book open, a panel half leaded, Jet's stool out
+    "light_table":   (2, 2, 1),     # a glowing light table, a half-leaded panel on it
+    "modern_kiln":   (2, 3, 1),     # a sleek steel city kiln with a dial, far too nice for the Vale
+    "glass_lamp":    (1, 3, 1),     # their own stained-glass floor lamp (Opal's 6 hearts; also on the counter)
+    "glass_counter": (3, 2, 1),     # the counter: suncatchers hung on a rail, a little lamp, the cash tin
+    "cutting_bench": (3, 2, 1),     # Jet's bench, spotless: a cutting mat, tools laid out in rows
+    "offcut_bins":   (2, 2, 1),     # offcuts sorted by colour, bin by bin
+    "leaning_panels": (1, 2, 1),    # finished panels leaning on the counter's side
+    "sketch_papers": (1, 1, -2),    # Opal's sketches dropped on the floor
+    "split_line":    (1, 1, -2),    # the black line down the middle of the floor, on a tile's right edge
     # the inn's, reused
     "wardrobe":      (2, 3, 1), "nightstand": (1, 2, 1), "writing_desk": (2, 2, 1), "sketch_wall": (2, 2, 0),
 }
@@ -159,6 +178,9 @@ GAME_PAINTINGS = {1554: (3, 2), 1547: (3, 2), 1541: (2, 2), 1557: (2, 2), 2421: 
                   1567: (1, 2), 2329: (2, 2), 2423: (2, 2), 1802: (2, 2), 1612: (2, 2), 1606: (1, 2)}
 for _id, _wh in GAME_PAINTINGS.items():
     LUPINI[f"game_{_id}"] = _id
+# The game's own furniture standing on the floor, from TileSheets/furniture: key -> (its sprite
+# index, tiles wide, tall, solid bottom rows). The Modern Lamp is the twins' city lamp.
+GAME_FURN = {"city_lamp": (1447, 1, 3, 1)}
 # wall pieces hung from the top of their cells, BEAM_DROP px down (Emmett's beams: one height, so
 # they join, clear of the ceiling's outline)
 TOP_ALIGNED = {"beam", "moss_wall", "beam_l", "beam_r", "moss_wall_l", "moss_wall_r"}
@@ -528,6 +550,58 @@ BUILDINGS = {
                "An old paint trestle, canvases left leaning, chairs under dust sheets; ivy and cobwebs, leaves blown in.",
                "Behind, in the east wing, through a door: the artist's back room (a cot, a washstand, a trunk).",
                "Right-click the painting, the note, the sketches and the rest to read about them. Orange = new PixelLab piece."]),
+    # Studio II, the Corrie twins' (docs/design/vale_newcomers.md, section 5; corrie_twins_brief.md):
+    # renovated by Robin, theirs from Spring 1, Year 3. A workshop with a counter, the city's money
+    # showing, split down the middle by a black line: Opal's half (west) a riot of colour, Jet's
+    # (east) spotless. Mabel's bench on the line under the big window, kept and never used. A bed
+    # at each end. The heart stages (STUDIO2_STAGES) swap pieces through content-pack conditions.
+    "studio2": dict(
+        title="Studio II, the Corries'", location="blinxxy.MuseArt_ValeStudio2", tmx="ValeStudio2.tmx",
+        W=22, H=16, outside=(86, 38),
+        rooms={"studio": dict(a=1, b=20, t=0, f=12, label="Studio II")},
+        doors=[],
+        front=("studio", 7),
+        zones=[],
+        # Opal's half papered in jewel squares on mustard, like glass in sunlight; Jet's plain grey
+        wall=80, wall_zones=[("studio", 1, 10, 17)], zone_colours={17: (232, 196, 90), 80: (150, 150, 150)},
+        all_picks=True,         # the sheet holds the heart stages' pieces too (STUDIO2_STAGES)
+        picks={**{k: "art/gilded_vale/interiors/studio2/" + k for k in (
+                   "colour_pool", "design_sketches", "drafting_table", "studio_window", "mabel_window",
+                   "mabel_bench_used", "glass_lamp", "offcut_bins", "leaning_panels", "sketch_papers", "split_line")},
+               # PixelLab, Pro Flash (the user, 2026-11-09)
+               **{k: "art/gilded_vale/interiors/studio2/pixellab/" + k for k in (
+                   "glass_counter", "cutting_bench", "light_table", "mabel_bench", "glass_racks", "modern_kiln")},
+               "ladder": "art/gilded_vale/interiors/hall/hall_v1/ladder_1_8"},
+        lights=[(3, 3), (10, 3), (13, 4), (18, 3), (4, 9)],
+        pieces=[
+            # ---- Opal's half, the west: her bed at the end, a city lamp, the glass racks
+            # throwing colour on the floor, her designs pinned up over her drawing board
+            ("bed", 1, 4), ("city_lamp", 3, 2), ("glass_racks", 4, 2), ("colour_pool", 4, 5),
+            ("design_sketches", 6, 1), ("drafting_table", 6, 3), ("sketch_papers", 2, 9), ("sketch_papers#2", 8, 6),
+            # the counter by the door, where she sells; finished panels lean on its side; a rug
+            ("glass_counter", 3, 9), ("leaning_panels", 6, 9), ("rug", 6, 8, 4, 3),
+            # ---- the middle: the big window, Mabel's bench under it on the line; the line itself
+            ("studio_window", 9, 1), ("mabel_bench", 10, 3),
+            *[("split_line" + ("#%d" % y if y > 5 else ""), 10, y) for y in range(5, 13)],
+            # ---- Jet's half, the east: the light table under a small window, the ladder up to
+            # the loft, the sleek city kiln, a city lamp, his bed at the end; his cutting bench and
+            # the offcuts sorted by colour, nothing on the floor
+            ("window", 13, 1), ("light_table", 13, 3), ("ladder", 15, 2), ("modern_kiln", 16, 2),
+            ("city_lamp#2", 18, 2), ("bed#2", 19, 4),
+            ("cutting_bench", 13, 8), ("offcut_bins", 19, 10),
+        ],
+        describe={"glass_racks": "racks", "design_sketches": "designs", "drafting_table": "drafting",
+                  "studio_window": "window", "mabel_bench": "bench", "light_table": "light_table",
+                  "modern_kiln": "kiln", "cutting_bench": "cutting_bench", "offcut_bins": "offcuts",
+                  "ladder": "ladder", "city_lamp": "city_lamp", "city_lamp#2": "city_lamp"},
+        notes=["Studio II, the Corrie twins' home and workshop (from Spring 1, Year 3). One room the size of Leah's cottage.",
+               "A black line runs down the middle of the floor. West: Opal's half, a riot of colour: jewel-square wallpaper, glass racks",
+               "throwing colour on the floor, her designs pinned up, sketches dropped, a rug, the counter by the door where she sells.",
+               "East: Jet's half, spotless grey: the light table under a small window, a sleek city kiln, his cutting bench, offcuts sorted by colour.",
+               "The middle: the big studio window and, under it on the line, Mabel's bench, kept and never used. The ladder goes up to the loft.",
+               "City money: a Modern Lamp (the game's own) by each bed, the steel kiln. A bed at each end.",
+               "Hearts: Opal 6+, their own glass lamps replace the city ones. Jet 8+, the line has a gap by the bench.",
+               "Jet 10+, Mabel's bench in use and her finished window in the studio's window. Orange = new hand-drawn piece."]),
 }
 
 # art drawn to its tiles' exact size, kept in its place in them (not stood on their bottom)
@@ -615,6 +689,50 @@ def closed_hall(hall):
 
 BUILDINGS["hall_closed"] = closed_hall(BUILDINGS["hall"])
 
+# Studio II through the twins' hearts (docs/design/vale_newcomers.md, section 5; the brief's "The
+# interior through their hearts"): stage -> (the condition, as a Content Patcher When on the
+# player's hearts, and the change to the base layout). Each is its own EditMap over the base map
+# (tools/vale_studio2.py diffs a stage's build against the base), so they combine in any order.
+STUDIO2_STAGES = {
+    # their own glass lamps replace the city ones
+    "opal6": ({"Hearts:OpalCorrie": 6}, {"swap": {"city_lamp": "glass_lamp"}, "describe": {"glass_lamp": "glass_lamp"}}),
+    # the line gets a gap by the bench, where they've started sharing the middle
+    "jet8": ({"Hearts:JetCorrie": 8}, {"remove": ["split_line", "split_line#6", "split_line#7"]}),
+    # Mabel's bench in use; her finished window in the studio's window
+    "jet10": ({"Hearts:JetCorrie": 10}, {"swap": {"mabel_bench": "mabel_bench_used", "studio_window": "mabel_window"},
+                                          "describe": {"mabel_bench_used": "bench_used", "mabel_window": "mabel_window"}}),
+}
+
+
+def studio2_stage(spec, stages):
+    """Studio II's spec with the given heart stages applied."""
+    import copy
+    out = copy.deepcopy(spec)
+    out["texts_of"] = "studio2"         # (a stage's right-click texts are Studio II's)
+    for st in stages:
+        change = STUDIO2_STAGES[st][1]
+        pieces = []
+        for p in out["pieces"]:
+            if p[0] in change.get("remove", []):
+                continue
+            key = p[0].split("#")[0]
+            if key in change.get("swap", {}):
+                tag = p[0][len(key):]
+                p = (change["swap"][key] + tag, *p[1:])
+            pieces.append(p)
+        out["pieces"] = pieces
+        described = {}
+        for k, v in out["describe"].items():
+            key = k.split("#")[0]
+            to = change.get("swap", {}).get(key, key)
+            described[to + k[len(key):]] = change.get("describe", {}).get(to, v)
+        out["describe"] = described
+    return out
+
+
+# every stage at once, for the plan
+BUILDINGS["studio2_hearts"] = studio2_stage(BUILDINGS["studio2"], list(STUDIO2_STAGES))
+
 # the game's floorings (walls_and_floors) for floors that aren't planks or Sam's tiles
 FLOORINGS = {"flagstones": 10, "terracotta": 21, "parquet": 16, "checker": 22, "stone tiles": 9}
 FLOOR_COLOURS = {"planks": (196, 140, 82), "flagstones": (150, 146, 138), "terracotta": (186, 98, 60), "parquet": (150, 90, 50), "checker": (200, 200, 210), "stone tiles": (220, 200, 160), "kitchen tiles": (200, 214, 226),
@@ -657,6 +775,8 @@ def footprint(p):
         return BED[0], BED[1], 3
     if key in LUPINI:
         return (*GAME_PAINTINGS.get(LUPINI[key], (2, 2)), 0)
+    if key in GAME_FURN:
+        return GAME_FURN[key][1:]
     if key in VANILLA:
         rows = VANILLA[key]
         w = max(len(g) for r in rows for g in r.values())
@@ -766,7 +886,13 @@ def plan(name, out):
         d.text((dx * T + T // 2, (f + 2) * T + 4), "FRONT DOOR", fill=(255, 255, 255), font=bold, anchor="mt")
     for zr, x0, x1, pp in spec.get("wall_zones", []):
         r = spec["rooms"][zr]
-        box(x0, r["t"] + 1, x1 - x0 + 1, 2, fill=(190, 225, 230))                     # a glass wall
+        box(x0, r["t"] + 1, x1 - x0 + 1, 2, fill=spec.get("zone_colours", {}).get(pp, (190, 225, 230)))   # a glass wall
+    if "zone_colours" in spec and spec.get("wall") in spec["zone_colours"]:      # (the rest of the wall)
+        for r in spec["rooms"].values():
+            zoned = {x for zr, x0, x1, _ in spec.get("wall_zones", []) for x in range(x0, x1 + 1)}
+            for x in range(r["a"], r["b"] + 1):
+                if x not in zoned:
+                    box(x, r["t"] + 1, 1, 2, fill=spec["zone_colours"][spec["wall"]])
 
     # grid
     for x in range(W + 1):
@@ -904,7 +1030,8 @@ def build(name, exports, assets):
             g["Back"][y][x] = g["Buildings"][y][x] = 1            # the void round the house
 
     picks = {k: v for k, v in {**INN_PICKS, **spec["picks"]}.items()
-             if any(p[0].split("#")[0] == k for p in spec["pieces"])}
+             if k in spec["picks"] and spec.get("all_picks")
+             or any(p[0].split("#")[0] == k for p in spec["pieces"])}   # (all_picks: a stage's pieces too)
     sheet, slots, shade = pack(picks)
     furn_first = WF + 16 * 43
     FURN = furn_first + (sheet.width // 16) * (sheet.height // 16)       # the game's furniture sheet
@@ -1007,6 +1134,15 @@ def build(name, exports, assets):
             for j in range(ph):
                 for i in range(pw):
                     g["Front2" if g["Front"][py + j][px + i] else "Front"][py + j][px + i] = FURN + n + 32 * j + i
+        elif key in GAME_FURN:
+            n, pw, ph, sol = GAME_FURN[key]
+            for j in range(ph):
+                for i in range(pw):
+                    x, y, gid = px + i, py + j, FURN + n + 32 * j + i
+                    if j >= ph - sol:
+                        g["Buildings"][y][x] = gid
+                    else:
+                        g["Front2" if g["Front"][y][x] else "Front"][y][x] = gid
         elif key in VANILLA:
             for j, row in enumerate(VANILLA[key]):
                 for code, gids in row.items():
@@ -1066,7 +1202,7 @@ def build(name, exports, assets):
             cells = [(x0 + i, y) for i in range(w) for y in (r["t"] + 2, r["t"] + 3)]
         for x, y in cells:
             if g["Buildings"][y][x]:
-                tile_props.append(("Buildings", x, y, "Action", f"Message {message_key(name, key)}"))
+                tile_props.append(("Buildings", x, y, "Action", f"Message {message_key(spec.get('texts_of', name), key)}"))
     props = {"Warp": " ".join(warps),
              "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in spec["lights"])}
     if spec["doors"]:
@@ -1075,7 +1211,8 @@ def build(name, exports, assets):
     tilesets = [("indoor", 1, "townInterior", 512, 1088), ("indoor2", T2, "townInterior_2", 512, 656),
                 ("zz_wallsfloors", WF, "walls_and_floors", 256, 688),
                 ("z_blinxxy.MuseArt_" + sheet_name[:-4], furn_first, sheet_name, sheet.width, sheet.height)]
-    if any(p[0] in LUPINI or p[0] == "display_easel" for p in spec["pieces"]):
+    if spec.get("all_picks") or any(p[0].split("#")[0] in LUPINI or p[0].split("#")[0] in GAME_FURN
+                                    or p[0] == "display_easel" for p in spec["pieces"]):
         tilesets.append(("zz_furniture", FURN, "../TileSheets/furniture", 512, 1488))
     write_raw(os.path.join(assets, spec["tmx"]), W, H, g, props, tilesets, tile_props, bmr.LAYERS)
     print("wrote", spec["tmx"], f"{W}x{H}")

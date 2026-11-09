@@ -10,7 +10,7 @@
 // Gift tastes, the schedule and dialogue come with the writing (each batch approved first).
 {
   "Changes": [
-    // ---- Who she is ----
+    // ---- Who he is ----
     {
       "Action": "EditData",
       "Target": "Data/Characters",
@@ -46,8 +46,8 @@
           "WinterStarParticipant": "FALSE",
           "CanVisitIsland": "FALSE",
           "Home": [
-            // Studio II, by she bed (tools/build_vale_interiors.py, "studio2").
-            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 3, "Y": 5 }, "Direction": "down" }
+            // Studio II, by his bed at the east end (tools/vale_studio2.py).
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 18, "Y": 6 }, "Direction": "down" }
           ]
         }
       }

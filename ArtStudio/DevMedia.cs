@@ -75,6 +75,13 @@ internal static class DevMedia
             texture.SaveAsPng(stream, texture.Width, texture.Height);
             _monitor.Log($"Saved {path} ({texture.Width}x{texture.Height}).", LogLevel.Info);
         });
+        DevTools.AddCommand(helper, "museart_exportdata", "Saves a string-to-string data asset (Data/Furniture, Data/Objects' older kin) to media/export_<name>.json. Usage: museart_exportdata Data/Furniture", (_, args) =>
+        {
+            var data = Game1.content.Load<Dictionary<string, string>>(args[0]);
+            string path = "media/export_" + args[0].Replace('/', '_') + ".json";
+            _helper.Data.WriteJsonFile(path, data);
+            _monitor.Log($"Saved {path} ({data.Count} entries).", LogLevel.Info);
+        });
         DevTools.AddCommand(helper, "museart_signtext", "Renders a heading in the game's bold font to media/sign_<slug>.png. Usage: museart_signtext Features", (_, args) => SignText(string.Join(" ", args)));
         DevTools.AddCommand(helper, "museart_updatecard", "Renders the update card's parchment, lines and in-game icons to media/update_card.png (tools/art/update_card.py adds the sky, title and portraits).", (_, _) => UpdateCard());
         DevTools.AddCommand(helper, "museart_spriteaudit", "Every paintable item, creature and animal (1.3): which have see-through pixels and how much their true colours change the picture, and which small paintings are bigger than 16x16.", (_, _) => SpriteAudit());
