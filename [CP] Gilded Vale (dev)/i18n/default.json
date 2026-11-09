@@ -526,6 +526,7 @@
   "vale.guide.page.unfound": "...",
   "vale.guide.step_in": "Step into the last page?",
   "vale.guide.not_here": "The page only seems to come alive in the Vale.",
+  "vale.guide.in_grove": "You're already standing in the last page.",
   "quest.painters_guide.title": "The Old Painters' Spots",
   "quest.painters_guide.description": "An old guide from the Vale House names eight places where the Vale's painters liked to sit. Find each one, and see what they saw.",
   "quest.painters_guide.objective": "{{found}} of 8 spots found",

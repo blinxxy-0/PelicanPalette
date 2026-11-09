@@ -143,11 +143,13 @@ internal static class PaintersGuide
             .Where(p => p.Length > 0)
             .ToList();
 
-    // Using the guide (right-click with it held). Before the last find, anywhere: its page, the eight
-    // spots found so far. After it, in the Vale: the question about stepping in (yes: GildedGrove,
-    // once the box has closed). After it, elsewhere:
-    // the page says it only comes alive in the Vale, and that's false (nothing was done). False and
-    // nothing shown, too, when the player isn't free or a splash is playing.
+    // Using the guide (right-click with it held, when the game has nothing of its own to do there:
+    // PerformUseActionPrefix). Before the last find, anywhere: its page, the eight spots found so far.
+    // After it, anywhere in the Vale (the outdoor map or any of its interiors, ValeBus.IsInVale): the
+    // question about stepping in (yes: GildedGrove, once the box has closed). After it, in the Grove
+    // itself: a line saying you're already there. After it, elsewhere: the page says it only comes
+    // alive in the Vale. Those last two are false (nothing was done). False and nothing shown, too,
+    // when the player isn't free or a splash is playing.
     public static bool UseGuide(Farmer who)
     {
         if (!Context.IsPlayerFree || PaintSplash.Playing)
@@ -158,7 +160,12 @@ internal static class PaintersGuide
             Game1.activeClickableMenu = new LetterViewerMenu(PageText(who));
             return true;
         }
-        if (here?.Name != ValeBus.Vale)
+        if (GildedGrove.InGrove(who))
+        {
+            Game1.drawObjectDialogue(Text("vale.guide.in_grove"));
+            return false;
+        }
+        if (!ValeBus.IsInVale(here))
         {
             Game1.drawObjectDialogue(Text("vale.guide.not_here"));
             return false;
@@ -182,8 +189,14 @@ internal static class PaintersGuide
 
     // The game's own data can't say "never dropped" (CanBeTrashed and CanBeGivenAsGift are all it has),
     // so the guide's canBeDropped is false here: toss it from the bag and it stays in your hands.
+    // Right-click is the game's own Object.performUseAction (PerformUseActionPrefix), and the guide
+    // is never used up by it (ReduceActiveItemPrefix).
     public static void Patch(HarmonyLib.Harmony harmony)
     {
+        harmony.Patch(HarmonyLib.AccessTools.Method(typeof(StardewValley.Object), nameof(StardewValley.Object.performUseAction), new[] { typeof(GameLocation) }),
+            prefix: new HarmonyLib.HarmonyMethod(typeof(PaintersGuide), nameof(PerformUseActionPrefix)));
+        harmony.Patch(HarmonyLib.AccessTools.Method(typeof(Farmer), nameof(Farmer.reduceActiveItemByOne)),
+            prefix: new HarmonyLib.HarmonyMethod(typeof(PaintersGuide), nameof(ReduceActiveItemPrefix)));
         harmony.Patch(HarmonyLib.AccessTools.Method(typeof(Item), nameof(Item.canBeDropped)),
             postfix: new HarmonyLib.HarmonyMethod(typeof(PaintersGuide), nameof(CanBeDroppedPostfix)));
         harmony.Patch(HarmonyLib.AccessTools.PropertyGetter(typeof(Quest), nameof(Quest.currentObjective)),
@@ -196,31 +209,27 @@ internal static class PaintersGuide
             __result = false;
     }
 
-    // Right-click with the guide held. Facing a spot's stool, a person, an object, furniture or
-    // anything with a tile action is the game's own click, left alone; anywhere else it opens the guide.
-    public static void Register(IModHelper helper) => helper.Events.Input.ButtonPressed += (_, e) =>
+    // Right-click with the guide held, the game's way. Game1.pressActionButton first tries the tile
+    // you're facing or pointing at (tryToCheckAt: a person, a pet, a farm animal, another farmer, a
+    // building's door, a placed object, furniture, a crop, a tree, a bush, a tile action...), and only
+    // when nothing there takes the click, and the player can move, does it call the held object's
+    // performUseAction: that's where the guide opens. The game's own performUseAction does nothing for
+    // it, so it's skipped. True whenever the guide showed something (its page, the question, or one of
+    // the lines that say it does nothing here): the press was the guide's, and the game goes no further
+    // (with false it would try the tiles around for something else to do, under the open box).
+    private static bool PerformUseActionPrefix(StardewValley.Object __instance, ref bool __result)
     {
-        if (!Context.IsPlayerFree || !e.Button.IsActionButton() || Game1.player.CurrentItem?.QualifiedItemId != "(O)" + GuideItemId)
-            return;
-        if (!ClickOpensGuide(Game1.currentLocation, e.Cursor.GrabTile))
-            return;
-        helper.Input.Suppress(e.Button);
-        UseGuide(Game1.player);
-    };
-
-    // False where the game has something of its own to do with a right-click on that tile.
-    public static bool ClickOpensGuide(GameLocation location, Vector2 tile)
-    {
-        int x = (int)tile.X, y = (int)tile.Y;
-        if (location.doesTileHaveProperty(x, y, "Action", "Buildings") != null)
-            return false;
-        // An NPC stands two tiles tall: a click on their head is on the tile above their feet.
-        if (location.isCharacterAtTile(tile) != null || location.isCharacterAtTile(tile + new Vector2(0, 1)) != null)
-            return false;
-        if (location.getObjectAtTile(x, y) != null || location.GetFurnitureAt(tile) != null)
-            return false;
-        return true;
+        if (__instance.QualifiedItemId != "(O)" + GuideItemId)
+            return true;
+        bool used = UseGuide(Game1.player);
+        __result = used || Game1.activeClickableMenu != null;
+        return false;
     }
+
+    // pressActionButton takes one away from any object whose use says true (a totem, a book): the
+    // guide is never used up.
+    private static bool ReduceActiveItemPrefix(Farmer __instance) =>
+        __instance.CurrentItem?.QualifiedItemId != "(O)" + GuideItemId;
 
     // The tile action: blinxxy.MuseArt_PaintSpot <spotId>. An old tile with no id does nothing.
     public static bool OnTouch(Farmer who, string[] args)
@@ -262,7 +271,7 @@ internal static class PaintersGuide
     public static IEnumerable<string> StringKeys =>
         Spots.SelectMany(s => new[] { $"vale.guide.spot.{s.Id}.name", $"vale.guide.spot.{s.Id}.line" })
             .Concat(new[] { "vale.guide.plain_stool", "vale.guide.last_page", "vale.guide.board", "vale.guide.take", "vale.guide.again",
-                "vale.guide.page.title", "vale.guide.page.unfound", "vale.guide.step_in", "vale.guide.not_here",
+                "vale.guide.page.title", "vale.guide.page.unfound", "vale.guide.step_in", "vale.guide.not_here", "vale.guide.in_grove",
                 "quest.painters_guide.title", "quest.painters_guide.description", "quest.painters_guide.objective", "vale.guide.item.description" })
             .Concat(GildedGrove.StringKeys)
             .Concat(ValeGraves.StringKeys);

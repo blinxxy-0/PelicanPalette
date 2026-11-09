@@ -31,7 +31,6 @@ internal static class GildedVale
         GameLocation.RegisterTileAction(PaintSpotAction, (_, args, who, _) => PaintersGuide.OnTouch(who, args));
         // The frame by the Vale House's guest books holds the guide (ValeHouse.tmx, PaintersGuide.BoardTile).
         GameLocation.RegisterTileAction(TakeGuideAction, (_, _, who, _) => PaintersGuide.OnTake(who));
-        PaintersGuide.Register(helper);
         PaintersGuide.Patch(harmony);
         // The Grove the guide's last page leads to, and the frame back (GildedGrove.cs).
         GildedGrove.Register(helper, monitor);

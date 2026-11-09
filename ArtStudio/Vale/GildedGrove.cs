@@ -68,11 +68,12 @@ internal static class GildedGrove
     public static void RequestWarpHome(Farmer who) => _pending = (who, false, 300);
     public static bool WarpPending => _pending != null;
 
-    // The last page: a flash, sparkles and a wash of gold paint, then the Grove. Only from the Vale,
-    // only with the Grove open, only when the player is free. effects:false warps at once (the checks).
+    // The last page: a flash, sparkles and a wash of gold paint, then the Grove. Only from the Vale
+    // (outdoors or in, ValeBus.IsInVale), only with the Grove open, only when the player is free.
+    // effects:false warps at once (the checks).
     public static bool WarpIn(Farmer who, bool effects = true)
     {
-        if (!Context.IsPlayerFree || PaintSplash.Playing || who.currentLocation?.Name != ValeBus.Vale
+        if (!Context.IsPlayerFree || PaintSplash.Playing || !ValeBus.IsInVale(who.currentLocation)
             || !who.mailReceived.Contains(PaintersGuide.GroveOpenFlag))
             return false;
         return Go(who, effects, true);
@@ -108,7 +109,7 @@ internal static class GildedGrove
     {
         bool ok = Context.IsWorldReady && Context.IsPlayerFree && !Game1.eventUp && !Game1.isWarping
             && Game1.timeOfDay < 2600 && !who.passedOut
-            && who.currentLocation?.Name == (into ? ValeBus.Vale : Location)
+            && (into ? ValeBus.IsInVale(who.currentLocation) : InGrove(who))
             && (!into || who.mailReceived.Contains(PaintersGuide.GroveOpenFlag));
         if (!ok)
         {

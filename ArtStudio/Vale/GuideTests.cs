@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ArtStudio.Painting;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -186,8 +187,29 @@ internal static class GuideTests
             who.currentLocation = place;
             Check(monitor, "guide: in the Vale, open", usedInVale && asked, $"returned {usedInVale}, asked {asked}");
 
-            // The right-click hook leaves the game's own clicks alone: people, objects, furniture, tile actions.
-            Check(monitor, "guide: right-click leaves NPCs, objects, furniture and tile actions alone", HookLeavesClicks(vale, out string hook), hook);
+            // Anywhere in the Vale, its interiors too: the question.
+            var house = Game1.getLocationFromName(ValeResidents.ValeHouse);
+            who.currentLocation = house;
+            bool usedIndoors = house != null && PaintersGuide.UseGuide(who);
+            bool askedIndoors = Game1.activeClickableMenu is DialogueBox { isQuestion: true };
+            Settle();
+            if (house != null)
+                house.afterQuestion = null;
+            who.currentLocation = place;
+            Check(monitor, "guide: in a Vale interior, open", usedIndoors && askedIndoors && ValeBus.IsInVale(house) && !ValeBus.IsInVale(farm),
+                $"{house?.Name ?? "no Vale House"}: returned {usedIndoors}, asked {askedIndoors}");
+
+            // In the Grove itself: not the Vale's line, but its own, and nothing done.
+            var groveHere = Game1.getLocationFromName(GildedGrove.Location);
+            who.currentLocation = groveHere;
+            bool usedInGrove = groveHere != null && PaintersGuide.UseGuide(who);
+            var groveBox = (Game1.activeClickableMenu as DialogueBox)?.dialogues.ToList() ?? new List<string>();
+            Settle();
+            who.currentLocation = place;
+            string groveLine = PaintersGuide.Text("vale.guide.in_grove");
+            Check(monitor, "guide: in the Grove, its own line", groveHere != null && !usedInGrove && groveBox.Count == 1 && groveBox[0] == groveLine
+                && groveLine != PaintersGuide.Text("vale.guide.not_here") && !ValeBus.IsInVale(groveHere),
+                $"returned {usedInGrove}, shown '{string.Join(" | ", groveBox)}'");
 
             // The spots on the Vale's map, and the guide's frame in the Vale House, through their tile actions.
             Clear();
@@ -772,47 +794,6 @@ internal static class GuideTests
             monitor.Log("Usage: museart_foundertest offer|check", LogLevel.Warn);
     }
 
-    // The game's own click, for each thing the hook must leave alone; true only if it leaves them all
-    // and still opens the guide on bare ground.
-    private static bool HookLeavesClicks(GameLocation vale, out string detail)
-    {
-        var tile = new Vector2(ValeGraves.GraveyardGateTile.X, ValeGraves.GraveyardGateTile.Y);
-        var results = new List<string>();
-        bool bare = PaintersGuide.ClickOpensGuide(vale, tile);
-        results.Add($"bare {bare}");
-
-        bool obj = false, furn = false;
-        if (!vale.Objects.ContainsKey(tile))
-        {
-            vale.Objects.Add(tile, ItemRegistry.Create<SObject>("(O)390"));
-            try { obj = !PaintersGuide.ClickOpensGuide(vale, tile); }
-            finally { vale.Objects.Remove(tile); }
-        }
-        results.Add($"object {obj}");
-        var chair = Furniture.GetFurnitureInstance("0", tile);
-        vale.furniture.Add(chair);
-        try { furn = !PaintersGuide.ClickOpensGuide(vale, tile); }
-        finally { vale.furniture.Remove(chair); }
-        results.Add($"furniture {furn}");
-
-        // Someone already in the world, wherever they are: their feet and their head.
-        var npc = Utility.getAllCharacters().FirstOrDefault(c => c.currentLocation != null && c.IsVillager);
-        bool feet = npc != null && !PaintersGuide.ClickOpensGuide(npc.currentLocation, npc.Tile);
-        bool head = npc != null && !PaintersGuide.ClickOpensGuide(npc.currentLocation, npc.Tile - new Vector2(0, 1));
-        results.Add($"{npc?.Name ?? "no NPC"} feet {feet} head {head}");
-
-        Vector2? action = null;
-        var layer = vale.Map.GetLayer("Buildings");
-        for (int y = 0; y < layer.LayerHeight && action == null; y++)
-            for (int x = 0; x < layer.LayerWidth && action == null; x++)
-                if (vale.doesTileHaveProperty(x, y, "Action", "Buildings") != null)
-                    action = new Vector2(x, y);
-        bool act = action != null && !PaintersGuide.ClickOpensGuide(vale, action.Value);
-        results.Add($"tile action {act}");
-        detail = string.Join(", ", results);
-        return bare && obj && furn && feet && head && act;
-    }
-
     // ---- What the boxes show ----
 
     // A page shows a code if it has a page break, a '#', or a $ and a letter or digit (portrait and
@@ -873,6 +854,9 @@ internal static class GuideTests
             who.currentLocation = Game1.getLocationFromName("Farm");
             PaintersGuide.UseGuide(who);
             Grab("the guide outside the Vale");
+            who.currentLocation = Game1.getLocationFromName(GildedGrove.Location);
+            PaintersGuide.UseGuide(who);
+            Grab("the guide in the Grove");
         }
         finally
         {
@@ -969,6 +953,34 @@ internal static class GuideTests
         int guideSlot = -1;
         bool guideAdded = false;
         int toolBefore = who.CurrentToolIndex;
+        // The guide in hand, as a player holds it: its toolbar slot selected (one is put in a free
+        // toolbar slot, and taken out again after, if it isn't in the toolbar).
+        void HoldGuide()
+        {
+            int at = who.Items.ToList().FindIndex(i => i?.QualifiedItemId == "(O)" + PaintersGuide.GuideItemId);
+            if (at < 0 || at >= 12)
+            {
+                at = Enumerable.Range(0, 12).Where(i => i >= who.Items.Count || who.Items[i] == null).DefaultIfEmpty(-1).First();
+                if (at >= 0)
+                {
+                    while (who.Items.Count <= at)
+                        who.Items.Add(null);
+                    who.Items[at] = ItemRegistry.Create("(O)" + PaintersGuide.GuideItemId);
+                    guideAdded = true;
+                }
+            }
+            guideSlot = at;
+            if (at >= 0)
+                who.CurrentToolIndex = at;
+        }
+        void DropAddedGuide()
+        {
+            if (guideAdded && guideSlot >= 0 && guideSlot < who.Items.Count && who.Items[guideSlot]?.QualifiedItemId == "(O)" + PaintersGuide.GuideItemId)
+                who.Items[guideSlot] = null;
+            guideAdded = false;
+            who.CurrentToolIndex = toolBefore;
+        }
+        Point clickAt = Point.Zero;
         Vector2 walkFrom = Vector2.Zero;
         int walkTicks = 0, walkDir = 0, waited = 0, walked = 0;
         string arrival = "";
@@ -1025,24 +1037,38 @@ internal static class GuideTests
             }),
             new("guide: a splash lets go after the box", () => ++walkTicks > 3, () =>
                 Check(monitor, "guide: a splash lets go after the box", who.CanMove, $"{arrival}; can move {who.CanMove} once it closed")),
+            // Right-click with the guide held, through the game's own Game1.pressActionButton, standing in
+            // the Vale: whatever is in front takes the click first, and the guide opens only when nothing does.
+            new("guide: right-click", () => Settled(), () =>
+            {
+                clickAt = ClickSpot(vale);
+                Game1.warpFarmer(ValeBus.Vale, clickAt.X, clickAt.Y, 2);
+            }),
+            // (once the screen has faded in: the game takes no action press while it fades)
+            new("guide: right-click", () => In(ValeBus.Vale) && !Game1.fadeToBlack && !Game1.globalFade, () =>
+            {
+                HoldGuide();
+                RightClickChecks(monitor, who, vale, clickAt);
+            }),
+            // From one of the Vale's interiors (the Vale House, in front of the guide's frame): used, yes, the Grove.
+            new("grove: warp in from a Vale interior", () => Settled(),
+                () => Game1.warpFarmer(ValeResidents.ValeHouse, PaintersGuide.BoardTile.X, PaintersGuide.BoardTile.Y + 1, 0)),
+            new("grove: warp in from a Vale interior", () => In(ValeResidents.ValeHouse), () =>
+            {
+                HoldGuide();
+                PaintersGuide.UseGuide(who);
+                SayYes(who.currentLocation);
+            }),
+            new("grove: warp in from a Vale interior", () => In(GildedGrove.Location), () =>
+            {
+                Check(monitor, "grove: warp in from a Vale interior", who.TilePoint == GildedGrove.ArrivalTile, $"at {who.TilePoint}, arrival {GildedGrove.ArrivalTile}");
+                GildedGrove.WarpHome(who, false);
+            }),
             new("grove: warp in", () => Settled(), () => Game1.warpFarmer(ValeBus.Vale, 20, 7, 2)),
             new("grove: warp in", () => In(ValeBus.Vale), () =>
             {
                 // As a player does it: the guide in hand, used, and yes.
-                guideSlot = who.Items.ToList().FindIndex(i => i?.QualifiedItemId == "(O)" + PaintersGuide.GuideItemId);
-                if (guideSlot < 0 || guideSlot >= 12)
-                {
-                    guideSlot = Enumerable.Range(0, 12).Where(i => i >= who.Items.Count || who.Items[i] == null).DefaultIfEmpty(-1).First();
-                    if (guideSlot >= 0)
-                    {
-                        while (who.Items.Count <= guideSlot)
-                            who.Items.Add(null);
-                        who.Items[guideSlot] = ItemRegistry.Create("(O)" + PaintersGuide.GuideItemId);
-                        guideAdded = true;
-                    }
-                }
-                if (guideSlot >= 0)
-                    who.CurrentToolIndex = guideSlot;
+                HoldGuide();
                 PaintersGuide.UseGuide(who);
                 SayYes(vale);
             }),
@@ -1083,9 +1109,7 @@ internal static class GuideTests
                 Check(monitor, "grove: arrive free", moved >= 32 && !posed && Context.IsPlayerFree && who.CanMove,
                     $"free to move after {waited} ticks, then walked {moved:0} px in 20 holding {who.CurrentItem?.Name ?? "nothing"}"
                     + $" (carried overhead {who.IsCarrying()}, posed {posed}, window focused {Game1.game1.IsActiveNoOverlay}); on arrival: {arrival}");
-                if (guideAdded && guideSlot >= 0 && guideSlot < who.Items.Count)
-                    who.Items[guideSlot] = null;
-                who.CurrentToolIndex = toolBefore;
+                DropAddedGuide();
                 Game1.timeOfDay = 2200;
             }),
             new("grove: golden at night", () => ++nightTicks > 30, () =>
@@ -1143,6 +1167,7 @@ internal static class GuideTests
         RunSteps(monitor, steps, () =>
         {
             HoldKey(null);
+            DropAddedGuide();
             if (blocker != null && vale.Objects.TryGetValue(gate, out var o) && o == blocker)
                 vale.Objects.Remove(gate);
             if (stander != null)
@@ -1157,6 +1182,227 @@ internal static class GuideTests
             Game1.warpFarmer(placeBefore, tileBefore.X, tileBefore.Y, facingBefore);
             monitor.Log("Grove warp checks done; back where you were.", LogLevel.Info);
         });
+    }
+
+    // ---- Right-click with the guide held ----
+
+    // Where to stand for the right-click checks: an open tile you can walk to near the graveyard's gate,
+    // with open ground, nothing growing and no tile action on the tile below it (the one you face, facing down).
+    private static Point ClickSpot(GameLocation vale)
+    {
+        var gate = ValeGraves.GraveyardGateTile;
+        for (int r = 0; r <= 10; r++)
+            for (int dy = -r; dy <= r; dy++)
+                for (int dx = -r; dx <= r; dx++)
+                {
+                    if (Math.Max(Math.Abs(dx), Math.Abs(dy)) != r)
+                        continue;
+                    var p = new Point(gate.X + dx, gate.Y + dy);
+                    var front = new Point(p.X, p.Y + 1);
+                    var box = new Rectangle(front.X * 64, front.Y * 64, 64, 64);
+                    if (GildedGrove.Landable(vale, p) && GildedGrove.Open(vale, front)
+                        && vale.doesTileHaveProperty(front.X, front.Y, "Action", "Buildings") == null
+                        && !vale.terrainFeatures.ContainsKey(front.ToVector2())
+                        && !vale.largeTerrainFeatures.Any(f => f.getBoundingBox().Intersects(box)))
+                        return p;
+                }
+        return gate;
+    }
+
+    // The player stands at `at`, holding the guide, facing down, and right-clicks the tile in front
+    // (Game1.pressActionButton, with the cursor on that tile). On bare
+    // ground the guide opens (its page: the Grove's flag is put aside for this) and isn't used up. With a
+    // person, a pet, a placed object (a keg with its wine ready), a tree, a bush, a ready crop, or a tile
+    // action (a grave, faced from below) in front, the game's own action happens and the guide doesn't open.
+    // Everything put down is taken away again, and the bag, the skills' XP, the graves' flags and the
+    // ground are put back.
+    private static void RightClickChecks(IMonitor monitor, Farmer who, GameLocation vale, Point at)
+    {
+        string guideId = "(O)" + PaintersGuide.GuideItemId;
+        var front = new Vector2(at.X, at.Y + 1);
+        var bag = who.Items.Select(i => (Item: i, Stack: i?.Stack ?? 0)).ToList();
+        var xp = who.experiencePoints.ToArray();
+        int debrisBefore = vale.debris.Count;
+        var graveFlags = ValeGraves.Ids.Select(ValeGraves.FlagFor).Append(ValeGraves.ReadFlag).ToList();
+        var readBefore = graveFlags.Where(who.mailReceived.Contains).ToHashSet();
+        bool hadGrove = who.mailReceived.Contains(PaintersGuide.GroveOpenFlag);
+        bool mouseBefore = Game1.wasMouseVisibleThisFrame;
+        var mouseStateBefore = Game1.oldMouseState;
+        float cursorBefore = Game1.mouseCursorTransparency;
+        var results = new List<(string What, bool Ok, string Detail)>();
+        int Guides() => who.Items.Where(i => i?.QualifiedItemId == guideId).Sum(i => i.Stack);
+        void Add(string what, bool ok, string detail) => results.Add((what, ok, detail));
+
+        // One right-click with the cursor on `tile`, as a player clicks: whether the game's own check took it
+        // (it notes the tile it acted on), whether the guide opened, and what's open after. (The cursor, not
+        // the tile the farmer faces: standing square on a tile, the game's grab tile is the farmer's own.)
+        (bool Took, bool Guide, string Menu) Press(Point stand, int facing, Vector2 tile)
+        {
+            Game1.activeClickableMenu = null;
+            Game1.dialogueUp = false;
+            who.Halt();
+            who.CanMove = true;
+            who.freezePause = 0;
+            who.setTileLocation(stand.ToVector2());
+            who.faceDirection(facing);
+            who.lastGrabTile = new Vector2(-99, -99);
+            float zoom = Game1.options.zoomLevel;
+            Game1.oldMouseState = new MouseState((int)((tile.X * 64 + 32 - Game1.viewport.X) * zoom), (int)((tile.Y * 64 + 32 - Game1.viewport.Y) * zoom),
+                0, ButtonState.Released, ButtonState.Released, ButtonState.Pressed, ButtonState.Released, ButtonState.Released);
+            Game1.wasMouseVisibleThisFrame = true;
+            Game1.mouseCursorTransparency = 1f;
+            Game1.pressActionButton(default, Game1.oldMouseState, default);
+            Game1.wasMouseVisibleThisFrame = mouseBefore;
+            Game1.oldMouseState = mouseStateBefore;
+            Game1.mouseCursorTransparency = cursorBefore;
+            var menu = Game1.activeClickableMenu;
+            // (the game notes the cursor's spot in tiles, a fraction into the tile)
+            bool took = (int)who.lastGrabTile.X == (int)tile.X && (int)who.lastGrabTile.Y == (int)tile.Y;
+            return (took, menu is LetterViewerMenu, menu?.GetType().Name ?? "none");
+        }
+
+        try
+        {
+            who.mailReceived.Remove(PaintersGuide.GroveOpenFlag);
+            int guides = Guides();
+            bool holding = who.CurrentItem?.QualifiedItemId == guideId;
+
+            var bare = Press(at, 2, front);
+            Add("bare ground opens the guide", holding && bare.Guide && !bare.Took && Guides() == guides,
+                $"at {at}, clicking {front}: holding {holding}, opened {bare.Guide}, menu {bare.Menu}, guides {guides} -> {Guides()}");
+
+            // A person, with something to say.
+            var npc = new NPC(new AnimatedSprite("Characters/Abigail", 0, 16, 32), front * 64f, 0, ModEntry.Id + "_ClickTester");
+            npc.CurrentDialogue.Push(new Dialogue(npc, null, "Hello."));
+            vale.characters.Add(npc);
+            try
+            {
+                var r = Press(at, 2, front);
+                bool talked = Game1.activeClickableMenu is DialogueBox { characterDialogue: { } d } && d.speaker == npc;
+                Add("a person talks", r.Took && !r.Guide && talked, $"took {r.Took}, guide {r.Guide}, menu {r.Menu}, talked {talked}");
+            }
+            finally { vale.characters.Remove(npc); }
+
+            // A pet.
+            var pet = new StardewValley.Characters.Pet((int)front.X, (int)front.Y, "0", "Cat");
+            vale.characters.Add(pet);
+            try
+            {
+                var r = Press(at, 2, front);
+                bool petted = pet.lastPetDay.TryGetValue(who.UniqueMultiplayerID, out int day) && day == Game1.Date.TotalDays;
+                Add("a pet is petted", r.Took && !r.Guide && petted, $"took {r.Took}, guide {r.Guide}, menu {r.Menu}, petted {petted}");
+            }
+            finally { vale.characters.Remove(pet); }
+
+            // A placed object: a keg, its wine ready.
+            var keg = ItemRegistry.Create<SObject>("(BC)12");
+            keg.heldObject.Value = ItemRegistry.Create<SObject>("(O)348");
+            keg.readyForHarvest.Value = true;
+            keg.MinutesUntilReady = 0;
+            vale.Objects.Add(front, keg);
+            try
+            {
+                var r = Press(at, 2, front);
+                bool emptied = keg.heldObject.Value == null;
+                Add("a placed object gives its wine", r.Took && !r.Guide && emptied, $"took {r.Took}, guide {r.Guide}, menu {r.Menu}, wine taken {emptied}");
+            }
+            finally { vale.Objects.Remove(front); }
+
+            // A tree, to shake.
+            var tree = new StardewValley.TerrainFeatures.Tree("1", 5);
+            vale.terrainFeatures.Add(front, tree);
+            try
+            {
+                var r = Press(at, 2, front);
+                Add("a tree shakes", r.Took && !r.Guide && tree.maxShake > 0, $"took {r.Took}, guide {r.Guide}, menu {r.Menu}, shaking {tree.maxShake > 0}");
+            }
+            finally { vale.terrainFeatures.Remove(front); }
+
+            // A bush, to shake.
+            var bush = new StardewValley.TerrainFeatures.Bush(front, 0, vale);
+            vale.largeTerrainFeatures.Add(bush);
+            try
+            {
+                var r = Press(at, 2, front);
+                float shake = _helper!.Reflection.GetField<float>(bush, "maxShake").GetValue();
+                Add("a bush shakes", r.Took && !r.Guide && shake > 0, $"took {r.Took}, guide {r.Guide}, menu {r.Menu}, shaking {shake > 0}");
+            }
+            finally { vale.largeTerrainFeatures.Remove(bush); }
+
+            // A crop ready to harvest (a parsnip).
+            var dirt = new StardewValley.TerrainFeatures.HoeDirt(1, vale);
+            vale.terrainFeatures.Add(front, dirt);
+            try
+            {
+                dirt.crop = new Crop("472", (int)front.X, (int)front.Y, vale);
+                dirt.crop.growCompletely();
+                var r = Press(at, 2, front);
+                bool harvested = dirt.crop == null;
+                Add("a ready crop is harvested", r.Took && !r.Guide && harvested, $"took {r.Took}, guide {r.Guide}, menu {r.Menu}, harvested {harvested}");
+            }
+            finally { vale.terrainFeatures.Remove(front); }
+
+            // A tile action: a grave's stone, faced from a walkable tile beside it (its urn stands in front,
+            // so behind it or to one side).
+            (Point Stone, Point Stand, int Facing)? grave = null;
+            var layer = vale.Map.GetLayer("Buildings");
+            var sides = new[] { (dx: 0, dy: -1, face: 2), (dx: -1, dy: 0, face: 1), (dx: 1, dy: 0, face: 3), (dx: 0, dy: 1, face: 0) };
+            for (int y = 1; y < layer.LayerHeight - 1 && grave == null; y++)
+                for (int x = 1; x < layer.LayerWidth - 1 && grave == null; x++)
+                    if (vale.doesTileHaveProperty(x, y, "Action", "Buildings")?.StartsWith(ValeGraves.GraveAction + " ") == true)
+                        foreach (var (dx, dy, face) in sides)
+                        {
+                            var stand = new Point(x + dx, y + dy);
+                            if (grave == null && vale.isTilePassable(stand.ToVector2()) && !vale.isWaterTile(stand.X, stand.Y)
+                                && vale.getObjectAtTile(stand.X, stand.Y) == null && vale.isCharacterAtTile(stand.ToVector2()) == null)
+                                grave = (new Point(x, y), stand, face);
+                        }
+            if (grave is var (stone, standAt, facing))
+            {
+                var r = Press(standAt, facing, stone.ToVector2());
+                bool read = Game1.activeClickableMenu is DialogueBox;
+                Add("a tile action (a grave) is read", r.Took && !r.Guide && read, $"grave at {stone} from {standAt}: took {r.Took}, guide {r.Guide}, menu {r.Menu}");
+            }
+            else
+                Add("a tile action (a grave) is read", false, "no grave with walkable ground beside it");
+
+            Add("the guide is never used up", Guides() == guides, $"guides {guides} -> {Guides()}");
+        }
+        catch (Exception ex)
+        {
+            Add("no error", false, ex.ToString());
+        }
+        finally
+        {
+            Game1.wasMouseVisibleThisFrame = mouseBefore;
+            Game1.oldMouseState = mouseStateBefore;
+            Game1.mouseCursorTransparency = cursorBefore;
+            Game1.activeClickableMenu = null;
+            Game1.dialogueUp = false;
+            who.Halt();
+            who.CanMove = true;
+            who.freezePause = 0;
+            who.FarmerSprite.StopAnimation();
+            if (hadGrove)
+                who.mailReceived.Add(PaintersGuide.GroveOpenFlag);
+            for (int i = 0; i < who.Items.Count; i++)
+            {
+                var (item, stack) = i < bag.Count ? bag[i] : (null, 0);
+                if (item != null)
+                    item.Stack = stack;
+                if (who.Items[i] != item)
+                    who.Items[i] = item;
+            }
+            for (int i = 0; i < xp.Length; i++)
+                who.experiencePoints[i] = xp[i];
+            while (vale.debris.Count > debrisBefore)
+                vale.debris.RemoveAt(vale.debris.Count - 1);
+            foreach (string flag in graveFlags)
+                if (!readBefore.Contains(flag))
+                    who.mailReceived.Remove(flag);
+        }
+        foreach (var (what, ok, detail) in results)
+            Check(monitor, "guide: right-click, " + what, ok, detail);
     }
 
     // Holds one movement key down, as a player does, through the game's own input hook (Game1.inputSimulator,
