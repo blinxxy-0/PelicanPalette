@@ -29,6 +29,8 @@
     // The Corrie twins, glassworkers, from Spring 1, Year 3 (docs/corrie_twins_brief.md).
     { "Action": "Include", "FromFile": "data/opal.json" },
     { "Action": "Include", "FromFile": "data/jet.json" },
+    // ... and their heart events (tools/build_corrie_events.py)
+    { "Action": "Include", "FromFile": "data/corrie_events.json" },
     { "Action": "Include", "FromFile": "data/vale_town_trips.json" },
     // Their shops and Bea's room for the night (not behind the switch: with nobody at a
     // counter they open on trust), and Lupini's letter opening the Vale.

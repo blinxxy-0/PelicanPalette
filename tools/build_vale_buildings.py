@@ -690,16 +690,17 @@ def closed_hall(hall):
 BUILDINGS["hall_closed"] = closed_hall(BUILDINGS["hall"])
 
 # Studio II through the twins' hearts (docs/design/vale_newcomers.md, section 5; the brief's "The
-# interior through their hearts"): stage -> (the condition, as a Content Patcher When on the
-# player's hearts, and the change to the base layout). Each is its own EditMap over the base map
+# interior through their hearts"): stage -> (the condition, as a Content Patcher When: the mail
+# flag the heart event that changes the room sets, tools/build_corrie_events.py; and the change
+# to the base layout). Each is its own EditMap over the base map
 # (tools/vale_studio2.py diffs a stage's build against the base), so they combine in any order.
 STUDIO2_STAGES = {
     # their own glass lamps replace the city ones
-    "opal6": ({"Hearts:OpalCorrie": 6}, {"swap": {"city_lamp": "glass_lamp"}, "describe": {"glass_lamp": "glass_lamp"}}),
+    "opal6": ({"HasFlag": "blinxxy.MuseArt_Opal6Seen"}, {"swap": {"city_lamp": "glass_lamp"}, "describe": {"glass_lamp": "glass_lamp"}}),
     # the line gets a gap by the bench, where they've started sharing the middle
-    "jet8": ({"Hearts:JetCorrie": 8}, {"remove": ["split_line", "split_line#6", "split_line#7"]}),
+    "jet8": ({"HasFlag": "blinxxy.MuseArt_Jet8Seen"}, {"remove": ["split_line", "split_line#6", "split_line#7"]}),
     # Mabel's bench in use; her finished window in the studio's window
-    "jet10": ({"Hearts:JetCorrie": 10}, {"swap": {"mabel_bench": "mabel_bench_used", "studio_window": "mabel_window"},
+    "jet10": ({"HasFlag": "blinxxy.MuseArt_Jet10Seen"}, {"swap": {"mabel_bench": "mabel_bench_used", "studio_window": "mabel_window"},
                                           "describe": {"mabel_bench_used": "bench_used", "mabel_window": "mabel_window"}}),
 }
 
