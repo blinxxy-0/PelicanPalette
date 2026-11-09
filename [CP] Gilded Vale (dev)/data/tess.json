@@ -1,0 +1,66 @@
+// Tess Brand (1.4): the Vale's woodcarver, Bram Fairlie's granddaughter (she doesn't
+// say so until her 6-heart event). She/her; early twenties; marriageable by any farmer,
+// 1.4's third romance with Fern and Emmett. Moves into Studio III on Winter 1, Year 3.
+// See docs/tess_brief.md and docs/design/vale_newcomers.md.
+//
+// SWITCHED OFF until the art exists: every patch here has the same When, so TessBrand
+// only exists once the dev pack's config has ValeResidents: true AND both
+// assets/tess/sprites.png (Characters/TessBrand) and assets/tess/portraits.png
+// (Portraits/TessBrand) are in this pack. See data/residents.json.
+//
+// Still to come (each written for the user's approval first): her gift tastes, her
+// days (a schedule), what she says, her heart events, the wedding and married life.
+// Until then she stays home in Studio III, and in a test save don't give her a
+// Mermaid's Pendant: the game would start a wedding with nothing behind it.
+{
+  "Changes": [
+    // ---- Who she is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"},
+      "Entries": {
+        "TessBrand": {
+          "DisplayName": "{{i18n:tess.name}}",
+          "Gender": "Female",
+          "Age": "Adult",
+          // serious, private, stubborn; dry once she trusts you (the game's generic lines)
+          "Manner": "Neutral",
+          "SocialAnxiety": "Shy",
+          "Optimism": "Neutral",
+          // Fall 25: when the Vale's trees have dropped their gold and the wood shows. Free in
+          // vanilla, the mod and Stardew Valley Expanded (its fall birthdays are the 7th, 8th
+          // and 28th; checked 2026-11-09), and no festival.
+          "BirthSeason": "Fall",
+          "BirthDay": 25,
+          // From the Vale, not the town: no introductions quest, and not on the calendar or
+          // social page until you've met her.
+          "HomeRegion": "Other",
+          "CanBeRomanced": true,
+          // Moves in on Winter 1, Year 3 (docs/design/vale_newcomers.md section 3: after the
+          // For Sale notice, the Sold notice and Robin's renovation): from Year 3, in its
+          // winter or any later year. Like Kent, no arrival trigger: she's simply there. And,
+          // like the other residents, not until the Vale's route is open (the letter,
+          // ArtStudio/Vale/ValeBus.cs; in a dev save add the mail flag blinxxy.MuseArt_ValeOpen).
+          "UnlockConditions": "YEAR 3, ANY \"YEAR 4\" \"SEASON Winter\", PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // Not at Pelican Town's festivals yet, not anyone's Winter Star secret friend while
+          // she's away from town, and no Ginger Island trips (as the other residents).
+          "FlowerDanceCanDance": false,
+          "WinterStarParticipant": "FALSE",
+          "CanVisitIsland": "FALSE",
+          "Home": [
+            // Studio III, by her bedroll near the stove (tools/build_vale_buildings.py studio3_0)
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio3", "Tile": { "X": 3, "Y": 7 }, "Direction": "up" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/TessBrand", "FromFile": "assets/tess/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"} },
+    { "Action": "Load", "Target": "Portraits/TessBrand", "FromFile": "assets/tess/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"} },
+    // (her dialogue comes later; an empty sheet so the game has one to read)
+    { "Action": "Load", "Target": "Characters/Dialogue/TessBrand", "FromFile": "data/blank.json", "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"} }
+  ]
+}

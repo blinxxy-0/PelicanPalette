@@ -13,8 +13,8 @@ Lines marked *(Claude's call)* are Claude's drafting, open to change.
 - **Pronouns:** she/her.
 - **Marriage:** yes, by any farmer *(the user)*, like Sable, Margot, Fern and Emmett.
 - **Age:** early twenties.
-- **Birthday:** **Fall 25** *(Claude's call: free in vanilla and the mod, no festival; to check against
-  SVE)*. When the Vale's trees have dropped their gold and the wood shows.
+- **Birthday:** **Fall 25** *(Claude's call: free in vanilla, the mod and SVE, whose fall birthdays are
+  the 7th, 8th and 28th, checked 2026-11-09; no festival)*. When the Vale's trees have dropped their gold and the wood shows.
 - **Home and work:** Studio III of the Old Studios, Bram's old studio.
 - **Arrival:** Winter 1, Year 3, with the first snow, after the For Sale notice (Summer, Year 3), the Sold
   notice (Fall) and Robin's renovation *(the user)*. In her first week she carves a new III over the door
@@ -49,6 +49,9 @@ Lines marked *(Claude's call)* are Claude's drafting, open to change.
   tell anyone why.
 - **Why she hides it *(Claude's call)*:** she wants to know if she belongs in the Vale as herself, not as
   Bram's granddaughter.
+- **The carving *(the user, 2026-11-09)*:** Bram's unfinished carving is **the Gilded Tree**, the Vale's
+  landmark, its leaves never finished. It stands in Studio III under a dust sheet; Tess works on it after each
+  heart event and cuts the last of its leaves at 10 hearts.
 - **The arc *(Claude's call)*:** whether she's in the Vale for him or for herself. The answer she finds is
   both: she finishes his carving, and the furniture she builds in his studio is her own.
 
@@ -116,3 +119,11 @@ Sample lines:
 - **Patio:** a carving bench and a half-finished piece that changes with the seasons.
 - **Married life:** two days a week she takes the bus back to Studio III to work; it stays her workshop and
   counter.
+
+## Built so far
+- **Studio III as she moves in** (plan approved by the user 2026-11-09): `tools/build_vale_buildings.py`
+  `studio3_0`, `[CP] Gilded Vale (dev)/data/tess_studio.json`. The game's own furniture wherever it has the
+  thing (the user: hand-drawn pieces were "rough"); spare candidates of earlier batches edited by
+  `tools/art/vale_studio3_art.py`. Its door opens on Winter 1, Year 3. Bram's photograph goes on the dresser
+  (his locked drawer is in it) after the reveal.
+- **Her NPC data** (`data/tess.json`): switched off until `assets/tess/sprites.png` and `portraits.png` exist.

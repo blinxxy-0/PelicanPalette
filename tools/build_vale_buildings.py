@@ -52,6 +52,20 @@ VANILLA = {
     # the brick fireplace (Haley's, the Saloon's), built into a back wall: x, t+1
     "fireplace":    [{"F": [667, 668]}, {"F": [699, 700]}, {"F": [731, 732]}, {"B": [763, 764]}, {"B": [795, 796]}],
     "fireplace_stone": [{"F": [669, 670]}, {"F": [701, 702]}, {"F": [733, 734]}, {"B": [765, 766]}, {"B": [797, 798]}],
+    # Robin's carpentry (ScienceHouse): her axe in its stump, her log pile
+    "axe_stump":    [{"F": [930]}, {"B": [962]}],
+    "log_pile":     [{"F": [2489]}, {"B": [2521]}],
+}
+# The game's own furniture (TileSheets/furniture, which the map loads straight from the game
+# as ../TileSheets/furniture): key -> (sprite index of its top-left tile, tiles wide, tall,
+# solid bottom rows; -2 lies on the floor). Sprite indexes from Data/Furniture.
+GAME_FURN = {
+    "stove":          (1798 + 32, 2, 4, 1),   # Stove Fireplace: a little iron stove, its pipe up the wall
+    "walnut_dresser": (709, 2, 2, 1),
+    "oak_chair":      (0, 1, 2, 1),
+    "walnut_chair":   (3, 1, 2, 1),
+    "wood_panel":     (2633, 1, 3, 1),        # boards: stood on the floor, leaning on the wall
+    "log_panel":      (2635, 1, 3, 1),
 }
 # Our own PixelLab pieces (the game has none): key -> (tiles wide, tall, solid bottom rows).
 # A solid of 0 hangs on the wall; -2 lies on the floor.
@@ -615,6 +629,95 @@ def closed_hall(hall):
 
 BUILDINGS["hall_closed"] = closed_hall(BUILDINGS["hall"])
 
+# Studio III, Tess Brand's (docs/design/vale_newcomers.md section 5; docs/tess_brief.md).
+# Bram Fairlie's studio for 31 summers, renovated by Robin: one room the size of Leah's
+# cottage (plan approved by the user 2026-11-09). She moves in Winter 1, Year 3, broke,
+# and makes do with what Bram left; the room gets homier after her 4-, 8- and 10-heart
+# events. Bram's unfinished carving (the Gilded Tree) stands in the back corner under a
+# dust sheet, a state further on after each of her events; his photograph is in the
+# locked drawer until her 6-heart reveal, then on the dresser. Those two are overlays on
+# whichever stage is loaded.
+# The game's own pieces wherever it has the thing (GAME_FURN, VANILLA: the user,
+# 2026-11-09, hand-drawn pieces were "rough"); the rest from spare candidates of earlier
+# batches, edited by tools/art/vale_studio3_art.py.
+ART.update({
+    "chisel_board":    (2, 2, 0),   # his chisels on a board over the dresser
+    "workbench":       (3, 2, 1),   # Bram's workbench under the north light, a block of ash on it
+    "bram_carving":    (2, 3, 1),   # the unfinished carving on its stand, against the wall
+    "bedroll":         (2, 1, -2),  # her bedroll on the floor by the stove
+    "shavings":        (1, 1, -2),  # wood shavings ("they're insulation")
+    "counter":         (3, 2, 1),   # Bram's old counter: a cash tin and a few carved animals
+    # (later stages; their art comes with her heart events)
+    "carved_counter":  (3, 2, 1),   # the counter she built: stools, frames, figures
+    "tess_chair":      (1, 2, 1),   # the chair (her 10-heart event): her own style, not his
+    "side_table":      (1, 1, 1),   # a little table she made, a mug of Tobin's on it
+    "stool_stack":     (1, 2, 1),   # her stools for sale, stacked
+    "tess_bed":        (2, 3, 2),   # the bed she built, a patchwork quilt (Opal's)
+})
+
+
+def studio3(stage):
+    """Studio III's floor plan at one heart stage: 0 just moved in, 3 the last (homey)."""
+    base = [
+        # the back wall: the iron stove in its corner; Bram's dresser, his chisels on the wall
+        # over it; the north light (the skylight outside) over his workbench; his timber
+        # leaning on the wall; the carving in the corner
+        ("stove", 1, 1), ("walnut_dresser", 3, 3), ("chisel_board", 3, 1), ("cobweb", 5, 1),
+        ("north_window", 6, 1), ("workbench", 7, 3), ("stool", 8, 5),
+        ("wood_panel", 11, 2), ("log_panel", 12, 2), ("bram_carving", 13, 2), ("cobweb#2", 14, 1),
+        ("log_pile", 1, 5), ("axe_stump", 1, 8),
+    ]
+    first = [
+        # broke: a bedroll by the stove, an upturned crate for a table, Bram's two old chairs;
+        # shavings everywhere; Bram's old counter by the door
+        ("bedroll", 2, 6), ("crate_table", 4, 6), ("oak_chair", 5, 5), ("walnut_chair", 14, 7),
+        ("shavings", 6, 6), ("shavings#2", 9, 6), ("shavings#3", 7, 8), ("shavings#4", 4, 9),
+        ("shavings#5", 12, 6), ("counter", 11, 9),
+    ]
+    home = [
+        # the bed she built, a rug, Bram's chair mended beside her own; Fern's fern; the
+        # counter she built, her stools stacked by it; fewer shavings
+        ("tess_bed", 2, 6), ("rug_brown", 4, 6, 4, 3), ("oak_chair", 5, 6),
+        ("side_table", 6, 7), ("tess_chair", 7, 6), ("fern_pot", 1, 10), ("plant_b", 14, 5),
+        ("shavings", 9, 6), ("shavings#2", 12, 6),
+        ("carved_counter", 11, 9), ("stool_stack", 14, 9),
+    ]
+    spec = dict(
+        title="Studio III", location="blinxxy.MuseArt_ValeStudio3", tmx=f"ValeStudio3_{stage}.tmx",
+        W=16, H=15, outside=(91, 38),
+        rooms={"studio": dict(a=1, b=14, t=0, f=11, label="Studio III")},
+        doors=[], front=("studio", 9), zones=[],
+        wall=103,                                   # plastered by Robin, as outside
+        picks={**{k: "art/gilded_vale/interiors/studio3/" + k for k in (
+                   "chisel_board", "workbench", "bedroll", "shavings", "counter", "north_window")},
+               "bram_carving": "art/gilded_vale/interiors/studio3/bram_carving_0",
+               "stool": "art/gilded_vale/interiors/pottery/pottery_v2/stool_1_1",
+               "crate_table": EMMETT_PICKS["crate_table"], "fern_pot": EMMETT_PICKS["fern_pot"],
+               "cobweb": "art/gilded_vale/interiors/studio/cobweb"},
+        lights=[(1, 4), (8, 6), (12, 8)],
+        pieces=base + (first if stage == 0 else home),
+        # one text per piece whatever the stage (vale.studio3.<key>; a key with a dot is used as it is)
+        describe={k: "studio3." + v for k, v in {
+            "bram_carving": "carving", "walnut_dresser": "drawers", "chisel_board": "chisels",
+            "workbench": "workbench", "wood_panel": "timber", "log_panel": "timber", "stove": "stove",
+            "counter": "counter", "carved_counter": "counter", "tess_chair": "chair",
+            "oak_chair": "bram_chair", "walnut_chair": "bram_chair"}.items()},
+        notes=(["Studio III, Tess's: one room, plastered walls as Robin left them. The front door opens by the counter.",
+                "JUST MOVED IN (Winter 1, Year 3). She makes do with what Bram left: his workbench under the north light,",
+                "his chisels on the wall over his dresser (one drawer locked: the photograph), his timber leaning on the wall,",
+                "his two old chairs. A bedroll by the iron stove, a crate for a table, shavings everywhere, his old counter.",
+                "The carving: back corner, under its sheet. Orange outline = our own art; the rest is the game's furniture."] if stage == 0 else
+               ["Studio III at the end (after her 10-heart event): the same room, homier. The bedroll is a bed she built,",
+                "Bram's chair is mended and her own chair (the 10-heart chair) sits beside it on a rug,",
+                "with a little table she made. Fern's fern; Bram's photograph on the dresser (from the 6-heart reveal);",
+                "the counter she built, her stools stacked beside it. The carving in the corner is finished."]),
+    )
+    return spec
+
+
+for _s in (0, 3):
+    BUILDINGS[f"studio3_{_s}"] = studio3(_s)
+
 # the game's floorings (walls_and_floors) for floors that aren't planks or Sam's tiles
 FLOORINGS = {"flagstones": 10, "terracotta": 21, "parquet": 16, "checker": 22, "stone tiles": 9}
 FLOOR_COLOURS = {"planks": (196, 140, 82), "flagstones": (150, 146, 138), "terracotta": (186, 98, 60), "parquet": (150, 90, 50), "checker": (200, 200, 210), "stone tiles": (220, 200, 160), "kitchen tiles": (200, 214, 226),
@@ -657,6 +760,8 @@ def footprint(p):
         return BED[0], BED[1], 3
     if key in LUPINI:
         return (*GAME_PAINTINGS.get(LUPINI[key], (2, 2)), 0)
+    if key in GAME_FURN:
+        return GAME_FURN[key][1], GAME_FURN[key][2], max(GAME_FURN[key][3], 0)
     if key in VANILLA:
         rows = VANILLA[key]
         w = max(len(g) for r in rows for g in r.values())
@@ -1007,6 +1112,20 @@ def build(name, exports, assets):
             for j in range(ph):
                 for i in range(pw):
                     g["Front2" if g["Front"][py + j][px + i] else "Front"][py + j][px + i] = FURN + n + 32 * j + i
+        elif key in GAME_FURN:
+            first, fw, fh, solid = GAME_FURN[key]
+            for j in range(fh):
+                for i in range(fw):
+                    gid = FURN + first + 32 * j + i
+                    x, y = px + i, py + j
+                    if solid == -2:
+                        g["Back2"][y][x] = gid
+                    elif j >= fh - solid:
+                        if g["Buildings"][y][x] and y in walls:
+                            g["Back"][y][x] = g["Buildings"][y][x]      # the wainscot, behind
+                        g["Buildings"][y][x] = gid
+                    else:
+                        g["Front2" if g["Front"][y][x] else "Front"][y][x] = gid
         elif key in VANILLA:
             for j, row in enumerate(VANILLA[key]):
                 for code, gids in row.items():
@@ -1075,7 +1194,7 @@ def build(name, exports, assets):
     tilesets = [("indoor", 1, "townInterior", 512, 1088), ("indoor2", T2, "townInterior_2", 512, 656),
                 ("zz_wallsfloors", WF, "walls_and_floors", 256, 688),
                 ("z_blinxxy.MuseArt_" + sheet_name[:-4], furn_first, sheet_name, sheet.width, sheet.height)]
-    if any(p[0] in LUPINI or p[0] == "display_easel" for p in spec["pieces"]):
+    if any(p[0].split("#")[0] in LUPINI or p[0].split("#")[0] in GAME_FURN or p[0] == "display_easel" for p in spec["pieces"]):
         tilesets.append(("zz_furniture", FURN, "../TileSheets/furniture", 512, 1488))
     write_raw(os.path.join(assets, spec["tmx"]), W, H, g, props, tilesets, tile_props, bmr.LAYERS)
     print("wrote", spec["tmx"], f"{W}x{H}")

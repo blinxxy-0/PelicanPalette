@@ -1,0 +1,56 @@
+// Studio III, Tess Brand's studio (1.4; docs/design/vale_newcomers.md section 5,
+// docs/tess_brief.md). Built by tools/build_vale_buildings.py ("studio3_<stage>").
+// Not behind the residents' switch: like the Old Studio, the room is there whether or
+// not she has her art yet. Its door opens on Winter 1, Year 3, the day she moves in
+// (ValeDate 309; until then the studio is for sale, sold, or Robin's, data/vale_studios.json).
+//
+// Stage 0, as she moves in: what Bram left, a bedroll, a trestle counter. The later
+// stages (after her 4-, 8- and 10-heart events), Bram's carving (a state after each of
+// her events) and his photograph (on the shelf after her 6-heart reveal) come with her
+// heart events.
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_ValeStudio3": {
+          "DisplayName": "{{i18n:location.vale-studio3}}",
+          "DefaultArrivalTile": { "X": 9, "Y": 10 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_ValeStudio3", "Type": "StardewValley.Locations.DecoratableLocation" }
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio3", "FromFile": "assets/ValeStudio3_0.tmx" },
+
+    // The door, from the day she moves in. After vale_studios.json in content.json and
+    // Late: its renovated states swap the tile at (91,38), which would drop the warp.
+    {
+      "LogName": "Studio III: the door opens",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_GildedVale",
+      "Priority": "Late",
+      "When": { "Query: {{ValeDate}} >= 309": "true" },
+      "MapTiles": [
+        { "Position": { "X": 91, "Y": 38 }, "Layer": "Buildings", "SetProperties": { "Action": "Warp 9 10 blinxxy.MuseArt_ValeStudio3" } },
+        { "Position": { "X": 92, "Y": 38 }, "Layer": "Buildings", "SetProperties": { "Action": "Warp 9 10 blinxxy.MuseArt_ValeStudio3" } }
+      ]
+    },
+
+    // What its pieces say when you right-click them (i18n vale.studio3.<key>)
+    {
+      "Action": "EditData",
+      "Target": "Strings/StringsFromMaps",
+      "Entries": {
+        "blinxxy.MuseArt_Vale.studio3.carving": "{{i18n:vale.studio3.carving}}",
+        "blinxxy.MuseArt_Vale.studio3.chisels": "{{i18n:vale.studio3.chisels}}",
+        "blinxxy.MuseArt_Vale.studio3.drawers": "{{i18n:vale.studio3.drawers}}",
+        "blinxxy.MuseArt_Vale.studio3.stove": "{{i18n:vale.studio3.stove}}",
+        "blinxxy.MuseArt_Vale.studio3.workbench": "{{i18n:vale.studio3.workbench}}",
+        "blinxxy.MuseArt_Vale.studio3.timber": "{{i18n:vale.studio3.timber}}",
+        "blinxxy.MuseArt_Vale.studio3.counter": "{{i18n:vale.studio3.counter}}",
+        "blinxxy.MuseArt_Vale.studio3.bram_chair": "{{i18n:vale.studio3.bram_chair}}"
+      }
+    }
+  ]
+}
