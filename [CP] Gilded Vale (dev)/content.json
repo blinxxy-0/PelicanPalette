@@ -13,6 +13,16 @@
       "Description": "The residents' days in Pelican Town, by bus (data/vale_town_trips.json). Reload the save after changing it."
     }
   },
+  // The calendar as one number, for patches that run from one date to another (the Old
+  // Studios' sale, data/vale_studios.json): (Year - 1) * 112 + season * 28 + day, so
+  // Spring 1, Year 1 is 1 and Fall 1, Year 2 is 169.
+  "DynamicTokens": [
+    { "Name": "ValeSeasonNumber", "Value": "0" },
+    { "Name": "ValeSeasonNumber", "Value": "1", "When": { "Season": "summer" } },
+    { "Name": "ValeSeasonNumber", "Value": "2", "When": { "Season": "fall" } },
+    { "Name": "ValeSeasonNumber", "Value": "3", "When": { "Season": "winter" } },
+    { "Name": "ValeDate", "Value": "{{Query: ({{Year}} - 1) * 112 + {{ValeSeasonNumber}} * 28 + {{Day}}}}" }
+  ],
   "Changes": [
     // The Gilded Vale (1.4), in development: the map built by tools/build_vale.py
     // (painted terrain, the five buildings, PixelLab stairs; other buildings still
@@ -234,6 +244,9 @@
     { "Action": "Include", "FromFile": "data/vale_worldmap.json" },
     // The Vale's own fish, and the game's river and lake fish in its water.
     { "Action": "Include", "FromFile": "data/vale_fish.json" },
+    // The Old Studios' sale (docs/design/vale_newcomers.md): the notices, Robin's scaffolding
+    // and her days in the Vale, the renovated studios, on the calendar.
+    { "Action": "Include", "FromFile": "data/vale_studios.json" },
     // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
     // its stops (ArtStudio/Vale/ValeBus.cs is the bus without it). Open once the route's
     // letter has come and the bus is mended, as for the Desert.

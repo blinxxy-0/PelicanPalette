@@ -3135,6 +3135,9 @@
   <tileset firstgid="31200" name="z_blinxxy.MuseArt_GildedValeSigns" tilewidth="16" tileheight="16" tilecount="16" columns="8">
     <image source="spring_GildedValeSigns.png" width="128" height="32" />
   </tileset>
+  <tileset firstgid="31300" name="z_blinxxy.MuseArt_GildedValeStudios" tilewidth="16" tileheight="16" tilecount="160" columns="16">
+    <image source="spring_GildedValeStudios.png" width="256" height="160" />
+  </tileset>
   <layer id="1" name="Back" width="96" height="76">
     <data encoding="csv">
 176,176,276,176,176,351,352,354,279,378,176,176,176,176,176,176,176,176,176,176,176,276,276,176,176,176,176,176,176,176,176,176,351,352,352,352,352,352,352,352,352,352,352,352,352,352,353,176,176,276,176,176,176,176,176,176,276,276,176,176,176,176,176,176,176,176,276,176,276,276,176,176,276,176,276,152,176,201,203,228,1230,1230,1230,1230,5210,228,178,204,176,176,176,176,176,276,176,351,

@@ -504,5 +504,21 @@
   "fish.shiner.name": "Lakeblue Shiner",
   "fish.shiner.description": "So blue that the painters who saw it were told they'd made it up.",
   "fish.carp.name": "Gilt Carp",
-  "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake."
+  "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake.",
+
+  // The Old Studios' sale and Robin's job (tools/vale_studio_sale.py writes these)
+  "vale.studios.sale.plaque_2_forsale": "A notice is pinned over the old gold II: FOR SALE. Enquire at the Vale House.",
+  "vale.studios.sale.plaque_2_sold": "SOLD, pasted across the notice. Somebody's bought Studio II.",
+  "vale.studios.sale.plaque_2_works": "SOLD. Chalked on the scaffold pole: ROBIN'S CARPENTRY. MIND THE PLANKS.",
+  "vale.studios.sale.plaque_2_renovated": "Studio II, the numeral new in gold. Under it, freshly painted: Opal & Jet Corrie, glass.",
+  "vale.studios.sale.plaque_3_forsale": "A notice is pinned over the old gold III: FOR SALE. Enquire at the Vale House.",
+  "vale.studios.sale.plaque_3_sold": "SOLD, pasted across the notice. Somebody's bought Studio III.",
+  "vale.studios.sale.plaque_3_works": "SOLD. Chalked on the scaffold pole: ROBIN'S CARPENTRY. MIND THE PLANKS.",
+  "vale.studios.sale.plaque_3_new": "The plaque's been sanded down to bare wood. The old gold numeral's gone. A card tucked in the door frame says: T. Brand.",
+  "vale.studios.sale.plaque_3_carved": "Studio III, cut into the bare wood by hand. No gold. Under it, a card in the door frame: T. Brand, woodcarver.",
+  "vale.studios.sale.timber": "Sawn planks, stacked on bearers to keep them off the wet. Stencilled on the end of every one: ROBIN.",
+  "vale.studios.sale.letter": "Hi! A heads-up from the shop.^^I've taken a job out in the Gilded Vale: one of the Old Studios has sold, and somebody wants it fit to live in by the end of the month. So on weekdays until then I'll be out there with my toolbox.^^The shop's still open. If I'm not behind the counter, leave your order and the money in the box and I'll see to it. And if you've got building work on the farm, that comes first, the Vale can wait a day.^^   -Robin",
+  "vale.studios.sale.letter.title": "Robin's away on a job",
+  "vale.studios.sale.robin_away": "Robin's not here. A note on the counter: 'Out in the Gilded Vale on a job, back this evening. Orders in the box, I'll see to them. -R'",
+  "vale.studios.sale.robin_book": "Her order book lies open beside the box."
 }
