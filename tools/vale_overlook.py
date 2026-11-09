@@ -1,8 +1,16 @@
 """The overlook: a raised bluff, one level high, in the Vale's south-east corner.
 (docs/superpowers/specs/2026-11-08-vale-falls-overlook-sculpture-design.md, section 2)
 
-For now, only how its edges are drawn (Task 4), learned from the vanilla plateaus
-(read off their stacks, 2026-11-08; docs/terrain_painting.md, "A raised bluff"):
+patch_file lays it on the committed map (build_vale.VALE_PIECES; the layout is the
+constants under "the overlook as built"): the bluff x 88-95, y 56-73, its steps up the
+south face, the overlook bench and the easels' row at its north-west, Lupini's lake
+painting spot along its west edge, the shed, the Three Trees and the stump of the fourth,
+the lakeside path wandering along its west foot and a trail along its south foot to the
+steps, with the picnic table by the lake's corner. Re-runnable: the box is cleared and its
+corners set outright each run; the lake spot's pieces are picked up wherever they stand.
+
+How its edges are drawn (Task 4), learned from the vanilla plateaus (read off their
+stacks, 2026-11-08; docs/terrain_painting.md, "A raised bluff"):
 
 - The camera only sees faces that look south. Everywhere else a raised piece of ground
   is drawn as a lit lip on its own edge tile: the edge tile's outer part is see-through
@@ -56,6 +64,8 @@ adds them in a new row, later runs find them by their pixels.
                                 snowed on in winter (our own copies of its tiles)
   lay_lake_corner(m, ctx)       the lake's south-east corner below the bluff, on the diagonal
 
+python tools/vale_overlook.py <GildedVale.tmx> <exports>
+  lays the overlook (patch_file).
 python tools/vale_overlook.py --strip <scratch GildedVale.tmx> <exports>
   lays the test strip at the bluff's north-west corner on a scratch copy (never the
   committed map).
@@ -130,7 +140,14 @@ def _paint(m, ctx, corners, box):
     return V
 
 
+def _inside(x, y):
+    """Nothing is laid outside the overlook's box (vale_patch.OVERLOOK_BOX)."""
+    bx0, by0, bx1, by1 = OVERLOOK_BOX
+    assert bx0 <= x <= bx1 and by0 <= y <= by1, f"{(x, y)} is outside the overlook's box {OVERLOOK_BOX}"
+
+
 def _laid(m, x, y):
+    _inside(x, y)
     _corners(m)
     m.overlook_laid.add((x, y))
 
@@ -171,20 +188,20 @@ def _clear_of_sand(V, corners, x, clear, cy):
                 corners[(west - k, cy)] = "S"
 
 
-def lay_side(m, ctx, x, y0, y1):
+def lay_side(m, ctx, x, y0, y1, widens=SKIRT_WIDENS):
     """The bluff's west side, down column x from y0 (under the corner) to y1. The side
     tile's left edge is see-through: the lower ground under it is the painter's; the
     plateau's grass starts on the corners right of it.
     Below it a skirt of dark grass, as the Forest's terraces have below their sides
     (doc "A raised bluff"): the side's outer corners dark, rounded off at both ends by the
-    painter's edge pieces, a tile wider in its lower half (SKIRT_WIDENS; a bulge that
+    painter's edge pieces, a tile wider from `widens` rows down (SKIRT_WIDENS; a bulge that
     narrowed again below needs D D / G D, whose only pieces carry the lip). Dark
     grass has no pieces against sand (the table's few are over town-sheet overlays), so a
     path beside it keeps a corner of grass between: a path along the side is pushed out
     round the skirt, and its edge no longer runs beside the lip's in two straight lines."""
     corners = {(x + 1, cy): "G" for cy in range(y0, y1 + 2)}
     V = _corners(m)
-    b0, b1 = y0 + SKIRT_WIDENS, y1
+    b0, b1 = y0 + widens, y1
     for cy in range(y0, y1 + 2):
         corners[(x, cy)] = "D" if y0 < cy <= y1 else "G"
         if b0 <= cy <= b1:
@@ -404,6 +421,7 @@ def lay_steps(m, ctx, x, y):
     for j in range(-1, 8):
         for i in range(4):
             sy, ty = ft + j, y + j
+            _inside(x + i, ty)
             if i in (1, 2):
                 if -1 <= j <= 6:
                     m.g["Buildings"][ty][x + i] = m.g["Front"][ty][x + i] = 0
@@ -439,6 +457,60 @@ def lay_lake_corner(m, ctx):
     for (x, y), stack in [((cx - 1, cy - 1), (bv.WATER, 0))] + [((cx, cy - 2 - k), s) for k, s in enumerate(LAKE_SE_TURN)]:
         m.g["Back"][y][x], m.g["Buildings"][y][x] = stack
         _laid(m, x, y)
+
+
+# --- the overlook as built (Task 5) ----------------------------------------------------
+# The bluff: its north rim on row 56, its west side down column 88 (rows 57-65), its south
+# face from row 66, so its top is x 89-95, y 57-65. The rim is a row further north than the
+# plan drew, because the steps take the south face (no vanilla flight climbs south) and the
+# face takes six rows: one row more of top is room for the bench, the easels, the trees and
+# the shed together. The lower ground between the rim and the terrace cliff's shading stays
+# two rows deep, as the Forest's terraces step.
+RIM_Y = 56
+SIDE_X = 88
+FACE_TOP = 66
+SIDE_WIDENS = 5              # the side's skirt is two tiles wide from row 62 (the path beside it wanders above)
+STAIRS_X = 90                # the flight's left wall; treads on x 91-92
+# The overlook bench, at the north-west corner. Town and the Forest have no bench seen
+# from behind, so it's Town's side bench facing west (vale_decor "bench_w"), its back to
+# the easels, looking out over the lake: its top on Front, its two seat rows on Buildings
+# (as Town lays it). BENCH is its upper seat tile; the bench stands against the side's lip.
+BENCH = (89, 58)
+BENCH_FACING = 3             # west, over the lake
+EASELS = (90, 92, 58)        # x0, x1, row: the 10-heart scene's easels, beside the bench, at the north edge
+# Lupini's lake painting spot (build_vale.PICKS spot_lake_*): left tile and base row of
+# each 2 x 2 piece, along the west edge under the bench, looking over the lake. He stands
+# between them, facing it.
+STOOL = (89, 61)
+ROCK = (89, 64)
+LUPINI_STAND = (89, 62)
+# The shed, where the third easel is kept: the game's own little plank hut (outdoors sheet,
+# Town numbering): its plank roof with the vent (sheet x 22-24, rows 69-70) over its walls
+# with the window and the door (x 15-17, rows 76-77). The sheet keeps the two halves apart,
+# but they meet pixel for pixel (the sign's cords run on from the roof's row into the wall's),
+# and every season is in the sheets (snow on the roof in winter). x0, y0, x1, y1; y1 its base.
+SHED = (92, 60, 94, 63)
+SHED_ART = ((1748, 1749, 1750), (1773, 1774, 1775), (1916, 1917, 1918), (1941, 1942, 1943))
+# The Three Trees (Paths markers: 9 oak, 10 maple, 11 pine) and the stump of the fourth, at
+# the north-east, clear of the bench, the easels and the shed: a tree's crown is 3 wide and
+# stands 2-5 rows above its trunk, so these hang out over the rim and the map's east edge.
+TREES = ((93, 57, 10), (95, 58, 9), (95, 61, 11))
+STUMP = (93, 59, 128)        # the game's own stump with its roots (outdoors 128, Forest (33,2)): a map tile, it can't be chopped
+FRINGE = ((95, 73, 9), (95, 75, 11))   # the woods along the bottom edge that stay (clear of the flight)
+PICNIC = (88, 72)            # vale_decor "picnic", at the bluff's foot by the lake's corner: no room on top
+FLOWERS = ((94, 58, 308), (95, 63, 258), (94, 65, 308), (89, 65, 258))
+# The lakeside path along the bluff's west foot: its east edge (the last sand corner) on
+# each corner row. It wanders a corner in and out, kept a corner of grass from the skirt.
+# (North of the bluff, rows 54-56, it stays as it is: x 85-87.)
+PATH_EAST = {57: 86, 58: 86, 59: 85, 60: 86, 61: 85, 62: 85, 63: 84, 64: 84,
+             65: 85, 66: 85, 67: 86, 68: 87, 69: 86, 70: 86, 71: 85, 72: 86, 73: 86}
+PATH_NARROW = {57: 84, 58: 84}  # where it still runs apart from the lake's sand: its west edge
+PATH_MEETS_LAKE = range(59, 72)  # rows where it runs into the lake's sand (the grass between goes)
+# The trail along the south foot to the flight: sand corners (x0, x1) by row. It dips under
+# the picnic table and rises to the flight's foot (corner row 74, below the skirt and its row
+# of grass: lay_face), so neither of its edges runs straight.
+SOUTH_PATH = {74: ((85, 87), (91, 93)), 75: ((85, 93),), 76: ((86, 91),)}
+CLEAR_BOX = (84, 56, 95, 75)  # what's cleared of props, markers and decor before laying
 
 
 # --- the test strip (Task 4): a scratch copy only -------------------------------------
@@ -487,8 +559,145 @@ def lay_test_strip(tmx_path, exports):
     print("overlook strip: wrote", tmx_path)
 
 
+PAINT_SPOT = "blinxxy.MuseArt_PaintSpot"
+
+
+def _spot_pieces(m):
+    """Lupini's lake painting spot as it stands in the box: its two 2 x 2 pieces (the
+    stool above the rock), each [(dx, dy, layer, gid)] from its left base tile, found by
+    their PaintSpot actions (wherever reachable_spot, or an earlier run, put them)."""
+    bx0, by0, bx1, by1 = OVERLOOK_BOX
+    bases = sorted((y, x) for (layer, x, y), p in m.props.items()
+                   if layer == "Buildings" and p.get("Action") == PAINT_SPOT and bx0 <= x <= bx1 and by0 <= y <= by1)
+    lefts = [(y, x) for y, x in bases if (y, x - 1) not in bases]
+    assert len(lefts) == 2 and len(bases) == 4, f"the lake spot's pieces in the box: {bases}"
+    pieces = []
+    for y, x in lefts:          # by row: the stool first, then the rock
+        cells = []
+        for dx in (0, 1):
+            cells.append((dx, 0, "Buildings", m.g["Buildings"][y][x + dx]))
+            for layer in ("Front2", "Front"):
+                if m.g[layer][y - 1][x + dx]:
+                    cells.append((dx, -1, layer, m.g[layer][y - 1][x + dx]))
+        pieces.append(cells)
+    return pieces
+
+
+def _design(m, ctx):
+    """The corners of the bluff's top, the lakeside path along its west foot and the trail
+    along its south foot, set outright (so every run paints from the same terrain). The
+    edges (lay_lip, lay_side, lay_face, lay_steps) then set their own."""
+    V = _corners(m)
+    want = {}
+    for cy in range(RIM_Y + 1, 74):                    # the top, and under the face: grass
+        for cx in range(SIDE_X, 97):                    # (the edges then set their own)
+            want[(cx, cy)] = "G"
+    for cy, east in PATH_EAST.items():
+        # sand from the path's west edge (where it meets the lake's sand, the lake's) to its
+        # east edge; grass from there to the side (the side's skirt is lay_side's)
+        west = PATH_NARROW.get(cy)
+        if west is None:
+            west = east
+            while V[cy][west - 1] == "S" or (cy in PATH_MEETS_LAKE and V[cy][west - 1] == "G"):
+                west -= 1
+        for cx in range(west, east + 1):
+            assert V[cy][cx] != "W", (cx, cy)
+            want[(cx, cy)] = "S"
+        for cx in range(east + 1, SIDE_X):
+            want[(cx, cy)] = "G"
+    for cy in (74, 75, 76):                             # the south foot: grass, and the trail
+        for cx in range(84, 97):
+            want[(cx, cy)] = "G"
+        for x0, x1 in SOUTH_PATH[cy]:
+            for cx in range(x0, x1 + 1):
+                want[(cx, cy)] = "S"
+    return want
+
+
+def _lay_cells(m, x, y, cells):
+    for dx, dy, layer, gid in cells:
+        _inside(x + dx, y + dy)
+        m.g[layer][y + dy][x + dx] = gid
+
+
+def patch_file(tmx_path, exports):
+    """The overlook on the committed map, in place (build_vale.VALE_PIECES). In order:
+    the lake spot's pieces are picked up and everything in CLEAR_BOX cleared of props,
+    markers and decor; the corners (_design) and the ground; the rim, side, face and steps
+    (one map object, so their working corners carry from one to the next); the lake's
+    corner; then the bench, the painting spot, the shed, the trees and the stump, the picnic
+    table, the woods that stay, flowers; the PaintSpot actions at the spot's new tiles."""
+    import contextlib, io
+    from vale_decor import PROPS
+    with contextlib.redirect_stdout(io.StringIO()):
+        ctx = context(tmx_path, exports)
+    m = load(tmx_path)
+    stool, rock = _spot_pieces(m)
+    x0, y0, x1, y1 = CLEAR_BOX
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            for layer in ("Paths", "Front", "Front2", "AlwaysFront", "Back2", "Buildings2"):
+                m.g[layer][y][x] = 0
+            if m.g["Buildings"][y][x] and (m.g["Back"][y][x], m.g["Buildings"][y][x]) not in bv.GROUND:
+                m.g["Buildings"][y][x] = 0      # props, and an earlier run's edges, shed, bench and stump
+            for layer in ("Buildings", "Paths", "Back"):
+                m.props.pop((layer, x, y), None)
+
+    # (from x 82: the path's corners move as far west as x 83, and the tiles left of a
+    # moved corner change with it)
+    _paint(m, ctx, _design(m, ctx), (82, RIM_Y, x1, y1))
+    lay_lip(m, ctx, SIDE_X, 95, RIM_Y)
+    lay_side(m, ctx, SIDE_X, RIM_Y + 1, FACE_TOP - 1, widens=SIDE_WIDENS)
+    lay_face(m, ctx, SIDE_X, 95, FACE_TOP, stairs_x=STAIRS_X)
+    lay_steps(m, ctx, STAIRS_X, FACE_TOP)
+    lay_lake_corner(m, ctx)
+
+    _lay_cells(m, BENCH[0], BENCH[1] - 1, PROPS["bench_w"])
+    for (sx, sy), cells in ((STOOL, stool), (ROCK, rock)):
+        _lay_cells(m, sx, sy, cells)
+        for dx in (0, 1):
+            m.props[("Buildings", sx + dx, sy)] = {"Action": PAINT_SPOT}
+    sx0, sy0, sx1, sy1 = SHED
+    for j, row in enumerate(SHED_ART):
+        y = sy0 + j
+        # only its foot is solid; the wall above it on Front, so you walk behind the shed,
+        # and the roof (two and more rows above the foot) on AlwaysFront, as place_buildings
+        # lays a building's roof: Front sorts by its own row and would draw under you
+        layer = "Buildings" if y == sy1 else "Front" if y == sy1 - 1 else "AlwaysFront"
+        for i, gid in enumerate(row):
+            _inside(sx0 + i, y)
+            m.g[layer][y][sx0 + i] = gid
+    for x, y, k in TREES + FRINGE:
+        _inside(x, y)
+        m.g["Paths"][y][x] = ctx.paths_first + k
+    x, y, gid = STUMP
+    _inside(x, y)
+    m.g["Buildings"][y][x] = gid
+    _lay_cells(m, PICNIC[0], PICNIC[1], PROPS["picnic"])
+    plain = lambda x, y: (set(bv.GROUND.get((m.g["Back"][y][x], m.g["Buildings"][y][x]), "?")) <= {"G", "D"}
+                          and not any(m.g[l][y][x] for l in ("Buildings", "Buildings2", "Back2", "Front", "Front2",
+                                                              "AlwaysFront", "Paths")))
+    for x, y, gid in FLOWERS:
+        if plain(x, y):
+            m.g["Back2"][y][x] = gid
+    # the woods round the box's edge stay only where their ground is still plain grass
+    bx0, by0, bx1, by1 = OVERLOOK_BOX
+    for y in range(by0, by1 + 1):
+        for x in range(bx0, bx1 + 1):
+            if m.g["Paths"][y][x] and (x, y) not in {(t[0], t[1]) for t in TREES + FRINGE}:
+                v = m.g["Paths"][y][x]
+                m.g["Paths"][y][x] = 0
+                if plain(x, y):
+                    m.g["Paths"][y][x] = v
+    save(m, tmx_path)
+    print("overlook: wrote", tmx_path)
+
+
 if __name__ == "__main__":
     if sys.argv[1:2] == ["--strip"]:
         lay_test_strip(sys.argv[2], sys.argv[3])
+    elif len(sys.argv) == 3:
+        patch_file(sys.argv[1], sys.argv[2])
     else:
-        sys.exit("usage: vale_overlook.py --strip <scratch GildedVale.tmx> <exports>")
+        sys.exit("usage: vale_overlook.py <GildedVale.tmx> <exports>\n"
+                 "       vale_overlook.py --strip <scratch GildedVale.tmx> <exports>")

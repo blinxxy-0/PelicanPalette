@@ -8,6 +8,7 @@ import collections, glob, re, sys, os
 import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from render_tmx import layer_data
+from vale_overlook import BENCH, FACE_TOP, STAIRS_X
 
 # name: a tile the player must be able to stand on (in front of it)
 PLACES = {
@@ -17,8 +18,12 @@ PLACES = {
     "parterre east statue": (25, 43), "Hall door": (44, 40), "fountain": (48, 46), "noticeboard": (41, 43),
     "Old Studio (big)": (73, 39), "studio B": (84, 39), "studio C": (90, 39),
     "amphitheatre stage": (37, 56), "Emmett's door": (18, 62), "Emmett's yard": (11, 58),
-    "Gilded Tree": (38, 69), "lakeside bench": (47, 60), "jetty": (48, 66), "picnic table": (90, 66),
-    "overlook bench": (86, 27), "hidden sculpture": (7, 44), "falls basin bank": (81, 13),
+    "Gilded Tree": (38, 69), "lakeside bench": (47, 60), "jetty": (48, 66), "picnic table": (89, 75),
+    "atelier bench": (86, 27), "hidden sculpture": (7, 44), "falls basin bank": (81, 13),
+    # The overlook (tools/vale_overlook.py). Its bench faces west against the bluff's side,
+    # with no tile in front of it: the seat itself, reached from beside it (SEATS).
+    "overlook bench": BENCH, "overlook easels": (BENCH[0] + 2, BENCH[1]),
+    "overlook steps top": (STAIRS_X + 1, FACE_TOP - 1), "overlook steps foot": (STAIRS_X + 1, FACE_TOP + 6),
 }
 # Schedule spots that are a seat (a bench or chair, solid itself): reachable if a neighbour is
 SEATS = {"nursery bench", "lakeside bench", "overlook bench"}

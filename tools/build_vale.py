@@ -75,8 +75,10 @@ PICKS = {
     "spot_atelier_rock": ("props/vale_props_v2/paint_rock_clean", 79, 19, 1, 0),
     "spot_meadow_stool": ("props/vale_props_v2/painters_stool_1_3", 28, 65, 1, 0),
     "spot_meadow_rock": ("props/vale_props_v2/paint_rock_clean", 31, 66, 1, 0),
-    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 84, 62, 1, 0),
-    "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 87, 62, 1, 0),
+    # (the lake's: up on the overlook, along its west edge over the lake; laid where they
+    # are here, not by reachable_spot, and moved with the bluff by tools/vale_overlook.py)
+    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 89, 61, 1, 0),
+    "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 89, 64, 1, 0),
     "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
     "vale_sign": ("props/vale_sign_gilded", 19, 4, 1, 0),   # gold lettering drawn on; lit at night (map property Light)         # A: where the high street starts
     "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door
@@ -152,7 +154,7 @@ FEATURES = {
 }
 
 W, H = 96, 76
-VALE_PIECES = ["vale_sculpture", "vale_falls"]           # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
+VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
 STAMP_LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "AlwaysFront"]
 
@@ -1076,6 +1078,11 @@ def amphitheatre_art(path):
     return im
 
 
+# Painting spots laid where PICKS has them: the lake's is on the overlook's bluff, which
+# tools/vale_overlook.py raises after the build (reachable_spot would find it reserved).
+FIXED_SPOTS = {"spot_lake_stool", "spot_lake_rock"}
+
+
 def reachable_spot(name, im, left, bottom, pieces):
     """The nearest place to (left, bottom) where a small prop stands on open grass the
     farmer can reach: every tile of it and the row in front plain grass (no water, sand,
@@ -1141,7 +1148,7 @@ def place_buildings(g, assets):
                 print(season, "art for", name, "doesn't match its spring size; using spring")
                 continue
             arts[season] = im
-        if name.startswith("spot_"):
+        if name.startswith("spot_") and name not in FIXED_SPOTS:
             left, bottom = reachable_spot(name, spring, left, bottom, pieces)
         pieces.append((name, arts, left, bottom, solid))
     if os.path.exists(os.path.join(ART, AMPHITHEATRE[0] + ".png")):

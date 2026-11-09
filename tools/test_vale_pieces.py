@@ -183,6 +183,56 @@ def test_falls_animated():
         assert int(fs[0]) == t and len(fs) == 17, t
 
 
+DATA = os.path.join(ROOT, "[CP] Gilded Vale (dev)", "data")
+LUPINI_SCHEDULE = os.path.join(DATA, "lupini_schedule.json")
+EMMETT_SCHEDULE = os.path.join(DATA, "emmett_schedule.json")
+
+
+def load_jsonc(path):
+    """A Content Patcher data file: JSON with // comment lines."""
+    import json
+    lines = [l for l in open(path, encoding="utf-8").read().split("\n") if not l.lstrip().startswith("//")]
+    return json.loads("\n".join(lines))
+
+
+def test_overlook_feet_only():
+    from vale_overlook import BENCH, EASELS, SHED
+    m = load(TMX)
+    bx, by = BENCH
+    assert m.g["Buildings"][by][bx] or m.g["Front"][by][bx]                   # the bench is there
+    ex0, ex1, ey = EASELS
+    assert ey == by
+    for x in range(ex0, ex1 + 1):                                              # the easels' row is open
+        assert not m.g["Buildings"][by][x] and not m.g["Paths"][by][x], x
+    x0, y0, x1, y1 = SHED                                                      # its tiles, inclusive; y1 is its base row
+    for y in range(y0, y1):                                                    # the roof and upper wall: over you, not solid
+        assert all(not m.g["Buildings"][y][x] for x in range(x0, x1 + 1)), y
+        assert all(m.g["Front"][y][x] or m.g["AlwaysFront"][y][x] for x in range(x0, x1 + 1)), y
+    for y in range(y0, y1 - 1):                                                # two or more rows above the base: AlwaysFront
+        assert all(m.g["AlwaysFront"][y][x] for x in range(x0, x1 + 1)), y
+    assert all(m.g["Buildings"][y1][x] for x in range(x0, x1 + 1))             # the walls' foot: solid
+
+
+def test_overlook_paint_spot_moved():
+    # the lake painting spot's two pieces are on the bluff, their PaintSpot actions with
+    # them, none left where reachable_spot had put them (88,58) and (88,61)
+    from vale_overlook import ROCK, STOOL
+    m = load(TMX)
+    spot = {(x, y) for (layer, x, y), p in m.props.items()
+            if layer == "Buildings" and p.get("Action") == "blinxxy.MuseArt_PaintSpot" and in_any_box(x, y)}
+    want = {(STOOL[0] + i, STOOL[1]) for i in (0, 1)} | {(ROCK[0] + i, ROCK[1]) for i in (0, 1)}
+    assert spot == want, spot
+    assert all(m.g["Buildings"][y][x] for x, y in want)
+
+
+def test_schedules_moved():
+    from vale_overlook import BENCH
+    lu, em = load_jsonc(LUPINI_SCHEDULE), load_jsonc(EMMETT_SCHEDULE)
+    assert f"1400 blinxxy.MuseArt_GildedVale {BENCH[0]} {BENCH[1]}" in lu["Sun"]
+    assert f"1300 blinxxy.MuseArt_GildedVale {BENCH[0]} {BENCH[1]}" in em["Sat"]
+    assert "88 59" not in lu["Fri"]
+
+
 if __name__ == "__main__":
     for name, fn in [(n, f) for n, f in list(globals().items()) if n.startswith("test_") and callable(f)]:
         try:
