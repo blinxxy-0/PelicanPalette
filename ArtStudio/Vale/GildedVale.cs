@@ -18,7 +18,7 @@ internal static class GildedVale
         ValeResidents.Register(helper, harmony);
         ValeTests.Register(helper, monitor);
         GuideTests.Register(helper, monitor);
-        ValeGrounds.Register(helper, monitor);
+        ValeGrounds.Register(helper, harmony, monitor);
         ValeOrchard.Register(helper, monitor);
         ValeFish.Register(helper, monitor);
         ValeStudios.Register(helper, harmony, monitor);

@@ -118,3 +118,24 @@ Previews: `emmett_walk_vs_portrait_x5.png`, `emmett_walk_vs_alex_x5.png`,
 `emmett_face_closeup_x14.png`, `emmett_walk_preview.gif`.
 
     python tools/art/emmett_walk_build.py art/vale_residents_sprites/ref_walk_alex.png "[CP] Gilded Vale (dev)/assets/emmett/sprites.png"
+
+## Sitting on a bench (Lupini and Emmett, 2026-11-09)
+
+A fifth row on their sheets (64x160): frame 16 sits facing left (west), 17 is it mirrored
+(east), 18 and 19 are empty. `tools/art/vale_sit_build.py` builds it from the game's own
+seated pose, Alex's frame 39 (`alex_sit_left`, his Hospital waiting-room chair):
+`ref_sit_alex39.png`. That frame's head and chest are Alex's standing-left frame exactly, a
+pixel right and two rows up, so each of them keeps their own standing-left head and chest,
+moved the same way, on Alex's seated legs in their colours (Emmett's are Alex's recoloured
+as in his walk sheet; Lupini's in his trousers, his frock coat's tails over the seat). No
+PixelLab generations.
+
+Used at the overlook bench (89, 58), Town's side bench facing west: `lupini_sit_left` and
+`emmett_sit_left` (`16/16/16//offset -16 24`) in `data/lupini.json` and `data/emmett.json`,
+on their Sunday and Saturday afternoons. The offset is in world pixels (4 to a sprite
+pixel). An NPC arriving by schedule stops a little off the tile (here 2 right and 4 down),
+so the offset was set from the arrivals seen in game: they sit mid-seat, their feet over its
+front edge. `ingame_overlook_bench_sit.png` is that check (Lupini left, Emmett right).
+
+    python tools/art/vale_sit_build.py art/vale_residents_sprites/ref_sit_alex39.png "[CP] Gilded Vale (dev)/assets/lupini/sprites.png" lupini
+    python tools/art/vale_sit_build.py art/vale_residents_sprites/ref_sit_alex39.png "[CP] Gilded Vale (dev)/assets/emmett/sprites.png" emmett

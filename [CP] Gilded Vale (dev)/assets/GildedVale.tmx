@@ -13179,306 +13179,336 @@
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1587" name="TileData" x="1504" y="464" width="16" height="16">
+    <object id="1587" name="TileData" x="1488" y="928" width="16" height="16">
+      <properties>
+        <property name="blinxxy.MuseArt_KeepTree" type="string" value="1" />
+      </properties>
+    </object>
+    <object id="1588" name="TileData" x="1504" y="464" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1588" name="TileData" x="1504" y="480" width="16" height="16">
+    <object id="1589" name="TileData" x="1504" y="480" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1589" name="TileData" x="1504" y="496" width="16" height="16">
+    <object id="1590" name="TileData" x="1504" y="496" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1590" name="TileData" x="1504" y="512" width="16" height="16">
+    <object id="1591" name="TileData" x="1504" y="512" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1591" name="TileData" x="1504" y="528" width="16" height="16">
+    <object id="1592" name="TileData" x="1504" y="528" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1592" name="TileData" x="1504" y="544" width="16" height="16">
+    <object id="1593" name="TileData" x="1504" y="544" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1593" name="TileData" x="1504" y="560" width="16" height="16">
+    <object id="1594" name="TileData" x="1504" y="560" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1594" name="TileData" x="1504" y="576" width="16" height="16">
+    <object id="1595" name="TileData" x="1504" y="576" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1595" name="TileData" x="1504" y="592" width="16" height="16">
+    <object id="1596" name="TileData" x="1504" y="592" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1596" name="TileData" x="1504" y="608" width="16" height="16">
+    <object id="1597" name="TileData" x="1504" y="608" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1597" name="TileData" x="1504" y="624" width="16" height="16">
+    <object id="1598" name="TileData" x="1504" y="624" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1598" name="TileData" x="1504" y="640" width="16" height="16">
+    <object id="1599" name="TileData" x="1504" y="640" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1599" name="TileData" x="1504" y="656" width="16" height="16">
+    <object id="1600" name="TileData" x="1504" y="656" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1600" name="TileData" x="1504" y="672" width="16" height="16">
+    <object id="1601" name="TileData" x="1504" y="672" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1601" name="TileData" x="1504" y="688" width="16" height="16">
+    <object id="1602" name="TileData" x="1504" y="688" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1602" name="TileData" x="1520" y="464" width="16" height="16">
+    <object id="1603" name="TileData" x="1504" y="896" width="16" height="16">
+      <properties>
+        <property name="blinxxy.MuseArt_KeepTree" type="string" value="2" />
+      </properties>
+    </object>
+    <object id="1604" name="TileData" x="1504" y="960" width="16" height="16">
+      <properties>
+        <property name="blinxxy.MuseArt_KeepTree" type="string" value="3" />
+      </properties>
+    </object>
+    <object id="1605" name="TileData" x="1520" y="464" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1603" name="TileData" x="1520" y="480" width="16" height="16">
+    <object id="1606" name="TileData" x="1520" y="480" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1604" name="TileData" x="1520" y="496" width="16" height="16">
+    <object id="1607" name="TileData" x="1520" y="496" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1605" name="TileData" x="1520" y="512" width="16" height="16">
+    <object id="1608" name="TileData" x="1520" y="512" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1606" name="TileData" x="1520" y="528" width="16" height="16">
+    <object id="1609" name="TileData" x="1520" y="528" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1607" name="TileData" x="1520" y="544" width="16" height="16">
+    <object id="1610" name="TileData" x="1520" y="544" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1608" name="TileData" x="1520" y="560" width="16" height="16">
+    <object id="1611" name="TileData" x="1520" y="560" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1609" name="TileData" x="1520" y="576" width="16" height="16">
+    <object id="1612" name="TileData" x="1520" y="576" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1610" name="TileData" x="1520" y="592" width="16" height="16">
+    <object id="1613" name="TileData" x="1520" y="592" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
-    <object id="1611" name="TileData" x="1520" y="608" width="16" height="16">
+    <object id="1614" name="TileData" x="1520" y="608" width="16" height="16">
       <properties>
         <property name="NoSpawn" type="string" value="Tree" />
       </properties>
     </object>
   </objectgroup>
   <objectgroup id="13" name="Buildings" visible="false">
-    <object id="1612" name="TileData" x="96" y="720" width="16" height="16">
+    <object id="1615" name="TileData" x="96" y="720" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.garden.hidden_statue" />
       </properties>
     </object>
-    <object id="1613" name="TileData" x="112" y="720" width="16" height="16">
+    <object id="1616" name="TileData" x="112" y="720" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.garden.hidden_statue" />
       </properties>
     </object>
-    <object id="1614" name="TileData" x="192" y="608" width="16" height="16">
+    <object id="1617" name="TileData" x="192" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 6 19 blinxxy.MuseArt_ValeFern" />
       </properties>
     </object>
-    <object id="1615" name="TileData" x="272" y="608" width="16" height="16">
+    <object id="1618" name="TileData" x="272" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 21 19 blinxxy.MuseArt_ValeFern" />
       </properties>
     </object>
-    <object id="1616" name="TileData" x="288" y="976" width="16" height="16">
+    <object id="1619" name="TileData" x="288" y="976" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 10 16 blinxxy.MuseArt_ValeEmmett" />
       </properties>
     </object>
-    <object id="1617" name="TileData" x="304" y="976" width="16" height="16">
+    <object id="1620" name="TileData" x="304" y="976" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 10 16 blinxxy.MuseArt_ValeEmmett" />
       </properties>
     </object>
-    <object id="1618" name="TileData" x="448" y="304" width="16" height="16">
+    <object id="1621" name="TileData" x="448" y="304" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 15 28 blinxxy.MuseArt_ValeHouse" />
       </properties>
     </object>
-    <object id="1619" name="TileData" x="448" y="1040" width="16" height="16">
+    <object id="1622" name="TileData" x="448" y="1040" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot wildflowers" />
       </properties>
     </object>
-    <object id="1620" name="TileData" x="464" y="304" width="16" height="16">
+    <object id="1623" name="TileData" x="464" y="304" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 15 28 blinxxy.MuseArt_ValeHouse" />
       </properties>
     </object>
-    <object id="1621" name="TileData" x="464" y="1040" width="16" height="16">
+    <object id="1624" name="TileData" x="464" y="1040" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot wildflowers" />
       </properties>
     </object>
-    <object id="1622" name="TileData" x="688" y="64" width="16" height="16">
+    <object id="1625" name="TileData" x="688" y="64" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot rooftops" />
       </properties>
     </object>
-    <object id="1623" name="TileData" x="704" y="64" width="16" height="16">
+    <object id="1626" name="TileData" x="704" y="64" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot rooftops" />
       </properties>
     </object>
-    <object id="1624" name="TileData" x="704" y="272" width="16" height="16">
+    <object id="1627" name="TileData" x="704" y="272" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 8 21 blinxxy.MuseArt_ValePottery" />
       </properties>
     </object>
-    <object id="1625" name="TileData" x="704" y="624" width="16" height="16">
+    <object id="1628" name="TileData" x="704" y="624" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 14 21 blinxxy.MuseArt_ValeHall" />
       </properties>
     </object>
-    <object id="1626" name="TileData" x="720" y="624" width="16" height="16">
+    <object id="1629" name="TileData" x="720" y="624" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 14 21 blinxxy.MuseArt_ValeHall" />
       </properties>
     </object>
-    <object id="1627" name="TileData" x="1152" y="608" width="16" height="16">
+    <object id="1630" name="TileData" x="1152" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.plaque_1" />
       </properties>
     </object>
-    <object id="1628" name="TileData" x="1168" y="368" width="16" height="16">
+    <object id="1631" name="TileData" x="1168" y="368" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 7 19 blinxxy.MuseArt_ValeAtelier" />
       </properties>
     </object>
-    <object id="1629" name="TileData" x="1168" y="608" width="16" height="16">
+    <object id="1632" name="TileData" x="1168" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Warp 12 18 blinxxy.MuseArt_ValeStudio" />
       </properties>
     </object>
-    <object id="1630" name="TileData" x="1184" y="608" width="16" height="16">
+    <object id="1633" name="TileData" x="1184" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.plaque_1" />
       </properties>
     </object>
-    <object id="1631" name="TileData" x="1248" y="720" width="16" height="16">
+    <object id="1634" name="TileData" x="1248" y="720" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.sign" />
       </properties>
     </object>
-    <object id="1632" name="TileData" x="1264" y="256" width="16" height="16">
+    <object id="1635" name="TileData" x="1264" y="256" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot northlight" />
       </properties>
     </object>
-    <object id="1633" name="TileData" x="1264" y="720" width="16" height="16">
+    <object id="1636" name="TileData" x="1264" y="720" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.sign" />
       </properties>
     </object>
-    <object id="1634" name="TileData" x="1280" y="256" width="16" height="16">
+    <object id="1637" name="TileData" x="1280" y="256" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot northlight" />
       </properties>
     </object>
-    <object id="1635" name="TileData" x="1280" y="720" width="16" height="16">
+    <object id="1638" name="TileData" x="1280" y="720" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.sign" />
       </properties>
     </object>
-    <object id="1636" name="TileData" x="1360" y="608" width="16" height="16">
+    <object id="1639" name="TileData" x="1360" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.plaque_2" />
       </properties>
     </object>
-    <object id="1637" name="TileData" x="1392" y="608" width="16" height="16">
+    <object id="1640" name="TileData" x="1392" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.plaque_2" />
       </properties>
     </object>
-    <object id="1638" name="TileData" x="1440" y="608" width="16" height="16">
+    <object id="1641" name="TileData" x="1440" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.plaque_3" />
       </properties>
     </object>
-    <object id="1639" name="TileData" x="1440" y="960" width="16" height="16">
+    <object id="1642" name="TileData" x="1440" y="960" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot lakewindow" />
       </properties>
     </object>
-    <object id="1640" name="TileData" x="1456" y="960" width="16" height="16">
+    <object id="1643" name="TileData" x="1456" y="960" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="blinxxy.MuseArt_PaintSpot lakewindow" />
       </properties>
     </object>
-    <object id="1641" name="TileData" x="1488" y="608" width="16" height="16">
+    <object id="1644" name="TileData" x="1488" y="608" width="16" height="16">
       <properties>
         <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studios.plaque_3" />
+      </properties>
+    </object>
+    <object id="1645" name="TileData" x="1488" y="1024" width="16" height="16">
+      <properties>
+        <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.overlook.shed" />
+      </properties>
+    </object>
+    <object id="1646" name="TileData" x="1504" y="1024" width="16" height="16">
+      <properties>
+        <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.overlook.shed" />
+      </properties>
+    </object>
+    <object id="1647" name="TileData" x="1520" y="1024" width="16" height="16">
+      <properties>
+        <property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.overlook.shed" />
       </properties>
     </object>
   </objectgroup>
   <objectgroup id="15" name="Paths" visible="false">
-    <object id="1642" name="TileData" x="1408" y="48" width="16" height="16">
+    <object id="1648" name="TileData" x="1408" y="48" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 628 4 4" />
       </properties>
     </object>
-    <object id="1643" name="TileData" x="1408" y="144" width="16" height="16">
+    <object id="1649" name="TileData" x="1408" y="144" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 629 4 4" />
       </properties>
     </object>
-    <object id="1644" name="TileData" x="1440" y="96" width="16" height="16">
+    <object id="1650" name="TileData" x="1440" y="96" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 631 4 4" />
       </properties>
     </object>
-    <object id="1645" name="TileData" x="1472" y="48" width="16" height="16">
+    <object id="1651" name="TileData" x="1472" y="48" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 633 4 4" />
       </properties>
     </object>
-    <object id="1646" name="TileData" x="1488" y="144" width="16" height="16">
+    <object id="1652" name="TileData" x="1488" y="144" width="16" height="16">
       <properties>
         <property name="SpawnTree" type="string" value="fruit 633 4 4" />
       </properties>

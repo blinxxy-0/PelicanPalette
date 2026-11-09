@@ -1,10 +1,12 @@
 #if DEBUG
 using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 
 namespace ArtStudio.Vale;
 
@@ -19,12 +21,22 @@ namespace ArtStudio.Vale;
 // This sweep, on loading and every morning, takes out what the map says can't be there,
 // plus anything standing in a wall or in water. Things you placed yourself stay.
 // museart_vale_clear runs it on demand.
+//
+// The overlook's Three Trees stay (tools/vale_overlook.py, KEEP_TREE): their trunk tiles
+// carry blinxxy.MuseArt_KeepTree on Back, its value the tree's type. The axe stops short
+// of them and bombs leave them standing ("He swears there used to be four": the stump of
+// the fourth is beside them), and the sweep replants any that's missing, as in saves made
+// before the overlook was built (a map's trees only spawn when the location is created).
 internal static class ValeGrounds
 {
     private const string KeepClear = ModEntry.Id + "_KeepClear";
+    private const string KeepTree = ModEntry.Id + "_KeepTree";
+    private const string KeepTreeLine = "Strings\\StringsFromMaps:" + ModEntry.Id + "_Vale.overlook.three_trees";
 
-    public static void Register(IModHelper helper, IMonitor monitor)
+    public static void Register(IModHelper helper, Harmony harmony, IMonitor monitor)
     {
+        harmony.Patch(AccessTools.Method(typeof(Tree), nameof(Tree.performToolAction)),
+            prefix: new HarmonyMethod(typeof(ValeGrounds), nameof(TreeToolPrefix)));
         helper.Events.GameLoop.SaveLoaded += (_, _) => Sweep(monitor, LogLevel.Info);
         helper.Events.GameLoop.DayStarted += (_, _) => Sweep(monitor, LogLevel.Trace);
         DevTools.AddCommand(helper, "museart_vale_clear",
@@ -78,6 +90,70 @@ internal static class ValeGrounds
         if (awayWasFree)
             vale.terrainFeatures.Remove(away);
         Check(monitor, "Vale grounds: no tree stands on a building's footprint or door approach", !vale.terrainFeatures.Pairs.Any(p => p.Value is Tree && NoTrees(vale, p.Key)));
+
+        // The Three Trees: a bomb leaves each standing; taken out, each is back after the sweep.
+        var kept = KeptTrees(vale).ToList();
+        Check(monitor, "Vale grounds: the overlook's Three Trees are marked on the map", kept.Count == 3);
+        Sweep(monitor, LogLevel.Trace);
+        foreach (var (tile, type) in kept)
+        {
+            bool standing = vale.terrainFeatures.TryGetValue(tile, out var f) && f is Tree t && t.treeType.Value == type && t.growthStage.Value >= Tree.treeStage && !t.stump.Value;
+            Check(monitor, $"Vale grounds: tree {type} stands at {tile.X},{tile.Y}", standing);
+            if (f is not Tree tree)
+                continue;
+            float health = tree.health.Value;
+            Check(monitor, $"Vale grounds: a bomb leaves the tree at {tile.X},{tile.Y} standing", !tree.performToolAction(null, 10, tile) && tree.health.Value == health);
+            // a real swing of an iridium axe, by the farmer: the tree takes no hit, and says why
+            Game1.exitActiveMenu();
+            var axe = new Axe { UpgradeLevel = 4 };
+            axe.DoFunction(vale, (int)tile.X * 64 + 32, (int)tile.Y * 64 + 32, 1, Game1.player);
+            string said = (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.getCurrentString() ?? "";
+            Check(monitor, $"Vale grounds: the axe stops short of the tree at {tile.X},{tile.Y}, and says so ({said})",
+                vale.terrainFeatures.TryGetValue(tile, out var after) && after == tree && tree.health.Value == health && said.Contains("stump"));
+            Game1.exitActiveMenu();
+            vale.terrainFeatures.Remove(tile);
+        }
+        Sweep(monitor, LogLevel.Trace);
+        foreach (var (tile, type) in kept)
+            Check(monitor, $"Vale grounds: the tree at {tile.X},{tile.Y} is replanted", vale.terrainFeatures.TryGetValue(tile, out var f) && f is Tree t && t.treeType.Value == type && t.growthStage.Value >= Tree.treeStage);
+
+        // The overlook shed's foot (x 93-95, y 64) says its line from Strings/StringsFromMaps.
+        var strings = Game1.content.Load<Dictionary<string, string>>("Strings/StringsFromMaps");
+        foreach (int x in new[] { 93, 94, 95 })
+        {
+            string? action = vale.doesTileHaveProperty(x, 64, "Action", "Buildings");
+            string key = action?.StartsWith("Message ") == true ? action[8..] : "";
+            Check(monitor, $"Vale grounds: the shed at {x},64 has its line ({action})", strings.TryGetValue(key, out string? line) && line.Contains("easel"));
+        }
+    }
+
+    // The tiles marked KeepTree, with the tree type each wants.
+    private static IEnumerable<(Vector2 Tile, string Type)> KeptTrees(GameLocation vale)
+    {
+        var back = vale.map?.GetLayer("Back");
+        if (back is null)
+            yield break;
+        for (int y = 0; y < back.LayerHeight; y++)
+            for (int x = 0; x < back.LayerWidth; x++)
+                if (vale.doesTileHaveProperty(x, y, KeepTree, "Back") is { } type)
+                    yield return (new Vector2(x, y), type);
+    }
+
+    private static bool IsKeptTree(GameLocation? where, Vector2 tile) =>
+        where is not null && where.Name == ValeBus.Vale && where.doesTileHaveProperty((int)tile.X, (int)tile.Y, KeepTree, "Back") is not null;
+
+    // The axe stops short of the Three Trees (and says why); a bomb leaves them standing.
+    private static bool TreeToolPrefix(Tree __instance, Tool? __0, ref bool __result)
+    {
+        if (!IsKeptTree(__instance.Location, __instance.Tile))
+            return true;
+        __result = false;
+        if (__0 is Axe axe && axe.getLastFarmerToUse() is { } who && who.IsLocalPlayer)
+        {
+            __instance.Location.playSound("woodyHit");
+            Game1.drawObjectDialogue(Game1.content.LoadString(KeepTreeLine));
+        }
+        return false;
     }
 
     private static void Check(IMonitor monitor, string what, bool ok) =>
@@ -129,7 +205,28 @@ internal static class ValeGrounds
         }
         if (removed > 0)
             monitor.Log($"Vale grounds: cleared {removed} trees, bushes and bits of debris off the buildings and door approaches.", level);
+        Replant(vale, monitor);
         return removed;
+    }
+
+    // Any of the Three Trees that's missing (or a stump, a sapling, another kind of tree)
+    // grows back full-sized overnight. A thing you placed on its tile keeps it away.
+    private static void Replant(GameLocation vale, IMonitor monitor)
+    {
+        foreach (var (tile, type) in KeptTrees(vale))
+        {
+            if (vale.terrainFeatures.TryGetValue(tile, out var f) && f is Tree t && t.treeType.Value == type && t.growthStage.Value >= Tree.treeStage && !t.stump.Value)
+                continue;
+            if (vale.objects.TryGetValue(tile, out var obj))
+            {
+                if (!obj.isDebrisOrForage())
+                    continue;
+                vale.objects.Remove(tile);
+            }
+            vale.terrainFeatures.Remove(tile);
+            vale.terrainFeatures.Add(tile, new Tree(type, Tree.treeStage));
+            monitor.Log($"Vale grounds: replanted the overlook's tree {type} at {tile.X},{tile.Y}", LogLevel.Trace);
+        }
     }
 
     // A building's footprint or its door's approach.
