@@ -262,20 +262,28 @@ def west_wall(m, ctx, exports):
     sheets = Sheets(ctx.assets)
     rows = sorted(set(END_ROWS))
     first = {r: END_ROWS.index(r) for r in rows}           # the wall's row each piece first sits on
-    own = [m.g["Buildings"][first[r]][CLIFF_X0] for r in rows]
-    if all(FEATURE_FIRST <= v < FEATURE_FIRST + 10000 for v in own) and len(set(own)) == len(own):
-        gids = dict(zip(rows, own))
-    else:
-        gids = {r: FEATURE_FIRST + sheets.end + i for i, r in enumerate(rows)}
-    sheets.grow(max(gids.values()) - FEATURE_FIRST + 1)
+    arts = {}
     for se in SEASONS:
         src = Image.open(os.path.join(exports, "sheets_" + se, "spring_outdoorsTileSheet.png")).convert("RGBA")
         cols = src.width // 16
-        for r, gid in gids.items():
+        for r in rows:
             k = ctx.tget("Buildings", WEST_END[0], WEST_END[1] + r) - 1     # the outdoors sheet is first, at gid 1
-            piece = src.crop((k % cols * 16, k // cols * 16, k % cols * 16 + 16, k // cols * 16 + 16))
-            box = sheets.box(gid)
-            sheets.im[se].paste(unband(piece), box[:2])
+            arts[se, r] = unband(src.crop((k % cols * 16, k // cols * 16, k % cols * 16 + 16, k // cols * 16 + 16)))
+    # a slot on the wall is reused only if its pixels are already this piece's in every
+    # season (never paint over a slot another piece put there); else a new one at the end
+    gids, claimed, nxt = {}, set(), sheets.end
+    for r in rows:
+        v = m.g["Buildings"][first[r]][CLIFF_X0]
+        if FEATURE_FIRST <= v < FEATURE_FIRST + sheets.end and v not in claimed and                 all(sheets.im[se].crop(sheets.box(v)).tobytes() == arts[se, r].tobytes() for se in SEASONS):
+            gids[r] = v
+        else:
+            gids[r] = FEATURE_FIRST + nxt
+            nxt += 1
+        claimed.add(gids[r])
+    sheets.grow(max(gids.values()) - FEATURE_FIRST + 1)
+    for se in SEASONS:
+        for r, gid in gids.items():
+            sheets.im[se].paste(arts[se, r], sheets.box(gid)[:2])
     for se in SEASONS:
         sheets.im[se].save(sheets.path(se))
     h = sheets.im["spring"].height

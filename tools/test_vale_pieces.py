@@ -15,7 +15,18 @@ from build_vale import VALE_PIECES, W, H, WATERFALLS
 from vale_patch import BOXES, context, corner_grid, load, repaint_terrain, save
 
 TMX = os.path.join(ROOT, "[CP] Gilded Vale (dev)", "assets", "GildedVale.tmx")
-BASE = "e2a31f5"            # the branch's starting commit
+
+
+def _base():
+    """The commit these pieces were built on: env VALE_BASE, else where this branch left
+    main (`git merge-base main HEAD`), else the branch's first commit."""
+    if os.environ.get("VALE_BASE"):
+        return os.environ["VALE_BASE"]
+    p = subprocess.run(["git", "merge-base", "main", "HEAD"], cwd=ROOT, capture_output=True, text=True)
+    return p.stdout.strip() if p.returncode == 0 and p.stdout.strip() else "e2a31f5"
+
+
+BASE = _base()
 EXPORTS = os.environ.get("VALE_EXPORTS", "C:/Users/blinx/Desktop/MuseStardew/.devgame/exports_vale")
 CRLF, LF = bytes([13, 10]), bytes([10])
 SEASON_SHEETS =[f"{s}_GildedValeBuildings.png" for s in ("spring", "summer", "fall", "winter")]
@@ -77,6 +88,11 @@ def test_round_trip():
 
 
 def test_outside_boxes_unchanged():
+    # Guards THIS branch's pieces only: outside their boxes the map is what BASE (VALE_BASE,
+    # else `git merge-base main HEAD`) had. Once main is merged in, main's own edits (the
+    # SpawnTree props vale-fish changed, say) lie outside the boxes too and would fail this
+    # spuriously; there, set VALE_BASE to main's side of the merge (its first parent when main
+    # was merged into this branch, `git merge-base` of the other parent otherwise).
     old, new = load_at(BASE), load(TMX)
     for layer in new.g:
         for x, y in all_tiles():
@@ -102,6 +118,32 @@ def test_idempotent():
         once = run_piece_on_copy(name, times=1)
         twice = run_piece_on_copy(name, times=2)
         assert once == twice, name
+
+
+def _run_pieces(order):
+    """The given pieces, in that order, once each on a scratch copy of the committed assets."""
+    import importlib
+    with tempfile.TemporaryDirectory() as d:
+        assets = os.path.join(d, "assets")
+        shutil.copytree(os.path.dirname(TMX), assets)
+        tmx = os.path.join(assets, os.path.basename(TMX))
+        for name in order:
+            importlib.import_module(name).patch_file(tmx, EXPORTS)
+        return [open(os.path.join(assets, f), "rb").read() for f in [os.path.basename(TMX)] + SEASON_SHEETS]
+
+
+def test_pieces_fixed_point():
+    # all three pieces, run on the committed map, leave the TMX and the four sheets byte-identical
+    committed = [open(os.path.join(os.path.dirname(TMX), f), "rb").read() for f in [os.path.basename(TMX)] + SEASON_SHEETS]
+    committed[0] = committed[0].replace(CRLF, LF)
+    assert _run_pieces(VALE_PIECES) == committed
+
+
+def test_pieces_order_independent():
+    # the pieces' own boxes and slots don't depend on which runs first
+    want = _run_pieces(VALE_PIECES)
+    for order in (list(reversed(VALE_PIECES)), VALE_PIECES[1:] + VALE_PIECES[:1]):
+        assert _run_pieces(order) == want, order
 
 
 def test_routes():

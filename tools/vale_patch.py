@@ -41,14 +41,34 @@ def _map_props(text):
     return re.search(r'(<map [^>]*>\s*<properties>\n)(.*?)(\n  </properties>)', text, re.S)
 
 
+def _object_counts(text):
+    """(objects, properties) in the file's object groups."""
+    start = text.find("<objectgroup")
+    tail = text[start:] if start >= 0 else ""
+    return tail.count("<object "), tail.count("<property ")
+
+
 def load(tmx_path):
     text = open(tmx_path, encoding="utf-8").read()
     g = {name: [list(map(int, row.rstrip(",").split(","))) for row in _layer(text, name).group(2).split("\n")]
          for name in _layer_names(text)}
-    props = {}
+    props, n_obj, n_prop = {}, 0, 0
     for layer, body in re.findall(r'<objectgroup id="\d+" name="([^"]+)" visible="false">(.*?)</objectgroup>', text, re.S):
         for ox, oy, p in re.findall(r'<object id="\d+" name="TileData" x="(\d+)" y="(\d+)"[^>]*>\s*<properties>(.*?)</properties>', body, re.S):
-            props[(layer, int(ox) // 16, int(oy) // 16)] = dict(re.findall(r'<property name="([^"]+)" type="string" value="([^"]*)" />', p))
+            n_obj += 1
+            n_prop += p.count("<property ")
+            key = (layer, int(ox) // 16, int(oy) // 16)
+            if key in props:
+                raise ValueError(f"{tmx_path}: two TileData objects on tile {key}; load() keeps one, so save() would drop the other")
+            props[key] = dict(re.findall(r'<property name="([^"]+)" type="string" value="([^"]*)" />', p))
+    # everything in the file's object section must have been read: a group that isn't a
+    # hidden layer-named one, an object that isn't TileData, a property that isn't a string
+    # would be silently lost on save
+    in_text = _object_counts(text)
+    if in_text != (n_obj, n_prop) or sum(len(p) for p in props.values()) != n_prop:
+        raise ValueError(f"{tmx_path}: load() read {n_obj} objects with {n_prop} properties but the file has "
+                         f"{in_text[0]} objects with {in_text[1]} (an object group, object or property of a kind "
+                         "vale_patch doesn't handle); save() would drop them")
     map_props = dict(re.findall(r'<property name="([^"]+)" type="string" value="([^"]*)" />', _map_props(text).group(2)))
     return ValeMap(text, g, props, map_props)
 
@@ -81,6 +101,10 @@ def save(m, tmx_path):
     start = text.find("  <objectgroup")
     end = text.rfind("</map>")
     text = (text[:start] if start >= 0 else text[:end]) + "\n".join(out) + "\n" + text[end:]
+    want = (len(m.props), sum(len(p) for p in m.props.values()))
+    if _object_counts(text) != want:
+        raise ValueError(f"{tmx_path}: save() would write {_object_counts(text)} objects and properties, not the "
+                         f"{want} the map holds (TileData on a layer that is not in the file?)")
     open(tmx_path, "w", encoding="utf-8", newline="\n").write(text)
 
 

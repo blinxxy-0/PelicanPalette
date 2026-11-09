@@ -146,16 +146,23 @@ def patch_file(tmx_path, exports):
     x0, y0, x1, y1 = POCKET
     arts = {se: compose(m, sheets, se) for se in SEASONS}
 
-    # the head's row on Front, the feet's on Buildings: this script's own slots if it ran
-    # before, else new ones at the sheets' end
+    # the head's row on Front, the feet's on Buildings: a slot already there is reused only
+    # if its pixels are what this would paint in every season (so a slot another piece, or
+    # an older version of this one, put there is never painted over); else a new slot at
+    # the sheets' end
     nxt = sheets.end
-    cells = []
+    cells, claimed = [], set()
     for y, layer in ((y0, "Front"), (y1, "Buildings")):
         for x in range(x0, x1 + 1):
-            if not own(m.g[layer][y][x]):
-                assert m.g[layer][y][x] == 0, (layer, x, y, m.g[layer][y][x])
+            v = m.g[layer][y][x]
+            px = ((x - x0) * 16, (y - y0) * 16)
+            want = {se: arts[se].crop(px + (px[0] + 16, px[1] + 16)).tobytes() for se in SEASONS}
+            mine = own(v) and v not in claimed and v - FEATURE_FIRST < sheets.end and                 all(sheets.im[se].crop(sheets.box(v)).tobytes() == want[se] for se in SEASONS)
+            if not mine:
+                assert v == 0 or own(v), (layer, x, y, v)
                 m.g[layer][y][x] = FEATURE_FIRST + nxt
                 nxt += 1
+            claimed.add(m.g[layer][y][x])
             cells.append((x, y, layer))
     sheets.grow(nxt)
     for x, y, layer in cells:
