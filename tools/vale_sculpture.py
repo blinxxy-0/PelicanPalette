@@ -8,7 +8,8 @@ The art is the garden's own pixels, read from the committed sheets with the laye
 each tile stacked (as vale_feature_fixes._patch reads them):
 - the head: the top 16 px of the west statue, lifted off the gravel and grass round it;
 - the hedge: the leaf pixels of the lower west bed's bushes (no path, soil or shadow),
-  behind the head and over its shoulders, filling the pocket.
+  each bush's capped top lobe and its foot (BUSHES), behind the head and over its
+  shoulders, filling the pocket with a rounded top and lumpy free side.
 Spring's art goes in the spring, summer and fall sheets; winter's is the same cut from
 the winter sheet, so the snow lies on it as on the bed beside it. Only the feet (row 45)
 are solid; the head and the hedge's top (row 44) are on Front, and you stand behind
@@ -25,14 +26,25 @@ from vale_patch import load, save
 from vale_feature_fixes import FEATURE_FIRST, GROUND, SEASONS, lift, snow
 
 STATUE = (6, 41, 7, 43)         # the west statue on its plinth
-HEDGE = (8, 44, 11, 45)         # the lower west hedged bed
+HEDGE = (8, 43, 11, 45)         # the lower west hedged bed, with its bushes' tops in row 43
 POCKET = (6, 44, 7, 45)         # the corner pocket: the head's row, then the feet's (in BOXES["sculpture"])
 PARTERRE_GROUND = GROUND["parterre"]        # what's ground round the statue: gravel, grass
 ACTION = "Message blinxxy.MuseArt_Vale.garden.hidden_statue"
 STACK = ("Back2", "Buildings", "Front")     # the feature's layers, bottom up
-# Where the cut pieces go in the pocket's 32 x 32 px (x, y of their top-left):
-BUSHES = [((3, 0, 23, 32), (-3, 0)),        # the bed's west bush, against the wall
-          ((40, 0, 60, 32), (13, 2))]       # its east bush, behind the head's right
+# The bed's bushes are 42 px tall (rows 3-44 of HEDGE's art): a lobe with a rounded,
+# snow-capped top (rows 3-17), a second capped lobe below it, then the leafy foot. The
+# pocket has 32. Cut at row 44 (as first done) the hedge's top was the upper lobe sliced
+# through: a flat dark line in winter. So each bush keeps its whole top lobe and drops its
+# middle (the second cap): top lobe, then the foot. And the bed's bushes are trimmed, with
+# straight sides: the east bush's side ran straight down the pocket's east edge for 15 px.
+# So the east foot is the west bush's foot mirrored (its rounded corner to the east) and
+# stepped in under the lobe: the wild hedge's free side goes in lumps. Cuts, (x0, y0, x1,
+# y1) of HEDGE's art, where their top-left goes in the pocket's 32 x 32 px, and whether
+# mirrored, back to front:
+BUSHES = [((3, 32, 24, 45), (9, 19), True),     # east: the west bush's foot, mirrored, stepped in
+          ((40, 0, 60, 18), (13, 2), False),    # the east bush's top lobe, behind the head's right
+          ((3, 0, 24, 18), (-3, 0), False),     # west: the west bush's top lobe, against the wall
+          ((3, 32, 24, 45), (-3, 18), False)]   # its foot
 HEAD_AT = (9, 1)    # the head, between the bushes, over x 7 (as in the approved mockup)
 SHOULDERS = 10      # px of the head's cut from which the front leaves cover it
 
@@ -110,8 +122,9 @@ def compose(m, sheets, se):
     head = statue.crop((0, top, statue.width, top + 16))
     bed = leaves(sheets.region(m, "spring", *HEDGE), sheets.region(m, src, *HEDGE), src)
     hedge = Image.new("RGBA", (32, 32))
-    for crop, at in BUSHES:
-        over(hedge, bed.crop(crop), at)
+    for crop, at, mirror in BUSHES:
+        cut = bed.crop(crop)
+        over(hedge, cut.transpose(Image.FLIP_LEFT_RIGHT) if mirror else cut, at)
     art = hedge.copy()
     over(art, head, HEAD_AT)
     cut = HEAD_AT[1] + SHOULDERS

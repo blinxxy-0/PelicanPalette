@@ -31,9 +31,14 @@ What the vanilla maps say (read off their stacks, 2026-11-08):
   Trees stand in front: the woods at the top edge, a pine added below them at the
   west end, and the orchard's own trees at the east end.
 
+- A river under a cliff keeps its bank: the Town pool's runs along its cliff's foot and
+  under its falls (Town x 92-97 y 4-5). So the river's north bank runs on along the
+  rim's foot (BASIN_V), under the fall on Town's stacks (POOL_DARK, POOL_BANK, the wet
+  rock's last row), and turns down into the basin's east bank (bank_end).
+
 Laid in order: the corners (the notch and the basin, sand round them), the ground by
-the painter's rules (vale_patch.repaint_terrain), the cliff, the fall, the river
-stones, and the sound (AmbientLocationSounds.sound_waterfall_big = 5, as the Town
+the painter's rules (vale_patch.repaint_terrain), the bank's end, the cliff, the fall,
+the river stones, and the sound (AmbientLocationSounds.sound_waterfall_big = 5, as the Town
 falls has it).
 
 Run as: python tools/vale_falls.py <GildedVale.tmx> <exports>   (build_vale.VALE_PIECES)
@@ -50,7 +55,18 @@ from build_vale import (CLIFF_FACE, CLIFF_FACE_VARIANT, CLIFF_LIP, CLIFF_SHADE, 
 from vale_patch import FALLS_BOX, context, corner_grid, load, repaint_terrain, save
 
 NOTCH_X = 80                 # the fall's first water column (water x 80-83, the river's width)
-BASIN_V = (78, 6, 86, 12)    # the basin's water corners
+# The basin's water corners. Its top is row 8: the river's north bank (the depth row under
+# the face's last row, the rock row on y 7) runs on along the cliff's foot to the fall's
+# pool, as the Town pool's bank runs along its cliff (Town x 92-97 y 4-5), and turns up
+# into the pool under the foam. (With the water up to the face, row 6, the bank's diagonal
+# up to it sat under the face's last row, and the rock row stopped in a cut at x 77.) Its
+# east bank is corner x 85, not 86, so it doesn't line up under the cliff's east end.
+BASIN_V = (78, 8, 85, 12)
+# The sand's east edge (corners on x 87, by row): grass under the cliff's east end, so the
+# sand east of the basin doesn't run on straight down from the cliff's edge; the sand
+# widens to two tiles lower down, the way the painter's rim varies (doc section 4). The
+# orchard (x 88 on) stays as it is.
+EAST_SAND = {7: "G", 8: "G", 9: "G", 10: "S", 11: "S", 12: "S"}
 CLIFF_X0, CLIFF_X1 = 76, 87  # the rim's end columns: into the woods west, against the orchard east
 FOOT = 6                     # the face's last row; its shading is on FOOT + 1
 FACE_ROWS = (0, 1, 1, 2, 2, 3)          # CLIFF_FACE's rows for y 1-6 (its middle rows doubled)
@@ -76,11 +92,14 @@ WOODS = [(75, 4, 11)]                   # (x, y, Paths marker): a pine before th
 # them by its falls (Town (95,1) the boulder 1248, (94,0) (93,8) (95,10) the pebbles 1250).
 # They're water tiles, not the shore overlays (SHORE_DECOR's only stones are the Forest's one
 # pale rock 1299 and pebbles 1325; vanilla puts 1248/1250 in rivers).
-STONES = [(85, 8, 1248), (78, 9, 1248), (80, 11, 1250), (85, 11, 1250)]
+STONES = [(84, 9, 1248), (78, 10, 1248), (80, 11, 1250), (83, 12, 1250)]
 SOUND = "82 8 5"
 SEED = 81
 
 WF_FIRST = 5939                         # the Waterfalls tileset (Town numbering)
+POOL_DARK = 1281                        # the Town pool's dark water, under its fall's foot (Town x 92-97 y 4)
+POOL_BANK = 212                         # the bank's top over it there
+DEPTH_END = (1245, 186)                 # the depth row's east end (bank_end)
 
 
 def cliff_cells():
@@ -94,20 +113,20 @@ def notch(x):
 def design(V, H, W):
     """The corners: the cliff's own corners (inside its columns, above its foot) set
     outright, so every run paints from the same terrain; the notch and the basin water;
-    sand round all new water. The orchard's corners (x 88 from y 2) aren't touched."""
+    sand round all new water, its east edge as EAST_SAND has it. The orchard's corners
+    (x 88 from y 2) aren't touched."""
     for y in range(0, FOOT + 2):
         for x in range(CLIFF_X0 + 1, CLIFF_X1 + 1):
             V[y][x] = "S"
-    for y in range(0, FOOT + 2):
+    for y in range(0, FOOT):
         for x in range(NOTCH_X, NOTCH_X + 5):
-            V[y][x] = "W"
+            V[y][x] = "W"         # the river above the fall; under it, the bank (BASIN_V)
     x0, y0, x1, y1 = BASIN_V
     for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            V[y][x] = "W"
-    # Its north-west corner, where the land is above the water, is cut on the diagonal
-    # (section 5): the river's north bank runs on into it, as the inner bend did.
-    V[y0][x0] = "S"
+        for x in range(x0, CLIFF_X1 + 1):
+            V[y][x] = "W" if x <= x1 else "S"     # (set outright: a run before may have had more water)
+    for y, t in EAST_SAND.items():
+        V[y][CLIFF_X1] = t
     bx0, by0, bx1, by1 = FALLS_BOX
     for y in range(by0, by1 + 2):
         for x in range(bx0, CLIFF_X1 + 1):
@@ -212,9 +231,10 @@ def lay_cliff(m, V, ctx, west):
                     m.g["Back"][y][x] = CLIFF_SHADE[1][0]  # the shading, on grass only
             m.g["Buildings"][y][x] = gid
             m.g["Front"][y][x] = 0
-        # the shading's last row, on grass only (sand keeps its own ground; banks stay)
+        # the shading's last row, on grass only (sand keeps its own ground; banks stay);
+        # none under an end wall, where it would be one square tile of shade
         y = FOOT + 1
-        if set(pat(x, y)) <= set("GD"):
+        if not end and set(pat(x, y)) <= set("GD"):
             m.g["Back"][y][x] = CLIFF_SHADE[2][0]
 
 
@@ -291,8 +311,19 @@ def lay_fall(m, ctx, anims):
             if v in OUTDOORS2 or (row == 0 and v == 126):     # 126: the water spilling over the edge
                 m.g["Buildings"][y][FALL_X + i] = v
     for x in range(NOTCH_X, NOTCH_X + 4):
-        m.g["Buildings"][FOOT][x] = 0                         # the pool, where the face's last row was
+        # where the face's last row was, the bank's depth row runs on under the fall, as the
+        # Town pool's bank does (Town x 93-96 y 4: 212 on the pool's dark water 1281, no face
+        # row). The depth row's own pieces (185 / 212 on sand) showed through the falling
+        # water as a light band.
+        m.g["Buildings"][FOOT][x] = POOL_BANK
         m.g["Back2"][FOOT][x] = 0
+        m.g["Back"][FOOT][x] = POOL_DARK
+    # and over it, as there, the wet rock's last row, where the fall meets the bank (Town
+    # x 92-97 y 4, Buildings2): without it the bank's sand showed through the water
+    for i in range(sw):
+        v = ctx.tget("Buildings2", sx + i, sy + FALL_ROWS[FOOT][0])
+        if v in OUTDOORS2:
+            m.g["Buildings2"][FOOT][FALL_X + i] = v
     return used
 
 
@@ -334,6 +365,15 @@ def lay_woods(m, ctx):
             m.g["Paths"][y][x] = ctx.paths_first + k
 
 
+def bank_end(m):
+    """The depth row's east end, over the basin's north-east corner where the bank along
+    the cliff's foot turns down into the east bank: the game's end piece (Town (97,4): 186
+    over the corner where its pool's bank turns down), not plain sand."""
+    x, y = BASIN_V[2], BASIN_V[1] - 2
+    if bv.GROUND.get((m.g["Back"][y][x], m.g["Buildings"][y][x])) == ("S",) * 4:
+        m.g["Back"][y][x], m.g["Buildings"][y][x] = DEPTH_END
+
+
 def fence_ground(m, V, ctx):
     """Tiles in the box under a prop (Lupini's fence) whose corners changed: the ground
     under the prop follows the corners, the prop stays."""
@@ -362,6 +402,7 @@ def patch_file(tmx_path, exports):
     reset(m, V, ctx)
     repaint_terrain(m, V, FALLS_BOX, ctx)
     fence_ground(m, V, ctx)
+    bank_end(m)
     lay_cliff(m, V, ctx, west)
     anims = tileset_anims(m.text)
     used = lay_fall(m, ctx, anims)
