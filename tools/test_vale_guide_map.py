@@ -595,6 +595,32 @@ def test_nothing_on_the_wall():
         assert not (p and p - m.paths_first in (9, 10, 11)), ("tree beside the west wall", x0 - 1, y)
 
 
+def test_graveyard_open_inside():
+    # every tile strictly inside the wall that isn't a stone's or marker's foot, an urn, or the bench's
+    # seat is walkable (no invisible wall, outdoors 103, left in the grass)
+    import vale_graveyard as vg
+    m, pieces = graveyard()
+    x0, y0, x1, y1 = vg.RECT
+    solid = {(x, y) for (layer, x, y), names in pieces.items() if layer == "Buildings"}
+    solid |= {(x, y) for y in range(y0, y1 + 1) for x in range(x0, x1 + 1) if m.at("Buildings", x, y) in VANILLA_BENCH}
+    shut = [(x, y) for y in range(y0 + 1, y1) for x in range(x0 + 1, x1) if (x, y) not in solid and not m.walkable(x, y)]
+    assert not shut, [(p, m.at("Buildings", *p)) for p in shut]
+
+
+def test_wall_sides_face_in():
+    # the side runs are the same piece, the east one mirrored: both with their dark face toward the inside
+    import vale_graveyard as vg
+    from PIL import ImageOps
+    m, pieces = graveyard()
+    x0, y0, x1, y1 = vg.RECT
+    art = vg.tiles()
+    for se in art["wall_side"]:
+        assert art["wall_side_east"][se].tobytes() == ImageOps.mirror(art["wall_side"][se]).tobytes(), se
+    for y in range(y0 + 1, y1):
+        assert pieces.get(("Buildings", x0, y)) == {"wall_side"}, (x0, y, pieces.get(("Buildings", x0, y)))
+        assert pieces.get(("Buildings", x1, y)) == {"wall_side_east"}, (x1, y, pieces.get(("Buildings", x1, y)))
+
+
 def pieces_at(pieces, name):
     return [(x, y) for (layer, x, y), names in pieces.items() if name in names]
 

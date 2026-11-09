@@ -7,7 +7,8 @@ gate and ends just inside it. The clearing's ring of trees stays round the outsi
 
 - The wall (the user's pick W2, art/gilded_vale/props/vale_graveyard_v1): a ring of one-tile
   pieces on Buildings, x 5-13, y 13-23 (RECT): wall_left and wall_right at the corners of the
-  north and south runs, wall_mid between, wall_side down the west and east sides. The gate is
+  north and south runs, wall_mid between, wall_side down the west side and the same piece
+  mirrored down the east, so both sides show their dark face toward the inside. The gate is
   two tiles wide (GATE) between two gateposts (1x2: the foot in the ring, the top on Front over
   the row above). It stands open: each leaf swung back into the graveyard against the wall's
   inner face beside its post, so it's drawn over that wall tile, mirrored (the gate's own art,
@@ -85,6 +86,7 @@ for _who, _kind in KIND.items():
     SOURCES["urn_" + _who] = ["urn_" + _who]
 for _w in ("wall_left", "wall_mid", "wall_right", "wall_side"):
     SOURCES[_w] = [_w]
+SOURCES["wall_side_east"] = ["wall_side"]            # mirrored: both side runs show their dark face inside
 SOURCES["gatepost.top"] = SOURCES["gatepost.foot"] = ["gatepost"]
 SOURCES["wall_mid+gate_left"] = SOURCES["wall_mid+gate_right"] = ["wall_mid", "gate"]
 
@@ -108,6 +110,8 @@ def tiles():
                 gate = _art("gate", se)
                 half = gate.crop((0, 0, 16, 16)) if name.endswith("left") else gate.crop((16, 0, 32, 16))
                 im.alpha_composite(ImageOps.mirror(half))
+            elif name == "wall_side_east":
+                im = ImageOps.mirror(_art("wall_side", se))
             elif part:
                 im = _art(base, se)
                 im = im.crop((0, 0, 16, 16)) if part == "top" else im.crop((0, 16, 16, 32))
@@ -135,7 +139,7 @@ def layout():
             else:
                 cells.append((x, y, "Buildings", left if x == x0 else right if x == x1 else "wall_mid"))
     for y in range(y0 + 1, y1):
-        cells += [(x0, y, "Buildings", "wall_side"), (x1, y, "Buildings", "wall_side")]
+        cells += [(x0, y, "Buildings", "wall_side"), (x1, y, "Buildings", "wall_side_east")]
     for who, (x, y) in GRAVES.items():
         cells += [(x, y - 1, "Front", KIND[who] + ".top"), (x, y, "Buildings", KIND[who] + ".foot"),
                   (x, y + 1, "Buildings", "urn_" + who)]
@@ -193,6 +197,12 @@ def patch_map(m, ctx):
     with contextlib.redirect_stdout(io.StringIO()):
         V = design(corner_grid(m.g, bv.GROUND))
         repaint_terrain(m, V, BOX, ctx)
+    # (repaint_terrain puts back a ground stack it finds, and the dark grass's (404, 103) carries the
+    # invisible wall: so it's cleared again here, inside the wall, after the repaint)
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            if m.g["Buildings"][y][x] == 103:
+                m.g["Buildings"][y][x] = 0
 
     # The wall, the gate, the graves and their urns, from the Vale's seasonal sheets
     cells = layout()
