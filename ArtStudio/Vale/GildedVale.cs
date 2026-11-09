@@ -1,5 +1,4 @@
 #if DEBUG
-using ArtStudio.Painting;
 using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
@@ -17,16 +16,14 @@ internal static class GildedVale
         ValeBus.Register(helper, harmony, monitor);
         ValeResidents.Register(helper, harmony);
         ValeTests.Register(helper, monitor);
+        GuideTests.Register(helper, monitor);
         ValeGrounds.Register(helper, monitor);
 
-        // Lupini's painting spots: sit at one and paint the view in front of it,
-        // as at an easel you set down yourself (the user, 2026-11-07: "can we
-        // make the palettes usable?").
-        GameLocation.RegisterTileAction(PaintSpotAction, (_, _, who, tile) =>
-        {
-            ArtHooks.OpenEasel(who, tile.ToVector2());
-            return true;
-        });
+        // Lupini's painting spots are found, not easels (the painters' guide design, section 4):
+        // touch a stool with the guide to find its view. blinxxy.MuseArt_PaintSpot <spotId>;
+        // a tile with no id does nothing. You can still paint any view with an easel you set down.
+        PaintSplash.Register(helper);
+        GameLocation.RegisterTileAction(PaintSpotAction, (_, args, who, _) => PaintersGuide.OnTouch(who, args));
     }
 }
 #endif

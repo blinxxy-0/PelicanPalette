@@ -145,7 +145,25 @@
         "room.locked": "{{i18n:bea.room.locked}}",
         "artists.locked": "{{i18n:bea.artists.locked}}",
         "room.tucked": "{{i18n:bea.room.tucked}}",
-        "room.tucked.paid": "{{i18n:bea.room.tucked.paid}}"
+        "room.tucked.paid": "{{i18n:bea.room.tucked.paid}}",
+        "vale.guide.spot.rooftops.name": "{{i18n:vale.guide.spot.rooftops.name}}",
+        "vale.guide.spot.rooftops.line": "{{i18n:vale.guide.spot.rooftops.line}}",
+        "vale.guide.spot.northlight.name": "{{i18n:vale.guide.spot.northlight.name}}",
+        "vale.guide.spot.northlight.line": "{{i18n:vale.guide.spot.northlight.line}}",
+        "vale.guide.spot.wildflowers.name": "{{i18n:vale.guide.spot.wildflowers.name}}",
+        "vale.guide.spot.wildflowers.line": "{{i18n:vale.guide.spot.wildflowers.line}}",
+        "vale.guide.spot.lakewindow.name": "{{i18n:vale.guide.spot.lakewindow.name}}",
+        "vale.guide.spot.lakewindow.line": "{{i18n:vale.guide.spot.lakewindow.line}}",
+        "vale.guide.spot.parterre.name": "{{i18n:vale.guide.spot.parterre.name}}",
+        "vale.guide.spot.parterre.line": "{{i18n:vale.guide.spot.parterre.line}}",
+        "vale.guide.spot.falls.name": "{{i18n:vale.guide.spot.falls.name}}",
+        "vale.guide.spot.falls.line": "{{i18n:vale.guide.spot.falls.line}}",
+        "vale.guide.spot.tree.name": "{{i18n:vale.guide.spot.tree.name}}",
+        "vale.guide.spot.tree.line": "{{i18n:vale.guide.spot.tree.line}}",
+        "vale.guide.spot.stage.name": "{{i18n:vale.guide.spot.stage.name}}",
+        "vale.guide.spot.stage.line": "{{i18n:vale.guide.spot.stage.line}}",
+        "vale.guide.plain_stool": "{{i18n:vale.guide.plain_stool}}",
+        "vale.guide.last_page": "{{i18n:vale.guide.last_page}}"
       }
     }
   ]
