@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import build_vale
-from build_vale import VALE_PIECES, W, H
+from build_vale import VALE_PIECES, W, H, WATERFALLS
 from vale_patch import BOXES, context, corner_grid, load, repaint_terrain, save
 
 TMX = os.path.join(ROOT, "[CP] Gilded Vale (dev)", "assets", "GildedVale.tmx")
@@ -151,6 +151,36 @@ def test_sculpture_feet_only():
     assert any(feature(m.g["Front"][44][x]) for x in (6, 7))           # the head and hedge top: over you
     assert not m.g["Buildings"][44][6] and not m.g["Buildings"][44][7] # nothing solid up there
     assert m.props[("Buildings", 7, 45)]["Action"] == "Message blinxxy.MuseArt_Vale.garden.hidden_statue"
+
+
+def test_falls_laid():
+    m = load(TMX)
+    assert any(m.g["Front"][y][x] in WATERFALLS or m.g["AlwaysFront"][y][x] in WATERFALLS
+               for x in range(78, 86) for y in range(0, 8))                # falling water over the notch
+    # the brook, and the falls' own big-waterfall sound (AmbientLocationSounds.sound_waterfall_big = 5,
+    # as the Town falls has it: "94 5 5")
+    assert "82 8 5" in m.map_props["BrookSounds"] and "60 3 0" in m.map_props["BrookSounds"]
+    for x in range(76, 88):                                                # the rim: solid all the way across
+        assert any(m.g["Buildings"][y][x] for y in range(0, 7)), x
+
+
+def test_falls_animated():
+    # every animated waterfall tile the falls use is animated in the map's tileset: the
+    # rows repeated to make the fall taller are the game's own tiles, their animation
+    # started a few frames on so each row runs on from the one above it
+    import re
+    m = load(TMX)
+    ts = re.search(r'<tileset firstgid="5939" name="v16_Waterfalls".*?</tileset>', m.text, re.S).group(0)
+    anims = {int(t): re.findall(r'<frame tileid="(\d+)"', body)
+             for t, body in re.findall(r'<tile id="(\d+)">(.*?)</tile>', ts, re.S)}
+    frames = {int(f) for fs in anims.values() for f in fs}
+    used = {m.g[l][y][x] - 5939 for l in ("Front", "AlwaysFront") for x, y in box_tiles(BOXES["falls"])
+            if m.g[l][y][x] in WATERFALLS}
+    assert used
+    for t in used:
+        assert t in anims or t not in frames, t       # an animation frame never stands alone
+    for t, fs in anims.items():
+        assert int(fs[0]) == t and len(fs) == 17, t
 
 
 if __name__ == "__main__":
