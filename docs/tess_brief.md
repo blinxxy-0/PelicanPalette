@@ -1,4 +1,4 @@
-# Character brief: Tess Brand, the woodcarver (DRAFT, for approval)
+# Character brief: Tess Brand, the woodcarver (approved 2026-11-08)
 
 1.4, the Gilded Vale. Decided so far (the user, 2026-11-08): a woman in her early twenties, a woodcarver,
 granddaughter of Bram Fairlie, who carved in the Vale's Studio III for 31 summers and is buried in the Vale.

@@ -1,4 +1,4 @@
-# Character brief: Opal and Jet Corrie, the glassworkers (DRAFT, for approval)
+# Character brief: Opal and Jet Corrie, the glassworkers (approved 2026-11-08)
 
 1.4, the Gilded Vale. Decided so far (the user, 2026-11-08): twins in their sixties, stained glass and
 mosaic, opposites who need each other. They grew up in the Vale's Studio II at their mother Mabel's bench,

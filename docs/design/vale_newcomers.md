@@ -1,6 +1,6 @@
 # The Vale fills up: the Old Studios sell, and three newcomers move in
 
-1.4, the Gilded Vale. Designed with the user, 2026-11-08 (a draft, for approval). Nothing here is built
+1.4, the Gilded Vale. Designed with the user, 2026-11-08 (approved by the user 2026-11-08). Nothing here is built
 except what section 1 says already exists.
 
 The characters have their own briefs: `docs/corrie_twins_brief.md` (Opal and Jet Corrie) and
