@@ -16,7 +16,7 @@ rest get PixelLab art after the allowance refills (Nov 26):
   leaning_panels   drawn: two finished panels in their frames, leaning back
   colour_pool      drawn: the colour the racks throw on the floor
   sketch_papers    drawn: sketches dropped on the floor
-  split_line       drawn: the black line down the middle, on a tile's right edge
+  split_line(_b)   drawn: the line down the middle, a strip of lead came inlaid across the seam
 
 Usage: vale_corrie_art.py   (writes art/gilded_vale/interiors/studio2/*.png and a preview)
 """
@@ -83,7 +83,7 @@ def window_frame(w=64, h=32):
     return im, d
 
 
-def studio_window():
+def studio_window_drawn():
     im, d = window_frame()
     for i in range(4):                       # eight panes, two rows, mullions between
         for j in range(2):
@@ -96,7 +96,7 @@ def studio_window():
     return im
 
 
-def mabel_window():
+def mabel_window_drawn():
     """Her design: the Vale at dawn: a gold sun rising over hills, gold trees each side
     of the blue river running down the middle, all leaded."""
     im, d = window_frame()
@@ -219,14 +219,34 @@ def glass_lamp():
 
 
 def colour_pool():
+    """The colour the glass racks throw on the floor in front of them: the daylight from the
+    small window behind the racks (small_window), through the sheets of glass. (The user,
+    2026-11-09, kept this soft patch over a version in streaks, once the light had a window.)"""
     im = new(32, 32)
     d = ImageDraw.Draw(im, "RGBA")
-    # slanting patches of coloured light, softer at the edges
     for k, ramp in enumerate((RUBY, COBALT, AMBER, GREEN)):
         x = 2 + k * 7
         c = ramp[2][:3]
         d.polygon([(x, 2), (x + 6, 2), (x + 9, 29), (x + 3, 29)], fill=c + (105,))
         d.polygon([(x + 1, 6), (x + 5, 6), (x + 7, 25), (x + 3, 25)], fill=c + (95,))
+    return im
+
+
+def small_window():
+    """A small window on the wall behind the glass racks, in the big window's slate-green frame,
+    clear glass: the daylight the racks colour comes from here."""
+    im = new(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle((2, 0, 29, 28), fill=FRAME, outline=vss.OUTLINE)
+    d.line((3, 1, 28, 1), fill=FRAME_L)
+    d.rectangle((1, 28, 30, 31), fill=SILL, outline=vss.OUTLINE)
+    d.line((2, 29, 29, 29), fill=SILL_L)
+    d.rectangle((4, 3, 27, 25), fill=FRAME_D)
+    px = im.load()
+    vss.clear_pane(px, 5, 4, 14, 24)
+    vss.clear_pane(px, 17, 4, 26, 24)
+    d.line((15, 4, 15, 24), fill=FRAME)
+    d.line((16, 4, 16, 24), fill=FRAME_D)
     return im
 
 
@@ -243,12 +263,17 @@ def sketch_papers():
     return im
 
 
-def split_line():
+def split_line(side):
+    """The line down the middle of the floor, a strip of lead came inlaid in the boards (the user,
+    2026-11-09: the first, a painted black stripe, was "ROUGH"): one pixel either side of the seam
+    between Opal's half (col 10, its right edge) and Jet's (col 11, its left edge), dark lead on
+    her side, its lit edge on his, a nail head every half tile."""
     im = new(16, 16)
     d = ImageDraw.Draw(im)
-    rect(d, 14, 0, 15, 15, fill=(30, 28, 32, 255))
-    d.point((14, 5), fill=(52, 50, 56, 255))
-    d.point((15, 11), fill=(52, 50, 56, 255))
+    x = 15 if side == "a" else 0
+    d.line([(x, 0), (x, 15)], fill=(64, 64, 74, 255) if side == "a" else (128, 130, 142, 255))
+    for y in (3, 11):
+        d.point((x, y), fill=(178, 180, 190, 255) if side == "a" else (206, 208, 216, 255))
     return im
 
 
@@ -284,13 +309,105 @@ def bench_in_use():
     return im
 
 
+# ------------------------------------------------------------------ the windows, leaded
+# (the user, 2026-11-09: the generated windows were "bad imitations of pixel art"; "even the glass
+# outside their studio is better". So these are drawn as the outside's are, with its own code:
+# tools/vale_studio_sale.py, window(), stained_pane(): the frame painted slate green, leaded
+# diamonds of the Corries' glass; Mabel's picture built from flat pieces with lead between them.)
+
+import sys as _sys
+_sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import vale_studio_sale as vss
+
+FRAME, FRAME_L, FRAME_D = (66, 92, 84, 255), (98, 128, 116, 255), (44, 62, 58, 255)
+SILL, SILL_L = (160, 116, 76, 255), (192, 150, 104, 255)
+
+
+def leaded_window(fill):
+    """The big window from inside: a frame, a sill, four panes across and two down between
+    mullions and a transom; fill(px, glass box, panes) does the glass."""
+    W, H = 64, 32
+    im = new(W, H)
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, W - 1, H - 4), fill=FRAME, outline=vss.OUTLINE)
+    d.line((1, 1, W - 2, 1), fill=FRAME_L)
+    d.rectangle((0, H - 4, W - 1, H - 1), fill=SILL, outline=vss.OUTLINE)       # the sill
+    d.line((1, H - 3, W - 2, H - 3), fill=SILL_L)
+    gx0, gy0, gx1, gy1 = 3, 3, W - 4, H - 7
+    d.rectangle((gx0 - 1, gy0 - 1, gx1 + 1, gy1 + 1), fill=FRAME_D)
+    cols = [gx0 + (gx1 - gx0 + 1) * i // 4 for i in range(5)]
+    ty = (gy0 + gy1) // 2
+    panes = [(cols[i] + (2 if i else 0), b, cols[i + 1] - 1, e) for b, e in ((gy0, ty - 1), (ty + 2, gy1)) for i in range(4)]
+    fill(im.load(), (gx0, gy0, gx1, gy1), panes)
+    for i in range(1, 4):                                        # mullions, a transom
+        d.line((cols[i], gy0, cols[i], gy1), fill=FRAME)
+        d.line((cols[i] + 1, gy0, cols[i] + 1, gy1), fill=FRAME_D)
+    d.line((gx0, ty, gx1, ty), fill=FRAME)
+    d.line((gx0, ty + 1, gx1, ty + 1), fill=FRAME_D)
+    return im
+
+
+def studio_window():
+    """The Corries' own glass, as the outside shows it: leaded diamonds, a gold heart in each pane."""
+    def fill(px, box, panes):
+        for k, (a, b, c, e) in enumerate(panes):
+            vss.stained_pane(px, a, b, c, e, k)
+    return leaded_window(fill)
+
+
+def mabel_window():
+    """Mabel's design, finished (Jet's 10 hearts): the Vale at dawn, the sun coming up between the
+    hills, gold trees either side, the river running down the middle toward you. Flat pieces of
+    the outside's glass colours, lead wherever two pieces meet, rays of lead from the sun, a glint
+    at each piece's top corner."""
+    PEACH, AMBER, GOLD, SUN = (236, 150, 110), (228, 170, 64), (198, 128, 48), (244, 214, 120)
+    GREEN, GREEN_D, BLUE, BLUE_L = (62, 150, 98), (40, 110, 72), (56, 92, 178), (96, 140, 214)
+
+    def fill(px, box, panes):
+        import math
+        gx0, gy0, gx1, gy1 = box                                    # 3..60 x 3..25; the transom at 14-15
+        cx, hy = (gx0 + gx1) / 2, 13                                # the sun on the horizon, just above the transom
+        colour = {}
+        for y in range(gy0, gy1 + 1):
+            for x in range(gx0, gx1 + 1):
+                dx, dy = x - cx, y - hy
+                if y <= hy:
+                    if dx * dx + dy * dy <= 64:
+                        c = SUN
+                    else:                                           # rays: wedges of glass fanning out
+                        wedge = int(math.atan2(hy - y + 0.5, dx) / (math.pi / 9))
+                        c = AMBER if wedge % 2 else PEACH
+                else:
+                    if abs(dx) <= 1 + (y - hy) * 0.9:               # the river, widening toward you
+                        c = BLUE
+                    else:
+                        c = GREEN if y < hy + 7 else GREEN_D
+                    for tx in (gx0 + 7, gx1 - 6):                   # a gold tree either side, on its trunk
+                        if (x - tx) ** 2 + (y - 19) ** 2 * 1.5 <= 14:
+                            c = AMBER if y < 19 else GOLD
+                        elif x == tx and 21 < y:
+                            c = (110, 70, 40)
+                colour[x, y] = c
+        for (x, y), c in colour.items():
+            lead = any((n in colour and colour[n] != c) for n in ((x + 1, y), (x, y + 1)))
+            if c in (GREEN, GREEN_D) and (x - gx0) % 8 == 4:
+                lead = True                                         # the hills in pieces
+            if c == BLUE and (y - hy) % 3 == 0:
+                lead = True                                         # the river in pieces
+            px[x, y] = vss.LEAD if lead else c + (255,)
+        for (x, y), c in colour.items():                            # a glint under each piece's top-left lead
+            if px[x, y] != vss.LEAD and px[x - 1, y] == vss.LEAD and px[x, y - 1] == vss.LEAD:
+                px[x, y] = vss.shade(c + (255,), 1.25)
+    return leaded_window(fill)
+
+
 PIECES = {
     "studio_window": studio_window, "mabel_window": mabel_window,
     "mabel_bench_used": lambda: bench_in_use(),
     "drafting_table": drafting_table,
     "design_sketches": design_sketches, "leaning_panels": leaning_panels, "glass_lamp": glass_lamp,
-    "colour_pool": colour_pool, "sketch_papers": sketch_papers,
-    "split_line": split_line, "offcut_bins": offcut_bins,
+    "colour_pool": colour_pool, "small_window": small_window, "sketch_papers": sketch_papers,
+    "split_line": lambda: split_line("a"), "split_line_b": lambda: split_line("b"), "offcut_bins": offcut_bins,
     
 }
 

@@ -62,7 +62,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 66,
+          "SetIndex": 67,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.glass_lamp"
           }
@@ -74,7 +74,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 66,
+          "SetIndex": 67,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.glass_lamp"
           }
@@ -86,7 +86,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 34
+          "SetIndex": 35
         },
         {
           "Position": {
@@ -95,7 +95,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 34
+          "SetIndex": 35
         },
         {
           "Position": {
@@ -104,7 +104,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 50
+          "SetIndex": 51
         },
         {
           "Position": {
@@ -113,7 +113,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 50
+          "SetIndex": 51
         }
       ]
     },
@@ -136,6 +136,14 @@
         },
         {
           "Position": {
+            "X": 11,
+            "Y": 5
+          },
+          "Layer": "Back2",
+          "Remove": true
+        },
+        {
+          "Position": {
             "X": 10,
             "Y": 6
           },
@@ -144,7 +152,23 @@
         },
         {
           "Position": {
+            "X": 11,
+            "Y": 6
+          },
+          "Layer": "Back2",
+          "Remove": true
+        },
+        {
+          "Position": {
             "X": 10,
+            "Y": 7
+          },
+          "Layer": "Back2",
+          "Remove": true
+        },
+        {
+          "Position": {
+            "X": 11,
             "Y": 7
           },
           "Layer": "Back2",
@@ -168,7 +192,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 48,
+          "SetIndex": 54,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.bench_used"
           }
@@ -180,7 +204,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 49,
+          "SetIndex": 55,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.bench_used"
           }
@@ -264,7 +288,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 32
+          "SetIndex": 38
         },
         {
           "Position": {
@@ -273,11 +297,11 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 33
+          "SetIndex": 39
         },
         {
           "Position": {
-            "X": 10,
+            "X": 12,
             "Y": 2
           },
           "Layer": "Buildings",
@@ -287,7 +311,7 @@
         },
         {
           "Position": {
-            "X": 12,
+            "X": 10,
             "Y": 2
           },
           "Layer": "Buildings",
@@ -337,7 +361,7 @@
         },
         {
           "Position": {
-            "X": 10,
+            "X": 12,
             "Y": 3
           },
           "Layer": "Buildings",
@@ -347,7 +371,7 @@
         },
         {
           "Position": {
-            "X": 12,
+            "X": 10,
             "Y": 3
           },
           "Layer": "Buildings",

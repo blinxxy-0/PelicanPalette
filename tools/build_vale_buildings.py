@@ -143,6 +143,7 @@ ART = {
     # tools/art/vale_corrie_art.py (no PixelLab: the user keeps it for characters)
     "glass_racks":   (2, 3, 1),     # an upright rack of coloured sheet glass, ruby, cobalt, amber, green
     "colour_pool":   (2, 2, -2),    # the colour the racks throw on the floor
+    "small_window":  (2, 2, 0),     # a small window behind the racks: where that light comes from
     "design_sketches": (3, 2, 0),   # Opal's window designs, coloured in, pinned up any old how
     "drafting_table": (2, 2, 1),    # her tilted drawing board, a design half coloured, pencils everywhere
     "studio_window": (4, 2, 0),     # the big studio window over Mabel's bench, plain glass
@@ -157,7 +158,8 @@ ART = {
     "offcut_bins":   (2, 2, 1),     # offcuts sorted by colour, bin by bin
     "leaning_panels": (1, 2, 1),    # finished panels leaning on the counter's side
     "sketch_papers": (1, 1, -2),    # Opal's sketches dropped on the floor
-    "split_line":    (1, 1, -2),    # the black line down the middle of the floor, on a tile's right edge
+    "split_line":    (1, 1, -2),    # the line down the middle of the floor: lead came inlaid across the seam,
+    "split_line_b":  (1, 1, -2),    # its left half on Opal's side (col 10), its right on Jet's (col 11)
     # the inn's, reused
     "wardrobe":      (2, 3, 1), "nightstand": (1, 2, 1), "writing_desk": (2, 2, 1), "sketch_wall": (2, 2, 0),
 }
@@ -561,32 +563,46 @@ BUILDINGS = {
         rooms={"studio": dict(a=1, b=20, t=0, f=12, label="Studio II")},
         doors=[],
         front=("studio", 7),
-        zones=[],
-        # Opal's half papered in jewel squares on mustard, like glass in sunlight; Jet's plain grey
-        wall=80, wall_zones=[("studio", 1, 10, 17)], zone_colours={17: (232, 196, 90), 80: (150, 150, 150)},
+        # Jet's half floored in the game's grey stone tiles, Opal's the planks (the user, 2026-11-09):
+        # the lead line runs where the two floors meet
+        zones=[(11, 4, 20, 12, "stone tiles")],
+        # Opal's half papered in the game's soft multicolour stripe, Jet's in plain plaster (the user,
+        # 2026-11-09: the jewel squares and flat grey first tried looked bad)
+        wall=103, wall_zones=[("studio", 1, 10, 97)], zone_colours={97: (236, 222, 214), 103: (214, 190, 170)},
         all_picks=True,         # the sheet holds the heart stages' pieces too (STUDIO2_STAGES)
-        picks={**{k: "art/gilded_vale/interiors/studio2/" + k for k in (
-                   "colour_pool", "design_sketches", "drafting_table", "studio_window", "mabel_window",
-                   "mabel_bench_used", "glass_lamp", "offcut_bins", "leaning_panels", "sketch_papers", "split_line")},
+        picks={**{k: "art/gilded_vale/interiors/studio2/" + k for k in ("colour_pool", "small_window", "sketch_papers", "split_line", "split_line_b",
+                                                                 # the windows drawn as the outside's are (vale_corrie_art.py)
+                                                                 "studio_window", "mabel_window")},
+               # Higgsfield (the user, 2026-11-09: "use higgsfield credits for the objects"), fitted to
+               # their footprints by tools/art/object_fit.py (art/gilded_vale/interiors/studio2/README.md)
+               **{k: f"art/gilded_vale/interiors/studio2/higgsfield/{k}_{n}_fit" for k, n in (
+                   ("design_sketches", 3),
+                   ("glass_lamp", 3), ("offcut_bins", 2), ("mabel_bench_used", 1))},
                # PixelLab, Pro Flash (the user, 2026-11-09)
                **{k: "art/gilded_vale/interiors/studio2/pixellab/" + k for k in (
-                   "glass_counter", "cutting_bench", "light_table", "mabel_bench", "glass_racks", "modern_kiln")},
+                   "glass_counter", "cutting_bench", "light_table", "mabel_bench", "glass_racks", "modern_kiln",
+                   "drafting_table")},     # (the drafting table too, the user 2026-11-09: as detailed as the bench)
                "ladder": "art/gilded_vale/interiors/hall/hall_v1/ladder_1_8"},
         lights=[(3, 3), (10, 3), (13, 4), (18, 3), (4, 9)],
         pieces=[
             # ---- Opal's half, the west: her bed at the end, a city lamp, the glass racks
             # throwing colour on the floor, her designs pinned up over her drawing board
-            ("bed", 1, 4), ("city_lamp", 3, 2), ("glass_racks", 4, 2), ("colour_pool", 4, 5),
+            # (the small window behind the racks first, so the racks stand in front of it; its
+            # daylight through their glass is the colour on the floor, the user 2026-11-09)
+            ("bed", 1, 4), ("city_lamp", 3, 2), ("small_window", 4, 1), ("glass_racks", 4, 2), ("colour_pool", 4, 5),
             ("design_sketches", 6, 1), ("drafting_table", 6, 3), ("sketch_papers", 2, 9), ("sketch_papers#2", 8, 6),
-            # the counter by the door, where she sells; finished panels lean on its side; a rug
-            ("glass_counter", 3, 9), ("leaning_panels", 6, 9), ("rug", 6, 8, 4, 3),
+            # the counter by the door, where she sells; a rug (the panels that leaned on its side went:
+            # at 16 pixels wide they read as a pile of stuff, the user 2026-11-09)
+            ("glass_counter", 3, 9), ("rug", 6, 8, 4, 3),
             # ---- the middle: the big window, Mabel's bench under it on the line; the line itself
             ("studio_window", 9, 1), ("mabel_bench", 10, 3),
             *[("split_line" + ("#%d" % y if y > 5 else ""), 10, y) for y in range(5, 13)],
-            # ---- Jet's half, the east: the light table under a small window, the ladder up to
+            *[("split_line_b" + ("#%d" % y if y > 5 else ""), 11, y) for y in range(5, 13)],
+            # ---- Jet's half, the east: the light table (the big window's light; the small window that
+            # was over it went, the user 2026-11-09), the ladder up to
             # the loft, the sleek city kiln, a city lamp, his bed at the end; his cutting bench and
             # the offcuts sorted by colour, nothing on the floor
-            ("window", 13, 1), ("light_table", 13, 3), ("ladder", 15, 2), ("modern_kiln", 16, 2),
+            ("light_table", 13, 3), ("ladder", 15, 2), ("modern_kiln", 16, 2),
             ("city_lamp#2", 18, 2), ("bed#2", 19, 4),
             ("cutting_bench", 13, 8), ("offcut_bins", 19, 10),
         ],
@@ -605,7 +621,7 @@ BUILDINGS = {
 }
 
 # art drawn to its tiles' exact size, kept in its place in them (not stood on their bottom)
-AS_DRAWN = set()
+AS_DRAWN = {"split_line", "split_line_b"}       # (Studio II's line sits on the seam between two tiles)
 
 # The Exhibition Hall closed: as it is until Lupini's 8-heart event reopens it ("closed and
 # dusty", map doc section 5; lupini_brief.md). Made from the open hall's spec, so its rooms,
@@ -698,7 +714,8 @@ STUDIO2_STAGES = {
     # their own glass lamps replace the city ones
     "opal6": ({"HasFlag": "blinxxy.MuseArt_Opal6Seen"}, {"swap": {"city_lamp": "glass_lamp"}, "describe": {"glass_lamp": "glass_lamp"}}),
     # the line gets a gap by the bench, where they've started sharing the middle
-    "jet8": ({"HasFlag": "blinxxy.MuseArt_Jet8Seen"}, {"remove": ["split_line", "split_line#6", "split_line#7"]}),
+    "jet8": ({"HasFlag": "blinxxy.MuseArt_Jet8Seen"}, {"remove": ["split_line", "split_line#6", "split_line#7",
+                                                                  "split_line_b", "split_line_b#6", "split_line_b#7"]}),
     # Mabel's bench in use; her finished window in the studio's window
     "jet10": ({"HasFlag": "blinxxy.MuseArt_Jet10Seen"}, {"swap": {"mabel_bench": "mabel_bench_used", "studio_window": "mabel_window"},
                                           "describe": {"mabel_bench_used": "bench_used", "mabel_window": "mabel_window"}}),
@@ -977,6 +994,22 @@ def flooring(i, x, y):
     return WF + 336 + (i // 8) * 32 + (i % 8) * 2 + (x % 2) + 16 * (y % 2)
 
 
+# Studio II's PixelLab and Higgsfield pieces outline in pure black; the Vale's furniture (and the
+# game's) in a dark warm brown. Near-black turns that brown as the sheet is packed (the user,
+# 2026-11-09: "this giant black outline").
+WARM_OUTLINES = "art/gilded_vale/interiors/studio2/"
+
+
+def warm_outline(im):
+    px = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            r, g, b, a = px[x, y]
+            if a and r + g + b < 60:
+                px[x, y] = (54, 24, 20, a)
+    return im
+
+
 def pack(picks):
     from vanillafy import selout
     images, slots, x, y, row_h = {}, {}, 0, 0, 0
@@ -997,6 +1030,8 @@ def pack(picks):
             tile.alpha_composite(im, (0, 0))
         else:
             tile.alpha_composite(im, ((cols * 16 - im.width) // 2, rows * 16 - im.height))
+        if path.startswith(WARM_OUTLINES):
+            tile = warm_outline(tile)
         images[name] = selout(tile)
         if x + cols > SHEET_COLS:
             x, y, row_h = 0, y + row_h, 0

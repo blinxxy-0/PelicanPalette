@@ -35,7 +35,7 @@ HALL_OPEN = "G PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeHallOpen Any"
 HALL_SHUT = "G !PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeHallOpen Any"
 PROPS = "Mods\\blinxxy.MuseArt\\CorrieEventProps"         # 32x32 each: 0 spring light, 1 Mabel's dawn light
 FURN = "TileSheets\\furniture"
-LAMPS = {"box": (80, 720), "modern": (112, 720), "classic": (144, 720)}  # Data/Furniture 1445, 1447, 1449
+LAMPS = {"modern": (112, 720), "ornate": (480, 864)}       # Data/Furniture 1447, 1758: the city's chrome and red
 
 
 def F(npc, hearts):
@@ -88,8 +88,9 @@ def events():
     # ---- 2 hearts: the city lamps (Studio II, a morning) ------------------------------
     studio[f"blinxxy.MuseArt_Opal2h/{F(O, 2)}/Time 800 1300"] = script(
         "continue", "10 8", f"farmer 7 12 0 {O} 7 6 2 {J} 14 10 0", "skippable",
-        # (the game's own lamps out of the crate, standing in the straw: Box and Classic Lamps)
-        sprite(FURN, *LAMPS["box"], 16, 48, 5, 5, 7), sprite(FURN, *LAMPS["classic"], 16, 48, 9, 5, 7),
+        # (the game's own lamps out of the crate, standing in the straw: its Modern and Ornate Lamps,
+        # the fanciest it has; the Box and Classic Lamps read as a cupboard and a green shade, the user)
+        sprite(FURN, *LAMPS["modern"], 16, 48, 5, 5, 7), sprite(FURN, *LAMPS["ornate"], 16, 48, 9, 5, 7),
         "pause 600", "move farmer 0 -3 0", "pause 300",
         say("A packing crate in the middle of Opal's half, straw everywhere. Opal is on her knees in it, lifting out lamps: chrome, brass, a glass globe the size of a melon. Jet is at his bench, not looking."),
         speak(O, "The last of the flat in Zuzu City. Jet said leave them. I said, Jet, they're Italian.$u"),

@@ -1,8 +1,8 @@
-# Opal and Jet Corrie's heart events (approved by the user 2026-11-09; not built)
+# Opal and Jet Corrie's heart events (approved by the user 2026-11-09; built)
 
 From the brief's outlines (`docs/corrie_twins_brief.md`, "Heart events"). The 2- and 4-heart events
-and the 6- to 10-heart ones (further down, after Jet's 4) were all approved 2026-11-09. Nothing here
-is built yet.
+and the 6- to 10-heart ones (further down, after Jet's 4) were all approved 2026-11-09, and built the
+same day by `tools/build_corrie_events.py` (`data/corrie_events.json`). Each played through in the game.
 
 Each twin has their own hearts and their own events, and both twins turn up in most of them: whose
 hearts trigger it decides whose story it is. Opal is loud and long, Jet says one sentence where she
@@ -290,13 +290,19 @@ take turns at it). You get the window he drew for your farmhouse (a furniture it
 
 ---
 
-## What building these needs
+## How they're built
 
-- **Event scripts** in a `data/corrie_events.json` (or `tools/build_corrie_events.py`, as Sable's are
-  built), with `Data/Events/blinxxy.MuseArt_ValeStudio2` and `Data/Events/blinxxy.MuseArt_GildedVale`.
-- **Props:** a packing crate full of straw and lamps, the chandelier, a catalogue, a pane of glass:
-  temporary sprites (`addTemporaryActor` / `temporarySprite`) drawn small, or the game's own crate.
-- **Rewards:** the Candle Lamp is the game's own; Jet's blue offcut is a new furniture item that
-  waits for its art.
-- **Animations:** none yet (kneeling, cutting, puttying): the walk sheets have only walking frames,
-  so these play as standing poses with the props doing the work, like the other residents' drafts.
+- `tools/build_corrie_events.py` writes `data/corrie_events.json`: the scripts (text in i18n as
+  `corrie-event.*`), Opal's and Jet's 10-heart letters (trigger actions), and the bench's text once
+  Jet's 6 has put the pattern book on it.
+- The studio's heart stages follow the events: Opal's 6, Jet's 8 and 10 set mail flags
+  (`blinxxy.MuseArt_Opal6Seen`, `_Jet8Seen`, `_Jet10Seen`) that `data/vale_studio2.json` waits for;
+  Jet's 8 and 10 also change the room on screen (`removeTile`, `changeMapTile`).
+- Props: the game's own Modern and Ornate Lamps in Opal's 2; the coloured light of the 10s.
+- Rewards still to make (art after the PixelLab refill): Jet's blue offcut (2), the cracked sunflower
+  (Opal 8), Opal's spring window (10), Jet's window for your farmhouse (10). Opal's 2 gives the
+  game's own Candle Lamp.
+- No animations yet (kneeling, cutting, puttying): standing poses, the props doing the work.
+
+---
+
