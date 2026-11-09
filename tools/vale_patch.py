@@ -28,7 +28,8 @@ SPOT_BOXES = {"spot_rooftops": (43, 3, 47, 4), "spot_northlight": (79, 15, 80, 1
               "spot_wildflowers": (28, 64, 32, 66), "spot_lakewindow": (90, 59, 91, 63),
               "spot_clearing": (8, 14, 10, 18),
               # the new spots (the painters' guide design, section 4), laid by vale_spots
-              "spot_parterre": (25, 38, 26, 44), "spot_falls": (71, 12, 75, 13), "spot_tree": (43, 62, 44, 66)}
+              "spot_parterre": (25, 38, 26, 44), "spot_falls": (68, 3, 73, 4), "spot_tree": (43, 62, 44, 66),
+              "spot_stage": (22, 52, 26, 53)}
 # the graveyard in the old Painter's clearing (tools/vale_graveyard.py): its wall, what's in it, the
 # clearing's trees round it, and the trail from the bus road's turning circle to its gate
 GRAVEYARD_BOX = (2, 8, 13, 23)

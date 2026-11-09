@@ -9,9 +9,9 @@ spot (the old Painter's clearing, x 3-12, y 10-22) goes: the clearing becomes th
 graveyard (section 6). The lake spot stays where the overlook put it.
 
 The four new spots (section 4) are laid here, from the same slots as the rooftops' stool and
-rock: the Lost Parterre's, just inside its east gate; the Falls', on the basin's south bank;
-and the Gilded Tree's, on its lawn by the trunk. The Old Stage's waits for the user to see
-where it goes (STAGE_PROPOSAL), so it isn't laid yet.
+rock: the Lost Parterre's, just inside its east gate; the Falls', on the river's north bank
+west of the cliff; the Gilded Tree's, on its lawn east of the trunk; and the Old Stage's, under
+the cliff west of the amphitheatre (the user's yes, 2026-11-09).
 
 The pieces are known by their pixels (the spring sheet's tiles under the foot are the
 bottom row of the stool's or the rock's art), so a spot is found wherever it stands.
@@ -44,19 +44,23 @@ NEW_SPOTS = {
     # in the pocket just inside the east gate, south of the path, looking west down the garden
     # (its rock in the north-east corner, clear of the east statue's head)
     "parterre": ((25, 44), (25, 39)),
-    # on the basin's south bank, west of the fall, looking up at it (the rock by the water, where
-    # he rinses his brushes); kept west, since the north light's stool is just south of the bank
-    "falls": ((74, 13), (71, 13)),
+    # on the river's north bank west of the falls' cliff, looking east at the fall's lip, the rock
+    # a little west. Not on the basin's south bank: that's beside the north light's stool (79, 16),
+    # and "can't be two right next to each other"; and the stool's top hung over the water. Just
+    # west of the pine at (75, 4), whose canopy (x 74-76) hides the cliff's end
+    "falls": ((72, 4), (68, 4)),
     # on the tree's lawn, east of it between the canopy and the lakeside sand (south of the tree
     # is under the woods' canopies, and west of it is the wildflowers' spot); the rock above it
     "tree": ((43, 66), (43, 63)),
+    # under the cliff west of the amphitheatre, looking at it from the side: 3 tiles clear of its
+    # footprint and off its seats, its stage and its approach (the user: "make sure the spot near
+    # the amphitheatre doesn't feel too intrusive. I eventually have plans for a skill there";
+    # this tile shown first, and approved, 2026-11-09). Its foot is on the cliff's shading row, so
+    # it stands off the plaza's curb (row 54)
+    "stage": ((25, 53), (22, 53)),
 }
 SPOTS.update(NEW_SPOTS)
 TEMPLATE = "rooftops"
-# The Old Stage's spot, proposed and not laid until the user has seen it (the user: "make sure
-# the spot near the amphitheatre doesn't feel too intrusive. I eventually have plans for a skill
-# there"): on the grass under the cliff, west of the bowl, looking at it from the side.
-STAGE_PROPOSAL = ((25, 53), (22, 53))
 CLEARING = (3, 10, 12, 22)                   # the old Painter's clearing: its spot goes
 BOXES = {name: box for name, box in SPOT_BOXES.items()}
 SPOT_BOX = {sid: SPOT_BOXES["spot_" + sid] for sid in SPOTS}
@@ -124,7 +128,8 @@ def _cells(m, foot):
 def _lay(m, pieces, sid, kind, foot, cells):
     """Lays a stool or a rock with its left foot at foot, unless it already stands there. The
     ground must be clear: nothing on the foot's Buildings or the top's Front layers, no Paths
-    marker (a tree, a bush, long grass), no water."""
+    marker (a tree, a bush, long grass), and no water under its foot or its top (nothing straddles
+    the water's edge)."""
     x, y = foot
     if pieces.at(m, x, y) == kind:
         return
@@ -133,10 +138,10 @@ def _lay(m, pieces, sid, kind, foot, cells):
             tx, ty = x + dx, y + dy
             _inside(SPOT_BOX[sid], tx, ty)
             assert not m.g["Paths"][ty][tx], f"{sid}: a Paths marker under its {kind} at ({tx}, {ty})"
+            assert m.g["Back"][ty][tx] not in bv.WATER_BACKS, f"{sid}: its {kind} over the water at ({tx}, {ty})"
             for layer in ("Front", "Front2", "AlwaysFront"):
                 assert not m.g[layer][ty][tx], f"{sid}: something on {layer} where its {kind} goes, ({tx}, {ty})"
         assert not m.g["Buildings"][y][x + dx], f"{sid}: something on Buildings where its {kind}'s foot goes, ({x + dx}, {y})"
-        assert m.g["Back"][y][x + dx] not in bv.WATER_BACKS, f"{sid}: its {kind}'s foot in the water, ({x + dx}, {y})"
     for dx, dy, layer, gid in cells:
         m.g[layer][y + dy][x + dx] = gid
 

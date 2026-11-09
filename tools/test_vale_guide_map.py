@@ -418,10 +418,11 @@ def test_all_eight_spots():
             spot_stool(m, sid)
 
 
-# The Old Stage's spot waits for the user to see it (the user: "make sure the spot near the
-# amphitheatre doesn't feel too intrusive. I eventually have plans for a skill there"). Until it's
-# placed, test_all_eight_spots leaves it out and test_stage_spot_clear is expected to fail.
-PENDING_SPOTS = {"stage"}
+# Spots not on the map yet: test_all_eight_spots leaves them out (and test_stage_spot_clear is expected
+# to fail while the stage is one). Empty: the Old Stage's was placed once the user had seen where
+# (the user: "make sure the spot near the amphitheatre doesn't feel too intrusive. I eventually have
+# plans for a skill there"; then "Yes, place it", 2026-11-09).
+PENDING_SPOTS = set()
 AMPHITHEATRE = (29, 49, 45, 59)          # its footprint (design section 4): keep 2 tiles clear of it
 SEATS_AND_STAGE = (31, 46, 43, 55)       # the bowl's art (build_vale.AMPHITHEATRE: its seats and the stage)
 # the stage's approach: the paved plaza in front of it, and the lane up to it from the west
@@ -456,14 +457,22 @@ def test_parterre_spot():
 
 
 def test_falls_spot():
-    # beside the basin (water next to it), inside the waterfall's box, and you can walk to its front
+    # by the falls: on the bank (water within 2 tiles, past its sand), at the waterfall's box (inside it,
+    # or at most 2 tiles out: inside it, the north bank is under the pine at (75, 4) that hides the
+    # cliff's end, and the south bank is beside the north light's stool), well apart from the north
+    # light's spot (the user: "can't be two right next to each other"), and you can walk to its front
+    import vale_spots
     from vale_patch import FALLS_BOX
     m = vale_map()
     x, y = spot_stool(m, "falls")
     tiles = spot_tiles((x, y))
-    assert all(gap(t, FALLS_BOX) == 0 for t in tiles), f"the falls' stool at {tiles}: outside {FALLS_BOX}"
-    near = {(tx + dx, ty + dy) for tx, ty in tiles for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
-    assert any(m.water(*t) for t in near), f"the falls' stool at {(x, y)}: no water beside it"
+    assert all(gap(t, FALLS_BOX) <= 2 for t in tiles), f"the falls' stool at {tiles}: away from {FALLS_BOX}"
+    near = {(tx + dx, ty + dy) for tx, ty in tiles for dx in range(-2, 3) for dy in range(-2, 3)}
+    assert any(m.water(*t) for t in near), f"the falls' stool at {(x, y)}: no water by it"
+    north = vale_spots.SPOTS["northlight"][0]
+    for t in tiles:
+        far = min(gap(t, (nx, ny, nx, ny)) for nx, ny in spot_tiles(north))
+        assert far >= 8, f"the falls' stool at {t}: {far} from the north light's stool"
     front = [t for t in ((x, y + 1), (x + 1, y + 1)) if m.walkable(*t)]
     reach = m.reach(BUS_STOP)
     assert any(t in reach for t in front), f"the falls' stool at {(x, y)}: nowhere reachable in front ({front})"
@@ -503,6 +512,16 @@ def test_new_spots_not_under_trees():
         for foot in vale_spots.SPOTS[sid]:
             for t in spot_tiles(foot):
                 assert t not in canopy, f"{sid}: {t} under the tree at {canopy.get(t)}"
+
+
+def test_new_spots_on_dry_ground():
+    # neither a new spot's stool nor its rock straddles the water's edge: no water under its foot or its top
+    import vale_spots
+    m = vale_map()
+    for sid in vale_spots.NEW_SPOTS:
+        for foot in vale_spots.SPOTS[sid]:
+            wet = [t for t in spot_tiles(foot) if m.water(*t)]
+            assert not wet, f"{sid}: over the water at {wet}"
 
 
 def test_clearing_spot_gone():

@@ -82,14 +82,17 @@ PICKS = {
     "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 90, 63, 1, 0),
     # (the painters' guide's new spots, design section 4: laid where they are here, and on the
     # committed map by tools/vale_spots.py NEW_SPOTS from the rooftops' slots. The parterre's
-    # just inside its east gate, the falls' on the basin's south bank, the tree's on its lawn east of it.
-    # The Old Stage's waits for the user: vale_spots.STAGE_PROPOSAL)
+    # just inside its east gate, the falls' on the river's north bank west of the falls' cliff (well
+    # away from the north light's), the tree's on its lawn east of it, the Old Stage's under the
+    # cliff west of the amphitheatre, clear of the bowl)
     "spot_parterre_stool": ("props/vale_props_v2/painters_stool_1_3", 25, 44, 1, 0),
     "spot_parterre_rock": ("props/vale_props_v2/paint_rock_clean", 25, 39, 1, 0),
-    "spot_falls_stool": ("props/vale_props_v2/painters_stool_1_3", 74, 13, 1, 0),
-    "spot_falls_rock": ("props/vale_props_v2/paint_rock_clean", 71, 13, 1, 0),
+    "spot_falls_stool": ("props/vale_props_v2/painters_stool_1_3", 72, 4, 1, 0),
+    "spot_falls_rock": ("props/vale_props_v2/paint_rock_clean", 68, 4, 1, 0),
     "spot_tree_stool": ("props/vale_props_v2/painters_stool_1_3", 43, 66, 1, 0),
     "spot_tree_rock": ("props/vale_props_v2/paint_rock_clean", 43, 63, 1, 0),
+    "spot_stage_stool": ("props/vale_props_v2/painters_stool_1_3", 25, 53, 1, 0),
+    "spot_stage_rock": ("props/vale_props_v2/paint_rock_clean", 22, 53, 1, 0),
     "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
     "vale_sign": ("props/vale_sign_gilded", 19, 4, 1, 0),   # gold lettering drawn on; lit at night (map property Light)         # A: where the high street starts
     "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door
@@ -1093,12 +1096,14 @@ def amphitheatre_art(path):
 # tools/vale_overlook.py raises after the build (reachable_spot would find it reserved); the
 # guide's new spots are where the committed map has them (tools/vale_spots.py NEW_SPOTS).
 FIXED_SPOTS = {"spot_lake_stool", "spot_lake_rock", "spot_parterre_stool", "spot_parterre_rock",
-               "spot_falls_stool", "spot_falls_rock", "spot_tree_stool", "spot_tree_rock"}
+               "spot_falls_stool", "spot_falls_rock", "spot_tree_stool", "spot_tree_rock",
+               "spot_stage_stool", "spot_stage_rock"}
 # Each stool's name in the painters' guide (ArtStudio/Vale/PaintersGuide.cs Spots): its foot
 # gets `blinxxy.MuseArt_PaintSpot <id>`. The rocks are scenery, with no action (tools/vale_spots.py).
 SPOT_IDS = {"spot_street_stool": "rooftops", "spot_atelier_stool": "northlight",
             "spot_meadow_stool": "wildflowers", "spot_lake_stool": "lakewindow",
-            "spot_parterre_stool": "parterre", "spot_falls_stool": "falls", "spot_tree_stool": "tree"}
+            "spot_parterre_stool": "parterre", "spot_falls_stool": "falls", "spot_tree_stool": "tree",
+            "spot_stage_stool": "stage"}
 
 
 def reachable_spot(name, im, left, bottom, pieces):

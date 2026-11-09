@@ -102,9 +102,9 @@ All of them decoratable rooms, built the way Margot's were: straight walls, the 
 | 3 | The Wildflower Field | 28, 65 | The meadow |
 | 4 | The Lake Window | 90, 60 | Up on the overlook, over the lake |
 | 5 | The Lost Parterre | 25, 44 | The sculpture garden, just inside its east gate, looking west down the hedges |
-| 6 | The Falls | 74, 13 | The basin's south bank, west of the fall |
+| 6 | The Falls | 72, 4 | The river's north bank, just west of the falls' cliff, looking east at the fall's lip (well away from the North Light's stool, below the basin) |
 | 7 | Under the Gilded Tree | 43, 66 | The tree's lawn, east of it, between the canopy and the lakeside sand |
-| 8 | The Old Stage | (proposed 25, 53) | Under the cliff west of the amphitheatre, looking at it from the side, well clear of the bowl (a skill may use it later). Waiting for the user's yes |
+| 8 | The Old Stage | 25, 53 | Under the cliff west of the amphitheatre, looking at it from the side: 3 tiles clear of its footprint, off the seats, the stage and the plaza (a skill may use the amphitheatre later) |
 
 **And the hidden easel** in the Gilded Grove (section 8): the Vale from above, in gold light. One view, not four, since the Grove has no seasons.
 
@@ -153,7 +153,7 @@ The concept sheet's hidden things (its section 7), placed:
 - **Rebuilds and merges:** a rebuild keeps them: `build_vale.py` runs `VALE_PIECES` on the map after it writes it (though it doesn't reproduce the committed map itself). On a merge conflict in `GildedVale.tmx`, take ONE side's TMX together with ALL FOUR `<season>_GildedValeBuildings.png` from that same side, then re-run `python tools/vale_sculpture.py`, `vale_falls.py` and `vale_overlook.py` on it, each as `<script> "[CP] Gilded Vale (dev)/assets/GildedVale.tmx" <exports>`. Never mix one side's TMX with the other side's sheets (the pieces' slot numbers live in both). Don't hand-merge the tile data. Then run `python tools/test_vale_pieces.py` (after a merge of main, set `VALE_BASE` to main's side of the merge for `test_outside_boxes_unchanged`).
 - **Seen in game, and not:** only Lupini was seen reaching the bench (Task 6, on a Sunday; he stands on the seat, there is no sit pose yet). Emmett's visit to the bench was not seen. Everything else was checked in a test copy in all four seasons.
 
-**Progress (2026-11-09):** the clearing is the graveyard (section 1); the painters' guide finds the eight painting spots (section 7: seven built, the Old Stage's waiting for the user's yes on its tile); the hidden easel is in the Gilded Grove (section 8).
+**Progress (2026-11-09):** the clearing is the graveyard (section 1); the painters' guide finds the eight painting spots, all built (section 7); the hidden easel is in the Gilded Grove (section 8).
 
 **The order:**
 1. **Greybox** (no art, no generations): `tools/build_vale.py` writes the TMX from vanilla tiles, with plain boxes for the buildings. A debug warp in, then walk it in-game in all four seasons: terraces, stairs, bridges, distances.

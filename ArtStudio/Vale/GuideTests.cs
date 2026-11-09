@@ -298,10 +298,8 @@ internal static class GuideTests
 
     // ---- The spots on the map ----
 
-    // The spots that stand on the map today (the painters' guide design, section 4; tools/vale_spots.py).
-    // The Old Stage's waits for the user to see where it goes (vale_spots.STAGE_PROPOSAL); add it here
-    // when it's placed.
-    private static readonly string[] MapSpots = { "rooftops", "northlight", "wildflowers", "lakewindow", "parterre", "falls", "tree" };
+    // The eight spots on the map (the painters' guide design, section 4; tools/vale_spots.py).
+    private static readonly string[] MapSpots = { "rooftops", "northlight", "wildflowers", "lakewindow", "parterre", "falls", "tree", "stage" };
 
     // Every PaintSpot tile on the Vale's map names one of the guide's spots, each on both foot tiles of
     // one stool, and the four that stand today are there. Then each, through its tile action as the game
@@ -1053,12 +1051,12 @@ internal static class GuideTests
                 Check(monitor, "grove: warp in", who.TilePoint == GildedGrove.ArrivalTile, $"at {who.TilePoint}, arrival {GildedGrove.ArrivalTile}");
                 Check(monitor, "grove: paint motes in the Grove", GildedGrove.MoteTotal > 0, $"{GildedGrove.MoteTotal} motes");
                 dayLight = Light();
-                // Then walk, as held keys would, towards an open tile beside the arrival.
+                // Then walk, holding a key as a player would, towards an open tile beside the arrival.
                 arrival = PlayerState();
                 var here = who.currentLocation;
-                (int dx, int dy, int dir)[] ways = { (-1, 0, 8), (1, 0, 2), (0, 1, 4), (0, -1, 1) };
+                (int dx, int dy, int dir)[] ways = { (-1, 0, 3), (1, 0, 1), (0, 1, 2), (0, -1, 0) };
                 walkDir = ways.Where(w => GildedGrove.Open(here, new Point(who.TilePoint.X + w.dx, who.TilePoint.Y + w.dy)))
-                    .Select(w => w.dir).DefaultIfEmpty(8).First();
+                    .Select(w => w.dir).DefaultIfEmpty(3).First();
                 walkFrom = who.Position;
                 waited = walked = 0;
             }),
@@ -1072,17 +1070,19 @@ internal static class GuideTests
                     walkFrom = who.Position;
                     return false;
                 }
-                who.setMoving((byte)walkDir);
+                if (walked == 0)
+                    HoldKey(walkDir);
                 return ++walked > 20;
             }, () =>
             {
+                HoldKey(null);
                 float moved = Vector2.Distance(walkFrom, who.Position);
                 who.Halt();
                 var sprite = who.FarmerSprite;
                 bool posed = sprite.PauseForSingleAnimation || who.UsingTool || who.freezePause > 0;
                 Check(monitor, "grove: arrive free", moved >= 32 && !posed && Context.IsPlayerFree && who.CanMove,
                     $"free to move after {waited} ticks, then walked {moved:0} px in 20 holding {who.CurrentItem?.Name ?? "nothing"}"
-                    + $" (carried overhead {who.IsCarrying()}, posed {posed}); on arrival: {arrival}");
+                    + $" (carried overhead {who.IsCarrying()}, posed {posed}, window focused {Game1.game1.IsActiveNoOverlay}); on arrival: {arrival}");
                 if (guideAdded && guideSlot >= 0 && guideSlot < who.Items.Count)
                     who.Items[guideSlot] = null;
                 who.CurrentToolIndex = toolBefore;
@@ -1142,6 +1142,7 @@ internal static class GuideTests
         };
         RunSteps(monitor, steps, () =>
         {
+            HoldKey(null);
             if (blocker != null && vale.Objects.TryGetValue(gate, out var o) && o == blocker)
                 vale.Objects.Remove(gate);
             if (stander != null)
@@ -1156,6 +1157,40 @@ internal static class GuideTests
             Game1.warpFarmer(placeBefore, tileBefore.X, tileBefore.Y, facingBefore);
             monitor.Log("Grove warp checks done; back where you were.", LogLevel.Info);
         });
+    }
+
+    // Holds one movement key down, as a player does, through the game's own input hook (Game1.inputSimulator,
+    // read in UpdateControlInput with or without the window's focus). Setting the farmer moving directly
+    // isn't enough: while the window has focus, the game's input pass sees no key held and halts the
+    // farmer every tick, so "grove: arrive free" walked 0 px whenever the dev window was in front (a fresh
+    // launch) and passed when it wasn't. dir is the game's facing (0 up, 1 right, 2 down, 3 left); null
+    // lets go. (Escape also clears the hook, as the game does for any simulator.)
+    private static void HoldKey(int? dir)
+    {
+        var field = typeof(Game1).GetField("inputSimulator", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!;
+        if (dir is int d)
+            field.SetValue(null, new HeldKey(d));
+        else if (field.GetValue(null) is HeldKey)
+            field.SetValue(null, null);
+    }
+
+    private sealed class HeldKey : StardewValley.Util.IInputSimulator
+    {
+        private readonly int dir;
+
+        public HeldKey(int dir) => this.dir = dir;
+
+        public void SimulateInput(ref bool actionButtonPressed, ref bool switchToolButtonPressed, ref bool useToolButtonPressed,
+            ref bool useToolButtonReleased, ref bool addItemToInventoryButtonPressed, ref bool cancelButtonPressed,
+            ref bool moveUpPressed, ref bool moveRightPressed, ref bool moveLeftPressed, ref bool moveDownPressed,
+            ref bool moveUpReleased, ref bool moveRightReleased, ref bool moveLeftReleased, ref bool moveDownReleased,
+            ref bool moveUpHeld, ref bool moveRightHeld, ref bool moveLeftHeld, ref bool moveDownHeld)
+        {
+            moveUpHeld |= dir == 0;
+            moveRightHeld |= dir == 1;
+            moveDownHeld |= dir == 2;
+            moveLeftHeld |= dir == 3;
+        }
     }
 
     // Each step waits (up to 15 seconds) until it's ready, then runs; a step that times out or throws
