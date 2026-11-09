@@ -129,6 +129,7 @@ ART = {
     "dusty_window":  (5, 2, 0),     # a tall studio window, cracked panes, cobwebs, grey light
     "pinned_sketches": (3, 2, 0),   # charcoal sketches for the unfinished painting, pinned up, curling
     "backward_painting": (2, 2, 0), # a painting hung facing the wall: its stretcher, a torn label
+    "rules_board":   (1, 2, 0),     # the studios' house rules, every artist's signature under them
     "cobweb":        (1, 1, 0),     # in a wall's corner
     "unfinished_easel": (2, 3, 1),  # the unfinished painting (Lupini's 6-heart event), a stool before it
     "note_table":    (2, 2, 1),     # a little table: the note, a dried-up palette, brushes stiff in a jar
@@ -481,7 +482,7 @@ BUILDINGS = {
                # of earlier batches, edited or drawn by tools/art/vale_studio_art.py
                **{k: "art/gilded_vale/interiors/studio/" + k for k in (
                    "dusty_window", "pinned_sketches", "backward_painting", "cobweb", "unfinished_easel", "note_table",
-                   "leaves")},
+                   "leaves", "rules_board")},
                "paint_trestle": "art/gilded_vale/interiors/atelier/atelier_v1/brush_table_1_13",
                "sheeted_chair": "art/gilded_vale/interiors/hall/hall_v3/sheeted_statue_1_4",
                "sheeted_chair_b": "art/gilded_vale/interiors/hall/hall_v3/sheeted_statue_1_6",
@@ -492,6 +493,8 @@ BUILDINGS = {
             # pinned up, the painting hung backward; ivy and cobwebs getting in
             ("dusty_window", 4, 10), ("pinned_sketches", 10, 10),
             ("backward_painting", 13, 10), ("cobweb", 20, 10), ("cobweb#2", 1, 10),
+            # the studios' house rules, signed by the artists who kept them (the user, 2026-11-08)
+            ("rules_board", 15, 10),
             # the game's own furniture, left as it was (the user, 2026-11-07: "more vanilla
             # furniture to liven up the place"): the clock that stopped, a hall table under
             # the sketches, a bookcase, a plant by the door through
@@ -518,7 +521,7 @@ BUILDINGS = {
         ],
         describe={"unfinished_easel": "unfinished", "note_table": "note", "pinned_sketches": "sketches",
                   "backward_painting": "backward", "dusty_window": "window", "paint_trestle": "trestle",
-                  "bed": "cot", "washstand": "washstand", "chest": "trunk"},
+                  "bed": "cot", "washstand": "washstand", "chest": "trunk", "rules_board": "rules"},
         notes=["The big Old Studio: one floor plan, bare stone walls as outside. The front door opens into the studio.",
                "Boarded up for years until Lupini's 6-heart event: the tall window lights the unfinished painting on its easel,",
                "the note on a little table beside it, the sketches for it pinned to the wall, a painting hung facing the wall.",
