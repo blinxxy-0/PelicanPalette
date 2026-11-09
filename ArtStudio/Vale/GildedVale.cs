@@ -10,6 +10,7 @@ namespace ArtStudio.Vale;
 internal static class GildedVale
 {
     public const string PaintSpotAction = ModEntry.Id + "_PaintSpot";
+    public const string TakeGuideAction = ModEntry.Id + "_TakeGuide";
 
     public static void Register(IModHelper helper, Harmony harmony, IMonitor monitor)
     {
@@ -25,6 +26,10 @@ internal static class GildedVale
         PaintersGuide.Monitor = monitor;
         PaintSplash.Register(helper);
         GameLocation.RegisterTileAction(PaintSpotAction, (_, args, who, _) => PaintersGuide.OnTouch(who, args));
+        // The frame by the Vale House's guest books holds the guide. (Placed on the map later.)
+        GameLocation.RegisterTileAction(TakeGuideAction, (_, _, who, _) => PaintersGuide.OnTake(who));
+        PaintersGuide.Register(helper);
+        PaintersGuide.Patch(harmony);
     }
 }
 #endif

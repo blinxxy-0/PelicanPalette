@@ -1,0 +1,41 @@
+// The old painters' guide (the Vale painters' guide design, section 4): the book itself and the
+// quest that counts its eight spots. ArtStudio/Vale/PaintersGuide.cs gives both (TakeGuide) and
+// writes the quest's objective as spots are found.
+//
+// The guide is a Quest-type object that can't be given, trashed or sold. Its icon is a
+// placeholder: the vanilla Lost Book (Maps/springobjects, 102) until the art task draws its own.
+{
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "blinxxy.MuseArt_PaintersGuide": {
+          "Name": "blinxxy.MuseArt_PaintersGuide",
+          "DisplayName": "{{i18n:vale.guide.page.title}}",
+          "Description": "{{i18n:vale.guide.item.description}}",
+          "Type": "Quest",
+          "Category": 0,
+          "Price": 0,
+          "Texture": "Maps/springobjects",
+          "SpriteIndex": 102,
+          "CanBeGivenAsGift": false,
+          "CanBeTrashed": false,
+          "ExcludeFromRandomSale": true,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ContextTags": [ "not_giftable", "not_placeable" ]
+        }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Quests",
+      "Entries": {
+        // Basic: Type/Title/Description/Objective/NextQuests/Money/Reward/Cancellable/Reaction.
+        // Not cancellable; no reward (the Grove is the reward).
+        "blinxxy.MuseArt_PaintersGuide": "Basic/{{i18n:quest.painters_guide.title}}/{{i18n:quest.painters_guide.description}}/{{i18n:quest.painters_guide.objective|found=0}}/null/-1/0/-1/false"
+      }
+    }
+  ]
+}

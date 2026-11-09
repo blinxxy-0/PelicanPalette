@@ -505,5 +505,16 @@
   "vale.guide.spot.stage.name": "The Old Stage",
   "vale.guide.spot.stage.line": "Sit off to the side. From the seats you see the stage; from here you see the stage and the seats, which is the whole of a theatre. On quiet days, paint the ivy.",
   "vale.guide.plain_stool": "The stool's seat is worn smooth. Someone sat here for years, looking at something.",
-  "vale.guide.last_page": "The guide's last page has always been blank. Now colour runs into it like water into paper: old trees, a still pool, grass gone gold in a light that doesn't move.#$b#It's nowhere you've seen in the Vale. Under it, in faded ink: 'Our favourite place. We painted it together, so it would keep.' The page is warm, like a window left open."
+  "vale.guide.last_page": "The guide's last page has always been blank. Now colour runs into it like water into paper: old trees, a still pool, grass gone gold in a light that doesn't move.#$b#It's nowhere you've seen in the Vale. Under it, in faded ink: 'Our favourite place. We painted it together, so it would keep.' The page is warm, like a window left open.",
+  "vale.guide.board": "A small frame by the guest books. Inside it, a thin book spotted with old paint: The Old Painters' Guide to the Viewpoints.",
+  "vale.guide.take": "The painters' guide? They left that here, oh, long before my time. My aunt kept it out for whoever asked.$0#$b#Nobody's asked in years. Take it. If you find all eight, come and tell me. I've only ever found the tea room.$u",
+  "vale.guide.again": "Tucked behind the frame's backing is another copy, just as spotted with paint. The painters must have known people lose things.",
+  "vale.guide.page.title": "The Old Painters' Guide to the Viewpoints",
+  "vale.guide.page.unfound": "...",
+  "vale.guide.step_in": "Step into the last page?",
+  "vale.guide.not_here": "The page only seems to come alive in the Vale.",
+  "quest.painters_guide.title": "The Old Painters' Spots",
+  "quest.painters_guide.description": "An old guide from the Vale House names eight places where the Vale's painters liked to sit. Find each one, and see what they saw.",
+  "quest.painters_guide.objective": "{{found}} of 8 spots found",
+  "vale.guide.item.description": "A thin book spotted with old paint. Right-click to turn its pages, or touch a worn stool with it."
 }

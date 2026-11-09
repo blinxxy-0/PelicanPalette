@@ -3,8 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using System.Text.RegularExpressions;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
+using StardewValley.Quests;
 
 namespace ArtStudio.Vale;
 
@@ -29,6 +32,7 @@ internal static class PaintersGuide
         new("stage", new[] { new Color(150, 146, 136), new Color(190, 184, 170), new Color(84, 128, 72), new Color(116, 156, 88) }),
     };
 
+    public const string GuideItemId = ModEntry.Id + "_PaintersGuide";
     public const string QuestId = ModEntry.Id + "_PaintersGuide";
     public const string GuideTakenFlag = ModEntry.Id + "_GuideTaken";
     public const string GroveOpenFlag = ModEntry.Id + "_GroveOpen";
@@ -62,12 +66,136 @@ internal static class PaintersGuide
             return TouchResult.FirstFind;
 
         who.mailReceived.Add(GroveOpenFlag);
-        // The quest itself comes with the guide item (a later task); until then there's
-        // nothing to complete.
         if (who.hasQuest(QuestId))
             who.completeQuest(QuestId);
         return TouchResult.Completed;
     }
+
+    // The quest log's line: "3 of 8 spots found". Quest.currentObjective is read back from
+    // Data/Quests every time (setting it does nothing for a data quest), so the game's own getter
+    // is patched to answer for this quest: the string carries [found], from the pack's i18n arg.
+    private static void ObjectivePostfix(Quest __instance, ref string __result)
+    {
+        if (__instance.id.Value == QuestId && Context.IsWorldReady)
+            __result = Text("quest.painters_guide.objective").Replace("[found]", FoundCount(Game1.player).ToString());
+    }
+
+    private static bool Holds(Farmer who) => who.Items.Any(i => i?.QualifiedItemId == "(O)" + GuideItemId);
+
+    // The tile action: blinxxy.MuseArt_TakeGuide, on the frame by the Vale House's guest books.
+    // The first time: the frame's words, Bea's, the guide in your bag and its quest. After that,
+    // if the guide's gone from your bag, another copy; if you still have it, only the frame's words.
+    // effects:false is for the checks: no boxes.
+    public static void TakeGuide(Farmer who, bool effects = true)
+    {
+        bool first = !who.mailReceived.Contains(GuideTakenFlag);
+        bool replace = !first && !Holds(who);
+        if (first)
+            who.mailReceived.Add(GuideTakenFlag);
+        if (first || replace)
+        {
+            Item guide = ItemRegistry.Create("(O)" + GuideItemId);
+            if (!who.addItemToInventoryBool(guide))
+                Game1.createItemDebris(guide, who.getStandingPosition(), -1, who.currentLocation);
+        }
+        if (!who.hasQuest(QuestId) && !who.mailReceived.Contains(GroveOpenFlag))
+        {
+            who.addQuest(QuestId);
+        }
+        if (!effects)
+            return;
+        if (first)
+        {
+            Game1.drawObjectDialogue(Text("vale.guide.board"));
+            Game1.afterDialogues = () => BeaSays(Text("vale.guide.take"));
+        }
+        else
+            Game1.drawObjectDialogue(Text(replace ? "vale.guide.again" : "vale.guide.board"));
+    }
+
+    // The tile action's handler.
+    public static bool OnTake(Farmer who)
+    {
+        TakeGuide(who);
+        return true;
+    }
+
+    // Bea in her own portrait if she's in the world; otherwise the same words without the codes.
+    private static void BeaSays(string text)
+    {
+        if (Game1.getCharacterFromName(ValeResidents.Bea) is { } bea)
+            Game1.DrawDialogue(new Dialogue(bea, null, text));
+        else
+            Game1.drawObjectDialogue(Regex.Replace(text, @"\$[a-z0-9]", "").Split("#$b#").ToList());
+    }
+
+    // Using the guide (right-click with it held). Before the last find, anywhere: its page, the eight
+    // spots found so far. After it, in the Vale: the question about stepping in. After it, elsewhere:
+    // the page says it only comes alive in the Vale, and that's false (nothing was done). False and
+    // nothing shown, too, when the player isn't free or a splash is playing.
+    public static bool UseGuide(Farmer who)
+    {
+        if (!Context.IsPlayerFree || PaintSplash.Playing)
+            return false;
+        GameLocation here = who.currentLocation;
+        if (!who.mailReceived.Contains(GroveOpenFlag))
+        {
+            Game1.activeClickableMenu = new LetterViewerMenu(PageText(who));
+            return true;
+        }
+        if (here?.Name != ValeBus.Vale)
+        {
+            Game1.drawObjectDialogue(Text("vale.guide.not_here"));
+            return false;
+        }
+        here.createQuestionDialogue(Text("vale.guide.step_in"), new[]
+        {
+            new Response("Yes", Game1.content.LoadString("Strings\\Lexicon:QuestionDialogue_Yes")),
+            new Response("No", Game1.content.LoadString("Strings\\Lexicon:QuestionDialogue_No")),
+        }, (_, answer) =>
+        {
+            if (answer == "Yes")
+                WarpToGrove(who);
+        });
+        return true;
+    }
+
+    private static string PageText(Farmer who) =>
+        Text("vale.guide.page.title") + "^^" + string.Join("^", Spots.Select(s => who.mailReceived.Contains(FoundFlag(s.Id))
+            ? "[x] " + Text($"vale.guide.spot.{s.Id}.name")
+            : "[ ] " + Text("vale.guide.page.unfound")));
+
+    // The one call site for the Grove: Task 7 (GildedGrove.WarpIn) replaces it.
+    private static void WarpToGrove(Farmer who) => Monitor?.Log("WarpIn: Task 7", LogLevel.Info);
+
+    // The game's own data can't say "never dropped" (CanBeTrashed and CanBeGivenAsGift are all it has),
+    // so the guide's canBeDropped is false here: toss it from the bag and it stays in your hands.
+    public static void Patch(HarmonyLib.Harmony harmony)
+    {
+        harmony.Patch(HarmonyLib.AccessTools.Method(typeof(Item), nameof(Item.canBeDropped)),
+            postfix: new HarmonyLib.HarmonyMethod(typeof(PaintersGuide), nameof(CanBeDroppedPostfix)));
+        harmony.Patch(HarmonyLib.AccessTools.PropertyGetter(typeof(Quest), nameof(Quest.currentObjective)),
+            postfix: new HarmonyLib.HarmonyMethod(typeof(PaintersGuide), nameof(ObjectivePostfix)));
+    }
+
+    private static void CanBeDroppedPostfix(Item __instance, ref bool __result)
+    {
+        if (__instance.QualifiedItemId == "(O)" + GuideItemId)
+            __result = false;
+    }
+
+    // Right-click with the guide held. Facing a spot's stool (or anything with a tile action) is a
+    // touch, not a use: that's the game's own action, left alone.
+    public static void Register(IModHelper helper) => helper.Events.Input.ButtonPressed += (_, e) =>
+    {
+        if (!Context.IsPlayerFree || !e.Button.IsActionButton() || Game1.player.CurrentItem?.QualifiedItemId != "(O)" + GuideItemId)
+            return;
+        Vector2 tile = e.Cursor.GrabTile;
+        if (Game1.currentLocation.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Action", "Buildings") != null)
+            return;
+        helper.Input.Suppress(e.Button);
+        UseGuide(Game1.player);
+    };
 
     // The tile action: blinxxy.MuseArt_PaintSpot <spotId>. An old tile with no id does nothing.
     public static bool OnTouch(Farmer who, string[] args)
@@ -108,7 +236,9 @@ internal static class PaintersGuide
     // The strings this code shows (all in the dev pack's ValeStrings); the checks resolve each one.
     public static IEnumerable<string> StringKeys =>
         Spots.SelectMany(s => new[] { $"vale.guide.spot.{s.Id}.name", $"vale.guide.spot.{s.Id}.line" })
-            .Concat(new[] { "vale.guide.plain_stool", "vale.guide.last_page" });
+            .Concat(new[] { "vale.guide.plain_stool", "vale.guide.last_page", "vale.guide.board", "vale.guide.take", "vale.guide.again",
+                "vale.guide.page.title", "vale.guide.page.unfound", "vale.guide.step_in", "vale.guide.not_here",
+                "quest.painters_guide.title", "quest.painters_guide.description", "quest.painters_guide.objective", "vale.guide.item.description" });
 
     public static IMonitor? Monitor;
     private static readonly HashSet<string> Warned = new();

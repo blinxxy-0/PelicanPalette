@@ -163,7 +163,18 @@
         "vale.guide.spot.stage.name": "{{i18n:vale.guide.spot.stage.name}}",
         "vale.guide.spot.stage.line": "{{i18n:vale.guide.spot.stage.line}}",
         "vale.guide.plain_stool": "{{i18n:vale.guide.plain_stool}}",
-        "vale.guide.last_page": "{{i18n:vale.guide.last_page}}"
+        "vale.guide.last_page": "{{i18n:vale.guide.last_page}}",
+        "vale.guide.board": "{{i18n:vale.guide.board}}",
+        "vale.guide.take": "{{i18n:vale.guide.take}}",
+        "vale.guide.again": "{{i18n:vale.guide.again}}",
+        "vale.guide.page.title": "{{i18n:vale.guide.page.title}}",
+        "vale.guide.page.unfound": "{{i18n:vale.guide.page.unfound}}",
+        "vale.guide.step_in": "{{i18n:vale.guide.step_in}}",
+        "vale.guide.not_here": "{{i18n:vale.guide.not_here}}",
+        "quest.painters_guide.title": "{{i18n:quest.painters_guide.title}}",
+        "quest.painters_guide.description": "{{i18n:quest.painters_guide.description}}",
+        "quest.painters_guide.objective": "{{i18n:quest.painters_guide.objective|found=[found]}}",
+        "vale.guide.item.description": "{{i18n:vale.guide.item.description}}"
       }
     }
   ]

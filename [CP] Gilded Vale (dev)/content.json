@@ -224,6 +224,8 @@
     // The five residents (1.4): data, gifts, schedules and dialogue, switched off until
     // their art exists (data/residents.json says what turns each one on).
     { "Action": "Include", "FromFile": "data/residents.json" },
+    // The old painters' guide and its quest (data/vale_guide.json).
+    { "Action": "Include", "FromFile": "data/vale_guide.json" },
     // The Vale on the world map (M), a region of its own.
     { "Action": "Include", "FromFile": "data/vale_worldmap.json" },
     // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
