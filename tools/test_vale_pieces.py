@@ -144,6 +144,15 @@ def test_repaint_changes_only_the_box():
     assert all(in_any_box(x, y) and box[0] <= x <= box[2] and box[1] <= y <= box[3] for x, y in changed), changed
 
 
+def test_sculpture_feet_only():
+    m = load(TMX)
+    feature = lambda v: 20000 <= v < 30000
+    assert all(feature(m.g["Buildings"][45][x]) for x in (6, 7))      # the feet: solid
+    assert any(feature(m.g["Front"][44][x]) for x in (6, 7))           # the head and hedge top: over you
+    assert not m.g["Buildings"][44][6] and not m.g["Buildings"][44][7] # nothing solid up there
+    assert m.props[("Buildings", 7, 45)]["Action"] == "Message blinxxy.MuseArt_Vale.garden.hidden_statue"
+
+
 if __name__ == "__main__":
     for name, fn in [(n, f) for n, f in list(globals().items()) if n.startswith("test_") and callable(f)]:
         try:
