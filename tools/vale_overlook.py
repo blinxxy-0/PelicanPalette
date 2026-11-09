@@ -164,7 +164,9 @@ def lay_lip(m, ctx, x0, x1, y):
     """The bluff's north edge, toward the lake, on row y from x0 (its north-west corner)
     to x1. The rim tile's top is see-through: the lower ground under it is the painter's;
     the plateau's grass starts on the corners below it."""
-    _paint(m, ctx, {(cx, y + 1): "G" for cx in range(x0 + 1, x1 + 2)}, (x0 - 1, y - 1, x1 + 1, y + 1))
+    # (from row y: the rim sets no corner above its own row, so the tiles above it stay as
+    # they are; one of them, under the terrace cliff's shading, isn't a plain piece)
+    _paint(m, ctx, {(cx, y + 1): "G" for cx in range(x0 + 1, x1 + 2)}, (x0 - 1, y, x1 + 1, y + 1))
     for x in range(x0, x1 + 1):
         _clear(m, x, y)
         m.g["Buildings"][y][x] = RIM_NW if x == x0 else RIM[(x - x0 - 1) % 2]
@@ -454,63 +456,78 @@ def lay_lake_corner(m, ctx):
     # the turn in a jog: the Town shore's own stacks there instead (Town (82,75), and
     # (83,74) above its diagonal; Town's (83,73) 5322 above that left a square step under
     # our short run's cap, so the painter's piece stays there)
-    for (x, y), stack in [((cx - 1, cy - 1), (bv.WATER, 0))] + [((cx, cy - 2 - k), s) for k, s in enumerate(LAKE_SE_TURN)]:
+    for (x, y), stack in ([((cx - 1, cy - 1), (bv.WATER, 0)), ((cx, cy - 1), LAKE_SE_END)]
+                          + [((cx, cy - 2 - k), s) for k, s in enumerate(LAKE_SE_TURN)]):
         m.g["Back"][y][x], m.g["Buildings"][y][x] = stack
         _laid(m, x, y)
 
 
 # --- the overlook as built (Task 5) ----------------------------------------------------
-# The bluff: its north rim on row 56, its west side down column 88 (rows 57-65), its south
-# face from row 66, so its top is x 89-95, y 57-65. The rim is a row further north than the
-# plan drew, because the steps take the south face (no vanilla flight climbs south) and the
-# face takes six rows: one row more of top is room for the bench, the easels, the trees and
-# the shed together. The lower ground between the rim and the terrace cliff's shading stays
-# two rows deep, as the Forest's terraces step.
-RIM_Y = 56
+# The bluff: its north rim on row 55, its west side down column 88 (rows 56-65), its south
+# face from row 66, so its top is x 89-95, y 56-65. The rim is further north than the plan
+# drew: the steps take the south face (no vanilla flight climbs south) and the face takes six
+# rows, and only a top this deep holds the bench, the easels' row, the painting spot, the
+# shed and the Three Trees with none of their crowns over the rest (searched: with the rim
+# on 56 no arrangement fits). North of the rim one row of the lower ground stays, under the
+# terrace cliff's shading, as the Forest's terraces step.
+RIM_Y = 55
 SIDE_X = 88
 FACE_TOP = 66
-SIDE_WIDENS = 5              # the side's skirt is two tiles wide from row 62 (the path beside it wanders above)
+SIDE_WIDENS = 6              # the side's skirt is two tiles wide from row 62 (the path beside it wanders above)
 STAIRS_X = 90                # the flight's left wall; treads on x 91-92
 # The overlook bench, at the north-west corner. Town and the Forest have no bench seen
 # from behind, so it's Town's side bench facing west (vale_decor "bench_w"), its back to
 # the easels, looking out over the lake: its top on Front, its two seat rows on Buildings
-# (as Town lays it). BENCH is its upper seat tile; the bench stands against the side's lip.
+# (as Town lays it). BENCH is its upper seat tile. It alone stands against the side's lip:
+# a step further in, the lake behind the lip is out of its view, and the top has no column
+# to spare (the painting spot, the lane and the shed take the rest).
 BENCH = (89, 58)
 BENCH_FACING = 3             # west, over the lake
-EASELS = (90, 92, 58)        # x0, x1, row: the 10-heart scene's easels, beside the bench, at the north edge
+# x0, x1, row: where the 10-heart scene's painters stand, beside the bench; their easels go
+# a row further north, at the edge (row 57), the woods beyond it thinned so they look out
+# over the Vale.
+EASELS = (90, 92, 58)
 # Lupini's lake painting spot (build_vale.PICKS spot_lake_*): left tile and base row of
-# each 2 x 2 piece, along the west edge under the bench, looking over the lake. He stands
+# each 2 x 2 piece, a tile in from the west side, under the bench, over the lake. He stands
 # between them, facing it.
-STOOL = (89, 61)
-ROCK = (89, 64)
-LUPINI_STAND = (89, 62)
+STOOL = (90, 60)
+ROCK = (90, 63)
+LUPINI_STAND = (90, 61)
 # The shed, where the third easel is kept: the game's own little plank hut (outdoors sheet,
 # Town numbering): its plank roof with the vent (sheet x 22-24, rows 69-70) over its walls
 # with the window and the door (x 15-17, rows 76-77). The sheet keeps the two halves apart,
 # but they meet pixel for pixel (the sign's cords run on from the roof's row into the wall's),
 # and every season is in the sheets (snow on the roof in winter). x0, y0, x1, y1; y1 its base.
-SHED = (92, 60, 94, 63)
+# Its door opens onto the steps' landing.
+SHED = (93, 61, 95, 64)
 SHED_ART = ((1748, 1749, 1750), (1773, 1774, 1775), (1916, 1917, 1918), (1941, 1942, 1943))
 # The Three Trees (Paths markers: 9 oak, 10 maple, 11 pine) and the stump of the fourth, at
-# the north-east, clear of the bench, the easels and the shed: a tree's crown is 3 wide and
-# stands 2-5 rows above its trunk, so these hang out over the rim and the map's east edge.
-TREES = ((93, 57, 10), (95, 58, 9), (95, 61, 11))
-STUMP = (93, 59, 128)        # the game's own stump with its roots (outdoors 128, Forest (33,2)): a map tile, it can't be chopped
-FRINGE = ((95, 73, 9), (95, 75, 11))   # the woods along the bottom edge that stay (clear of the flight)
+# the north-east, inward: a tree's crown is 3 wide and stands 2-5 rows above its trunk, so
+# these hang out over the rim and the lower ground, on the map, clear of the bench, the
+# easels' row and the shed's roof. The woods behind them (rows 53-54) go, so they stand apart.
+TREES = ((94, 56, 10), (93, 58, 9), (94, 60, 11))
+STUMP = (93, 60, 128)        # the game's own stump with its roots (outdoors 128, Forest (33,2)): a map tile, it can't be chopped
+THIN = (88, 53, 95, 54)      # the woods north of the rim that go
+# The woods that ring the Vale, round the bluff: down the east edge below the face, and
+# along the south edge where the trail, the picnic table and the steps' foot leave room
+# (the trail along the face's foot takes the bottom rows between them).
+FRINGE = ((95, 71, 10), (95, 73, 9), (95, 75, 11), (87, 72, 9), (84, 74, 11),
+          (81, 73, 10), (82, 74, 10), (81, 75, 11), (83, 75, 10))
 PICNIC = (88, 72)            # vale_decor "picnic", at the bluff's foot by the lake's corner: no room on top
-FLOWERS = ((94, 58, 308), (95, 63, 258), (94, 65, 308), (89, 65, 258))
+FLOWERS = ((92, 60, 308), (93, 59, 258))
 # The lakeside path along the bluff's west foot: its east edge (the last sand corner) on
 # each corner row. It wanders a corner in and out, kept a corner of grass from the skirt.
-# (North of the bluff, rows 54-56, it stays as it is: x 85-87.)
-PATH_EAST = {57: 86, 58: 86, 59: 85, 60: 86, 61: 85, 62: 85, 63: 84, 64: 84,
+# (North of the bluff, rows 54-55, it stays as it is: x 85-87.)
+PATH_EAST = {56: 86, 57: 86, 58: 86, 59: 85, 60: 86, 61: 85, 62: 85, 63: 84, 64: 84,
              65: 85, 66: 85, 67: 86, 68: 87, 69: 86, 70: 86, 71: 85, 72: 86, 73: 86}
-PATH_NARROW = {57: 84, 58: 84}  # where it still runs apart from the lake's sand: its west edge
+PATH_NARROW = {56: 85, 57: 84, 58: 84}  # where it still runs apart from the lake's sand: its west edge
 PATH_MEETS_LAKE = range(59, 72)  # rows where it runs into the lake's sand (the grass between goes)
 # The trail along the south foot to the flight: sand corners (x0, x1) by row. It dips under
 # the picnic table and rises to the flight's foot (corner row 74, below the skirt and its row
-# of grass: lay_face), so neither of its edges runs straight.
-SOUTH_PATH = {74: ((85, 87), (91, 93)), 75: ((85, 93),), 76: ((86, 91),)}
-CLEAR_BOX = (84, 56, 95, 75)  # what's cleared of props, markers and decor before laying
+# of grass: lay_face), so neither of its edges runs straight; its west end leaves a tile of
+# grass for the woods by the lake's corner.
+SOUTH_PATH = {74: ((86, 87), (91, 93)), 75: ((86, 93),), 76: ((87, 91),)}
+CLEAR_BOX = (84, 55, 95, 75)  # what's cleared of props, markers and decor before laying
 
 
 # --- the test strip (Task 4): a scratch copy only -------------------------------------
@@ -520,7 +537,12 @@ STRIP_SIDE_TO = 65            # the side's last row; the face's lip row is the n
 STRIP_STAIRS_X = 90
 STRIP_BOX = (86, 57, 95, 75)  # what the strip clears of props, trees and decor first
 LAKE_SE = (84, 71)            # the lake's south-east water corner (OVERLOOK_BOX), cut by lay_lake_corner
-LAKE_SE_TURN = ((5226, 211),)  # the east bank's last piece above the cut, upward (Town (83,74))
+# the east bank's last pieces above the cut, upward: Town (83,74)'s end, and the painter's
+# own cycle piece over it (fixed: re-chosen each run against what the last run left, it
+# flipped between 5290 and 236)
+LAKE_SE_TURN = ((5226, 211), (1230, 5290))
+LAKE_SE_END = (1230, 261)     # under it, where the bank turns onto the diagonal (Town (83,75)): without it the
+                              # 211 ended in a vertical cut and the diagonal was two 214s, a ruler-straight line
 
 
 def lay_test_strip(tmx_path, exports):
@@ -680,6 +702,11 @@ def patch_file(tmx_path, exports):
     for x, y, gid in FLOWERS:
         if plain(x, y):
             m.g["Back2"][y][x] = gid
+    tx0, ty0, tx1, ty1 = THIN
+    for y in range(ty0, ty1 + 1):
+        for x in range(tx0, tx1 + 1):
+            _inside(x, y)
+            m.g["Paths"][y][x] = 0
     # the woods round the box's edge stay only where their ground is still plain grass
     bx0, by0, bx1, by1 = OVERLOOK_BOX
     for y in range(by0, by1 + 1):

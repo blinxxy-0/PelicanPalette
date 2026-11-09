@@ -226,11 +226,85 @@ def test_overlook_paint_spot_moved():
 
 
 def test_schedules_moved():
-    from vale_overlook import BENCH
+    from vale_overlook import BENCH, LUPINI_STAND
     lu, em = load_jsonc(LUPINI_SCHEDULE), load_jsonc(EMMETT_SCHEDULE)
     assert f"1400 blinxxy.MuseArt_GildedVale {BENCH[0]} {BENCH[1]}" in lu["Sun"]
     assert f"1300 blinxxy.MuseArt_GildedVale {BENCH[0]} {BENCH[1]}" in em["Sat"]
     assert "88 59" not in lu["Fri"]
+    assert f"900 blinxxy.MuseArt_GildedVale {LUPINI_STAND[0]} {LUPINI_STAND[1]} 3" in lu["Fri"]   # beside his stool, facing the lake
+
+
+def crown(x, r):
+    """The tiles a tree's crown covers (a Paths-marker tree is 3 wide, 6 tall over its trunk)."""
+    return {(x + i, r - k) for i in (-1, 0, 1) for k in range(2, 6)}
+
+
+def test_overlook_trees_and_fringe():
+    # the Three Trees stand inward, their crowns on the map and clear of the bench, the
+    # easels' row and the shed's roof; the stump is beside them; a fringe of woods stays
+    # along the east and south edges, clear of the trail and the steps' foot
+    from vale_overlook import BENCH, EASELS, FRINGE, SHED, STUMP, TREES
+    m, paths_first = load(TMX), 1976
+    x0, y0, x1, y1 = SHED
+    shed = {(x, y) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1)}
+    ex0, ex1, ey = EASELS
+    keep_clear = shed | {(BENCH[0], BENCH[1] + d) for d in (-1, 0, 1)} | {(x, ey) for x in range(ex0, ex1 + 1)}
+    for x, r, k in TREES:
+        assert m.g["Paths"][r][x] == paths_first + k, (x, r)
+        assert 91 <= x <= 94, (x, r)
+        assert all(0 <= cx < W for cx, _ in crown(x, r)), (x, r)
+        assert not crown(x, r) & keep_clear, (x, r, crown(x, r) & keep_clear)
+    sx, sy, _ = STUMP
+    assert min(abs(sx - x) + abs(sy - r) for x, r, _ in TREES) <= 2
+    east = [(x, y) for x, y, _ in FRINGE if x == 95]
+    south = [(x, y) for x, y, _ in FRINGE if y >= 72]
+    assert len(east) >= 3 and len(south) >= 4, FRINGE
+    for x, y, k in FRINGE:
+        assert m.g["Paths"][y][x] == paths_first + k, (x, y)
+    # nothing stands in the woods north of the rim, above the easels
+    assert not any(m.g["Paths"][y][x] for y in (53, 54) for x in range(88, 96))
+
+
+def test_overlook_props_inside():
+    # the painting spot and the flowers stand at least a tile in from the side and the
+    # face's lip; the bench alone stands against the side, facing over the lake
+    from vale_overlook import FACE_TOP, FLOWERS, RIM_Y, ROCK, SIDE_X, STOOL
+    for sx, sy in (STOOL, ROCK):
+        assert sx >= SIDE_X + 2 and sy - 1 >= RIM_Y + 2 and sy <= FACE_TOP - 2, (sx, sy)
+    for x, y, _ in FLOWERS:
+        assert x >= SIDE_X + 2 and RIM_Y + 2 <= y <= FACE_TOP - 2, (x, y)
+
+
+def test_overlook_lake_corner():
+    # the lake's east bank ends as Town's shore does (Town x 83 rows 74-76): the vertical
+    # cycle's end 211, then 261 under it, then the diagonal's 214
+    m = load(TMX)
+    assert (m.g["Back"][69][84], m.g["Buildings"][69][84]) == (5226, 211)
+    assert (m.g["Back"][70][84], m.g["Buildings"][70][84]) == (1230, 261)
+    assert (m.g["Back"][71][83], m.g["Buildings"][71][83]) == (1230, 214)
+
+
+def test_decor_rebuild_unchanged_outside_overlook():
+    # vale_decor shares one random generator: the rebuild's decor outside the overlook's
+    # box is what it was before Task 5 (b17e01a), tile for tile
+    import importlib.util
+    old_src = subprocess.run(["git", "show", "b17e01a:tools/vale_decor.py"], cwd=ROOT,
+                             capture_output=True, check=True).stdout.decode("utf-8")
+    grids = []
+    for src in (old_src, open(os.path.join(HERE, "vale_decor.py"), encoding="utf-8").read()):
+        mod = importlib.util.module_from_spec(importlib.util.spec_from_loader("decor_copy", loader=None))
+        exec(compile(src, "vale_decor_copy", "exec"), mod.__dict__)
+        g = {l: [[0] * W for _ in range(H)] for l in build_vale.LAYERS}
+        for row in g["Back"]:
+            row[:] = [176] * W
+        with contextlib.redirect_stdout(io.StringIO()):
+            mod.decor(g, {(176, 0): ("G",) * 4}, 1976, W, H)
+        grids.append(g)
+    old, new = grids
+    for layer in old:
+        for x, y in all_tiles():
+            if not in_any_box(x, y):
+                assert old[layer][y][x] == new[layer][y][x], (layer, x, y)
 
 
 if __name__ == "__main__":

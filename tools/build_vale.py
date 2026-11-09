@@ -77,8 +77,8 @@ PICKS = {
     "spot_meadow_rock": ("props/vale_props_v2/paint_rock_clean", 31, 66, 1, 0),
     # (the lake's: up on the overlook, along its west edge over the lake; laid where they
     # are here, not by reachable_spot, and moved with the bluff by tools/vale_overlook.py)
-    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 89, 61, 1, 0),
-    "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 89, 64, 1, 0),
+    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 90, 60, 1, 0),
+    "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 90, 63, 1, 0),
     "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
     "vale_sign": ("props/vale_sign_gilded", 19, 4, 1, 0),   # gold lettering drawn on; lit at night (map property Light)         # A: where the high street starts
     "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door

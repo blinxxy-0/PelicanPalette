@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_vale as bv
 
 FALLS_BOX = (74, 0, 89, 13)          # the rim cliff, the fall and the basin
-OVERLOOK_BOX = (80, 54, 95, 75)      # the bluff, its steps, the lake's east shore below it
+OVERLOOK_BOX = (80, 53, 95, 75)      # the bluff, its steps, the lake's east shore below it (row 53: the woods behind its rim)
 SCULPTURE_BOX = (6, 43, 7, 45)       # the corner pocket (x 6-7, y 44-45) and the tile above it
 BOXES = {"falls": FALLS_BOX, "overlook": OVERLOOK_BOX, "sculpture": SCULPTURE_BOX}
 

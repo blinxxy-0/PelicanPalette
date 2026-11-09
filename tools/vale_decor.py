@@ -20,7 +20,7 @@ import random
 # reachable_spot): fenced yards and the orchard's trees, (x0, y0, x1, y1) inclusive.
 # The last two: the atelier's bench, and the overlook (vale_patch.OVERLOOK_BOX: the bluff
 # tools/vale_overlook.py raises there, with the lake's painting spot on it).
-RESERVED = [(82, 13, 90, 22), (9, 55, 14, 60), (87, 2, 94, 10), (84, 25, 88, 26), (80, 54, 95, 75)]
+RESERVED = [(82, 13, 90, 22), (9, 55, 14, 60), (87, 2, 94, 10), (84, 25, 88, 26), (80, 53, 95, 75)]
 
 # Tile property objects for the writer: (layer, x, y) -> {name: value}
 TILE_PROPS = {}
@@ -229,10 +229,15 @@ def decor(g, ground, paths_first, W, H):
     for x, y, t in ((5, 57, MAPLE), (27, 60, OAK), (31, 72, PINE)):        # (the Gilded Tree's lawn is x 33-44)
         marker(x, y, t, why="lower trees")
 
-    # N: a picnic spot at the foot of the overlook's bluff, by the lake's corner (its top has
-    # no room: the bench, the easels, the Three Trees and the shed; tools/vale_overlook.py,
-    # PICNIC, which lays it again with the bluff)
-    prop("picnic", 88, 72)
+    # N: a picnic spot at the end of the east trail. (The overlook's bluff stands here now:
+    # tools/vale_overlook.py clears its box and lays the picnic table at its foot, PICNIC.
+    # These stay as they were, so the generator the decor shares draws the same for
+    # everything after them, outside the box.)
+    prop("picnic", 89, 64)
+    for x, y, k in ((88, 60, BUSH_M), (92, 69, BUSH_S), (93, 60, BUSH_S)):
+        marker(x, y, k, BUSH_W[k], "picnic bush")
+    for x, y, t in ((94, 66, MAPLE), (90, 72, OAK)):
+        marker(x, y, t, why="picnic tree")
 
     # The cohesion pass (the user, 2026-11-06, after Timberline Falls: "we're missing
     # things like nature, fences, bushes"): every home gets a yard, the grass gets its
@@ -255,7 +260,9 @@ def decor(g, ground, paths_first, W, H):
     clump(91, 52, PINE)
     clump(26, 70, OAK)
     # stones here and there, as the game's grass has
-    for x, y in ((16, 12), (6, 25), (39, 24), (58, 30), (70, 44), (90, 43), (4, 50), (24, 57), (29, 66), (8, 72), (47, 66)):
+    # ((92, 62) is on the overlook now: vale_overlook clears it; it stays here so the
+    # shared generator draws the same for everything after it)
+    for x, y in ((16, 12), (6, 25), (39, 24), (58, 30), (70, 44), (90, 43), (4, 50), (24, 57), (29, 66), (8, 72), (92, 62), (47, 66)):
         rock(x, y)
     # flowers through every open stretch (the meadow thickest)
     flowers(0, 10, 20, 27, 0.03, 0.04)          # the upper west
@@ -265,7 +272,7 @@ def decor(g, ground, paths_first, W, H):
     flowers(64, 42, 95, 47, 0.05, 0.06)         # below the Old Studios
     flowers(2, 62, 31, 75, 0.12, 0.25)          # Fern's meadow
     flowers(0, 54, 50, 75, 0.03, 0.03)          # the rest of the lower terrace
-    flowers(84, 54, 95, 55, 0.04, 0.04)         # below the lower cliff, north of the overlook (off its edges and steps)
+    flowers(84, 54, 95, 75, 0.04, 0.04)         # the overlook's side (vale_overlook clears its box; the call stays for the generator)
     flowers(0, 26, 56, 27, 0.06)                # along the upper cliff's top
     flowers(0, 46, 95, 47, 0.05)                # and the lower one's
 

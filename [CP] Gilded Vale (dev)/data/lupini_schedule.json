@@ -16,7 +16,7 @@
   // Thursday: the wildflower meadow.
   "Thu": "900 blinxxy.MuseArt_GildedVale 30 65 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
   // Friday: the lake, from his painting spot up on the overlook.
-  "Fri": "900 blinxxy.MuseArt_GildedVale 89 62 3/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  "Fri": "900 blinxxy.MuseArt_GildedVale 90 61 3/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
   // Saturday: his overgrown garden, under the ivy Fern lets grow (some Saturdays,
   // spring to fall, he paints in town instead: data/vale_town_trips.json).
   "Sat": "900 blinxxy.MuseArt_GildedVale 86 18 3/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
