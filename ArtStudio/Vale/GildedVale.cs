@@ -19,6 +19,7 @@ internal static class GildedVale
         ValeTests.Register(helper, monitor);
         ValeGrounds.Register(helper, monitor);
         ValeOrchard.Register(helper, monitor);
+        ValeFish.Register(helper, monitor);
 
         // Lupini's painting spots: sit at one and paint the view in front of it,
         // as at an easel you set down yourself (the user, 2026-11-07: "can we

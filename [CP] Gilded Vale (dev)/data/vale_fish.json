@@ -1,0 +1,226 @@
+// The Gilded Vale's own fish (1.4; docs/superpowers/specs/2026-11-08-vale-fish-design.md),
+// and the game's own river and lake fish in the Vale's water.
+//
+// Ids are blinxxy.MuseArt.Vale_<Name>: not the mod's own blinxxy.MuseArt_ prefix, which the
+// painting record leaves out (RecordTabs), so a still life of one fills its Fish-tab entry;
+// and not the dev pack's {{ModId}}, so the ids survive the move into the released pack.
+//
+// Where they bite (the location's Fish, below):
+//   River (the fallback area: all water outside the lake): the Forest's river fish, the Loach.
+//   Lake (x 48-84, y 55-71): the Mountain lake's fish, the Shiner and the Gilt Carp.
+//   The Cascade Trout bites only in the two cascade pools, and the Falls Sculpin only in the
+//   waterfall basin, by bobber position inside the River area.
+//   The basin isn't built yet (session vale-map-gaps, branch claude/infallible-jang-a66ee9):
+//   its rectangle is the top of the river for now. Re-check it, and the lake's east edge (the
+//   overlook bluff), once that branch is merged.
+{
+  "Changes": [
+    // ---- The icons and the fish-tank sprites (tools/art/vale_fish_icons.py) ----
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt.Vale/Fish",
+      "FromFile": "assets/ValeFish.png"
+    },
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt.Vale/FishAquarium",
+      "FromFile": "assets/ValeFishAquarium.png"
+    },
+
+    // ---- The items ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "blinxxy.MuseArt.Vale_ClaybankLoach": {
+          "Name": "Claybank Loach",
+          "DisplayName": "{{i18n:fish.loach.name}}",
+          "Description": "{{i18n:fish.loach.description}}",
+          "Type": "Fish",
+          "Category": -4,
+          "Price": 40,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/Fish",
+          "SpriteIndex": 0,
+          "Edibility": 10,
+          "ContextTags": [ "color_brown", "fish_has_roe", "fish_river", "season_spring", "season_summer", "season_fall" ]
+        },
+        "blinxxy.MuseArt.Vale_CascadeTrout": {
+          "Name": "Cascade Trout",
+          "DisplayName": "{{i18n:fish.trout.name}}",
+          "Description": "{{i18n:fish.trout.description}}",
+          "Type": "Fish",
+          "Category": -4,
+          "Price": 120,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/Fish",
+          "SpriteIndex": 1,
+          "Edibility": 10,
+          "ContextTags": [ "color_pink", "fish_has_roe", "fish_river", "season_spring", "season_fall" ]
+        },
+        "blinxxy.MuseArt.Vale_FallsSculpin": {
+          "Name": "Falls Sculpin",
+          "DisplayName": "{{i18n:fish.sculpin.name}}",
+          "Description": "{{i18n:fish.sculpin.description}}",
+          "Type": "Fish",
+          "Category": -4,
+          "Price": 90,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/Fish",
+          "SpriteIndex": 2,
+          "Edibility": 10,
+          "ContextTags": [ "color_gray", "fish_has_roe", "fish_river", "season_fall", "season_winter" ]
+        },
+        "blinxxy.MuseArt.Vale_LakeblueShiner": {
+          "Name": "Lakeblue Shiner",
+          "DisplayName": "{{i18n:fish.shiner.name}}",
+          "Description": "{{i18n:fish.shiner.description}}",
+          "Type": "Fish",
+          "Category": -4,
+          "Price": 75,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/Fish",
+          "SpriteIndex": 3,
+          "Edibility": 10,
+          "ContextTags": [ "color_blue", "fish_has_roe", "fish_lake", "season_spring", "season_summer" ]
+        },
+        "blinxxy.MuseArt.Vale_GiltCarp": {
+          "Name": "Gilt Carp",
+          "DisplayName": "{{i18n:fish.carp.name}}",
+          "Description": "{{i18n:fish.carp.description}}",
+          "Type": "Fish",
+          "Category": -4,
+          "Price": 250,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/Fish",
+          "SpriteIndex": 4,
+          "Edibility": 10,
+          "ContextTags": [ "color_yellow", "fish_has_roe", "fish_lake", "season_fall" ]
+        }
+      }
+    },
+
+    // ---- How they fight, and when they bite ----
+    // name/difficulty/motion/min size/max size/times/seasons/weather/(unused)/max depth/spawn chance/depth multiplier/min fishing level/tutorial
+    {
+      "Action": "EditData",
+      "Target": "Data/Fish",
+      "Entries": {
+        "blinxxy.MuseArt.Vale_ClaybankLoach": "Claybank Loach/30/sinker/4/12/600 1900/spring summer fall/both/684 .35/1/.4/.1/0/false",
+        "blinxxy.MuseArt.Vale_CascadeTrout": "Cascade Trout/70/dart/12/30/600 1900/spring fall/rainy/684 .35/2/.35/.2/0/false",
+        "blinxxy.MuseArt.Vale_FallsSculpin": "Falls Sculpin/55/sinker/4/10/1800 2600/fall winter/both/684 .35/2/.35/.1/0/false",
+        "blinxxy.MuseArt.Vale_LakeblueShiner": "Lakeblue Shiner/45/mixed/3/8/900 1700/spring summer/sunny/684 .35/1/.4/.1/0/false",
+        "blinxxy.MuseArt.Vale_GiltCarp": "Gilt Carp/80/mixed/18/44/1000 1800/fall/sunny/684 .35/3/.1/.1/3/false"
+      }
+    },
+
+    // ---- The Vale's water ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "TargetField": [ "blinxxy.MuseArt_GildedVale" ],
+      "Entries": {
+        "FishAreas": {
+          "River": { "CrabPotFishTypes": [ "freshwater" ] },
+          "Lake": { "Position": { "X": 48, "Y": 55, "Width": 37, "Height": 17 }, "CrabPotFishTypes": [ "freshwater" ] }
+        },
+        "Fish": [
+          // The Vale's own. Their seasons are here, not only in Data/Fish: in 1.6 the game
+          // doesn't check Data/Fish's seasons for location fish (museart_fishtest found it).
+          { "Id": "blinxxy.MuseArt.Vale_ClaybankLoach", "ItemId": "(O)blinxxy.MuseArt.Vale_ClaybankLoach", "FishAreaId": "River", "Condition": "LOCATION_SEASON Here spring summer fall" },
+          { "Id": "blinxxy.MuseArt.Vale_CascadeTrout_Upper", "ItemId": "(O)blinxxy.MuseArt.Vale_CascadeTrout", "FishAreaId": "River", "BobberPosition": { "X": 59, "Y": 28, "Width": 6, "Height": 9 }, "Condition": "LOCATION_SEASON Here spring fall" },
+          { "Id": "blinxxy.MuseArt.Vale_CascadeTrout_Lower", "ItemId": "(O)blinxxy.MuseArt.Vale_CascadeTrout", "FishAreaId": "River", "BobberPosition": { "X": 59, "Y": 48, "Width": 6, "Height": 7 }, "Condition": "LOCATION_SEASON Here spring fall" },
+          { "Id": "blinxxy.MuseArt.Vale_FallsSculpin", "ItemId": "(O)blinxxy.MuseArt.Vale_FallsSculpin", "FishAreaId": "River", "BobberPosition": { "X": 76, "Y": 0, "Width": 13, "Height": 13 }, "Condition": "LOCATION_SEASON Here fall winter" },
+          { "Id": "blinxxy.MuseArt.Vale_LakeblueShiner", "ItemId": "(O)blinxxy.MuseArt.Vale_LakeblueShiner", "FishAreaId": "Lake", "Condition": "LOCATION_SEASON Here spring summer" },
+          { "Id": "blinxxy.MuseArt.Vale_GiltCarp", "ItemId": "(O)blinxxy.MuseArt.Vale_GiltCarp", "FishAreaId": "Lake", "Season": "Fall", "Chance": 0.5 },
+
+          // The Forest's river fish
+          { "Id": "(O)145", "ItemId": "(O)145", "FishAreaId": "River", "Condition": "LOCATION_SEASON Here spring summer" },
+          { "Id": "(O)143", "ItemId": "(O)143", "FishAreaId": "River", "Condition": "LOCATION_SEASON Here spring fall winter" },
+          { "Id": "(O)132", "ItemId": "(O)132", "FishAreaId": "River" },
+          { "Id": "(O)706", "ItemId": "(O)706", "FishAreaId": "River", "Condition": "LOCATION_SEASON Here spring summer fall" },
+          { "Id": "(O)702", "ItemId": "(O)702" },
+          { "Id": "(O)144", "ItemId": "(O)144", "FishAreaId": "River", "Condition": "LOCATION_SEASON Here summer winter" },
+          { "Id": "(O)138", "ItemId": "(O)138", "Season": "Summer" },
+          { "Id": "(O)704", "ItemId": "(O)704", "FishAreaId": "River", "Season": "Summer" },
+          { "Id": "(O)140", "ItemId": "(O)140", "Condition": "LOCATION_SEASON Here fall winter" },
+          { "Id": "(O)139", "ItemId": "(O)139", "FishAreaId": "River", "Season": "Fall" },
+          { "Id": "(O)699", "ItemId": "(O)699", "FishAreaId": "River", "Condition": "LOCATION_SEASON Here fall winter" },
+          { "Id": "(O)141", "ItemId": "(O)141", "Season": "Winter" },
+          { "Id": "(O)707", "ItemId": "(O)707", "Season": "Winter" },
+
+          // The Mountain lake's fish (the Chub, Rainbow Trout, Walleye, Perch and Lingcod above bite in both)
+          { "Id": "(O)136", "ItemId": "(O)136", "FishAreaId": "Lake" },
+          { "Id": "(O)142", "ItemId": "(O)142", "FishAreaId": "Lake", "Condition": "LOCATION_SEASON Here spring summer fall" },
+          { "Id": "(O)700", "ItemId": "(O)700", "FishAreaId": "Lake" },
+          { "Id": "(O)698", "ItemId": "(O)698", "FishAreaId": "Lake", "Condition": "LOCATION_SEASON Here summer winter" },
+          { "Id": "(O)269", "ItemId": "(O)269", "FishAreaId": "Lake", "Condition": "LOCATION_SEASON Here fall winter" },
+
+          // Both
+          { "Id": "(O)153", "ItemId": "(O)153" },
+          { "Id": "(O)RiverJelly", "ItemId": "(O)RiverJelly", "Chance": 0.1, "IgnoreFishDataRequirements": true, "ChanceBoostPerLuckLevel": 0.05, "UseFishCaughtSeededRandom": true }
+        ]
+      }
+    },
+
+    // ---- Fish Ponds: roe, and a little vanilla extra that fits each one. The Trout and the
+    // Shiner give roe only, from the game's own RiverFish and LakeFish entries. Population
+    // gates are the game's river and lake ones. ----
+    {
+      "Action": "EditData",
+      "Target": "Data/FishPondData",
+      "Entries": {
+        "blinxxy.MuseArt.Vale_ClaybankLoach": {
+          "Id": "blinxxy.MuseArt.Vale_ClaybankLoach",
+          "RequiredTags": [ "id_o_blinxxy.museart.vale_claybankloach" ],
+          "ProducedItems": [
+            { "Id": "(O)330", "ItemId": "(O)330", "RequiredPopulation": 3, "Chance": 0.15, "MinStack": 1, "MaxStack": 3 },
+            { "Id": "(O)812", "ItemId": "(O)812", "Chance": 0.9 }
+          ],
+          "PopulationGates": {
+            "4": [ "(O)309 3", "(O)310 3", "(O)311 3", "(O)684 10" ],
+            "6": [ "(O)384 3", "(O)724", "(O)770 5" ],
+            "8": [ "(O)70 2", "(O)340", "(O)716", "(O)722" ]
+          }
+        },
+        "blinxxy.MuseArt.Vale_FallsSculpin": {
+          "Id": "blinxxy.MuseArt.Vale_FallsSculpin",
+          "RequiredTags": [ "id_o_blinxxy.museart.vale_fallssculpin" ],
+          "ProducedItems": [
+            { "Id": "(O)535", "ItemId": "(O)535", "RequiredPopulation": 7, "Chance": 0.05 },
+            { "Id": "(O)390", "ItemId": "(O)390", "RequiredPopulation": 3, "Chance": 0.15, "MinStack": 2, "MaxStack": 5 },
+            { "Id": "(O)812", "ItemId": "(O)812", "Chance": 0.9 }
+          ],
+          "PopulationGates": {
+            "4": [ "(O)309 3", "(O)310 3", "(O)311 3", "(O)684 10" ],
+            "6": [ "(O)384 3", "(O)724", "(O)770 5" ],
+            "8": [ "(O)70 2", "(O)340", "(O)716", "(O)722" ]
+          }
+        },
+        "blinxxy.MuseArt.Vale_GiltCarp": {
+          "Id": "blinxxy.MuseArt.Vale_GiltCarp",
+          "RequiredTags": [ "id_o_blinxxy.museart.vale_giltcarp" ],
+          "ProducedItems": [
+            { "Id": "(O)384", "ItemId": "(O)384", "RequiredPopulation": 7, "Chance": 0.05, "MinStack": 1, "MaxStack": 3 },
+            { "Id": "(O)812", "ItemId": "(O)812", "Chance": 0.9 }
+          ],
+          "PopulationGates": {
+            "4": [ "(O)153 2 3", "(O)330 2 3", "(O)766 5", "(O)684 10" ],
+            "6": [ "(O)86 1 2", "(O)404 2 3", "(O)571" ],
+            "8": [ "(O)574", "(O)721", "(O)774 5" ]
+          }
+        }
+      }
+    },
+
+    // ---- Fish tanks: cells 0-4 of the Vale's aquarium sheet, laid out like the game's ----
+    // index/type/idle/dart start/dart hold/dart end/texture. The texture's path takes
+    // backslashes: the game splits these fields on '/', path and all.
+    {
+      "Action": "EditData",
+      "Target": "Data/AquariumFish",
+      "Entries": {
+        "blinxxy.MuseArt.Vale_ClaybankLoach": "0/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_CascadeTrout": "1/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_FallsSculpin": "2/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_LakeblueShiner": "3/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_GiltCarp": "4/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium"
+      }
+    }
+  ]
+}

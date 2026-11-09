@@ -53,7 +53,7 @@
 
 - **Where it runs:** a **waterfall** in the north-east, into a pool below Lupini's atelier. Then south-west past the pottery, down a **cascade** over each cliff, and into the lake.
 - **Bridges:** three, one on each terrace. They're the only ways across, so the river splits the Vale into a west side (the inn, Fern, the amphitheatre) and an east side (Lupini, the Old Studios, the overlook).
-- **Fishing:** the river and the lake use the game's own river and lake fish. Fish of the Vale's own could come later.
+- **Fishing (built 2026-11-08):** the river has the Forest's river fish and the lake the Mountain lake's, plus five fish of the Vale's own: the Claybank Loach (the river), the Cascade Trout (the cascade pools, in rain), the Falls Sculpin (the waterfall basin, at night), the Lakeblue Shiner and the rare Gilt Carp (the lake). Design: `docs/superpowers/specs/2026-11-08-vale-fish-design.md`; data: `[CP] Gilded Vale (dev)/data/vale_fish.json`; check: `museart_fishtest`.
 - **To check:** which waterfall and cascade tiles the game has (the Mountain's lake, the Forest's river). The waterfall may need a small animated piece of our own.
 
 ## 3. The old tree (new idea, for approval)
