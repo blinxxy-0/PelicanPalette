@@ -26,7 +26,9 @@ STAIR_BOXES = {f"stairs_{sx}_{top}": (sx, top, sx + 3, top + 5) for sx, top in b
 # pieces (the foot row and its top above it); and the clearing's, taken away
 SPOT_BOXES = {"spot_rooftops": (43, 3, 47, 4), "spot_northlight": (79, 15, 80, 19),
               "spot_wildflowers": (28, 64, 32, 66), "spot_lakewindow": (90, 59, 91, 63),
-              "spot_clearing": (8, 14, 10, 18)}
+              "spot_clearing": (8, 14, 10, 18),
+              # the new spots (the painters' guide design, section 4), laid by vale_spots
+              "spot_parterre": (25, 38, 26, 44), "spot_falls": (71, 12, 75, 13), "spot_tree": (43, 62, 44, 66)}
 # the graveyard in the old Painter's clearing (tools/vale_graveyard.py): its wall, what's in it, the
 # clearing's trees round it, and the trail from the bus road's turning circle to its gate
 GRAVEYARD_BOX = (2, 8, 13, 23)

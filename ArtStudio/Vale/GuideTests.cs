@@ -298,9 +298,10 @@ internal static class GuideTests
 
     // ---- The spots on the map ----
 
-    // The four spots that stand on the map today (the painters' guide design, section 4); the
-    // other four come with the graveyard, the falls, the tree's lawn and the stage.
-    private static readonly string[] MapSpots = { "rooftops", "northlight", "wildflowers", "lakewindow" };
+    // The spots that stand on the map today (the painters' guide design, section 4; tools/vale_spots.py).
+    // The Old Stage's waits for the user to see where it goes (vale_spots.STAGE_PROPOSAL); add it here
+    // when it's placed.
+    private static readonly string[] MapSpots = { "rooftops", "northlight", "wildflowers", "lakewindow", "parterre", "falls", "tree" };
 
     // Every PaintSpot tile on the Vale's map names one of the guide's spots, each on both foot tiles of
     // one stool, and the four that stand today are there. Then each, through its tile action as the game

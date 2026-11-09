@@ -8,6 +8,11 @@ PaintersGuide.cs, Spots), and the rock is scenery, with no action. The clearing'
 spot (the old Painter's clearing, x 3-12, y 10-22) goes: the clearing becomes the
 graveyard (section 6). The lake spot stays where the overlook put it.
 
+The four new spots (section 4) are laid here, from the same slots as the rooftops' stool and
+rock: the Lost Parterre's, just inside its east gate; the Falls', on the basin's south bank;
+and the Gilded Tree's, on its lawn by the trunk. The Old Stage's waits for the user to see
+where it goes (STAGE_PROPOSAL), so it isn't laid yet.
+
 The pieces are known by their pixels (the spring sheet's tiles under the foot are the
 bottom row of the stool's or the rock's art), so a spot is found wherever it stands.
 Everything this changes is inside vale_patch.SPOT_BOXES.
@@ -33,6 +38,25 @@ SPOTS = {
     "wildflowers": ((28, 65), (31, 66)),     # the meadow
     "lakewindow": (LAKE_STOOL, LAKE_ROCK),   # the lake, from the overlook (tools/vale_overlook.py)
 }
+# The new spots, laid by this script (patch_map): their stools and rocks copy the template spot's
+# tiles, so they take no new slots on the sheets.
+NEW_SPOTS = {
+    # in the pocket just inside the east gate, south of the path, looking west down the garden
+    # (its rock in the north-east corner, clear of the east statue's head)
+    "parterre": ((25, 44), (25, 39)),
+    # on the basin's south bank, west of the fall, looking up at it (the rock by the water, where
+    # he rinses his brushes); kept west, since the north light's stool is just south of the bank
+    "falls": ((74, 13), (71, 13)),
+    # on the tree's lawn, east of it between the canopy and the lakeside sand (south of the tree
+    # is under the woods' canopies, and west of it is the wildflowers' spot); the rock above it
+    "tree": ((43, 66), (43, 63)),
+}
+SPOTS.update(NEW_SPOTS)
+TEMPLATE = "rooftops"
+# The Old Stage's spot, proposed and not laid until the user has seen it (the user: "make sure
+# the spot near the amphitheatre doesn't feel too intrusive. I eventually have plans for a skill
+# there"): on the grass under the cliff, west of the bowl, looking at it from the side.
+STAGE_PROPOSAL = ((25, 53), (22, 53))
 CLEARING = (3, 10, 12, 22)                   # the old Painter's clearing: its spot goes
 BOXES = {name: box for name, box in SPOT_BOXES.items()}
 SPOT_BOX = {sid: SPOT_BOXES["spot_" + sid] for sid in SPOTS}
@@ -91,7 +115,41 @@ def _set_action(m, x, y, value):
         m.props.pop(("Buildings", x, y), None)
 
 
+def _cells(m, foot):
+    """A piece's tiles as laid: [(dx, dy, layer, gid)] from its left foot tile."""
+    x, y = foot
+    return [(dx, 0, "Buildings", m.g["Buildings"][y][x + dx]) for dx in (0, 1)] +            [(dx, -1, "Front2", m.g["Front2"][y - 1][x + dx]) for dx in (0, 1)]
+
+
+def _lay(m, pieces, sid, kind, foot, cells):
+    """Lays a stool or a rock with its left foot at foot, unless it already stands there. The
+    ground must be clear: nothing on the foot's Buildings or the top's Front layers, no Paths
+    marker (a tree, a bush, long grass), no water."""
+    x, y = foot
+    if pieces.at(m, x, y) == kind:
+        return
+    for dx in (0, 1):
+        for dy in (0, -1):
+            tx, ty = x + dx, y + dy
+            _inside(SPOT_BOX[sid], tx, ty)
+            assert not m.g["Paths"][ty][tx], f"{sid}: a Paths marker under its {kind} at ({tx}, {ty})"
+            for layer in ("Front", "Front2", "AlwaysFront"):
+                assert not m.g[layer][ty][tx], f"{sid}: something on {layer} where its {kind} goes, ({tx}, {ty})"
+        assert not m.g["Buildings"][y][x + dx], f"{sid}: something on Buildings where its {kind}'s foot goes, ({x + dx}, {y})"
+        assert m.g["Back"][y][x + dx] not in bv.WATER_BACKS, f"{sid}: its {kind}'s foot in the water, ({x + dx}, {y})"
+    for dx, dy, layer, gid in cells:
+        m.g[layer][y + dy][x + dx] = gid
+
+
 def patch_map(m, pieces):
+    template = dict(zip(("stool", "rock"), SPOTS[TEMPLATE]))
+    for kind, foot in template.items():
+        assert pieces.at(m, *foot) == kind, f"{TEMPLATE}: no {kind} at {foot}"
+    cells = {kind: _cells(m, foot) for kind, foot in template.items()}
+    for sid, (stool, rock) in NEW_SPOTS.items():
+        _lay(m, pieces, sid, "stool", stool, cells["stool"])
+        _lay(m, pieces, sid, "rock", rock, cells["rock"])
+
     for sid, (stool, rock) in SPOTS.items():
         box = SPOT_BOX[sid]
         for (x, y), kind in ((stool, "stool"), (rock, "rock")):

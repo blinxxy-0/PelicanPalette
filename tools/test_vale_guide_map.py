@@ -313,7 +313,6 @@ HOUSE_TMX = os.path.join(PACK, "assets", "ValeHouse.tmx")
 PAINT_SPOT = "blinxxy.MuseArt_PaintSpot"
 FEATURE_FIRST, FEATURE_COLS = 20000, 32         # the Vale's own building sheet (build_vale.BUILD_FIRST, SHEET_COLS)
 CLEARING = (3, 10, 12, 22)                      # the old Painter's clearing, now the graveyard's
-EXISTING = ("rooftops", "northlight", "wildflowers", "lakewindow")
 
 
 def guide_ids():
@@ -387,15 +386,123 @@ def test_every_spot_action_has_a_known_id():
     assert not bad, bad
 
 
-def test_existing_spots_present():
-    # each of the four kept spots is on both foot tiles of exactly one stool, and only there
-    m = vale_map()
+def spot_stool(m, sid):
+    """The left foot tile of the stool that carries spot sid: it's on both foot tiles of exactly one
+    stool, and nowhere else."""
     stools = [p for p, k in spot_pieces(m).items() if k == "stool"]
-    acts = spot_actions(m)
-    for sid in EXISTING:
-        tiles = sorted((x, y) for (_, x, y), a in acts.items() if a == [sid])
-        on = [s for s in stools if tiles == [s, (s[0] + 1, s[1])]]
-        assert len(on) == 1, f"{sid}: on {tiles}, stools {stools}"
+    tiles = sorted((x, y) for (_, x, y), a in spot_actions(m).items() if a == [sid])
+    on = [s for s in stools if tiles == [s, (s[0] + 1, s[1])]]
+    assert len(on) == 1, f"{sid}: on {tiles}, stools {stools}"
+    return on[0]
+
+
+def spot_tiles(foot):
+    """A stool's or a rock's four tiles (both are 2 x 2: its foot row and its top above), from its left foot."""
+    x, y = foot
+    return [(x + dx, y - dy) for dx in (0, 1) for dy in (0, 1)]
+
+
+def gap(tile, rect):
+    """How many tiles from tile to the nearest tile of rect (0 inside it, 1 touching it)."""
+    x, y = tile
+    x0, y0, x1, y1 = rect
+    return max(x0 - x, 0, x - x1, y0 - y, 0, y - y1)
+
+
+def test_all_eight_spots():
+    # each of the guide's eight spots is on both foot tiles of exactly one stool, and only there
+    # (PENDING_SPOTS: placed once the user has seen where; see test_stage_spot_clear)
+    m = vale_map()
+    for sid in guide_ids():
+        if sid not in PENDING_SPOTS:
+            spot_stool(m, sid)
+
+
+# The Old Stage's spot waits for the user to see it (the user: "make sure the spot near the
+# amphitheatre doesn't feel too intrusive. I eventually have plans for a skill there"). Until it's
+# placed, test_all_eight_spots leaves it out and test_stage_spot_clear is expected to fail.
+PENDING_SPOTS = {"stage"}
+AMPHITHEATRE = (29, 49, 45, 59)          # its footprint (design section 4): keep 2 tiles clear of it
+SEATS_AND_STAGE = (31, 46, 43, 55)       # the bowl's art (build_vale.AMPHITHEATRE: its seats and the stage)
+# the stage's approach: the paved plaza in front of it, and the lane up to it from the west
+STAGE_APPROACH = ((22, 55, 45, 58), (21, 58, 24, 65))
+LOST_PARTERRE = (5, 39, 28, 47)
+
+
+def test_stage_spot_clear():
+    # the stage's stool and rock stand at least 2 tiles from every tile of the amphitheatre's footprint,
+    # off its seats, its stage and the stage's approach
+    import vale_spots
+    m = vale_map()
+    stool = spot_stool(m, "stage")
+    assert "stage" in vale_spots.SPOTS, "vale_spots.SPOTS has no stage spot"
+    rock = vale_spots.SPOTS["stage"][1]
+    assert spot_pieces(m).get(rock) == "rock", f"no rock at {rock}"
+    for kind, foot in (("stool", stool), ("rock", rock)):
+        for t in spot_tiles(foot):
+            assert gap(t, AMPHITHEATRE) >= 2, f"the stage's {kind} at {t}: {gap(t, AMPHITHEATRE)} from the amphitheatre"
+            assert gap(t, SEATS_AND_STAGE) > 0, f"the stage's {kind} at {t}: on the seats or the stage"
+            assert all(gap(t, lane) > 0 for lane in STAGE_APPROACH), f"the stage's {kind} at {t}: on the approach"
+
+
+def test_parterre_spot():
+    # inside the Lost Parterre, at least 3 tiles from the statue hidden in its hedge
+    from vale_patch import SCULPTURE_BOX
+    m = vale_map()
+    stool = spot_stool(m, "parterre")
+    for t in spot_tiles(stool):
+        assert gap(t, LOST_PARTERRE) == 0, f"the parterre's stool at {t}: outside {LOST_PARTERRE}"
+        assert gap(t, SCULPTURE_BOX) >= 3, f"the parterre's stool at {t}: {gap(t, SCULPTURE_BOX)} from the hidden statue"
+
+
+def test_falls_spot():
+    # beside the basin (water next to it), inside the waterfall's box, and you can walk to its front
+    from vale_patch import FALLS_BOX
+    m = vale_map()
+    x, y = spot_stool(m, "falls")
+    tiles = spot_tiles((x, y))
+    assert all(gap(t, FALLS_BOX) == 0 for t in tiles), f"the falls' stool at {tiles}: outside {FALLS_BOX}"
+    near = {(tx + dx, ty + dy) for tx, ty in tiles for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+    assert any(m.water(*t) for t in near), f"the falls' stool at {(x, y)}: no water beside it"
+    front = [t for t in ((x, y + 1), (x + 1, y + 1)) if m.walkable(*t)]
+    reach = m.reach(BUS_STOP)
+    assert any(t in reach for t in front), f"the falls' stool at {(x, y)}: nowhere reachable in front ({front})"
+
+
+def test_tree_spot():
+    # on the Gilded Tree's lawn: near its trunk but clear of its art (the tree draws over a stool under
+    # it), and well apart from the wildflowers' spot (the user: "can't be two right next to each other")
+    import build_vale as bv
+    import vale_spots
+    from PIL import Image
+    m = vale_map()
+    stool = spot_stool(m, "tree")
+    art, left, bottom = bv.PICKS["old_tree"][:3]
+    im = bv.tile_piece(Image.open(os.path.join(ROOT, bv.ART, art + ".png")).convert("RGBA"), 0)
+    tree = (left, bottom - im.height // 16 + 1, left + im.width // 16 - 1, bottom)
+    trunk = (left + 3, bottom, left + 4, bottom)
+    wild = vale_spots.SPOTS["wildflowers"]
+    near = min(gap(t, trunk) for t in spot_tiles(stool))
+    assert near <= 5, f"the tree's stool at {stool}: {near} from the trunk"
+    for t in spot_tiles(stool):
+        assert gap(t, tree) > 0, f"the tree's stool at {t}: under the tree {tree}"
+        for foot in wild:
+            assert all(gap(t, (wx, wy, wx, wy)) >= 5 for wx, wy in spot_tiles(foot)), f"the tree's stool at {t}: by the wildflowers' spot"
+
+
+def test_new_spots_not_under_trees():
+    # no tree planted from the Paths layer (oak, maple, pine, fruit) stands with its canopy over a new
+    # spot's stool or rock: the canopy is 3 wide and 6 tall over the trunk, and draws over what's behind
+    # it (the woods' edge trees reach up over the tree's lawn as far as row 67)
+    import vale_spots
+    m = vale_map()
+    trees = [(x, y) for y in range(m.h) for x in range(m.w)
+             if m.at("Paths", x, y) and m.at("Paths", x, y) - m.paths_first in (9, 10, 11, 34)]
+    canopy = {(tx + dx, ty - dy): (tx, ty) for tx, ty in trees for dx in (-1, 0, 1) for dy in range(6)}
+    for sid in vale_spots.NEW_SPOTS:
+        for foot in vale_spots.SPOTS[sid]:
+            for t in spot_tiles(foot):
+                assert t not in canopy, f"{sid}: {t} under the tree at {canopy.get(t)}"
 
 
 def test_clearing_spot_gone():
@@ -447,13 +554,14 @@ def test_only_guide_boxes_changed():
 
 
 def test_spots_in_routes():
-    # vale_routes.PLACES stands in front of each kept stool, on walkable ground
+    # vale_routes.PLACES stands in front of each spot's stool, on walkable ground
     import vale_routes
     m = vale_map()
-    acts = spot_actions(m)
     places = set(vale_routes.PLACES.values())
-    for sid in EXISTING:
-        x, y = min((x, y) for (_, x, y), a in acts.items() if a == [sid])
+    for sid in guide_ids():
+        if sid in PENDING_SPOTS:
+            continue
+        x, y = spot_stool(m, sid)
         front = [p for p in ((x, y + 1), (x + 1, y + 1)) if p in places]
         assert front and all(m.walkable(*p) for p in front), f"{sid}: in front of ({x}, {y}): {front}"
 
@@ -806,7 +914,21 @@ def test_guide_board():
 
 
 if __name__ == "__main__":
+    # tests waiting on a pending spot are expected to fail; one that passes means the spot is
+    # placed, and it should come out of PENDING_SPOTS
+    expected_failures = {"test_stage_spot_clear"} if "stage" in PENDING_SPOTS else set()
+    only = sys.argv[1:]
     for name, fn in [(n, f) for n, f in list(globals().items()) if n.startswith("test_") and callable(f)]:
+        if only and name not in only:
+            continue
+        if name in expected_failures:
+            try:
+                fn()
+            except Exception as e:
+                print("pending", name, f"({type(e).__name__}: {e})")
+                continue
+            print("FAIL", name, "passes, but its spot is still in PENDING_SPOTS")
+            sys.exit(1)
         try:
             fn()
         except Exception:

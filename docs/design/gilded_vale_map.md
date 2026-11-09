@@ -22,7 +22,7 @@
 | **The pottery** | 46 to 56, 12 to 20 | Tobin's. The kiln chimney smokes on firing days. Its clay pit is on the riverbank below it (57, 25) |
 | **The upper bridge** | 64, 17 | Over the river, to Lupini's side |
 | **Lupini's atelier** | 75 to 86, 16 to 24 | On the bluff by the waterfall, looking south over the whole Vale. A small, overgrown garden |
-| **The Painter's clearing** | 3 to 8, 14 to 22 | Up a path into the western woods. The hidden easel (a discovery) |
+| **The graveyard** | 3 to 12, 10 to 22 | The old Painter's clearing, up a trail from the bus road's turning circle into the western woods. A low stone wall and gate, seven graves (Bram's carved stones, his own plain one, Tobin's clay markers) with an urn at each, and a bench (built 2026-11-09, `tools/vale_graveyard.py`). The hidden easel moved to the Gilded Grove (section 8) |
 
 ### The middle terrace: the Vale's heart
 
@@ -93,7 +93,22 @@ All of them decoratable rooms, built the way Margot's were: straight walls, the 
 
 ## 7. Views to paint
 
-The overlook (the whole Vale), the plaza and the old tree, the amphitheatre, the sculpture garden, the lake, the waterfall, and the spot from Lupini's 4-heart event once you've seen it. They go into the painting record, and a portfolio page of their own, **The Vale** (to decide).
+**The eight painting spots,** each a stool with Lupini's paint box and the rock he wipes his brushes on. Only the stool is touched: with the old painters' guide in hand, it's found (`tools/vale_spots.py`; the painters' guide design, `docs/superpowers/specs/2026-11-08-vale-painters-guide-grove-graveyard-design.md`, section 4). You paint the view with an easel of your own, the usual way.
+
+| # | Spot | Stool (left foot) | Where |
+|---|---|---|---|
+| 1 | The Rooftops | 43, 4 | The high street, by its hedge |
+| 2 | The North Light | 79, 16 | Lupini's garden, by the atelier |
+| 3 | The Wildflower Field | 28, 65 | The meadow |
+| 4 | The Lake Window | 90, 60 | Up on the overlook, over the lake |
+| 5 | The Lost Parterre | 25, 44 | The sculpture garden, just inside its east gate, looking west down the hedges |
+| 6 | The Falls | 74, 13 | The basin's south bank, west of the fall |
+| 7 | Under the Gilded Tree | 43, 66 | The tree's lawn, east of it, between the canopy and the lakeside sand |
+| 8 | The Old Stage | (proposed 25, 53) | Under the cliff west of the amphitheatre, looking at it from the side, well clear of the bowl (a skill may use it later). Waiting for the user's yes |
+
+**And the hidden easel** in the Gilded Grove (section 8): the Vale from above, in gold light. One view, not four, since the Grove has no seasons.
+
+They go into the painting record, and a portfolio page of their own, **The Vale** (to decide).
 
 ## 8. Where the discoveries go
 
@@ -101,7 +116,7 @@ The concept sheet's hidden things (its section 7), placed:
 
 | Discovery | Where |
 |---|---|
-| A hidden easel overlooking the Vale | The Painter's clearing |
+| A hidden easel overlooking the Vale | **The Gilded Grove,** a painting the Vale's first painters made of their favourite place, which you step inside: a small map of its own (`blinxxy.MuseArt_GildedGrove`), always in fall's gold light. The easel stands at its edge over a painted panorama of the Vale. You reach it only by the old painters' guide, once all eight spots are found: using the guide anywhere in the Vale asks "Step into the last page?", and a painted frame at the Grove's edge brings you back to the graveyard's gate |
 | A painting hung backward | The open Old Studio |
 | A weathered sign listing former studios | By the Old Studios, across the lane from the foot of Lupini's stairs (78-80, 43-45). Built 2026-11-08 with the studios' carved numerals (I, II, III) on their plaques and the signed house rules inside studio I: `tools/vale_studio_signs.py` |
 | A sculpture almost hidden by plants | The sculpture garden's south-west corner, behind a hedge. **Built:** a head and shoulders in the hedge at (6 to 7, 44 to 45). It is the west statue's own head, between two bushes cut from the lower bed beside it. The head and the hedge's top are on Front, so you walk behind them; only the hedge's foot (6 to 7, 45) is solid. Examine it from (7, 44) for the message `vale.garden.hidden_statue`. All four seasons (the winter hedge keeps its snow caps) |
@@ -109,7 +124,7 @@ The concept sheet's hidden things (its section 7), placed:
 | A bench that gives Lupini a special line | The overlook: the bench at (89, 58), the Town side bench facing west over the lake. **Built:** a solid seat tile, as the Vale's other benches are. In game the farmer sits on it, and so do Lupini (Sundays from 2pm) and Emmett (Saturdays from 1pm): their sheets' frame 16, Alex's seated pose with their own heads (`tools/art/vale_sit_build.py`), drawn with `offset -16 24` so they sit mid-seat with their feet over its front edge (both seen in game, 2026-11-09) |
 | A mural that changes with the story | The Exhibition Hall's west wall: faded, then repainted after Lupini's 8-heart event |
 | An abandoned exhibition room | The Hall's back room, before it reopens |
-| The old painters' guide to the viewpoints | The Vale House noticeboard |
+| The old painters' guide to the viewpoints | The Vale House noticeboard, by the guest books. Built: take it from the board (`blinxxy.MuseArt_TakeGuide`); it names the eight spots (section 7) |
 
 ## 9. Building it (proposed 2026-11-03)
 
@@ -137,6 +152,8 @@ The concept sheet's hidden things (its section 7), placed:
 - **Changes from the design,** as built: the steps climb the bluff's south face, not up from (82, 58). The bench is the Town side bench facing west, not north. The shed's door faces south. The picnic table is at the bluff's foot. The top is about 7 by 9 tiles with its rim on row 55. The bluff is one level high, not as high as the upper terrace.
 - **Rebuilds and merges:** a rebuild keeps them: `build_vale.py` runs `VALE_PIECES` on the map after it writes it (though it doesn't reproduce the committed map itself). On a merge conflict in `GildedVale.tmx`, take ONE side's TMX together with ALL FOUR `<season>_GildedValeBuildings.png` from that same side, then re-run `python tools/vale_sculpture.py`, `vale_falls.py` and `vale_overlook.py` on it, each as `<script> "[CP] Gilded Vale (dev)/assets/GildedVale.tmx" <exports>`. Never mix one side's TMX with the other side's sheets (the pieces' slot numbers live in both). Don't hand-merge the tile data. Then run `python tools/test_vale_pieces.py` (after a merge of main, set `VALE_BASE` to main's side of the merge for `test_outside_boxes_unchanged`).
 - **Seen in game, and not:** only Lupini was seen reaching the bench (Task 6, on a Sunday; he stands on the seat, there is no sit pose yet). Emmett's visit to the bench was not seen. Everything else was checked in a test copy in all four seasons.
+
+**Progress (2026-11-09):** the clearing is the graveyard (section 1); the painters' guide finds the eight painting spots (section 7: seven built, the Old Stage's waiting for the user's yes on its tile); the hidden easel is in the Gilded Grove (section 8).
 
 **The order:**
 1. **Greybox** (no art, no generations): `tools/build_vale.py` writes the TMX from vanilla tiles, with plain boxes for the buildings. A debug warp in, then walk it in-game in all four seasons: terraces, stairs, bridges, distances.
