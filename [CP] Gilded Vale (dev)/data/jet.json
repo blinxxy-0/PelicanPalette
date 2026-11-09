@@ -61,6 +61,14 @@
       "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"},
       "Entries": { "JetCorrie": "{{i18n:jet.gift.love}}/338 82 74 253 70/{{i18n:jet.gift.like}}/-2 -12 198 202 213 214 219 227 228 728 730/{{i18n:jet.gift.dislike}}/167 92 724 725 726/{{i18n:jet.gift.hate}}/168 747 172/{{i18n:jet.gift.neutral}}/" }
     },
+    // ---- His days (data/jet_schedule.json), and the Exhibition Hall days once it reopens ----
+    { "Action": "Load", "Target": "Characters/schedules/JetCorrie", "FromFile": "data/jet_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/JetCorrie",
+      "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true", "HasFlag": "blinxxy.MuseArt_ValeHallOpen"},
+      "Entries": {"Tue": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 18 6 2", "Thu": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 18 6 2"}
+    },
     // ---- What he says ----
     { "Action": "Include", "FromFile": "data/jet_dialogue.json" }
   ]

@@ -1,7 +1,7 @@
 """Writes the Corrie twins' approved everyday dialogue and gift tastes into the dev pack from
 docs/corrie_twins_dialogue.md (its tables are the source: edit the doc, rerun this):
-data/opal_dialogue.json, data/jet_dialogue.json, the gift tastes in data/opal.json and
-data/jet.json, and the i18n keys opal.dialogue.*, opal.gift.*, jet.dialogue.*, jet.gift.*.
+data/opal_dialogue.json, data/jet_dialogue.json, the gift tastes, schedule Loads and
+Exhibition Hall days in data/opal.json and data/jet.json, and the i18n keys opal.dialogue.*, opal.gift.*, jet.dialogue.*, jet.gift.*.
 
 Usage: python tools/corrie_dialogue.py"""
 import json, re
@@ -15,6 +15,14 @@ TASTES = {
                   "dislike": "167 92 724 725 726", "hate": "168 747 172"},
 }
 WHO = {"opal": ("OpalCorrie", "Opal"), "jet": ("JetCorrie", "Jet")}
+# Two days a week at the Exhibition Hall once Lupini's 8-heart event reopens it (the mail flag
+# blinxxy.MuseArt_ValeHallOpen): outside its front, at its windows, Opal at the right-hand ones,
+# Jet at the left (his dawn walk first). Rain keeps them in: rain comes before the weekdays.
+_S2, _V = "blinxxy.MuseArt_ValeStudio2", "blinxxy.MuseArt_GildedVale"
+HALL_DAYS = {
+    "OpalCorrie": {d: f"900 {_V} 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 {_S2} 3 6 2" for d in ("Tue", "Thu")},
+    "JetCorrie": {d: f"600 {_V} 19 37 3/900 {_V} 40 40 0/1700 {_S2} 16 5 0/2100 {_S2} 18 6 2" for d in ("Tue", "Thu")},
+}
 
 
 def tables():
@@ -70,6 +78,11 @@ def main():
                  f'    {{\n      "Action": "EditData",\n      "Target": "Data/NPCGiftTastes",\n      "When": {json.dumps(when)},\n'
                  f'      "Entries": {{ "{name}": "{{{{i18n:{slug}.gift.love}}}}/{t["love"]}/{{{{i18n:{slug}.gift.like}}}}/{t["like"]}/'
                  f'{{{{i18n:{slug}.gift.dislike}}}}/{t["dislike"]}/{{{{i18n:{slug}.gift.hate}}}}/{t["hate"]}/{{{{i18n:{slug}.gift.neutral}}}}/" }}\n    }},\n'
+                 f'    // ---- {"Her" if slug == "opal" else "His"} days (data/{slug}_schedule.json), and the Exhibition Hall days once it reopens ----\n'
+                 f'    {{ "Action": "Load", "Target": "Characters/schedules/{name}", "FromFile": "data/{slug}_schedule.json", "When": {json.dumps(when)} }},\n'
+                 f'    {{\n      "Action": "EditData",\n      "Target": "Characters/schedules/{name}",\n'
+                 f'      "When": {json.dumps({**when, "HasFlag": "blinxxy.MuseArt_ValeHallOpen"})},\n'
+                 f'      "Entries": {json.dumps(HALL_DAYS[name])}\n    }},\n'
                  f'    // ---- What {"she" if slug == "opal" else "he"} says ----\n'
                  f'    {{ "Action": "Include", "FromFile": "data/{slug}_dialogue.json" }}\n')
         anchor = f'    {{ "Action": "Load", "Target": "Portraits/{name}", "FromFile": "assets/{slug}/portraits.png", "When": {json.dumps(when)} }}'

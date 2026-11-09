@@ -60,6 +60,14 @@
       "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"},
       "Entries": { "OpalCorrie": "{{i18n:opal.gift.love}}/338 82 74 595 221/{{i18n:opal.gift.like}}/-2 -12 -80/{{i18n:opal.gift.dislike}}/167/{{i18n:opal.gift.hate}}/168 747 172/{{i18n:opal.gift.neutral}}/" }
     },
+    // ---- Her days (data/opal_schedule.json), and the Exhibition Hall days once it reopens ----
+    { "Action": "Load", "Target": "Characters/schedules/OpalCorrie", "FromFile": "data/opal_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/OpalCorrie",
+      "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true", "HasFlag": "blinxxy.MuseArt_ValeHallOpen"},
+      "Entries": {"Tue": "900 blinxxy.MuseArt_GildedVale 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 blinxxy.MuseArt_ValeStudio2 3 6 2", "Thu": "900 blinxxy.MuseArt_GildedVale 48 40 0/1700 blinxxy.MuseArt_ValeHouse 17 25 1/2200 blinxxy.MuseArt_ValeStudio2 3 6 2"}
+    },
     // ---- What she says ----
     { "Action": "Include", "FromFile": "data/opal_dialogue.json" }
   ]
