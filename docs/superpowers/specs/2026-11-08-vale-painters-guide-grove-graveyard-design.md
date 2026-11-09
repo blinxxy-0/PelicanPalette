@@ -128,7 +128,7 @@ This needs one more piece of art: a clay marker in place of a headstone for thre
 - All the code: the quest, the guide item, the splash overlay, the warp, the frame, the offering, and the echoes' interaction.
 - Exact tiles for the new spots, the Grove's layout, and the graveyard's layout, within the rules above. Show renders before committing.
 - **All player-facing text is drafted by the builder and shown to the user as one batch before it's committed:** the guide's eight lines and its last page, the quest text, Bea's line, Tobin's line, the epitaphs, the four echoes' memories, and the Founders' easel's lines. Write it in the voice of `docs/vale_events.md` and the residents' briefs.
-- Art: headstones (four carved, one plain), clay markers (three), urns, the Vale panorama below the Grove's edge, the wall and gate, the echoes (four), the Founders' easel, the hidden easel, the return frame, the guide's icon, the painted fish's icon, and the splash. The builder chooses PixelLab or hand-drawn, within the credit rule above.
+- Art: headstones (three carved, one plain), clay markers (three), urns, the Vale panorama below the Grove's edge, the wall and gate, the echoes (four), the Founders' easel, the hidden easel, the return frame, the guide's icon, the painted fish's icon, and the splash. The builder chooses PixelLab or hand-drawn, within the credit rule above.
 - The masterpiece bonus at the hidden easel, and the Founders' Frame's trait.
 - In-game checks in `ArtStudio/Vale/ValeTests.cs`, in the style of the existing ones.
 

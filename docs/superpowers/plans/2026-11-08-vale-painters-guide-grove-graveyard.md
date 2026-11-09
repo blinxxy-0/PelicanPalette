@@ -19,7 +19,7 @@
 - Props stay well inside yards: nothing on walls, nothing straddling edges. Only a tall thing's bottom row is solid; its top goes on Front.
 - Read `docs/terrain_painting.md` before painting terrain. Patch `GildedVale.tmx` in place (`tools/vale_patch.py`), never by rebuilding with `build_vale.py`.
 - Check every map change in all four seasons (offline renders with `tools/render_tmx.py`; in game with `museart_menu mapshot`).
-- Never launch a game over the user's running game. Use `run_dev.ps1 -ModsDir devmods_guide` (`docs/development.md`) with `PELICAN_DEV_ROOT=C:/Users/blinx/Desktop/MuseStardew/.devgame`, and check the log's "Mods go here" line names `devmods_guide`.
+- Never launch a game over the user's running game. Use `tools/test/run_dev.ps1 -ModsDir devmods_guide` (`docs/development.md`) with `PELICAN_DEV_ROOT=C:/Users/blinx/Desktop/MuseStardew/.devgame`, and check the log's "Mods go here" line names `devmods_guide`.
 - All player-facing text is approved by the user as one batch (Task 1) before it is committed. All new art is shown as candidates (Task 2) before it's used, with a rough PixelLab generation count before any credits are spent.
 - Commit only this work's files on `claude/vale-guide-grove`. Never push to main or release without the user's OK.
 
@@ -63,7 +63,7 @@ The Vale's map and the Vale House interior are being changed on other branches. 
 **Files:**
 - Create: `art/gilded_vale/props/vale_guide_v1/` (candidates), `art/gilded_vale/props/vale_guide_v1/candidates.png` (a contact sheet, each candidate at 3x beside a vanilla tombstone and easel for scale)
 
-- [ ] **Step 1:** List the pieces with sizes in tiles, and the PixelLab generations each would take (or "hand-drawn"): four carved headstones, one plain stone, three glazed clay markers, seven urns in different glazes, the low wall and gate, four echoes (two frames of idle motion each), the Founders' easel (empty, and with a covered canvas), the hidden easel, the return frame, the Vale panorama, the guide icon, the painted-fish icon, and the Founders' Frame (in the style of `tools/art/frame_styles.py`). The splash is drawn in code (Task 3); it needs no art.
+- [ ] **Step 1:** List the pieces with sizes in tiles, and the PixelLab generations each would take (or "hand-drawn"): three carved headstones, one plain stone, three glazed clay markers, seven urns in different glazes, the low wall and gate, four echoes (two frames of idle motion each), the Founders' easel (empty, and with a covered canvas), the hidden easel, the return frame, the Vale panorama, the guide icon, the painted-fish icon, and the Founders' Frame (in the style of `tools/art/frame_styles.py`). The splash is drawn in code (Task 3); it needs no art.
 - [ ] **Step 2:** Tell the user the total generation count and wait for their OK before spending credits. Then make the candidates and send the contact sheet. Apply their picks, add winter versions of the outdoor graveyard pieces (snow, like `SEASONAL` in `tools/build_vale.py`), and commit the chosen art.
 
 ### Task 3: Spots that you find, and the splash
@@ -143,7 +143,7 @@ The Vale's map and the Vale House interior are being changed on other branches. 
 - Produces: the tile action `blinxxy.MuseArt_Grave <id>` (ids as in Task 1), and `static readonly Point GraveyardGateTile` (in `ValeGraves`), the tile just inside the gate, used by Task 7.
 
 - [ ] **Step 1: Write the failing offline checks:**
-  - `test_graves`: exactly 7 `Grave` actions, one per id, all inside the wall. Four are carved stones, Bram's is the plain stone, and Ada's, Hester's and Amos's are clay markers. Each grave has an urn piece on the tile at its foot.
+  - `test_graves`: exactly 7 `Grave` actions, one per id, all inside the wall. Three (Agnes, Hollis, Mabel) are carved stones, Bram's is the plain stone, and Ada's, Hester's and Amos's are clay markers. Each grave has an urn piece on the tile at its foot.
   - `test_wall_closed_but_gate`: the wall's ring is solid except the gate. The gate tile is walkable from the bus stop (`vale_routes` reachability).
   - `test_nothing_on_the_wall`: no prop's tiles overlap the wall's tiles or straddle its edge.
   - `test_tall_feet_only`: each stone's and marker's top row is on Front, and only its bottom row is on Buildings.
