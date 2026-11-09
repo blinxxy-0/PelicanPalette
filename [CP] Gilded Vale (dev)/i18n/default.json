@@ -526,6 +526,8 @@
   "vale.guide.page.unfound": "...",
   "vale.guide.step_in": "Step into the last page?",
   "vale.guide.not_here": "The page only seems to come alive in the Vale.",
+  // Said once, the morning after you've found all eight spots (data/bea_dialogue.json)
+  "bea.dialogue.grove_open": "All eight? Then you've seen more of this valley than I have. Don't tell me what's on the last page. I'd like to wonder.$h",
   "vale.guide.in_grove": "You're already standing in the last page.",
   "quest.painters_guide.title": "The Old Painters' Spots",
   "quest.painters_guide.description": "An old guide from the Vale House names eight places where the Vale's painters liked to sit. Find each one, and see what they saw.",
@@ -553,7 +555,7 @@
   "vale.grave.bram": "A plain stone, never carved. Scratched into it, not very neatly:^^BRAM FAIRLIE",
   "vale.grave.ada": "A clay marker she glazed herself, years before it was needed.^^ADA BRANNOCK^Pots, and the kiln. 46 summers.^On her urn's lid, in her glaze: 'not yet'. Nobody has had the heart to change it.",
   "vale.grave.hester": "A clay marker glazed heather-purple, a small T pressed into the foot.^^HESTER THISTLE^The Vale House. 50 summers.^'There was always tea, and always room.'",
-  "vale.grave.amos": "A clay marker glazed hedge-green, a small T pressed into the foot. Something nobody planted flowers at its foot.^^AMOS REED^The gardens. 72 summers.^'A gardener's job is to listen.'",
+  "vale.grave.amos": "A clay marker glazed hedge-green, a small T pressed into its foot. Somebody keeps flowers growing beside it.^^AMOS REED^The gardens. 72 summers.^'A gardener's job is to listen.'",
 
   // The Vale's own fish (data/vale_fish.json)
   "fish.loach.name": "Claybank Loach",
@@ -566,8 +568,8 @@
   "fish.shiner.description": "So blue that the painters who saw it were told they'd made it up.",
   "fish.carp.name": "Gilt Carp",
   "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake.",
-  // The painted fish (data/vale_guide.json). PLACEHOLDER text: needs the author's review.
-  "fish.painted.name": "Painted Fish",
+  // The painted fish (data/vale_guide.json).
+  "fish.painted.name": "Brushfin",
   "fish.painted.description": "A rare fish, drawn with visible brushstrokes. It only lives in the Gilded Grove's pool.",
 
   // The Old Studios' sale and Robin's job (tools/vale_studio_sale.py writes these)

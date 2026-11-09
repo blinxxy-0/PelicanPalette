@@ -1,6 +1,6 @@
-# The painters' guide, the Grove and the graveyard: the text (DRAFT, for approval)
+# The painters' guide, the Grove and the graveyard: the text (APPROVED by the user on 2026-11-09)
 
-Every player-facing line for the design in `2026-11-08-vale-painters-guide-grove-graveyard-design.md`, under its future i18n key. Nothing here is in the i18n files yet: once you've approved it (with your edits), this file is the source for every string.
+Every player-facing line for the design in `2026-11-08-vale-painters-guide-grove-graveyard-design.md`, under its future i18n key. Approved by the user on 2026-11-09, with his edits (Tobin's T on the foot, Amos's stone, the painted fish's name, Bea's reply). The i18n files hold these strings; this file is the full record.
 
 How to read it:
 - `#$b#` starts a new box, as in the residents' dialogue. Portrait codes (`$0`, `$h`, `$s`, `$u`, `$l`) are only on lines a resident says.
@@ -115,7 +115,7 @@ Each stone shows a line about the marker, then what's on it: the name, what they
 > A clay marker glazed heather-purple, a small T pressed into the back.^^HESTER THISTLE^The Vale House. 50 summers.^'There was always tea, and always room.'
 
 **`vale.grave.amos`**
-> A clay marker glazed hedge-green, a small T pressed into the back. Something nobody planted flowers at its foot.^^AMOS REED^The gardens. 72 summers.^'A gardener's job is to listen.'
+> A clay marker glazed hedge-green, a small T pressed into its foot. Somebody keeps flowers growing beside it.^^AMOS REED^The gardens. 72 summers.^'A gardener's job is to listen.'
 
 **`vale.grave.ada`**
 > A clay marker she glazed herself, years before it was needed.^^ADA BRANNOCK^Pots, and the kiln. 46 summers.^On her urn's lid, in her glaze: 'not yet'. Nobody has had the heart to change it.
@@ -181,3 +181,33 @@ Memories in the artists' own voices, from their own time. They don't know you're
 
 **`lupini.dialogue.bram`**
 > Bram carved the stones for his friends in the clearing, every one. When he went, nobody was left who could carve his. I scratched his name on with a palette knife. He'd have hated my lettering.$s
+
+**`bea.dialogue.grove_open`** (Bea, said once, the next time you talk to her after the Grove opens)
+> All eight? Then you've seen more of this valley than I have. Don't tell me what's on the last page. I'd like to wonder.$h
+
+---
+
+## Written while building
+
+Lines that weren't in the first draft, copied from the i18n files.
+
+**`vale.guide.item.description`** (the guide's item description)
+> A thin book spotted with old paint. Right-click to turn its pages, or touch a worn stool with it.
+
+**`vale.guide.in_grove`** (stepping into the last page while already in the Grove)
+> You're already standing in the last page.
+
+**`location.gilded-grove`** (the Grove's name)
+> The Gilded Grove
+
+**`item.frame.founders`** (the frame the Founders' easel gives)
+> Founders' Frame
+
+**`item.frame.founders.description`**
+> An old frame from the Vale's first painters, warm as if it had just been carved. Hung in a room, inspiration comes sooner.
+
+**`fish.painted.name`**
+> Brushfin
+
+**`fish.painted.description`**
+> A rare fish, drawn with visible brushstrokes. It only lives in the Gilded Grove's pool.

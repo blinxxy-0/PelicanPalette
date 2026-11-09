@@ -881,7 +881,8 @@ def test_grave_text():
     for key in keys:
         assert i18n.get(key) == drafted(key), (key, i18n.get(key), drafted(key))
     for g in ("hester", "amos"):
-        assert "into the foot" in i18n[f"vale.grave.{g}"] and "into the back" not in i18n[f"vale.grave.{g}"]
+        # Amos's approved stone says "its foot"; Hester's keeps "the foot"
+        assert re.search(r"into (the|its) foot", i18n[f"vale.grave.{g}"]) and "into the back" not in i18n[f"vale.grave.{g}"]
     strings = guide_entries_from(os.path.join(PACK, "data", "vale_shops.json"), "Mods/blinxxy.MuseArt/ValeStrings")
     for g in GRAVE_IDS:
         assert strings.get(f"vale.grave.{g}") == "{{i18n:vale.grave.%s}}" % g, g

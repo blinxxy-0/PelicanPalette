@@ -528,6 +528,7 @@ internal static class GuideTests
         {
             (ModEntry.Id + "_ValeUrnsTalk", "TobinClay", ModEntry.Id + "_ValeUrns"),
             (ModEntry.Id + "_ValeBramTalk", "Lupini", ModEntry.Id + "_ValeBram"),
+            (ModEntry.Id + "_ValeGroveTalk", "BeaThistle", ModEntry.Id + "_ValeGrove"),
         };
         var wiring = new List<string>();
         bool wired = true;
@@ -541,7 +542,30 @@ internal static class GuideTests
             wired &= parses && said;
             wiring.Add($"{npc}: trigger {parses}, line {said}");
         }
-        Check(monitor, "graves: Tobin's urns and Lupini's Bram lines are wired", wired, string.Join("; ", wiring));
+        Check(monitor, "graves: Tobin's urns, Lupini's Bram and Bea's Grove lines are wired", wired, string.Join("; ", wiring));
+
+        // Bea's: the topic is added only once the Grove has opened, and the trigger isn't set to repeat (an action
+        // marked applied runs once per save, so it isn't added again after she's said it).
+        {
+            var beaWho = Game1.player;
+            bool beaHad = beaWho.mailReceived.Contains(PaintersGuide.GroveOpenFlag);
+            try
+            {
+                var bea = triggers.TryGetValue(ModEntry.Id + "_ValeGroveTalk", out var bt) ? bt : null;
+                beaWho.mailReceived.Remove(PaintersGuide.GroveOpenFlag);
+                bool closed = bea != null && !GameStateQuery.CheckConditions(bea.Condition);
+                beaWho.mailReceived.Add(PaintersGuide.GroveOpenFlag);
+                bool open = bea != null && GameStateQuery.CheckConditions(bea.Condition);
+                bool once = bea != null && bea.Trigger == "DayStarted" && bea.MarkActionApplied;
+                Check(monitor, "graves: Bea's Grove topic waits for the Grove and is added once", closed && open && once,
+                    $"closed {closed}, open {open}, once {once}");
+            }
+            finally
+            {
+                if (!beaHad)
+                    beaWho.mailReceived.Remove(PaintersGuide.GroveOpenFlag);
+            }
+        }
     }
 
     // ---- The Grove's two easels ----
