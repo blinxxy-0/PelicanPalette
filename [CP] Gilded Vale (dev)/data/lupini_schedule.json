@@ -8,8 +8,9 @@
   // and rocks with blinxxy.MuseArt_PaintSpot), a different one each day, standing
   // beside the spot so you can still sit and paint there; back at his easel at 4;
   // the Vale House in the evening (at the table across from Tobin); bed at 11.
-  // Monday: the clearing in the western woods.
-  "Mon": "900 blinxxy.MuseArt_GildedVale 10 16 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
+  // Monday: the graveyard in the old clearing (tools/vale_graveyard.py), beside its bench by the
+  // gate, sketching the stones, looking down over them as the bench does.
+  "Mon": "900 blinxxy.MuseArt_GildedVale 9 15 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
   // Tuesday: the high street, looking down over the Vale.
   "Tue": "900 blinxxy.MuseArt_GildedVale 44 5 2/1600 blinxxy.MuseArt_ValeAtelier 10 7 0/1800 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2",
   // Wednesday: the spot by his own atelier.

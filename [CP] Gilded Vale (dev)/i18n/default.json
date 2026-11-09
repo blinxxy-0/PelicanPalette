@@ -135,6 +135,8 @@
   "tobin.dialogue.AcceptGift_395": "Coffee. Black. You've been paying attention.$h",
   "tobin.dialogue.AcceptBirthdayGift_Positive": "For my birthday. ...Thank you. I'm not good at this part. It's a good gift.$l",
   "tobin.dialogue.AcceptBirthdayGift_Negative": "For my birthday. Hm. I'll find it a shelf.$0",
+  // Said once, from 4 hearts, after you've read a stone in the graveyard (data/tobin_dialogue.json)
+  "tobin.dialogue.urns": "The urns in the clearing. Ada built a kiln outdoors just for those. Every one glazed in the colour that person loved.$0#$b#Never met her. I fire it now, when somebody asks. Bea's aunt was heather. Amos was hedge green. Took me three firings. He'd have said four.$u",
   "lupini.name": "Lupini",
   "lupini.gift.love": "My friend! This is perfect. You've got an eye, you know. Don't waste it.$h",
   "lupini.gift.like": "How kind. The colour alone! Thank you.$h",
@@ -191,6 +193,8 @@
   "lupini.dialogue.AcceptGift_330": "Clay. Tobin's given me enough clay to last a lifetime, my friend. He calls it 'perspective'.$u",
   "lupini.dialogue.AcceptBirthdayGift_Positive": "For my birthday! You remembered. I'm touched, my friend. Truly.$l",
   "lupini.dialogue.AcceptBirthdayGift_Negative": "For my birthday. Ah. It has... a strong composition.$s",
+  // Said once, after you've read Bram's stone (data/lupini_dialogue.json)
+  "lupini.dialogue.bram": "Bram carved the stones for his friends in the clearing, every one. When he went, nobody was left who could carve his. I scratched his name on with a palette knife. He'd have hated my lettering.$s",
   "fern.name": "Fern",
   "fern.gift.love": "Oh! Oh, you lovely thing. And you, too. Thank you!$h",
   "fern.gift.like": "Thank you! Something to plant, or something to plant near. Either way.$h",
@@ -538,6 +542,17 @@
   "vale.echo.hollis": "A woodcut's mostly what you take away. Every bit you cut prints white. Cut one line too many and the block's spoiled, and there's no painting over it.#$b#Took me years to learn what to leave out. Folk call that patience. It isn't. I'm just frightened of the knife.",
   "vale.echo.mabel": "Glass on the bench is nothing much. Grey, a bit dusty. Hold it up to the window, though... There. That's the whole trick. You let the light through.#$b#Opal's at my bench again, loud as a kettle, and Jet's under it sorting the blues. They'll go off to the city one day, the pair of them. Good. Then they can come home and tell me all about it.",
   "vale.echo.bram": "Every stone I carve, they want a line on it. Something to make the visitors stop. I pick each word with them, and cut it deep, so it lasts.#$b#Not mine. When it's my turn, leave it plain. Scratch the name on and let the stone do the talking. Stone's good at that. Better than me.",
+
+  // The graveyard in the old Painter's clearing (docs/superpowers/specs/2026-11-08-vale-guide-text.md; the
+  // user's one change: Tobin's T is pressed into the markers' foot, where the art shows it). ^^ ends a
+  // stone's first page (the marker), ^ is a line of what's written on it (ArtStudio/Vale/ValeGraves.cs).
+  "vale.grave.agnes": "A headstone, cut deep and clean. A small B in one corner.^^AGNES MORROW^Oils. 18 summers.^'Not one sky the same.'",
+  "vale.grave.hollis": "A headstone, cut deep and clean. A small B in one corner.^^HOLLIS PIKE^Woodcuts. 22 summers.^'He knew what to leave out.'",
+  "vale.grave.mabel": "A headstone, cut deep and clean. A small B in one corner.^^MABEL CORRIE^Stained glass. 24 summers.^'She let the light through.'",
+  "vale.grave.bram": "A plain stone, never carved. Scratched into it, not very neatly:^^BRAM FAIRLIE",
+  "vale.grave.ada": "A clay marker she glazed herself, years before it was needed.^^ADA BRANNOCK^Pots, and the kiln. 46 summers.^On her urn's lid, in her glaze: 'not yet'. Nobody has had the heart to change it.",
+  "vale.grave.hester": "A clay marker glazed heather-purple, a small T pressed into the foot.^^HESTER THISTLE^The Vale House. 50 summers.^'There was always tea, and always room.'",
+  "vale.grave.amos": "A clay marker glazed hedge-green, a small T pressed into the foot. Something nobody planted flowers at its foot.^^AMOS REED^The gardens. 72 summers.^'A gardener's job is to listen.'",
 
   // The Vale's own fish (data/vale_fish.json)
   "fish.loach.name": "Claybank Loach",

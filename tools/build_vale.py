@@ -65,7 +65,9 @@ PICKS = {
     "old_tree": ("props/vale_props_v1/old_tree_1_1", 35, 68, (1, 3, 4), 0),
     # 6: Lupini's painting spots (he paints at a different viewpoint each day): a stool
     # with his paint box, and the rock he wipes his brushes on. (The clearing's went: the
-    # clearing is the graveyard now, the painters' guide design section 6.)
+    # clearing is the graveyard now, the painters' guide design section 6. Its wall, stones,
+    # urns and their winter art aren't PICKS: tools/vale_graveyard.py, one of VALE_PIECES,
+    # lays them on the written map and adds their tiles at the sheets' end.)
     # (by the high street's hedge, side by side: the user, 2026-11-07, "can't be two
     # right next to each other" in the top right)
     "spot_street_stool": ("props/vale_props_v2/painters_stool_1_3", 43, 4, 1, 0),
@@ -153,7 +155,7 @@ FEATURES = {
 }
 
 W, H = 96, 76
-VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook", "vale_terrace_stairs", "vale_spots"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
+VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook", "vale_terrace_stairs", "vale_spots", "vale_graveyard"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
 STAMP_LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "AlwaysFront"]
 

@@ -184,7 +184,14 @@
         "vale.echo.agnes": "{{i18n:vale.echo.agnes}}",
         "vale.echo.hollis": "{{i18n:vale.echo.hollis}}",
         "vale.echo.mabel": "{{i18n:vale.echo.mabel}}",
-        "vale.echo.bram": "{{i18n:vale.echo.bram}}"
+        "vale.echo.bram": "{{i18n:vale.echo.bram}}",
+        "vale.grave.agnes": "{{i18n:vale.grave.agnes}}",
+        "vale.grave.hollis": "{{i18n:vale.grave.hollis}}",
+        "vale.grave.mabel": "{{i18n:vale.grave.mabel}}",
+        "vale.grave.bram": "{{i18n:vale.grave.bram}}",
+        "vale.grave.ada": "{{i18n:vale.grave.ada}}",
+        "vale.grave.hester": "{{i18n:vale.grave.hester}}",
+        "vale.grave.amos": "{{i18n:vale.grave.amos}}"
       }
     }
   ]

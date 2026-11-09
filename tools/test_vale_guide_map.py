@@ -286,9 +286,22 @@ def test_grove_no_warps():
 
 # ---- The way back ----
 
+GRAVES_CS = os.path.join(ROOT, "ArtStudio", "Vale", "ValeGraves.cs")
+
+
+def gate_tile():
+    """ValeGraves.GraveyardGateTile, where the frame sets you down."""
+    t = re.search(r"GraveyardGateTile\s*=\s*new\s*(?:Point)?\(\s*(\d+)\s*,\s*(\d+)\s*\)", open(GRAVES_CS, encoding="utf-8").read())
+    assert t, "ValeGraves.GraveyardGateTile not found"
+    return int(t.group(1)), int(t.group(2))
+
+
 def test_return_tile_walkable():
-    # GildedGrove.ReturnTile (until Task 6's ValeGraves.GraveyardGateTile) stands on open ground in the Vale
-    x, y = cs_point("ReturnTile")
+    # the frame home lands on ValeGraves.GraveyardGateTile (GildedGrove has no tile of its own), on open
+    # ground in the Vale, just inside the graveyard's gate
+    text = open(GROVE_CS, encoding="utf-8").read()
+    assert "ReturnTile" not in text and "ValeGraves.GraveyardGateTile" in text, "GildedGrove should land on ValeGraves.GraveyardGateTile"
+    x, y = gate_tile()
     vale = Map(VALE_TMX)
     assert vale.walkable(x, y), (x, y)
 
@@ -408,10 +421,12 @@ def _base():
     return p.stdout.strip()
 
 
-def test_only_spot_boxes_changed():
-    # compared with main, the map's tiles and TileData change only inside vale_spots' boxes
+def test_only_guide_boxes_changed():
+    # compared with main, the map's tiles and TileData change only inside vale_spots' boxes and the
+    # graveyard's (vale_patch.BOXES "graveyard")
     import subprocess, tempfile
     from vale_spots import BOXES as SPOT_BOXES
+    from vale_patch import BOXES
     rel = os.path.relpath(VALE_TMX, ROOT).replace(os.sep, "/")
     text = subprocess.run(["git", "show", f"{_base()}:{rel}"], cwd=ROOT, capture_output=True, check=True).stdout
     with tempfile.TemporaryDirectory() as d:
@@ -419,7 +434,8 @@ def test_only_spot_boxes_changed():
         open(path, "wb").write(text)
         old = Map(path)
     new = vale_map()
-    inside = lambda x, y: any(x0 <= x <= x1 and y0 <= y <= y1 for x0, y0, x1, y1 in SPOT_BOXES.values())
+    boxes = list(SPOT_BOXES.values()) + [BOXES["graveyard"]]
+    inside = lambda x, y: any(x0 <= x <= x1 and y0 <= y <= y1 for x0, y0, x1, y1 in boxes)
     assert set(old.layers) == set(new.layers) and old.props == new.props
     for name in new.layers:
         for y in range(new.h):
@@ -440,6 +456,304 @@ def test_spots_in_routes():
         x, y = min((x, y) for (_, x, y), a in acts.items() if a == [sid])
         front = [p for p in ((x, y + 1), (x + 1, y + 1)) if p in places]
         assert front and all(m.walkable(*p) for p in front), f"{sid}: in front of ({x}, {y}): {front}"
+
+
+# ---- The graveyard (design section 6) ----
+
+GRAVE = "blinxxy.MuseArt_Grave"
+GRAVE_IDS = ("agnes", "hollis", "mabel", "bram", "ada", "hester", "amos")
+# Bram carved the artists' stones; his own is the plain one; the potters' and the rest are clay
+GRAVE_ART = {"agnes": "headstone_agnes", "hollis": "headstone_hollis", "mabel": "headstone_mabel", "bram": "stone_bram",
+             "ada": "marker_ada", "hester": "marker_hester", "amos": "marker_amos"}
+VANILLA_BENCH = {2330, 2331, 2335, 2362, 2363, 2367}     # vale_decor PROPS["bench"]
+BUS_STOP = (12, 8)                                         # vale_routes PLACES["bus stop"]
+TEXT_MD = os.path.join(ROOT, "docs", "superpowers", "specs", "2026-11-08-vale-guide-text.md")
+I18N = os.path.join(PACK, "i18n", "default.json")
+
+
+class ValeSheets:
+    """The Vale's building sheet in its four seasons: a gid's 16 x 16 pixels in each."""
+
+    def __init__(self):
+        from PIL import Image
+        self.im = {se: Image.open(os.path.join(PACK, "assets", f"{se}_GildedValeBuildings.png")).convert("RGBA")
+                   for se in ("spring", "summer", "fall", "winter")}
+
+    def px(self, se, gid):
+        i = gid - FEATURE_FIRST
+        im = self.im[se]
+        if not 0 <= i < (im.width // 16) * (im.height // 16):
+            return None
+        x, y = i % FEATURE_COLS * 16, i // FEATURE_COLS * 16
+        return im.crop((x, y, x + 16, y + 16)).tobytes()
+
+
+_GY = {}
+
+
+def graveyard():
+    """(map, {(layer, x, y): {piece names}}) for the Vale's map: every graveyard piece laid, known by
+    its pixels in all four sheets (vale_graveyard.tiles(): spring's art in spring, summer and fall,
+    winter's in winter). A tile can be more than one piece: the three carved headstones' tops are
+    the same stone (their carvings are lower down), so they share a slot."""
+    if not _GY:
+        import vale_graveyard as vg
+        m, sheets = vale_map(), ValeSheets()
+        art = {name: {se: im.tobytes() for se, im in seasons.items()} for name, seasons in vg.tiles().items()}
+        by_spring = collections.defaultdict(list)
+        for name, seasons in art.items():
+            by_spring[seasons["spring"]].append(name)
+        found = {}
+        x0, y0, x1, y1 = vg.RECT
+        for layer in ("Buildings", "Front", "Front2", "AlwaysFront", "Back2", "Buildings2"):
+            for y in range(y0 - 3, y1 + 3):
+                for x in range(x0 - 3, x1 + 3):
+                    gid = m.at(layer, x, y)
+                    for name in by_spring.get(sheets.px("spring", gid), []):
+                        if all(sheets.px(se, gid) == art[name][se] for se in art[name]):
+                            found.setdefault((layer, x, y), set()).add(name)
+        _GY.update(map=m, pieces=found, vg=vg)
+    return _GY["map"], _GY["pieces"]
+
+
+def ring(rect):
+    x0, y0, x1, y1 = rect
+    return [(x, y) for y in range(y0, y1 + 1) for x in range(x0, x1 + 1) if x in (x0, x1) or y in (y0, y1)]
+
+
+def strictly_inside(rect, x, y):
+    x0, y0, x1, y1 = rect
+    return x0 < x < x1 and y0 < y < y1
+
+
+def grave_actions(m):
+    return {p: a for p, a in m.actions(GRAVE).items()}
+
+
+def test_graves():
+    # exactly seven Grave actions, one per id, on the foot of that person's stone or marker, all inside
+    # the wall; each with an urn (glazed in their colour) on the tile at its foot
+    import vale_graveyard as vg
+    m, pieces = graveyard()
+    acts = grave_actions(m)
+    assert sorted(" ".join(a) for a in acts.values()) == sorted(GRAVE_IDS), acts
+    for (x, y), (gid,) in acts.items():
+        assert strictly_inside(vg.RECT, x, y), (gid, x, y)
+        assert pieces.get(("Buildings", x, y)) == {GRAVE_ART[gid] + ".foot"}, (gid, x, y, pieces.get(("Buildings", x, y)))
+        assert pieces.get(("Buildings", x, y + 1)) == {"urn_" + gid}, (gid, "urn", x, y + 1, pieces.get(("Buildings", x, y + 1)))
+    kinds = collections.Counter(GRAVE_ART[g].split("_")[0] for g in GRAVE_IDS)
+    assert kinds == {"headstone": 3, "stone": 1, "marker": 3}, kinds
+
+
+def test_wall_closed_but_gate():
+    # the wall's ring is solid all round but for the gate, which is walkable from the bus stop; with
+    # the gate shut, nothing inside can be reached
+    import vale_graveyard as vg
+    m, pieces = graveyard()
+    gate = set(vg.GATE)
+    for x, y in ring(vg.RECT):
+        if (x, y) in gate:
+            assert m.walkable(x, y), ("gate", x, y)
+        else:
+            assert not m.walkable(x, y), ("wall open", x, y)
+            names = pieces.get(("Buildings", x, y), set())
+            assert names and all(n.startswith(("wall_", "gatepost")) for n in names), ("not wall", x, y, names)
+    seen = m.reach(BUS_STOP)
+    assert gate <= seen, "the gate isn't reachable from the bus stop"
+    gx, gy = gate_tile()
+    assert gx in {x for x, _ in gate} and gy == vg.RECT[1] + 1 and (gx, gy) in seen, ("gate tile", (gx, gy))
+    shut = Map(VALE_TMX)
+    inside_tiles = [(x, y) for x in range(vg.RECT[0] + 1, vg.RECT[2]) for y in range(vg.RECT[1] + 1, vg.RECT[3])]
+    walk = shut.walkable
+    shut.walkable = lambda x, y: (x, y) not in gate and walk(x, y)
+    assert not set(inside_tiles) & shut.reach(BUS_STOP), "the wall has a gap besides the gate"
+
+
+def test_nothing_on_the_wall():
+    # every stone, marker, urn and the bench well inside the wall; the ring carries only the wall's own
+    # pieces (nothing on Front over it), and no tree, bush or long grass is on the wall or inside it
+    import vale_graveyard as vg
+    m, pieces = graveyard()
+    x0, y0, x1, y1 = vg.RECT
+    props = [(x, y, names) for (layer, x, y), names in pieces.items() if not any(n.startswith(("wall_", "gatepost")) for n in names)]
+    assert len(props) == 7 * 3, props               # each stone's top and foot, and its urn
+    bench = [(x, y) for y in range(y0 - 2, y1 + 3) for x in range(x0 - 2, x1 + 3)
+             if m.at("Buildings", x, y) in VANILLA_BENCH or m.at("Front", x, y) in VANILLA_BENCH]
+    assert len(bench) == 6, bench
+    for x, y, *name in props + [(x, y, "bench") for x, y in bench]:
+        assert strictly_inside(vg.RECT, x, y), (name, x, y)
+    for x, y in ring(vg.RECT):
+        for layer in ("Front", "Front2", "AlwaysFront", "Back2"):
+            assert not m.at(layer, x, y), (layer, x, y)
+    posts = pieces_at(pieces, "gatepost.top")
+    assert sorted(posts) == sorted((x, y0 - 1) for x, y in pieces_at(pieces, "gatepost.foot")), posts
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            assert not m.at("Paths", x, y), ("marker", x, y, m.at("Paths", x, y) - m.paths_first)
+        # nor a tree right beside the west wall: the woods' crowns hid it
+        p = m.at("Paths", x0 - 1, y)
+        assert not (p and p - m.paths_first in (9, 10, 11)), ("tree beside the west wall", x0 - 1, y)
+
+
+def pieces_at(pieces, name):
+    return [(x, y) for (layer, x, y), names in pieces.items() if name in names]
+
+
+def test_grave_tall_feet_only():
+    # each stone's and marker's top row is on Front (walkable: you walk behind it), and only its
+    # bottom row is on Buildings; the gateposts too
+    import vale_graveyard as vg
+    m, pieces = graveyard()
+    for (x, y), (gid,) in grave_actions(m).items():
+        art = GRAVE_ART[gid]
+        assert art + ".top" in pieces.get(("Front", x, y - 1), set()), (gid, x, y - 1)
+        assert not m.at("Buildings", x, y - 1) and m.walkable(x, y - 1), (gid, "top solid", x, y - 1)
+        assert not m.at("Front", x, y), (gid, "something over its foot")
+    for x, y in pieces_at(pieces, "gatepost.foot"):
+        assert pieces.get(("Front", x, y - 1)) == {"gatepost.top"} and not m.at("Buildings", x, y - 1), (x, y)
+
+
+_TERRAIN = {}
+
+
+def terrain(m):
+    """{(x, y): the four corners' terrain} for every tile of plain ground (build_vale.GROUND, as
+    vale_patch.context loads it from the vanilla exports)."""
+    if not _TERRAIN:
+        import contextlib, io
+        import build_vale as bv
+        from vale_patch import context
+        with contextlib.redirect_stdout(io.StringIO()):
+            context(VALE_TMX, os.environ.get("VALE_EXPORTS", "C:/Users/blinx/Desktop/MuseStardew/.devgame/exports_vale"))
+        _TERRAIN["ground"] = bv.GROUND
+    ground = _TERRAIN["ground"]
+    return {(x, y): ground.get((m.at("Back", x, y), m.at("Buildings", x, y))) for y in range(m.h) for x in range(m.w)}
+
+
+def test_trail_joins_road():
+    # a walkable trail (tiles with sand corners) runs from beside the bus road's turning circle to the gate
+    import vale_graveyard as vg
+    m, _ = graveyard()
+    ter = terrain(m)
+    road = lambda x, y: 30000 <= m.at("Back", x, y) < 31000          # build_vale ROAD_FIRST
+    trail = lambda x, y: m.walkable(x, y) and "S" in (ter.get((x, y)) or ())
+    start = [(x, y) for (x, y) in ter if trail(x, y) and any(road(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                                                           if 0 <= x + dx < m.w and 0 <= y + dy < m.h)
+             and abs(x - vg.GATE[0][0]) <= 4 and y < vg.RECT[1]]
+    assert start, "no trail beside the road near the gate"
+    seen, q = set(start), collections.deque(start)
+    while q:
+        x, y = q.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, y + dy)
+            if n not in seen and trail(*n):
+                seen.add(n)
+                q.append(n)
+    assert all(g in seen for g in vg.GATE), ("trail doesn't reach the gate", sorted(seen))
+    # and the old trail to nowhere is gone: no sand left inside the wall but the landing at the gate
+    x0, y0, x1, y1 = vg.RECT
+    sand = [(x, y) for y in range(y0 + 1, y1) for x in range(x0 + 1, x1) if "S" in (ter.get((x, y)) or ())]
+    near = lambda x, y: y <= y0 + 2 and min(abs(x - gx) for gx, _ in vg.GATE) <= 1
+    assert sand and all(near(x, y) for x, y in sand), sand
+
+
+def test_four_seasons():
+    # every graveyard piece has its own winter art (snow on it), laid in the winter sheet; spring's
+    # art is in spring, summer and fall
+    import vale_graveyard as vg
+    m, pieces = graveyard()
+    laid = set().union(*pieces.values())
+    for name in laid:
+        for src in vg.SOURCES[name]:
+            for suffix in ("", "_winter"):
+                assert os.path.exists(os.path.join(vg.ART, src + suffix + ".png")), (name, src + suffix)
+    art = vg.tiles()
+    assert set(art) == laid, (set(art) ^ laid)          # every piece of art is on the map
+    from PIL import Image
+    for src in {src for name in laid for src in vg.SOURCES[name]}:
+        spring, winter = (Image.open(os.path.join(vg.ART, src + sfx + ".png")).convert("RGBA").tobytes() for sfx in ("", "_winter"))
+        assert winter != spring, f"{src}: its winter is spring's art"     # (a tile of it may be the same: a gatepost's foot has no snow)
+
+
+def test_gate_tile_agrees():
+    # vale_graveyard's tile just inside the gate is ValeGraves.GraveyardGateTile
+    import vale_graveyard as vg
+    assert gate_tile() == vg.GATE_INSIDE, (gate_tile(), vg.GATE_INSIDE)
+
+
+def lupini_monday():
+    sched = json_with_comments(os.path.join(PACK, "data", "lupini_schedule.json"))
+    first = sched["Mon"].split("/")[0].split()
+    return first
+
+
+def test_lupini_monday():
+    # his Monday morning: a walkable tile beside the graveyard bench, reached from the bus stop, inside
+    # the wall; the rest of his day unchanged
+    import vale_graveyard as vg
+    m, _ = graveyard()
+    time, where, x, y, facing = lupini_monday()[:5]
+    x, y = int(x), int(y)
+    assert (time, where) == ("900", "blinxxy.MuseArt_GildedVale"), (time, where)
+    assert (x, y) == vg.LUPINI_STAND and facing == str(vg.LUPINI_FACING), ((x, y), facing)
+    assert m.walkable(x, y) and (x, y) in m.reach(BUS_STOP), (x, y)
+    assert strictly_inside(vg.RECT, x, y)
+    seat = [(x + dx, y) for dx in (-1, 1) if m.at("Buildings", x + dx, y) in VANILLA_BENCH]
+    assert seat, "not beside the bench's seat"
+    sched = json_with_comments(os.path.join(PACK, "data", "lupini_schedule.json"))
+    assert sched["Mon"].split("/", 1)[1] == sched["Tue"].split("/", 1)[1], "the rest of Monday changed"
+
+
+def test_graveyard_in_routes():
+    import vale_graveyard as vg
+    import vale_routes
+    assert vale_routes.PLACES["graveyard gate"] == vg.GATE_INSIDE
+    bx, by = vg.BENCH
+    assert vale_routes.PLACES["graveyard bench"] == (bx + 1, by + 1) and "graveyard bench" in vale_routes.SEATS
+
+
+def drafted(key):
+    """A line's drafted text in the text doc, with the user's one change: Tobin's T is on the foot."""
+    text = open(TEXT_MD, encoding="utf-8").read()
+    t = re.search(r"\*\*`" + re.escape(key) + r"`\*\*[^\n]*\n> ([^\n]+)", text)
+    assert t, key
+    return t.group(1).replace("a small T pressed into the back", "a small T pressed into the foot")
+
+
+def test_grave_text():
+    # the grave lines, Tobin's and Lupini's, verbatim from the draft (the T on the foot), in i18n, and
+    # the graves' in ValeStrings (how the dev pack's text reaches the code)
+    i18n = json_with_comments(I18N)
+    keys = [f"vale.grave.{g}" for g in GRAVE_IDS] + ["tobin.dialogue.urns", "lupini.dialogue.bram"]
+    for key in keys:
+        assert i18n.get(key) == drafted(key), (key, i18n.get(key), drafted(key))
+    for g in ("hester", "amos"):
+        assert "into the foot" in i18n[f"vale.grave.{g}"] and "into the back" not in i18n[f"vale.grave.{g}"]
+    strings = guide_entries_from(os.path.join(PACK, "data", "vale_shops.json"), "Mods/blinxxy.MuseArt/ValeStrings")
+    for g in GRAVE_IDS:
+        assert strings.get(f"vale.grave.{g}") == "{{i18n:vale.grave.%s}}" % g, g
+
+
+def guide_entries_from(path, target):
+    data = json_with_comments(path)
+    return next(c["Entries"] for c in data["Changes"] if c.get("Target") == target and c.get("Action") == "EditData")
+
+
+def test_resident_lines_wired():
+    # Tobin's urns line (from 4 hearts, once you've read a stone) and Lupini's about Bram (once you've
+    # read Bram's): conversation topics added by trigger actions, said once
+    tobin = os.path.join(PACK, "data", "tobin_dialogue.json")
+    lupini = os.path.join(PACK, "data", "lupini_dialogue.json")
+    assert guide_entries_from(tobin, "Characters/Dialogue/TobinClay")["blinxxy.MuseArt_ValeUrns"] == "{{i18n:tobin.dialogue.urns}}"
+    assert guide_entries_from(lupini, "Characters/Dialogue/Lupini")["blinxxy.MuseArt_ValeBram"] == "{{i18n:lupini.dialogue.bram}}"
+    t = guide_entries_from(tobin, "Data/TriggerActions")["blinxxy.MuseArt_ValeUrnsTalk"]
+    assert "PLAYER_HEARTS Current TobinClay 4" in t["Condition"] and "blinxxy.MuseArt_ValeGraveRead" in t["Condition"], t
+    assert t["Actions"][0].startswith("AddConversationTopic blinxxy.MuseArt_ValeUrns "), t
+    l = guide_entries_from(lupini, "Data/TriggerActions")["blinxxy.MuseArt_ValeBramTalk"]
+    assert "blinxxy.MuseArt_ValeGraveRead_bram" in l["Condition"], l
+    assert l["Actions"][0].startswith("AddConversationTopic blinxxy.MuseArt_ValeBram "), l
+    cs = open(GRAVES_CS, encoding="utf-8").read()
+    assert '"_ValeGraveRead"' in cs, "ValeGraves should set the read flags"
 
 
 # ---- The guide's board in the Vale House (controller Ruling 9) ----

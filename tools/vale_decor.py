@@ -185,7 +185,10 @@ def decor(g, ground, paths_first, W, H):
     for x, kind in ((3, BUSH_M), (7, BUSH_S), (11, BUSH_M), (16, BUSH_L), (22, BUSH_S), (26, BUSH_M), (36, BUSH_M), (40, BUSH_S), (47, BUSH_L)):
         marker(x, 26, kind, BUSH_W[kind], "cliff-top bush")
 
-    # C: the Painter's clearing, ringed by trees at the trail's end
+    # C: the Painter's clearing, ringed by trees at the trail's end. It's the graveyard now:
+    # tools/vale_graveyard.py takes out the markers that fall on its wall or inside it, and
+    # the rest ring it. They stay here, so the generator the decor shares (flowers below)
+    # draws the same for everything after them.
     for x, y, t in ((2, 13, MAPLE), (11, 13, OAK), (2, 22, OAK), (11, 21, MAPLE), (12, 17, PINE), (3, 18, PINE)):
         marker(x, y, t, why="clearing tree")
     for x, y, k in ((8, 12, BUSH_M), (4, 15, BUSH_S), (9, 22, BUSH_S)):

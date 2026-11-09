@@ -35,6 +35,8 @@ internal static class GildedVale
         PaintersGuide.Patch(harmony);
         // The Grove the guide's last page leads to, and the frame back (GildedGrove.cs).
         GildedGrove.Register(helper, monitor);
+        // The graveyard in the old Painter's clearing: read a stone (ValeGraves.cs).
+        ValeGraves.Register(monitor);
     }
 }
 #endif

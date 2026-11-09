@@ -254,7 +254,8 @@ internal static class PaintersGuide
             .Concat(new[] { "vale.guide.plain_stool", "vale.guide.last_page", "vale.guide.board", "vale.guide.take", "vale.guide.again",
                 "vale.guide.page.title", "vale.guide.page.unfound", "vale.guide.step_in", "vale.guide.not_here",
                 "quest.painters_guide.title", "quest.painters_guide.description", "quest.painters_guide.objective", "vale.guide.item.description" })
-            .Concat(GildedGrove.StringKeys);
+            .Concat(GildedGrove.StringKeys)
+            .Concat(ValeGraves.StringKeys);
 
     public static IMonitor? Monitor;
     private static readonly HashSet<string> Warned = new();

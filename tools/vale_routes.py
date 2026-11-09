@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from render_tmx import layer_data
 from vale_overlook import BENCH, FACE_TOP, STAIRS_X
 from vale_spots import SPOTS
+from vale_graveyard import BENCH as GRAVEYARD_BENCH, GATE_INSIDE as GRAVEYARD_GATE
 
 # name: a tile the player must be able to stand on (in front of it)
 PLACES = {
@@ -28,9 +29,12 @@ PLACES = {
     # Lupini's painting spots (tools/vale_spots.py): in front of each stool, where you touch it
     # with the painters' guide
     **{f"{sid} stool": (stool[0], stool[1] + 1) for sid, (stool, _) in SPOTS.items()},
+    # The graveyard (tools/vale_graveyard.py): just inside its gate, and its bench's seat (the middle
+    # of the game's 3-wide bench, the row under its back)
+    "graveyard gate": GRAVEYARD_GATE, "graveyard bench": (GRAVEYARD_BENCH[0] + 1, GRAVEYARD_BENCH[1] + 1),
 }
 # Schedule spots that are a seat (a bench or chair, solid itself): reachable if a neighbour is
-SEATS = {"nursery bench", "lakeside bench", "overlook bench"}
+SEATS = {"nursery bench", "lakeside bench", "overlook bench", "graveyard bench"}
 DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "[CP] Gilded Vale (dev)", "data")
 
 

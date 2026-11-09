@@ -28,10 +28,6 @@ internal static class GildedGrove
     // (tools/build_vale_grove.py ARRIVAL; data/vale_guide.json DefaultArrivalTile).
     public static readonly Point ArrivalTile = new(12, 11);
 
-    // Where the frame sets you down in the Vale: the old trail's foot, below the Painter's clearing.
-    // TODO(Task 6): the graveyard's gate. Replace with ValeGraves.GraveyardGateTile once it exists.
-    public static readonly Point ReturnTile = new(8, 23);
-
     // The paint wash's gold.
     private static readonly Color[] Gold =
     {
@@ -125,13 +121,13 @@ internal static class GildedGrove
         else
         {
             var vale = Game1.getLocationFromName(ValeBus.Vale);
-            Point tile = vale == null ? ReturnTile : HomeTile(vale);
+            Point tile = vale == null ? ValeGraves.GraveyardGateTile : HomeTile(vale);
             Game1.warpFarmer(ValeBus.Vale, tile.X, tile.Y, 2);
         }
         return true;
     }
 
-    // ReturnTile if it's open and reachable on foot from the Vale's paths; otherwise the nearest such
+    // ValeGraves.GraveyardGateTile if it's open and reachable on foot from the Vale's paths; otherwise the nearest such
     // tile, searching outward ring by ring.
     public static Point HomeTile(GameLocation vale)
     {
@@ -145,7 +141,7 @@ internal static class GildedGrove
                 {
                     if (Math.Max(Math.Abs(dx), Math.Abs(dy)) != r)
                         continue;
-                    var p = new Point(ReturnTile.X + dx, ReturnTile.Y + dy);
+                    var p = new Point(ValeGraves.GraveyardGateTile.X + dx, ValeGraves.GraveyardGateTile.Y + dy);
                     double d = dx * dx + dy * dy;
                     if (d < bestDist && Open(vale, p) && (reach.Count == 0 || reach.Contains(p)))
                         (best, bestDist) = (p, d);
@@ -153,8 +149,8 @@ internal static class GildedGrove
             if (best != null)
                 return best.Value;
         }
-        Monitor?.Log($"No open tile near {ReturnTile} in the Vale; using it anyway.", LogLevel.Warn);
-        return ReturnTile;
+        Monitor?.Log($"No open tile near {ValeGraves.GraveyardGateTile} in the Vale; using it anyway.", LogLevel.Warn);
+        return ValeGraves.GraveyardGateTile;
     }
 
     // Dry, walkable ground nothing stands on (a placed object, furniture, an NPC, a tree). Other farmers

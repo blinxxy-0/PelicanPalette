@@ -165,6 +165,7 @@ internal static class GuideTests
             foreach (var q in who.questLog.Where(q => q.id.Value == PaintersGuide.QuestId).ToList()) who.questLog.Remove(q);
             BoardCheck(monitor, who, Held, Quests, Settle);
             Clear();
+            GraveChecks(monitor, who, vale, Settle);
 
             // ---- The Gilded Grove ----
             var grove = Game1.getLocationFromName(GildedGrove.Location);
@@ -371,6 +372,121 @@ internal static class GuideTests
         bool gave = who.mailReceived.Contains(PaintersGuide.GuideTakenFlag) && held() == 1 && quests() == 1;
         Check(monitor, "guide: the frame in the Vale House", action == GildedVale.TakeGuideAction && front && taken && gave,
             $"{tile}: '{action ?? "(no action)"}', floor in front {front}, handled {taken}, flag {who.mailReceived.Contains(PaintersGuide.GuideTakenFlag)}, held {held()}, quests {quests()}");
+    }
+
+    // ---- The graveyard (the design's section 6) ----
+
+    // The seven stones on the Vale's map, each through its tile action as the game runs it: its box
+    // shows that stone's own text (vale.grave.<id>, from ValeStrings), page for page, and reading it
+    // sets the flags the residents' lines wait for (put back after). Then Lupini's Monday morning:
+    // open ground beside the graveyard's bench, reached from the bus stop. And the two lines' wiring:
+    // the trigger actions' conditions parse, and the dialogue keys they add are in the two NPCs' files.
+    private static void GraveChecks(IMonitor monitor, Farmer who, GameLocation vale, Action settle)
+    {
+        var found = new Dictionary<string, Point>();
+        var bad = new List<string>();
+        var layer = vale.Map.GetLayer("Buildings");
+        for (int y = 0; y < layer.LayerHeight; y++)
+            for (int x = 0; x < layer.LayerWidth; x++)
+            {
+                string[] words = vale.doesTileHaveProperty(x, y, "Action", "Buildings")?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+                if (words.Length == 0 || words[0] != ValeGraves.GraveAction)
+                    continue;
+                if (words.Length != 2 || !ValeGraves.Ids.Contains(words[1]) || found.ContainsKey(words[1]))
+                    bad.Add($"'{string.Join(" ", words)}' at ({x}, {y})");
+                else
+                    found[words[1]] = new Point(x, y);
+            }
+
+        var flags = ValeGraves.Ids.Select(ValeGraves.FlagFor).Append(ValeGraves.ReadFlag).ToList();
+        var had = flags.Where(who.mailReceived.Contains).ToHashSet();
+        var placeBefore = who.currentLocation;
+        var detail = new List<string>();
+        bool all = bad.Count == 0 && found.Count == ValeGraves.Ids.Length;
+        try
+        {
+            who.currentLocation = vale;
+            foreach (string id in ValeGraves.Ids)
+            {
+                if (!found.TryGetValue(id, out var p))
+                {
+                    detail.Add($"{id}: not on the map");
+                    continue;
+                }
+                foreach (string f in flags)
+                    who.mailReceived.Remove(f);
+                string key = ValeGraves.Key(id), text = PaintersGuide.Text(key);
+                string action = vale.doesTileHaveProperty(p.X, p.Y, "Action", "Buildings")!;
+                bool handled = vale.performAction(action, who, new xTile.Dimensions.Location(p.X, p.Y));
+                var shown = (Game1.activeClickableMenu as DialogueBox)?.dialogues.ToList() ?? new List<string>();
+                var want = ValeGraves.Pages(id);
+                bool same = shown.Count == 2 && shown.SequenceEqual(want) && text != key && text.Contains(id.ToUpperInvariant());
+                bool flagged = who.mailReceived.Contains(ValeGraves.ReadFlag) && who.mailReceived.Contains(ValeGraves.FlagFor(id))
+                    && flags.Count(who.mailReceived.Contains) == 2;
+                settle();
+                bool ok = handled && same && flagged;
+                all &= ok;
+                detail.Add(ok ? $"{id} ok" : $"{id} at {p}: handled {handled}, pages {shown.Count}/{want.Count} same {same}, flags {flagged}");
+            }
+            bool unknown = ValeGraves.OnGrave(who, "nobody");
+            all &= !unknown && Game1.activeClickableMenu == null;
+            settle();
+        }
+        finally
+        {
+            settle();
+            who.currentLocation = placeBefore;
+            foreach (string f in flags)
+                who.mailReceived.Remove(f);
+            foreach (string f in had)
+                who.mailReceived.Add(f);
+        }
+        Check(monitor, "graves: seven stones read", all,
+            string.Join("; ", detail) + (bad.Count > 0 ? "; bad: " + string.Join(", ", bad) : ""));
+
+        // The residents (and so Lupini's schedule and the two lines) are only there with the pack's
+        // ValeResidents on and their art in it (data/lupini.json): with them off there's nothing to check.
+        if (!Game1.content.DoesAssetExist<Dictionary<string, string>>("Characters/schedules/Lupini"))
+        {
+            monitor.Log("[INFO] graves: Lupini's Monday and the residents' lines not checked: the residents are switched off (ValeResidents)", LogLevel.Info);
+            return;
+        }
+
+        // Lupini's Monday: the first leg, in the Vale, on open ground beside the bench's seat.
+        string mon = Game1.content.Load<Dictionary<string, string>>("Characters/schedules/Lupini").GetValueOrDefault("Mon") ?? "(no Mon)";
+        string[] leg = mon.Split('/')[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        bool standing = false;
+        string where = string.Join(" ", leg);
+        if (leg.Length >= 5 && leg[1] == ValeBus.Vale && int.TryParse(leg[2], out int lx) && int.TryParse(leg[3], out int ly))
+        {
+            var tile = new Point(lx, ly);
+            var seat = new HashSet<int> { 2362 - 2040, 2363 - 2040, 2367 - 2040 };     // the game's bench, its seat (Town sheet)
+            bool beside = new[] { lx - 1, lx + 1 }.Any(nx => layer.Tiles[nx, ly] is { } t && t.TileSheet.Id == "Town" && seat.Contains(t.TileIndex));
+            standing = GildedGrove.Landable(vale, tile) && beside;
+            where += $": open and reachable {GildedGrove.Landable(vale, tile)}, beside the bench {beside}";
+        }
+        Check(monitor, "graves: Lupini's Monday tile walkable", standing, where);
+
+        // The two lines: Tobin's about the urns (from 4 hearts, once a stone's been read) and Lupini's about Bram.
+        var triggers = Game1.content.Load<List<StardewValley.GameData.TriggerActionData>>("Data/TriggerActions").ToDictionary(t => t.Id);
+        var lines = new (string Trigger, string Npc, string Topic)[]
+        {
+            (ModEntry.Id + "_ValeUrnsTalk", "TobinClay", ModEntry.Id + "_ValeUrns"),
+            (ModEntry.Id + "_ValeBramTalk", "Lupini", ModEntry.Id + "_ValeBram"),
+        };
+        var wiring = new List<string>();
+        bool wired = true;
+        foreach (var (trigger, npc, topic) in lines)
+        {
+            bool parses = triggers.TryGetValue(trigger, out var t) && GameStateQuery.Parse(t.Condition).All(q => q.Error == null)
+                && t.Actions?.Any(a => a.StartsWith("AddConversationTopic " + topic + " ")) == true;
+            bool said;
+            try { said = Game1.content.Load<Dictionary<string, string>>("Characters/Dialogue/" + npc).TryGetValue(topic, out string? line) && line.Length > 0 && !line.Contains("{{"); }
+            catch (Exception) { said = false; }
+            wired &= parses && said;
+            wiring.Add($"{npc}: trigger {parses}, line {said}");
+        }
+        Check(monitor, "graves: Tobin's urns and Lupini's Bram lines are wired", wired, string.Join("; ", wiring));
     }
 
     // ---- The Grove's two easels ----
@@ -627,7 +743,7 @@ internal static class GuideTests
     // and still opens the guide on bare ground.
     private static bool HookLeavesClicks(GameLocation vale, out string detail)
     {
-        var tile = new Vector2(GildedGrove.ReturnTile.X, GildedGrove.ReturnTile.Y);
+        var tile = new Vector2(ValeGraves.GraveyardGateTile.X, ValeGraves.GraveyardGateTile.Y);
         var results = new List<string>();
         bool bare = PaintersGuide.ClickOpensGuide(vale, tile);
         results.Add($"bare {bare}");
@@ -676,7 +792,7 @@ internal static class GuideTests
         int facingBefore = who.FacingDirection;
         bool hadGrove = who.mailReceived.Contains(PaintersGuide.GroveOpenFlag);
         var vale = Game1.getLocationFromName(ValeBus.Vale);
-        var gate = new Vector2(GildedGrove.ReturnTile.X, GildedGrove.ReturnTile.Y);
+        var gate = new Vector2(ValeGraves.GraveyardGateTile.X, ValeGraves.GraveyardGateTile.Y);
         SObject? blocker = null;
         NPC? stander = null;
         int timeBefore = Game1.timeOfDay;
@@ -724,7 +840,7 @@ internal static class GuideTests
             }),
             new("grove: the frame home", () => In(ValeBus.Vale), () =>
             {
-                Check(monitor, "grove: the frame home", who.TilePoint == GildedGrove.ReturnTile, $"at {who.TilePoint}, gate {GildedGrove.ReturnTile}");
+                Check(monitor, "grove: the frame home", who.TilePoint == ValeGraves.GraveyardGateTile, $"at {who.TilePoint}, gate {ValeGraves.GraveyardGateTile}");
                 Check(monitor, "grove: the motes stop outside it", GildedGrove.MoteTotal == 0, $"{GildedGrove.MoteTotal} motes");
                 if (!vale.Objects.ContainsKey(gate))
                 {
@@ -740,7 +856,7 @@ internal static class GuideTests
             }),
             new("grove: the frame home, blocked", () => In(ValeBus.Vale), () =>
             {
-                Point at = who.TilePoint, gateTile = GildedGrove.ReturnTile;
+                Point at = who.TilePoint, gateTile = ValeGraves.GraveyardGateTile;
                 int far = Math.Max(Math.Abs(at.X - gateTile.X), Math.Abs(at.Y - gateTile.Y));
                 Check(monitor, "grove: the frame home, blocked", blocker != null && at != gateTile && far == 1 && GildedGrove.Open(vale, at),
                     $"at {at}, gate {gateTile}, {far} away, blocker {blocker != null}");
@@ -759,7 +875,7 @@ internal static class GuideTests
             }),
             new("grove: the frame home, someone on the gate", () => In(ValeBus.Vale), () =>
             {
-                Point at = who.TilePoint, gateTile = GildedGrove.ReturnTile;
+                Point at = who.TilePoint, gateTile = ValeGraves.GraveyardGateTile;
                 int far = Math.Max(Math.Abs(at.X - gateTile.X), Math.Abs(at.Y - gateTile.Y));
                 Check(monitor, "grove: the frame home, someone on the gate", stander != null && at != gateTile && far == 1 && GildedGrove.Landable(vale, at),
                     $"at {at}, gate {gateTile}, {far} away, {stander?.Name} at {stander?.TilePoint}");

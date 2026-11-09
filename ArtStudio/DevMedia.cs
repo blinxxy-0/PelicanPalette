@@ -130,6 +130,11 @@ internal static class DevMedia
             bool done = Game1.currentLocation.checkAction(tile, Game1.viewport, Game1.player);
             monitor.Log($"Action at {tile}: {(done ? "handled" : "nothing")}; menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}.", LogLevel.Info);
         });
+        DevTools.AddCommand(helper, "museart_nextpage", "Turns an open dialogue box to its next page, as a click would (for screenshots of later pages).", (_, _) =>
+        {
+            if (Game1.activeClickableMenu is StardewValley.Menus.DialogueBox box)
+                box.receiveLeftClick(box.xPositionOnScreen + 8, box.yPositionOnScreen + 8);
+        });
         DevTools.AddCommand(helper, "museart_stand", "Puts the farmer (and so the camera) on a tile, wherever it is, without the game nudging them aside. Usage: museart_stand 82 32", (_, args) =>
             Game1.player.Position = new Vector2(int.Parse(args[0]), int.Parse(args[1])) * 64f);
         DevTools.AddCommand(helper, "museart_wallpaper", "Papers this room's walls with a wallpaper, to compare them. Usage: museart_wallpaper blinxxy.MuseArt_Wallpapers:2", (_, args) =>
