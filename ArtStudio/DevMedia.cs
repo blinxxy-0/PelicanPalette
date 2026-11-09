@@ -187,10 +187,15 @@ internal static class DevMedia
                 n += 2;
             }
         });
-        DevTools.AddCommand(helper, "museart_seen", "Marks events as already seen. Usage: museart_seen blinxxy.MuseArt_SableIntro", (_, args) =>
+        DevTools.AddCommand(helper, "museart_seen", "Marks events as already seen ('-' in front: not seen). Usage: museart_seen blinxxy.MuseArt_SableIntro -blinxxy.MuseArt_Sable2h", (_, args) =>
         {
             foreach (string id in args)
-                Game1.player.eventsSeen.Add(id);
+            {
+                if (id.StartsWith('-'))
+                    Game1.player.eventsSeen.Remove(id.Substring(1));
+                else
+                    Game1.player.eventsSeen.Add(id);
+            }
         });
         DevTools.AddCommand(helper, "museart_flag", "Sets mail flags, then sleeps to the next morning so Content Patcher's conditions see them. Usage: museart_flag blinxxy.MuseArt_MargotCottageBuilt", (_, args) =>
         {

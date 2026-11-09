@@ -27,7 +27,9 @@
         "blinxxy.MuseArt_TessAshStool": "blinxxy.MuseArt_TessAshStool/chair/1 2/1 1/1/400/-1/{{i18n:tess.item.ash_stool}}/4/Mods\\blinxxy.MuseArt\\TessCarvings",
         "blinxxy.MuseArt_TessWalnutStool": "blinxxy.MuseArt_TessWalnutStool/chair/1 2/1 1/1/500/-1/{{i18n:tess.item.walnut_stool}}/5/Mods\\blinxxy.MuseArt\\TessCarvings",
         "blinxxy.MuseArt_TessHeron": "blinxxy.MuseArt_TessHeron/decor/1 2/1 1/1/800/-1/{{i18n:tess.item.heron}}/6/Mods\\blinxxy.MuseArt\\TessCarvings",
-        "blinxxy.MuseArt_TessGildedTree": "blinxxy.MuseArt_TessGildedTree/decor/1 2/1 1/1/2500/-1/{{i18n:tess.item.tree}}/7/Mods\\blinxxy.MuseArt\\TessCarvings"
+        "blinxxy.MuseArt_TessGildedTree": "blinxxy.MuseArt_TessGildedTree/decor/1 2/1 1/1/2500/-1/{{i18n:tess.item.tree}}/7/Mods\\blinxxy.MuseArt\\TessCarvings",
+        // her 14-heart gift, both your names (not sold; "true": off limits for the catalogues)
+        "blinxxy.MuseArt_TessNameSign": "blinxxy.MuseArt_TessNameSign/painting/2 1/2 1/1/0/-1/{{i18n:tess.item.sign}}/8/Mods\\blinxxy.MuseArt\\TessCarvings/true"
       }
     },
     {

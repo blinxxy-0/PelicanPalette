@@ -45,6 +45,20 @@
       }
     },
     {
+      "LogName": "Tess's 14-heart event, in your farmhouse",
+      "Action": "EditData",
+      "Target": "Data/Events/FarmHouse",
+      "When": {
+        "ValeResidents": "true",
+        "HasFile:assets/tess/sprites.png": "true",
+        "HasFile:assets/tess/portraits.png": "true"
+      },
+      "Entries": {
+        "blinxxy.MuseArt_TessHeart14/G PLAYER_NPC_RELATIONSHIP Current TessBrand Married, PLAYER_FARMHOUSE_UPGRADE Current 1 1/Friendship TessBrand 3500/Time 1800 2200/SawEvent blinxxy.MuseArt_TessHeart10": "continue/10 8/farmer 12 8 3 TessBrand 9 10 0/skippable/pause 600/playSound doorClose/pause 300/move TessBrand 0 -2 1/pause 300/message \"{{i18n:tess.event.heart14.01}}\"/speak TessBrand \"{{i18n:tess.event.heart14.02}}\"/pause 300/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\TessCarvings 0 16 32 16 9999 1 9999 10 8 false false 8 0 1 0 0 0/message \"{{i18n:tess.event.heart14.03}}\"/speak TessBrand \"{{i18n:tess.event.heart14.04}}\"/quickQuestion  #{{i18n:tess.event.heart14.05}}#{{i18n:tess.event.heart14.06}}#{{i18n:tess.event.heart14.07}}(break)speak TessBrand \"{{i18n:tess.event.heart14.08}}\"(break)speak TessBrand \"{{i18n:tess.event.heart14.09}}\"(break)speak TessBrand \"{{i18n:tess.event.heart14.10}}\"/pause 400/speak TessBrand \"{{i18n:tess.event.heart14.11}}\"/pause 300/addItem (F)blinxxy.MuseArt_TessNameSign 1/pause 300/end",
+        "blinxxy.MuseArt_TessHeart14/G PLAYER_NPC_RELATIONSHIP Current TessBrand Married, PLAYER_FARMHOUSE_UPGRADE Current 2/Friendship TessBrand 3500/Time 1800 2200/SawEvent blinxxy.MuseArt_TessHeart10": "continue/28 27/farmer 30 27 3 TessBrand 27 29 0/skippable/pause 600/playSound doorClose/pause 300/move TessBrand 0 -2 1/pause 300/message \"{{i18n:tess.event.heart14.01}}\"/speak TessBrand \"{{i18n:tess.event.heart14.02}}\"/pause 300/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\TessCarvings 0 16 32 16 9999 1 9999 28 27 false false 27 0 1 0 0 0/message \"{{i18n:tess.event.heart14.03}}\"/speak TessBrand \"{{i18n:tess.event.heart14.04}}\"/quickQuestion  #{{i18n:tess.event.heart14.05}}#{{i18n:tess.event.heart14.06}}#{{i18n:tess.event.heart14.07}}(break)speak TessBrand \"{{i18n:tess.event.heart14.08}}\"(break)speak TessBrand \"{{i18n:tess.event.heart14.09}}\"(break)speak TessBrand \"{{i18n:tess.event.heart14.10}}\"/pause 400/speak TessBrand \"{{i18n:tess.event.heart14.11}}\"/pause 300/addItem (F)blinxxy.MuseArt_TessNameSign 1/pause 300/end"
+      }
+    },
+    {
       "LogName": "Tess's 6-heart event, with the Corrie twins",
       "Action": "EditData",
       "Target": "Data/Events/blinxxy.MuseArt_ValeStudio3",

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="6" height="9" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="1">
+  <tileset firstgid="1" name="indoor" tilewidth="16" tileheight="16" tilecount="2176" columns="32">
+    <image source="townInterior" width="512" height="1088" />
+  </tileset>
+  <tileset firstgid="2177" name="p" tilewidth="16" tileheight="16" tilecount="64" columns="4">
+    <image source="paths" width="64" height="256" />
+  </tileset>
+  <tileset firstgid="2241" name="v15_TownInterior2" tilewidth="16" tileheight="16" tilecount="1312" columns="32">
+    <image source="townInterior_2" width="512" height="656" />
+  </tileset>
+  <tileset firstgid="3553" name="z_blinxxy.MuseArt_TessSpouse" tilewidth="16" tileheight="16" tilecount="32" columns="8">
+    <image source="TessSpouse.png" width="128" height="64" />
+  </tileset>
+  <tileset firstgid="3585" name="zz_furniture" tilewidth="16" tileheight="16" tilecount="2976" columns="32">
+    <image source="../TileSheets/furniture" width="512" height="1488" />
+  </tileset>
+  <layer id="1" name="Back" width="6" height="9">
+    <data encoding="csv">
+267,267,267,267,267,267,
+267,267,267,267,267,267,
+99,99,99,99,99,99,
+575,576,575,576,575,576,
+607,607,607,607,607,607,
+639,639,639,639,639,639,
+607,607,607,607,607,607,
+639,639,639,639,639,639,
+607,607,607,607,607,608
+    </data>
+  </layer>
+  <layer id="2" name="Back2" width="6" height="9">
+    <data encoding="csv">
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,5362,5363,0,0,
+0,0,5394,5395,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="3" name="Buildings" width="6" height="9">
+    <data encoding="csv">
+267,267,267,267,267,267,
+81,81,81,81,81,81,
+113,113,113,113,113,113,
+3561,3562,3563,0,6282,6284,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+3572,3573,0,0,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="4" name="Paths" width="6" height="9">
+    <data encoding="csv">
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,2184,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="5" name="Front" width="6" height="9">
+    <data encoding="csv">
+0,0,0,257,0,0,
+0,0,0,289,6218,6220,
+3553,3554,3555,0,6250,6252,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+3556,3557,0,0,0,0,
+3564,3565,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="6" name="AlwaysFront" width="6" height="9">
+    <data encoding="csv">
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0,
+0,0,0,0,0,0
+    </data>
+  </layer>
+</map>

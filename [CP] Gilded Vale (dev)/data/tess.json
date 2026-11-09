@@ -8,9 +8,7 @@
 // assets/tess/sprites.png (Characters/TessBrand) and assets/tess/portraits.png
 // (Portraits/TessBrand) are in this pack. See data/residents.json.
 //
-// Still to come (each written for the user's approval first): her heart events, the
-// wedding and married life. Until then, in a test save don't give her a Mermaid's
-// Pendant: the game would start a wedding with nothing behind it.
+// Her marriage: data/tess_marriage.json (docs/tess_marriage.md).
 {
   "Changes": [
     // ---- Who she is ----
@@ -89,6 +87,9 @@
     { "Action": "Include", "FromFile": "data/tess_dialogue.json" },
 
     // ---- Her heart events (data/tess_events.json, written by tools/build_tess_events.py) ----
-    { "Action": "Include", "FromFile": "data/tess_events.json" }
+    { "Action": "Include", "FromFile": "data/tess_events.json" },
+
+    // ---- Married (data/tess_marriage.json, written by tools/build_tess_marriage.py) ----
+    { "Action": "Include", "FromFile": "data/tess_marriage.json" }
   ]
 }

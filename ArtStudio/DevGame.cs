@@ -304,7 +304,7 @@ internal static class DevGame
             var framed = ArtHooks.Frame(painting);
             monitor.Log($"Portrait: '{painting.DisplayName}', framed as '{framed.DisplayName}': {framed.getDescription().Replace("\n", " ")}", LogLevel.Info);
         });
-        DevTools.AddCommand(helper, "museart_marry", "Throwaway farm only: marries the farmer to Sable (house upgraded), lays out the spouse room and patio, and puts Sable in their room. 'patio' puts them at the patio instead.", (_, args) => Marry(monitor, args));
+        DevTools.AddCommand(helper, "museart_marry", "Throwaway farm only: marries the farmer to Sable (house upgraded), lays out the spouse room and patio, and puts Sable in their room. 'patio' puts them at the patio instead; 'npc:<name>' marries someone else; 'points:3500' sets the hearts; 'house:2' the farmhouse's upgrade.", (_, args) => Marry(monitor, args));
         DevTools.AddCommand(helper, "museart_wedding", "Throwaway farm only: plays the wedding to Sable (as on the wedding morning); 'npc:MargotPell' to someone else.", (_, args) => Wedding(monitor, args));
         DevTools.AddCommand(helper, "museart_export_weddings", "Writes Data/Weddings to the exports folder as JSON.", (_, _) =>
         {
@@ -4683,15 +4683,32 @@ internal static class DevGame
         // compare how other mods treat Sable's room with a vanilla one.
         string name = args.FirstOrDefault(a => a.StartsWith("npc:"))?.Substring(4) ?? "Sable";
         var sable = Game1.getCharacterFromName(name);
-        who.friendshipData[name] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
+        if (sable == null)
+        {
+            monitor.Log($"No {name} in the world today.", LogLevel.Error);
+            return;
+        }
+        // 'points:3500' for a 14-heart spouse; 'house:2' for the bigger farmhouse
+        int points = int.TryParse(args.FirstOrDefault(a => a.StartsWith("points:"))?.Substring(7), out int p) ? p : 2500;
+        int level = int.TryParse(args.FirstOrDefault(a => a.StartsWith("house:"))?.Substring(6), out int l) ? l : 1;
+        who.friendshipData[name] = new Friendship(points) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
         who.spouse = name;
-        who.HouseUpgradeLevel = 1;
+        who.HouseUpgradeLevel = level;
         var house = Utility.getHomeOfFarmer(who);
-        house.setMapForUpgradeLevel(1);
+        house.setMapForUpgradeLevel(level);
         house.showSpouseRoom();
         Game1.getFarm().addSpouseOutdoorArea(name);
-        if (args.FirstOrDefault() == "patio")
+        if (args.Contains("patio"))
         {
+            // the throwaway farm's trees and stones out of the way, so the patio can be seen
+            var farm = Game1.getFarm();
+            var corner = farm.GetSpouseOutdoorAreaCorner();
+            var around = new Microsoft.Xna.Framework.Rectangle((int)corner.X - 3, (int)corner.Y - 3, 10, 12);
+            foreach (var tile in farm.terrainFeatures.Keys.Where(t => around.Contains((int)t.X, (int)t.Y)).ToList())
+                farm.terrainFeatures.Remove(tile);
+            foreach (var tile in farm.objects.Keys.Where(t => around.Contains((int)t.X, (int)t.Y)).ToList())
+                farm.objects.Remove(tile);
+            farm.resourceClumps.RemoveWhere(c => around.Intersects(new Microsoft.Xna.Framework.Rectangle((int)c.Tile.X, (int)c.Tile.Y, c.width.Value, c.height.Value)));
             sable.setUpForOutdoorPatioActivity();
             monitor.Log($"{name} is on the patio at {sable.TilePoint} (spot {Game1.getFarm().spousePatioSpot}).", LogLevel.Info);
         }
@@ -4712,6 +4729,9 @@ internal static class DevGame
         who.friendshipData[name] = new Friendship(2500) { Status = FriendshipStatus.Married, WeddingDate = Game1.Date };
         who.spouse = name;
         who.HouseUpgradeLevel = Math.Max(1, who.HouseUpgradeLevel);   // as the pendant requires
+        // 'met:Lupini,BeaThistle' for guests who come only once you've met them
+        foreach (string guest in (args.FirstOrDefault(a => a.StartsWith("met:"))?.Substring(4) ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
+            who.friendshipData.TryAdd(guest, new Friendship(0));
         var wedding = Utility.getWeddingEvent(who);
         if (wedding == null)
         {

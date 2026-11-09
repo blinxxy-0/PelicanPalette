@@ -9,6 +9,7 @@ state_5), read down the same way.
          0 rabbit, 1 duck, 2 fox, 3 owl (16x16; row 0)
          4 ash stool, 5 walnut stool (16x32, the stool in the lower half, as the game's stools)
          6 heron, 7 small Gilded Tree (16x32)
+         8 Tess's Name Sign (32x16, row 1; her 14-heart gift: art/tess/counter/sign_a, the user's pick)
 
 Usage: python tools/art/tess_counter_art.py
 """
@@ -84,6 +85,8 @@ def main():
     sheet.alpha_composite(piece("heron", 16, 32), (96, 0))
     tree = shrink(cut(Image.open("art/gilded_vale/interiors/studio3/carving/state_5.png").convert("RGBA")), 16, 32)
     sheet.alpha_composite(tree, (112, 0))
+    sign = shrink(cut(Image.open(D + "sign_a.png").convert("RGBA")), 32, 16)
+    sheet.alpha_composite(sign, (0, 16))
     sheet.save(D + "carvings.png")
     print("wrote", D + "carvings.png")
 

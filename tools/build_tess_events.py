@@ -233,6 +233,42 @@ def heart10():
     )
 
 
+def heart14(upgraded):
+    """14 hearts: both names (your farmhouse, an evening; married). The farmhouse's maps differ by
+    upgrade: the small house's main room (FarmHouse1: the door at 9,11) is the bigger house's
+    (FarmHouse2, from the second upgrade on: the door at 27,30) moved 18 right and 19 down, so the
+    event is written once for the small house and shifted for the bigger one, each behind the
+    game's own upgrade check (both under the one event ID: seeing either is seeing it).
+    The sign is her name sign's own sprite (TessCarvings 8, data/tess_shop.json), and you're
+    given one: (F)blinxxy.MuseArt_TessNameSign."""
+    dx, dy = (18, 19) if upgraded else (0, 0)
+
+    def at(x, y):
+        return f"{x + dx} {y + dy}"
+    house = "PLAYER_FARMHOUSE_UPGRADE Current 2" if upgraded else "PLAYER_FARMHOUSE_UPGRADE Current 1 1"
+    key = (f"{EV[14]}/G PLAYER_NPC_RELATIONSHIP Current {T} Married, {house}/{F} 3500/Time 1800 2200/"
+           f"SawEvent {EV[10]}")
+    return key, script(
+        "continue", at(10, 8), f"farmer {at(12, 8)} 3 {T} {at(9, 10)} 0", "skippable",
+        "pause 600", "playSound doorClose", "pause 300", f"move {T} 0 -2 1", "pause 300",
+        "message " + q("Tess comes in with something long and flat wrapped in sacking, sets it down and stands back from it."),
+        speak(T, "I made something for the farm. Don't laugh.$0#$b#Robin says I'm not allowed to call it furniture.$0"),
+        "pause 300",
+        # the sign, unwrapped, leaning between you (her name sign's own sprite)
+        f"temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\TessCarvings 0 16 32 16 9999 1 9999 {at(10, 8)} false false {8 + dy} 0 1 0 0 0",
+        "message " + q("She pulls the sacking off: a slab of walnut, both your names carved into it in her letters, plain and deep, with a border of small leaves running round it. Not Bram's style. Hers."),
+        speak(T, "I did yours first. Don't read into that.$u#$b#...Read into it.$l"),
+        quick([
+            ("Over the door.", [speak(T, "Where everyone can see it. Show-off. ...Good.$h")]),
+            ("In here, where it's ours.", [speak(T, "Where only we see it. ...Yes. That's better.$l")]),
+            ("Wherever you think.", [speak(T, "I think you're avoiding a decision. Over the door. No, in here. I'll decide in the morning.$u")]),
+        ]),
+        "pause 400",
+        speak(T, "Every stone in that graveyard has a name cut into it by somebody who loved them.$0#$b#I wanted one with two names on it that nobody's finished yet.$l"),
+        "pause 300", "addItem (F)blinxxy.MuseArt_TessNameSign 1", "pause 300", "end",
+    )
+
+
 def splice(i18n):
     path = os.path.join(PACK, "i18n", "default.json")
     s = open(path, encoding="utf-8").read()
@@ -279,6 +315,10 @@ def main():
     studio = {k4: lift("tess.event.heart4", s4, i18n), k10: lift("tess.event.heart10", s10, i18n)}
     with_twins = {k6: lift("tess.event.heart6", s6, i18n)}
     without = {k6b: lift("tess.event.heart6_alone", s6b, i18n)}
+    k14, s14 = heart14(False)
+    k14b, s14b = heart14(True)
+    farmhouse = {k14: lift("tess.event.heart14", s14, i18n)}
+    farmhouse[k14b] = lift("tess.event.heart14", s14b, {})       # the same lines, the same keys
     changes = [
         {"Action": "Load", "Target": "Mods/blinxxy.MuseArt/TessEventProps", "FromFile": "assets/tess/event_props.png"},
         # (the Vale's and Studio III's event lists start empty: ours. Low, so another Vale
@@ -287,6 +327,8 @@ def main():
         {"Action": "Load", "Target": f"Data/Events/{STUDIO}", "FromFile": "data/blank.json"},
         {"Action": "EditData", "Target": f"Data/Events/{VALE}", "When": WHEN, "Entries": vale},
         {"Action": "EditData", "Target": f"Data/Events/{STUDIO}", "When": WHEN, "Entries": studio},
+        {"LogName": "Tess's 14-heart event, in your farmhouse", "Action": "EditData", "Target": "Data/Events/FarmHouse",
+         "When": WHEN, "Entries": farmhouse},
         {"LogName": "Tess's 6-heart event, with the Corrie twins", "Action": "EditData", "Target": f"Data/Events/{STUDIO}",
          "When": {**WHEN, **TWINS}, "Entries": with_twins},
         {"LogName": "Tess's 6-heart event, before the twins are in the pack", "Action": "EditData", "Target": f"Data/Events/{STUDIO}",
