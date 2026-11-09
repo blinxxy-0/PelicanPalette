@@ -118,3 +118,24 @@ Previews: `emmett_walk_vs_portrait_x5.png`, `emmett_walk_vs_alex_x5.png`,
 `emmett_face_closeup_x14.png`, `emmett_walk_preview.gif`.
 
     python tools/art/emmett_walk_build.py art/vale_residents_sprites/ref_walk_alex.png "[CP] Gilded Vale (dev)/assets/emmett/sprites.png"
+
+## Opal and Jet Corrie (approved by the user, 2026-11-09)
+
+Vanilla sheets recoloured, with their things drawn on by hand; no Higgsfield or PixelLab.
+
+- **Opal** (`tools/art/opal_walk_build.py`): Evelyn's sheet (`ref_walk_evelyn.png`; short and round,
+  a cloud of white curls in a bun, as Opal is). Her curls silver, her red dress a cobalt city coat
+  with amber buttons and hem, a ruby scarf at her neck with its tail in front, a yellow pencil
+  with a pink end pushed through her curls; facing left is facing right mirrored.
+  That's `[CP] Gilded Vale (dev)/assets/opal/sprites.png`.
+- **Jet** (`tools/art/jet_walk_build.py`): Kent's sheet (`ref_walk_kent.png`; tall, short hair,
+  clean-shaven). His crop grey, his jacket and shirt one black roll-neck with its collar up,
+  his jeans slate, boots dark; a leather apron (bib and skirt in front, its edge in profile,
+  crossed straps and a tie behind); safety goggles up on his crop, two rimmed lenses with a
+  bridge (the user: the first band "lacking shape"), one lens in profile, the strap behind.
+  That's `[CP] Gilded Vale (dev)/assets/jet/sprites.png`.
+
+Previews: `opal_walk_preview.gif`, `jet_walk_preview.gif`.
+
+    python tools/art/opal_walk_build.py art/vale_residents_sprites/ref_walk_evelyn.png "[CP] Gilded Vale (dev)/assets/opal/sprites.png"
+    python tools/art/jet_walk_build.py art/vale_residents_sprites/ref_walk_kent.png "[CP] Gilded Vale (dev)/assets/jet/sprites.png"
