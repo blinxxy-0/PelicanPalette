@@ -159,6 +159,80 @@ def heart6(twins):
     return key, script(*first)
 
 
+def heart8():
+    """8 hearts: leave it plain (the graveyard, an evening). The graveyard is the approved build on
+    branch claude/vale-guide-grove (tools/vale_graveyard.py): the gate at (9-10, 13), the back row's
+    stones with their feet on row 18 (Bram's the last, at x 12) and urns on row 19; the column x 11
+    between his and Mabel's is open ground. She honours his wish (his echo: "leave it plain"): his name
+    cut properly and one leaf, not a carved headstone. Bram's stone changes for good once this event's
+    been seen (the graveyard's swap: tools/art/bram_carved_stone.py)."""
+    key = f"{EV[8]}/{F} 2000/Time 1600 1800/Weather sunny/SawEvent {EV[6]}"
+    return key, script(
+        "continue", "10 15", f"farmer 10 9 2 {T} 8 11 2", "skippable",
+        "pause 600", "move farmer 0 2 2", "faceDirection farmer 3", "pause 400",
+        "message " + q("Tess is standing at the top of the trail above the graveyard, where she stops every evening. She doesn't turn round."),
+        speak(T, "I come up here every night. I've never gone in.$0#$b#...Come with me?$0"),
+        f"move {T} 1 0 1", f"move {T} 0 3 2", f"move {T} 2 0 1", f"move {T} 0 4 2", f"faceDirection {T} 1",
+        "move farmer 0 3 2", "move farmer 1 0 1", "move farmer 0 3 2", "faceDirection farmer 1",
+        "pause 600",
+        "message " + q("Past Agnes's carved stone, and Hollis's, and Mabel's, to the plain one at the end of the row."),
+        speak(T, "BRAM FAIRLIE. Lupini did that. With a palette knife. He told me he'd hated every letter.$s#$b#He was right. The R's backwards.$u"),
+        "message " + q("She takes a letter out of her apron, unfolds it, and reads it to the stone."),
+        speak(T, "'The top of the tree's the hard part, love. I keep leaving it. Every stone I carve, they want a line on it, and I pick each word with them and cut it deep. When it's my turn, leave mine plain. Scratch the name on and let the stone do the talking.'$0"),
+        "pause 800",
+        speak(T, "So he wanted it plain. And it is. And I hate it.$s"),
+        quick([
+            ("Then carve it. You're the only one who can.", [f"friendship {T} 30",
+                speak(T, "That's what I keep thinking. And then I think, he asked.$s")]),
+            ("Ask Lupini. He scratched the name.", [f"friendship {T} 30",
+                speak(T, "I did. He said, 'He'd have hated my lettering more than any carving.' That's not an answer. It's Lupini.$u")]),
+            ("He said plain. He didn't say badly.", [f"friendship {T} 30",
+                "message " + q("A short laugh."), speak(T, "...No. He didn't, did he.$h")]),
+        ]),
+        "message " + q("She kneels in front of it and lays her hand flat over the scratched name, measuring."),
+        speak(T, "Plain, then. His name, cut properly, deep enough to last. And one leaf, small, under it. Off the tree he never finished.$0#$b#That's not breaking his rule. That's just finishing his sentence.$l"),
+        "pause 800", "globalFade",
+        "message " + q("Every evening for a week, Tess goes back up the trail with her chisels."),
+        "pause 300", "end",
+    )
+
+
+def heart10():
+    """10 hearts: her chair (Studio III, an evening; you're dating). Her chair is the game's Birch
+    Chair (TileSheets/furniture sprite 6), the one that stands at Bram's bench from the room's last
+    stage. After the fade the carving's tiles are swapped for its finished state (the indices are
+    tools/build_vale_buildings.py studio3's: bram_carving_5 on the shared sheet), so it's finished
+    before the event ends; the room's patches keep it so afterwards."""
+    key = f"{EV[10]}/{F} 2500/Time 1900 2200/Dating {T}/SawEvent {EV[8]}"
+    return key, script(
+        "continue", "8 7", f"farmer 9 11 0 {T} 7 7 1", "skippable",
+        "temporaryAnimatedSprite TileSheets\\furniture 96 0 16 32 9999 1 9999 8 6 false false 8 0 1 0 0 0",
+        "pause 400", "move farmer 0 -3 0", "faceDirection farmer 0",
+        "message " + q("In the middle of the floor stands a new chair. Tess is beside it with her arms folded."),
+        speak(T, "Don't say anything until you've looked at it. Then don't say anything until you've sat in it.$0"),
+        "message " + q("A chair in pale birch, light and plain, its back very slightly curved."),
+        speak(T, "I tried to make it his. Oak, heavy, the arms carved. It kept going wrong. Every time I stopped thinking about him it got better.$s#$b#So it's not his. It's the first thing I've made in here that isn't.$0"),
+        speak(T, "Sit in it. You're the first. That's the point.$l"),
+        "message " + q("You sit. It holds. It's comfortable, which surprises you, and her."),
+        quick([
+            ("It's perfect.", [f"friendship {T} 30", speak(T, "It's not. The left back leg's a hair short. But I'll take it.$u")]),
+            ("It's very you.", [f"friendship {T} 30", speak(T, "Plain, stubborn and holds up under pressure? ...Yes. All right.$h")]),
+            ("Can I keep sitting in it?", [f"friendship {T} 30", speak(T, "You can keep sitting in it forever. That came out wrong. Or right. Stop looking at me.$l")]),
+        ]),
+        f"move {T} 0 -2 0", f"move {T} 6 0 1", f"faceDirection {T} 0", "pause 400",
+        speak(T, "And then there's this.$0"),
+        "message " + q("She picks up a gouge, climbs onto the stool, and cuts the last leaves at the top of the tree while you watch. It takes the rest of the evening."),
+        "globalFade", "pause 600",
+        # the carving finished: bram_carving_5's tiles
+        "changeMapTile Front 13 2 46", "changeMapTile Front 14 2 47", "changeMapTile Front 13 3 62",
+        "changeMapTile Front 14 3 63", "changeMapTile Buildings 13 4 78", "changeMapTile Buildings 14 4 79",
+        "globalFadeToClear", "pause 600", f"faceDirection {T} 2",
+        speak(T, "There. Thirty years late.$s#$b#He'd have said I rushed the top.$h"),
+        speak(T, "I came to the Vale for him. I'm staying for the light, and the soup, and the stupid tree, and... you, a bit. Mostly you.$l"),
+        "pause 300", "end",
+    )
+
+
 def splice(i18n):
     path = os.path.join(PACK, "i18n", "default.json")
     s = open(path, encoding="utf-8").read()
@@ -199,8 +273,10 @@ def main():
     k4, s4 = heart4()
     k6, s6 = heart6(True)
     k6b, s6b = heart6(False)
-    vale = {k2: lift("tess.event.heart2", s2, i18n)}
-    studio = {k4: lift("tess.event.heart4", s4, i18n)}
+    k8, s8 = heart8()
+    k10, s10 = heart10()
+    vale = {k2: lift("tess.event.heart2", s2, i18n), k8: lift("tess.event.heart8", s8, i18n)}
+    studio = {k4: lift("tess.event.heart4", s4, i18n), k10: lift("tess.event.heart10", s10, i18n)}
     with_twins = {k6: lift("tess.event.heart6", s6, i18n)}
     without = {k6b: lift("tess.event.heart6_alone", s6b, i18n)}
     changes = [

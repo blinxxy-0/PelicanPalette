@@ -121,3 +121,108 @@ lines, later).
 - **The 6-heart event's second scene** has the Corrie twins in it, who are on their own branch: it needs that
   branch merged first (or the scene runs without them until it is, and Jet's lines go to Lupini).
 - Opal's and Jet's portraits for their lines; Lupini's and Bea's exist.
+
+---
+
+# 8, 10 and 14 hearts (approved by the user 2026-11-09; 8 and 10 built, 14 comes with the marriage batch)
+
+## 8 hearts: leave it plain (the graveyard, an evening)
+
+**Lore it has to fit** (the graveyard's approved build, branch `claude/vale-guide-grove`): Bram's stone is the one
+plain stone in the back row (its foot at 12,18, its urn below it), "never carved", his name scratched on by Lupini
+with a palette knife ("He'd have hated my lettering"). And in the Gilded Grove, Bram's echo says: *"When it's my
+turn, leave it plain. Scratch the name on and let the stone do the talking."* So Tess, who has his letters, knows
+he wanted it plain. **My proposal:** she honours that. She doesn't make it a carved headstone like the others; she
+cuts his name properly and deep where Lupini scratched it, and one small leaf of the Gilded Tree under it, in her
+own style. That is her carving his stone (the user's decision) without breaking his wish.
+
+**Trigger:** you enter the Gilded Vale between 4pm and 6pm, not raining, with 8+ hearts and her 6-heart event
+seen. (In winter that's her dusk walk anyway.)
+
+**Scene:**
+- Tess is standing at the top of the trail above the graveyard, where she stops every evening, looking down at the
+  wall. She doesn't turn round.
+- `$0` "I come up here every night. I've never gone in." #$b# "...Come with me?"
+- You walk down through the open gate together, past Agnes's and Hollis's and Mabel's carved stones, to the plain
+  one at the end of the row.
+- `$s` "BRAM FAIRLIE. Lupini did that. With a palette knife. He told me he'd hated every letter." #$b# `$u` "He
+  was right. The R's backwards."
+- She takes a letter out of her apron, unfolds it, and reads it to the stone.
+- `$0` *"The top of the tree's the hard part, love. I keep leaving it. Every stone I carve, they want a line on it,
+  and I pick each word with them and cut it deep. When it's my turn, leave mine plain. Scratch the name on and
+  let the stone do the talking."*
+- She folds the letter up. `$s` "So he wanted it plain. And it is. And I hate it."
+- **Choice:**
+  - "Then carve it. You're the only one who can." → `$s` "That's what I keep thinking. And then I think, he
+    asked." 
+  - "Ask Lupini. He scratched the name." → `$u` "I did. He said, 'He'd have hated my lettering more than any
+    carving.' That's not an answer. It's Lupini."
+  - "He said plain. He didn't say badly." → `$h` A short laugh. "...No. He didn't, did he."
+- She kneels in front of it and lays her hand flat over the scratched name, measuring.
+- `$0` "Plain, then. His name, cut properly, deep enough to last. And one leaf, small, under it. Off the tree he
+  never finished." #$b# `$l` "That's not breaking his rule. That's just finishing his sentence."
+- (Fade.) `message` "Every evening for a week, Tess goes back up the trail with her chisels."
+
+**After:** Bram's stone is carved for good: his name cut deep, one leaf under it (art to make; the graveyard
+swaps it in once this event's been seen: `blinxxy.MuseArt_TessHeart8`). Her 8-heart lines (the grave, "saving the
+top") and the carving's nearly finished state (already built). Proposed new words for his stone, for the graveyard
+work: *"A plain stone. His name is cut into it now, deep and even, and under it a single leaf.^^BRAM FAIRLIE"*
+
+## 10 hearts: her chair (Studio III, an evening; you're dating)
+
+**Trigger:** you enter Studio III between 7pm and 10pm, with 10 hearts, dating her, her 8-heart event seen.
+
+**Scene:**
+- In the middle of the floor stands something under one of Bram's old dust sheets, chair-shaped. Tess is beside it
+  with her arms folded.
+- `$0` "Don't say anything until I've taken the sheet off. Then don't say anything until you've sat in it."
+- She pulls the sheet off: a chair in pale birch, light and plain, its back slats very slightly curved.
+- `$s` "I tried to make it his. Oak, heavy, the arms carved. It kept going wrong. Every time I stopped thinking
+  about him it got better." #$b# `$0` "So it's not his. It's the first thing I've made in here that isn't."
+- `$l` "Sit in it. You're the first. That's the point."
+- You sit. It holds. It's comfortable, which surprises you, and her.
+- **Choice:**
+  - "It's perfect." → `$u` "It's not. The left back leg's a hair short. But I'll take it."
+  - "It's very you." → `$h` "Plain, stubborn and holds up under pressure? ...Yes. All right."
+  - "Can I keep sitting in it?" → `$l` "You can keep sitting in it forever. That came out wrong. Or right. Stop
+    looking at me."
+- She turns to the corner, to Bram's tree. One last rough block is still at the top of the crown.
+- `$0` "And then there's this." She picks up a gouge, climbs onto the stool, and cuts the last leaves while you
+  watch. It takes the rest of the evening. (Fade, and back.)
+- The tree is finished. `$s` "There. Thirty years late." #$b# `$h` "He'd have said I rushed the top."
+- `$l` "I came to the Vale for him. I'm staying for the light, and the soup, and the stupid tree, and... you, a
+  bit. Mostly you."
+
+**After:** the room's last stage (her birch chair at Bram's workbench, the red rug, the lamp) and the carving
+finished (already built); the little Gilded Tree at her counter (already built).
+
+## 14 hearts: both names (your farmhouse; married)
+
+**Trigger:** you're married to her; you enter the farmhouse between 6pm and 10pm, with 14 hearts.
+
+**Scene:**
+- Tess comes in with something long and flat wrapped in sacking, sets it on the table and stands back from it.
+- `$0` "I made something for the farm. Don't laugh." #$b# "Robin says I'm not allowed to call it furniture."
+- She unwraps it: a sign, a slab of walnut, both your names carved into it in her letters, plain and deep, with a
+  border of small leaves running round it. Not Bram's style. Hers.
+- `$u` "I did yours first. Don't read into that." #$b# `$l` "...Read into it."
+- **Choice** (where it goes; the sign is yours to place either way):
+  - "Over the door." → `$h` "Where everyone can see it. Show-off. ...Good."
+  - "In here, where it's ours." → `$l` "Where only we see it. ...Yes. That's better."
+  - "Wherever you think." → `$u` "I think you're avoiding a decision. Over the door. No, in here. I'll decide in
+    the morning."
+- `$l` "Every stone in that graveyard has a name cut into it by somebody who loved them. I wanted one with two
+  names on it that nobody's finished yet."
+
+**After:** you get the sign (a furniture item: **Tess's Name Sign**, a carved walnut slab with both names and a
+leaf border; art to make, the names suggested rather than readable, so it works for any farmer's name). A one-off
+gift, not stock: the "no signs" rule was for her counter.
+
+## What building 8, 10 and 14 needs
+- **Bram's carved stone** (16x32 and its winter version, matching the graveyard's plain stone's size and place):
+  his name cut deep, one leaf. Handed to the graveyard work with the event's ID. Art route: the user's call (see the
+  question); about 2-3 Higgsfield credits, or PixelLab with an estimate first.
+- **The 10-heart chair** under a sheet and unveiled: the game's own Birch Chair, as a temporary sprite.
+- **Tess's Name Sign** (a 2x1 wall piece): one new piece of art, same route as the stone.
+- **The 14-heart event needs her marriage built** (spouse room, the farmhouse): it's drafted here and built with
+  the marriage batch.
