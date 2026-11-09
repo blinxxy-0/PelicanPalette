@@ -37,8 +37,10 @@
       "Action": "EditData",
       "Target": "Data/Quests",
       "Entries": {
-        // Basic: Type/Title/Description/Objective/NextQuests/Money/Reward/Cancellable/Reaction.
-        // Not cancellable; no reward (the Grove is the reward).
+        // The game's layout: type/title/description/objective/requirements/next quests/money/
+        // reward description/cancellable/reaction text. A Basic quest has no requirements (null);
+        // no next quest (-1), no money (0), no reward description (-1), not cancellable, and no
+        // reaction text. The Grove is the reward.
         "blinxxy.MuseArt_PaintersGuide": "Basic/{{i18n:quest.painters_guide.title}}/{{i18n:quest.painters_guide.description}}/{{i18n:quest.painters_guide.objective|found=0}}/null/-1/0/-1/false"
       }
     },

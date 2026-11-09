@@ -8,7 +8,7 @@ by lightness, each with a small touch of its own.
     in the mod for now): the Gilded Grove's deep amber, a fall leaf in each
     corner and a gold leaf over the top (the user's pick FF2, 2026-11-09)
 Writes:
-  - ArtStudio/assets/furniture.png, widened to 1280x48: each style's 2x2 and
+  - ArtStudio/assets/furniture.png, widened to 1280 (160 tall): each style's 2x2 and
     3x3 framed paintings, 80 pixels apart from x 560 (sprite indices
     35/37, 40/42, ... 75/77). That fills the sheet's first band (80 tiles a
     row), so styles after the ninth go in a second band at y 96 (row 6, under

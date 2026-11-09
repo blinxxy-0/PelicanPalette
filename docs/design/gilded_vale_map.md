@@ -102,7 +102,7 @@ All of them decoratable rooms, built the way Margot's were: straight walls, the 
 | 3 | The Wildflower Field | 28, 65 | The meadow |
 | 4 | The Lake Window | 90, 60 | Up on the overlook, over the lake |
 | 5 | The Lost Parterre | 25, 44 | The sculpture garden, just inside its east gate, looking west down the hedges |
-| 6 | The Falls | 72, 4 | The river's north bank, just west of the falls' cliff, looking east at the fall's lip (well away from the North Light's stool, below the basin) |
+| 6 | The Falls | 72, 4 | The river's north bank, just west of the falls' cliff, looking east at the fall's lip (up on the bank above the fall, well away from the North Light's stool) |
 | 7 | Under the Gilded Tree | 43, 66 | The tree's lawn, east of it, between the canopy and the lakeside sand |
 | 8 | The Old Stage | 25, 53 | Under the cliff west of the amphitheatre, looking at it from the side: 3 tiles clear of its footprint, off the seats, the stage and the plaza (a skill may use the amphitheatre later) |
 

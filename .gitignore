@@ -40,3 +40,7 @@ release/nexus/preview.html
 
 # Other people's mods, for reference only (e.g. Timberline Falls and its requirements): never commit.
 reference_mods/
+
+# Python bytecode.
+__pycache__/
+*.pyc
