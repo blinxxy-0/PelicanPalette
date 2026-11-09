@@ -4,10 +4,10 @@
 // not she has her art yet. Its door opens on Winter 1, Year 3, the day she moves in
 // (ValeDate 309; until then the studio is for sale, sold, or Robin's, data/vale_studios.json).
 //
-// Stage 0, as she moves in: what Bram left, a bedroll, a trestle counter. The later
-// stages (after her 4-, 8- and 10-heart events), Bram's carving (a state after each of
-// her events) and his photograph (on the shelf after her 6-heart reveal) come with her
-// heart events.
+// Four stages, as she moves in and after her 4-, 8- and 10-heart events (content.json's
+// TessStudioStage); Bram's carving, a state further on after each of her 2- to 10-heart
+// events (TessCarving); his photographs on the wall after her 6-heart reveal. All in
+// data/tess_studio_stages.json, written by the tool with the shared sheet's tile numbers.
 {
   "Changes": [
     {
@@ -21,7 +21,7 @@
         }
       }
     },
-    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio3", "FromFile": "assets/ValeStudio3_0.tmx" },
+    { "Action": "Include", "FromFile": "data/tess_studio_stages.json" },
 
     // The door, from the day she moves in. After vale_studios.json in content.json and
     // Late: its renovated states swap the tile at (91,38), which would drop the warp.
@@ -49,7 +49,16 @@
         "blinxxy.MuseArt_Vale.studio3.workbench": "{{i18n:vale.studio3.workbench}}",
         "blinxxy.MuseArt_Vale.studio3.timber": "{{i18n:vale.studio3.timber}}",
         "blinxxy.MuseArt_Vale.studio3.counter": "{{i18n:vale.studio3.counter}}",
-        "blinxxy.MuseArt_Vale.studio3.bram_chair": "{{i18n:vale.studio3.bram_chair}}"
+        "blinxxy.MuseArt_Vale.studio3.bram_chair": "{{i18n:vale.studio3.bram_chair}}",
+        "blinxxy.MuseArt_Vale.studio3.carving_1": "{{i18n:vale.studio3.carving_1}}",
+        "blinxxy.MuseArt_Vale.studio3.carving_2": "{{i18n:vale.studio3.carving_2}}",
+        "blinxxy.MuseArt_Vale.studio3.carving_3": "{{i18n:vale.studio3.carving_3}}",
+        "blinxxy.MuseArt_Vale.studio3.carving_4": "{{i18n:vale.studio3.carving_4}}",
+        "blinxxy.MuseArt_Vale.studio3.carving_5": "{{i18n:vale.studio3.carving_5}}",
+        "blinxxy.MuseArt_Vale.studio3.photos": "{{i18n:vale.studio3.photos}}",
+        "blinxxy.MuseArt_Vale.studio3.drawers_open": "{{i18n:vale.studio3.drawers_open}}",
+        "blinxxy.MuseArt_Vale.studio3.bed": "{{i18n:vale.studio3.bed}}",
+        "blinxxy.MuseArt_Vale.studio3.chair": "{{i18n:vale.studio3.chair}}"
       }
     }
   ]

@@ -52,8 +52,9 @@
           "WinterStarParticipant": "FALSE",
           "CanVisitIsland": "FALSE",
           "Home": [
-            // Studio III, by her bedroll near the stove (tools/build_vale_buildings.py studio3_0)
-            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio3", "Tile": { "X": 3, "Y": 7 }, "Direction": "up" }
+            // Studio III, between her bed (her bedroll at first) and the door: a tile clear in
+            // every stage of the room (tools/build_vale_buildings.py studio3_0 to _3)
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio3", "Tile": { "X": 4, "Y": 9 }, "Direction": "up" }
           ]
         }
       }

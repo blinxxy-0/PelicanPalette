@@ -1,0 +1,420 @@
+// Written by tools/build_vale_buildings.py studio3: Studio III's stage, Bram's carving and his
+// photographs, by Tess's heart events (TessStudioStage and TessCarving are content.json's).
+{
+  "Changes": [
+    {
+      "LogName": "Studio III: its stage",
+      "Action": "Load",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "FromFile": "assets/ValeStudio3_{{TessStudioStage}}.tmx"
+    },
+    {
+      "LogName": "Studio III: Bram's carving, state 1",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "When": {
+        "TessCarving": "1"
+      },
+      "MapTiles": [
+        {
+          "Position": {
+            "X": 13,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 38
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 39
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 54
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 55
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 70,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_1"
+          }
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 71,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_1"
+          }
+        }
+      ]
+    },
+    {
+      "LogName": "Studio III: Bram's carving, state 2",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "When": {
+        "TessCarving": "2"
+      },
+      "MapTiles": [
+        {
+          "Position": {
+            "X": 13,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 40
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 41
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 56
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 57
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 72,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_2"
+          }
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 73,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_2"
+          }
+        }
+      ]
+    },
+    {
+      "LogName": "Studio III: Bram's carving, state 3",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "When": {
+        "TessCarving": "3"
+      },
+      "MapTiles": [
+        {
+          "Position": {
+            "X": 13,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 42
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 43
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 58
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 59
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 74,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_3"
+          }
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 75,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_3"
+          }
+        }
+      ]
+    },
+    {
+      "LogName": "Studio III: Bram's carving, state 4",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "When": {
+        "TessCarving": "4"
+      },
+      "MapTiles": [
+        {
+          "Position": {
+            "X": 13,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 44
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 45
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 60
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 61
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 76,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_4"
+          }
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 77,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_4"
+          }
+        }
+      ]
+    },
+    {
+      "LogName": "Studio III: Bram's carving, state 5",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "When": {
+        "TessCarving": "5"
+      },
+      "MapTiles": [
+        {
+          "Position": {
+            "X": 13,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 46
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 47
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 62
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 3
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 63
+        },
+        {
+          "Position": {
+            "X": 13,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 78,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_5"
+          }
+        },
+        {
+          "Position": {
+            "X": 14,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio3Interior",
+          "SetIndex": 79,
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.carving_5"
+          }
+        }
+      ]
+    },
+    {
+      "LogName": "Studio III: Bram's photographs, after the reveal",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+      "When": {
+        "HasSeenEvent": "blinxxy.MuseArt_TessHeart6"
+      },
+      "MapTiles": [
+        {
+          "Position": {
+            "X": 5,
+            "Y": 1
+          },
+          "Layer": "Front",
+          "SetTilesheet": "zz_furniture",
+          "SetIndex": 1605
+        },
+        {
+          "Position": {
+            "X": 5,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "zz_furniture",
+          "SetIndex": 1637
+        },
+        {
+          "Position": {
+            "X": 5,
+            "Y": 3
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.photos"
+          }
+        },
+        {
+          "Position": {
+            "X": 3,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.drawers_open"
+          }
+        },
+        {
+          "Position": {
+            "X": 4,
+            "Y": 4
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio3.drawers_open"
+          }
+        }
+      ]
+    }
+  ]
+}

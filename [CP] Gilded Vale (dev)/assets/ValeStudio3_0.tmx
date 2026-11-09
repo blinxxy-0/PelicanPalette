@@ -13,8 +13,8 @@
   <tileset firstgid="3489" name="zz_wallsfloors" tilewidth="16" tileheight="16" tilecount="688" columns="16">
     <image source="walls_and_floors" width="256" height="688" />
   </tileset>
-  <tileset firstgid="4177" name="z_blinxxy.MuseArt_ValeStudio3_0Interior" tilewidth="16" tileheight="16" tilecount="96" columns="16">
-    <image source="ValeStudio3_0Interior.png" width="256" height="96" />
+  <tileset firstgid="4177" name="z_blinxxy.MuseArt_ValeStudio3Interior" tilewidth="16" tileheight="16" tilecount="96" columns="16">
+    <image source="ValeStudio3Interior.png" width="256" height="96" />
   </tileset>
   <tileset firstgid="4273" name="zz_furniture" tilewidth="16" tileheight="16" tilecount="2976" columns="32">
     <image source="../TileSheets/furniture" width="512" height="1488" />
@@ -63,13 +63,13 @@
 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 65,80,81,81,81,81,81,81,81,81,81,81,81,81,82,69,
 65,112,113,113,113,113,113,113,113,113,113,113,113,113,114,69,
-65,6199,6200,5014,5015,0,0,4195,4196,4197,0,6970,6972,4241,4242,69,
-65,0,0,0,0,0,0,0,4211,0,0,0,0,0,0,69,
-65,2521,0,0,4212,4305,0,0,0,0,0,0,0,0,0,69,
+65,6199,6200,5014,5015,4305,0,4195,4196,4197,0,6970,6972,4245,4246,69,
+65,0,0,0,0,0,0,0,4209,0,0,0,0,0,0,69,
+65,2521,0,0,4210,0,0,0,0,0,0,0,0,0,0,69,
 65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
-65,0,0,0,0,0,0,0,0,0,0,0,0,0,4308,69,
+65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
 65,962,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
-65,0,0,0,0,0,0,0,0,0,0,4201,4202,4203,0,69,
+65,0,0,0,0,0,0,0,0,0,0,4201,4202,4203,4308,69,
 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,
@@ -79,15 +79,15 @@
   <layer id="4" name="Front" width="16" height="15">
     <data encoding="csv">
 0,2,3,2122,3,3,3,3,2122,3,3,3,3,2122,4,0,
-33,42,6104,4177,4178,4213,4188,4189,4190,4191,4192,0,0,0,44,37,
-65,6135,6136,4193,4194,0,4204,4205,4206,4207,4208,6906,6908,4209,4210,69,
-2153,6167,6168,4982,4983,0,0,4179,4180,4181,0,6938,6940,4225,4226,2154,
+33,42,6104,4177,4178,4212,4188,4189,4190,4191,4192,0,0,0,44,37,
+65,6135,6136,4193,4194,0,4204,4205,4206,4207,4208,6906,6908,4213,4214,69,
+2153,6167,6168,4982,4983,4273,0,4179,4180,4181,0,6938,6940,4229,4230,2154,
 65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
-65,2489,0,0,0,4273,0,0,0,0,0,0,0,0,0,69,
+65,2489,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
 65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
-2153,0,0,0,0,0,0,0,0,0,0,0,0,0,4276,2154,
+2153,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2154,
 65,930,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
-65,0,0,0,0,0,0,0,0,0,0,4185,4186,4187,0,69,
+65,0,0,0,0,0,0,0,0,0,0,4185,4186,4187,4276,69,
 65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
 161,162,2121,166,166,166,166,166,163,0,164,166,166,166,167,168,
 0,0,0,0,0,0,0,0,97,197,131,0,0,0,0,0,
@@ -98,7 +98,7 @@
   <layer id="5" name="Front2" width="16" height="15">
     <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,6103,0,0,0,0,0,0,0,0,0,0,0,0,4213,0,
+0,6103,0,0,0,0,0,0,0,0,0,0,0,0,4212,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -179,20 +179,20 @@
     <object id="15" name="TileData" x="224" y="64" width="16" height="16">
       <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.carving" /></properties>
     </object>
-    <object id="16" name="TileData" x="80" y="96" width="16" height="16">
+    <object id="16" name="TileData" x="176" y="160" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.counter" /></properties>
+    </object>
+    <object id="17" name="TileData" x="192" y="160" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.counter" /></properties>
+    </object>
+    <object id="18" name="TileData" x="208" y="160" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.counter" /></properties>
+    </object>
+    <object id="19" name="TileData" x="80" y="64" width="16" height="16">
       <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.bram_chair" /></properties>
     </object>
-    <object id="17" name="TileData" x="224" y="128" width="16" height="16">
+    <object id="20" name="TileData" x="224" y="160" width="16" height="16">
       <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.bram_chair" /></properties>
-    </object>
-    <object id="18" name="TileData" x="176" y="160" width="16" height="16">
-      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.counter" /></properties>
-    </object>
-    <object id="19" name="TileData" x="192" y="160" width="16" height="16">
-      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.counter" /></properties>
-    </object>
-    <object id="20" name="TileData" x="208" y="160" width="16" height="16">
-      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio3.counter" /></properties>
     </object>
   </objectgroup>
 </map>

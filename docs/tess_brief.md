@@ -124,8 +124,13 @@ Sample lines:
 - **Studio III as she moves in** (plan approved by the user 2026-11-09): `tools/build_vale_buildings.py`
   `studio3_0`, `[CP] Gilded Vale (dev)/data/tess_studio.json`. The game's own furniture wherever it has the
   thing (the user: hand-drawn pieces were "rough"); spare candidates of earlier batches edited by
-  `tools/art/vale_studio3_art.py`. Its door opens on Winter 1, Year 3. Bram's photograph goes on the dresser
-  (his locked drawer is in it) after the reveal.
+  `tools/art/vale_studio3_art.py`. Its door opens on Winter 1, Year 3.
+- **Studio III's stages** (approved 2026-11-09): `tools/build_vale_buildings.py studio3` builds four maps on one
+  sheet and writes `data/tess_studio_stages.json`. The room changes after her 4-, 8- and 10-heart events
+  (a rug and Fern's fern; the bed she built and a birch table; the red rug, a lamp and her birch chair at
+  Bram's workbench), chairs always against a wall (the user). Bram's carving moves on after each of her 2- to
+  10-heart events (six states, Higgsfield, the user's pick, about 13.5 credits); his photographs hang by the
+  dresser and the locked drawer opens after the reveal. Her events' IDs: `blinxxy.MuseArt_TessHeart<N>`.
 - **Her NPC data** (`data/tess.json`), behind the residents' switch (`ValeResidents`, off by default).
 - **Her art** (`art/tess/README.md`): the walk sheet recoloured from Emily's; six Higgsfield portraits from the
   user's pick, no pencil in her hair (Margot has one). Spouse frames come with her marriage.

@@ -10,8 +10,11 @@ batches (no new generations), edited here, and three small things are drawn:
   counter          the pottery batch's spare counter (sales_counter_1_11): the cash tin kept,
                    three small carved animals where its box was
   north_window     the atelier batch's spare window, its ivy gone (Robin's renovation)
-  bram_carving_0   drawn: the carving on its stand under a dust sheet (the Gilded Tree,
-                   the user 2026-11-09)
+  bram_carving_N   Bram's carving, the Gilded Tree (the user, 2026-11-09), in six states: 0 under its
+                   dust sheet, 1 as he left it (the crown a rough block), 2-4 a quarter, half, nearly
+                   carved, 5 finished. Higgsfield gpt_image_2_6: the finished one (the user's pick of
+                   four, carving/tree_2), then edits of it backwards; each read down to 2x3 tiles with
+                   one crop and scale for all six, a pixel taking its cell's commonest colour
   bedroll          drawn: her bedroll, a knitted pillow, a blanket
   shavings         drawn: curls of pale wood on the floor
 
@@ -66,52 +69,6 @@ def save(im, name):
 
 def rect(d, x0, y0, x1, y1, fill, outline=OL):
     d.rectangle([x0, y0, x1, y1], fill=fill, outline=outline)
-
-
-def bram_carving_sheeted():
-    """The carving under its dust sheet: a stand, and a tall shape under the linen,
-    a tree's crown at the top (branches pushing the cloth out in lumps), the sheet
-    falling to the stand in folds and crumpling there."""
-    im, d = new(32, 48)
-    # the stand: a low plinth of two boards
-    rect(d, 2, 41, 29, 47, W2)
-    d.line([(3, 42), (28, 42)], fill=W3)
-    d.line([(3, 46), (28, 46)], fill=W1)
-    # the sheet's outline: lumps at the crown, a waist at the trunk, flaring at the foot
-    shape = [(15, 1), (19, 2), (21, 1), (25, 4), (27, 8), (29, 11), (28, 15), (29, 19), (26, 23),
-             (22, 25), (20, 28), (21, 33), (24, 38), (27, 42), (4, 42), (8, 38), (11, 33), (12, 28),
-             (9, 25), (5, 23), (2, 19), (3, 15), (2, 11), (5, 6), (9, 3), (12, 2)]
-    d.polygon(shape, fill=L2, outline=OL)
-    # shade the right side (the window is to the left)
-    mask = Image.new("L", im.size)
-    ImageDraw.Draw(mask).polygon(shape, fill=255)
-    px, mk = im.load(), mask.load()
-    for y in range(48):
-        xs = [x for x in range(32) if mk[x, y]]
-        if not xs:
-            continue
-        x0, x1 = min(xs), max(xs)
-        for x in xs:
-            if x in (x0, x1):
-                continue
-            t = (x - x0) / max(1, x1 - x0)
-            if t > 0.72:
-                px[x, y] = L1
-            elif t < 0.22:
-                px[x, y] = L3
-    # the crown's lumps: highlights on their upper left, shadows under them
-    for cx, cy in ((9, 6), (16, 4), (6, 13), (12, 11), (20, 9), (9, 19), (16, 17)):
-        d.point((cx, cy), fill=L4)
-        d.point((cx + 1, cy), fill=L4)
-        d.line([(cx, cy + 3), (cx + 3, cy + 2)], fill=L1)
-    d.line([(6, 22), (11, 25), (16, 26), (21, 25), (25, 22)], fill=L1)     # where the crown's hem hangs
-    # folds down the trunk, flaring out
-    d.line([(14, 27), (12, 35), (9, 41)], fill=L3)
-    d.line([(17, 27), (18, 35), (20, 41)], fill=L1)
-    d.line([(15, 30), (15, 41)], fill=L1)
-    # the hem crumpled on the plinth
-    d.line([(5, 41), (9, 40), (13, 41), (18, 40), (22, 41), (26, 41)], fill=L4)
-    save(im, "bram_carving_0")
 
 
 def bedroll():
@@ -262,8 +219,64 @@ def counter():
     save(im, "counter")
 
 
+def carving_states():
+    from collections import Counter
+    srcs = [Image.open(os.path.join(OUT, "carving", f"state_{n}.png")).convert("RGBA") for n in range(6)]
+    cut = []
+    for im in srcs:
+        px = im.load()
+        w, h = im.size
+        bg = px[2, 2]
+        close = lambda c: sum(abs(c[i] - bg[i]) for i in range(3)) < 48
+        seen, todo = set(), [(x, y) for x in range(w) for y in (0, h - 1)] + [(x, y) for y in range(h) for x in (0, w - 1)]
+        while todo:
+            x, y = todo.pop()
+            if (x, y) in seen or not (0 <= x < w and 0 <= y < h) or not close(px[x, y]):
+                continue
+            seen.add((x, y))
+            todo += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+        for x, y in seen:
+            px[x, y] = (0, 0, 0, 0)
+        cut.append(im)
+    # one box and one scale for all six, so the carving doesn't jump between states
+    boxes = [im.getbbox() for im in cut]
+    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+    W, H = 32, 48
+    s = min(W / (box[2] - box[0]), H / (box[3] - box[1]))
+    nw, nh = round((box[2] - box[0]) * s), round((box[3] - box[1]) * s)
+    for n, im in enumerate(cut):
+        ip = im.load()
+        out = Image.new("RGBA", (W, H))
+        op = out.load()
+        ox, oy = (W - nw) // 2, H - nh
+        for ty in range(nh):
+            for tx in range(nw):
+                x0, y0 = box[0] + int(tx / s), box[1] + int(ty / s)
+                x1, y1 = max(x0 + 1, box[0] + int((tx + 1) / s)), max(y0 + 1, box[1] + int((ty + 1) / s))
+                cells = [ip[x, y] for y in range(y0, min(y1, im.height)) for x in range(x0, min(x1, im.width))]
+                opaque = [c for c in cells if c[3] > 128]
+                if len(opaque) * 2 < len(cells):
+                    continue
+                q = Counter((c[0] // 12, c[1] // 12, c[2] // 12) for c in opaque).most_common(1)[0][0]
+                pick = [c for c in opaque if (c[0] // 12, c[1] // 12, c[2] // 12) == q]
+                op[ox + tx, oy + ty] = tuple(sum(c[i] for c in pick) // len(pick) for i in range(3)) + (255,)
+        save(out, f"bram_carving_{n}")
+    # The "nearly finished" edit left a rough patch too small to see at game size (the user,
+    # 2026-11-09: no difference between 8 and 10 hearts). So state 4 is the finished carving
+    # with the top of its crown, slanting larger to the upper right, still Bram's rough block
+    # (state 1's pixels): plainly the part she hasn't done.
+    done = Image.open(os.path.join(OUT, "bram_carving_5.png")).convert("RGBA")
+    rough = Image.open(os.path.join(OUT, "bram_carving_1.png")).convert("RGBA")
+    dp, rp = done.load(), rough.load()
+    for y in range(48):
+        for x in range(32):
+            if y <= 8 + max(0, x - 12) // 3 and (rp[x, y][3] or dp[x, y][3]):
+                dp[x, y] = rp[x, y]
+    save(done, "bram_carving_4")
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for f in (north_window, workbench, chisel_board, counter, bram_carving_sheeted, bedroll, shavings):
+    for f in (north_window, workbench, chisel_board, counter, carving_states, bedroll, shavings):
         f()
     print("wrote", OUT)
