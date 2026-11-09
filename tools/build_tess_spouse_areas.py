@@ -121,6 +121,12 @@ def room(exports, sheet, slots, out):
     put(grid, slots, "workbench", 0, 2, solid=1)              # her bench, against the back wall (on the floor)
     put_furn(grid, "wood_panel", 4, 1, 1, 3, solid=1)         # her timber, leaning on the wall
     put_furn(grid, "log_panel", 5, 1, 1, 3, solid=1)
+    # her firewood and offcuts, the game's log piles (Robin's: townInterior_2 312/344 and 313/345),
+    # stacked two by two down the right-hand side under the timber (the user, 2026-11-09: more log
+    # piles). Not on the room's last row: in the house that's behind the bottom wall.
+    for (x, y), first in (((4, 4), 313), ((5, 4), 312), ((4, 6), 312), ((5, 6), 313)):
+        grid["Front"][y][x] = ("townInterior_2", first)
+        grid["Buildings"][y + 1][x] = ("townInterior_2", first + 32)
     put_furn(grid, "rug", 2, 5, 2, 2, layer="Back2")
     put(grid, slots, "chest", 0, 5, solid=1)                  # Bram's letters, in the box she made,
                                                               # the Little Gilded Tree standing on it
