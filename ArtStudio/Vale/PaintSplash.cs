@@ -49,13 +49,17 @@ internal static class PaintSplash
     private static List<Shape>? _splatShapes, _dropShapes;
     private static readonly List<Splat> Splats = new();
     private static readonly List<Drop> Drops = new();
-    private static int _ticks, _total;
+    private static int _ticks, _total, _elapsed;
     private static Action? _done;
-    private static bool _heldStill;
+    private static bool _heldStill, _releaseLater;
+
+    // However it's held (museart_splashhold), no splash lasts more than a second past its time.
+    private const int Margin = 60;
 
     public static bool Playing => _total > 0;
 
-    // For screenshots (museart_splashhold): the splash stops at this fraction of its time until released.
+    // For screenshots (museart_splashhold): the next splash stops at this fraction of its time, until
+    // released or until Margin runs out. It's cleared when that splash ends, and on return to title.
     internal static float? HoldAt;
 
     public static void Register(IModHelper helper)
@@ -65,10 +69,19 @@ internal static class PaintSplash
         helper.Events.GameLoop.ReturnedToTitle += (_, _) =>
         {
             Finish(false);
+            HoldAt = null;
+            _releaseLater = false;
             DropTextures();
         };
+        // A new day starts clean: a splash still going (passing out at 2am) ends without its box.
+        helper.Events.GameLoop.DayEnding += (_, _) =>
+        {
+            if (Playing)
+                Finish(false);
+            _releaseLater = false;
+        };
         DevTools.AddCommand(helper, "museart_splashhold",
-            "Holds the paint splash at a point in its time, for screenshots (0 to 1; 'off' lets it finish). Usage: museart_splashhold 0.2|off",
+            "Holds the next paint splash at a point in its time, for screenshots (0 to 1; 'off' lets it finish). It ends a second past its time whatever the hold, and the hold goes with it. Usage: museart_splashhold 0.2|off",
             (_, args) => HoldAt = args.Length > 0 && float.TryParse(args[0], System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out float f) ? MathHelper.Clamp(f, 0f, 1f) : null);
         DevTools.AddCommand(helper, "museart_splashframe",
@@ -138,7 +151,7 @@ internal static class PaintSplash
         if (Playing || palette.Length == 0)
             return;
         _total = grand ? 180 : 90;      // ticks: 1.5 s, or 3 s
-        _ticks = 0;
+        _ticks = _elapsed = 0;
         _done = onDone;
         Lay(palette, grand);
         _heldStill = Game1.player.CanMove;
@@ -150,26 +163,63 @@ internal static class PaintSplash
     // For the checks (museart_guidetest): ends a splash at once, without its closing box.
     internal static void Stop() => Finish(false);
 
+    // For the checks: ends a splash at once, as if its time were up (its closing box shows).
+    internal static void FinishNow() => Finish(true);
+
+    // Whether something else has the player now: an event, passing out, or a box or menu. The splash
+    // then neither holds them nor lets them go; that's for whatever has them.
+    internal static bool OwnedElsewhere() =>
+        Game1.eventUp || Game1.player.passedOut || Game1.activeClickableMenu != null || Game1.dialogueUp;
+
     private static void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
+        if (_releaseLater && !Playing && Context.IsWorldReady)
+            ReleaseLater();
         if (!Playing)
             return;
-        // Stay held for the whole splash, even if something else gives movement back.
-        if (_heldStill)
+        // Stay held for the whole splash, even if something else gives movement back, unless an
+        // event, passing out or a box has taken the player over.
+        if (_heldStill && !OwnedElsewhere())
             Game1.player.CanMove = false;
+        if (++_elapsed >= _total + Margin)
+        {
+            Finish(true);
+            return;
+        }
         if (HoldAt is float hold && _ticks >= (int)(hold * _total) && _ticks < _total - 1)
             return;
         if (++_ticks >= _total)
             Finish(true);
     }
 
+    // A box or menu came up during the splash: the player is let go once it's closed, unless an
+    // event or passing out has them by then (those give movement back themselves).
+    private static void ReleaseLater()
+    {
+        if (Game1.eventUp || Game1.player.passedOut)
+            _releaseLater = false;
+        else if (!OwnedElsewhere())
+        {
+            Game1.player.CanMove = true;
+            _releaseLater = false;
+        }
+    }
+
+    // Lets go only of what the splash took: the player it held still, and only if nothing else has
+    // them now (a box: once it closes; an event or passing out: never, they let go themselves).
     private static void Finish(bool callDone)
     {
         var done = _done;
         if (_heldStill && Context.IsWorldReady)
-            Game1.player.CanMove = true;
+        {
+            if (!OwnedElsewhere())
+                Game1.player.CanMove = true;
+            else if (!Game1.eventUp && !Game1.player.passedOut)
+                _releaseLater = true;
+        }
         _heldStill = false;
-        _total = 0;
+        _total = _ticks = _elapsed = 0;
+        HoldAt = null;
         Splats.Clear();
         Drops.Clear();
         _done = null;

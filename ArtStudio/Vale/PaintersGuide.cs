@@ -124,14 +124,24 @@ internal static class PaintersGuide
         return true;
     }
 
-    // Bea in her own portrait if she's in the world; otherwise the same words without the codes.
-    private static void BeaSays(string text)
+    // Bea in her own portrait if she's in the world; otherwise the same words, a page at a time,
+    // without the codes (asObject: the plain box even if she's about, for the checks).
+    internal static void BeaSays(string text, bool asObject = false)
     {
-        if (Game1.getCharacterFromName(ValeResidents.Bea) is { } bea)
+        if (!asObject && Game1.getCharacterFromName(ValeResidents.Bea) is { } bea)
             Game1.DrawDialogue(new Dialogue(bea, null, text));
         else
-            Game1.drawObjectDialogue(Regex.Replace(text, @"\$[a-z0-9]", "").Split("#$b#").ToList());
+            Game1.drawObjectDialogue(Pages(text));
     }
+
+    // Text written as a villager's dialogue, as the pages of a plain box: split at its page breaks
+    // first, then its portrait and other codes ($0, $u, $h...) taken out, since a plain box shows them
+    // as they're written.
+    internal static List<string> Pages(string text) =>
+        text.Split("#$b#")
+            .Select(p => Regex.Replace(p, @"\$[A-Za-z0-9]", "").Replace("#", "").Trim())
+            .Where(p => p.Length > 0)
+            .ToList();
 
     // Using the guide (right-click with it held). Before the last find, anywhere: its page, the eight
     // spots found so far. After it, in the Vale: the question about stepping in (yes: GildedGrove,
@@ -243,7 +253,7 @@ internal static class PaintersGuide
                 break;
             case TouchResult.Completed:
                 PaintSplash.Play(Spots.SelectMany(s => s.Palette).ToArray(), true,
-                    () => Game1.drawObjectDialogue(Text("vale.guide.last_page").Split("#$b#").ToList()));
+                    () => Game1.drawObjectDialogue(Pages(Text("vale.guide.last_page"))));
                 break;
         }
     }

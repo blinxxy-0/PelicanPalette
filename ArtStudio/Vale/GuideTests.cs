@@ -31,6 +31,38 @@ internal static class GuideTests
         DevTools.AddCommand(helper, "museart_foundertest",
             "Co-op checks for the Founders' easel. 'offer': this player offers a test masterpiece for real and keeps the frame and the flag. 'check': every player online has offered and holds their own Founders' Frame.",
             (_, args) => FoundersCoop(monitor, args.FirstOrDefault() ?? ""));
+        DevTools.AddCommand(helper, "museart_useguide",
+            "Selects the guide in the toolbar and uses it, as a right-click with it held would (for playing the guide's flow by hand).",
+            (_, _) =>
+            {
+                var who = Game1.player;
+                int slot = who.Items.ToList().FindIndex(i => i?.QualifiedItemId == "(O)" + PaintersGuide.GuideItemId);
+                if (slot is >= 0 and < 12)
+                    who.CurrentToolIndex = slot;
+                bool used = Context.IsPlayerFree && who.CurrentItem?.QualifiedItemId == "(O)" + PaintersGuide.GuideItemId && PaintersGuide.UseGuide(who);
+                monitor.Log($"Used the guide: {used}; menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}.", LogLevel.Info);
+            });
+        DevTools.AddCommand(helper, "museart_answer",
+            "Answers the open question box with its nth answer (0 first), as a click on it would. Usage: museart_answer 0",
+            (_, args) =>
+            {
+                if (Game1.activeClickableMenu is DialogueBox { isQuestion: true } box && int.TryParse(args.FirstOrDefault() ?? "0", out int n))
+                {
+                    box.selectedResponse = n;
+                    box.receiveLeftClick(box.xPositionOnScreen + box.width / 2, box.yPositionOnScreen + box.height / 2);
+                }
+            });
+        DevTools.AddCommand(helper, "museart_playerstate", "Logs whether the farmer can move, and what's holding them.", (_, _) => monitor.Log(PlayerState(), LogLevel.Info));
+    }
+
+    internal static string PlayerState()
+    {
+        var who = Game1.player;
+        var sprite = who.FarmerSprite;
+        return $"at {who.currentLocation?.Name} {who.TilePoint}; free {Context.IsPlayerFree}, CanMove {who.CanMove}, menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}, "
+            + $"dialogueUp {Game1.dialogueUp}, eventUp {Game1.eventUp}, warping {Game1.isWarping}, freezeControls {who.freezePause}, "
+            + $"UsingTool {who.UsingTool}, frame {sprite.CurrentFrame} (single anim {sprite.PauseForSingleAnimation}, anim {sprite.CurrentAnimation?.Count ?? 0}), carrying {who.IsCarrying()}, "
+            + $"held {who.ActiveObject?.Name ?? "nothing"}, splash {PaintSplash.Playing}, warp pending {GildedGrove.WarpPending}, fade {Game1.globalFade} {Game1.fadeToBlack}";
     }
 
     private static void Check(IMonitor monitor, string what, bool ok, string detail = "") =>
@@ -241,6 +273,8 @@ internal static class GuideTests
                 EchoChecks(monitor, who, grove);
                 GroveFishChecks(monitor, who, grove);
             }
+
+            PageChecks(monitor, who, Settle);
 
             var bad = PaintersGuide.StringKeys.Where(k => { string t = PaintersGuide.Text(k); return t.Length == 0 || t == k; }).ToList();
             Check(monitor, "guide: every guide string resolves", bad.Count == 0,
@@ -780,6 +814,88 @@ internal static class GuideTests
         return bare && obj && furn && feet && head && act;
     }
 
+    // ---- What the boxes show ----
+
+    // A page shows a code if it has a page break, a '#', or a $ and a letter or digit (portrait and
+    // page codes only work in a villager's own dialogue).
+    private static readonly System.Text.RegularExpressions.Regex Codes = new(@"#|\$[A-Za-z0-9]");
+
+    // The pages the open box shows, whatever kind of box it is.
+    private static List<string> OnScreen()
+    {
+        if (Game1.activeClickableMenu is not DialogueBox box)
+            return new List<string>();
+        if (box.characterDialogue is { } d)
+            return d.dialogues.Select(l => l.Text ?? "").ToList();
+        return box.dialogues.ToList();
+    }
+
+    private static void PageChecks(IMonitor monitor, Farmer who, Action settle)
+    {
+        var shown = new List<(string Where, string Page)>();
+        void Grab(string where)
+        {
+            var pages = OnScreen();
+            if (pages.Count == 0)
+                shown.Add((where, "(no box)"));
+            shown.AddRange(pages.Select(p => (where, p)));
+            settle();
+        }
+        var ours = PaintersGuide.Spots.Select(s => PaintersGuide.FoundFlag(s.Id)).Append(PaintersGuide.GuideTakenFlag).Append(PaintersGuide.GroveOpenFlag).ToList();
+        var placeBefore = who.currentLocation;
+        try
+        {
+            foreach (string f in ours) who.mailReceived.Remove(f);
+            // Bea's words when you take the guide: as hers if she's about, and as a plain box if not.
+            PaintersGuide.TakeGuide(who);
+            Grab("the frame");
+            bool beaHere = Game1.getCharacterFromName(ValeResidents.Bea) != null;
+            PaintersGuide.BeaSays(PaintersGuide.Text("vale.guide.take"));
+            Grab(beaHere ? "Bea" : "Bea (not about)");
+            PaintersGuide.BeaSays(PaintersGuide.Text("vale.guide.take"), asObject: true);
+            Grab("Bea's words, plain");
+            PaintersGuide.TakeGuide(who);
+            Grab("the frame again");
+
+            who.currentLocation = Game1.getLocationFromName(ValeBus.Vale);
+            PaintersGuide.Touch(who, "rooftops");
+            PaintSplash.FinishNow();
+            Grab("a first find");
+            PaintersGuide.Touch(who, "rooftops");
+            Grab("a find again");
+            foreach (var s in PaintersGuide.Spots.Skip(1).Take(6))
+                who.mailReceived.Add(PaintersGuide.FoundFlag(s.Id));
+            PaintersGuide.Touch(who, PaintersGuide.Spots[7].Id);
+            PaintSplash.FinishNow();
+            Grab("the last page");
+            who.mailReceived.Remove(PaintersGuide.GuideTakenFlag);
+            PaintersGuide.Touch(who, "rooftops");
+            Grab("a stool, no guide");
+            who.currentLocation = Game1.getLocationFromName("Farm");
+            PaintersGuide.UseGuide(who);
+            Grab("the guide outside the Vale");
+        }
+        finally
+        {
+            PaintSplash.Stop();
+            settle();
+            who.currentLocation = placeBefore;
+            foreach (string f in ours) who.mailReceived.Remove(f);
+        }
+        foreach (string id in GildedGrove.EchoIds)
+            shown.AddRange(GildedGrove.EchoPages(id).Select(p => ($"echo {id}", p)));
+        foreach (string id in ValeGraves.Ids)
+            shown.AddRange(ValeGraves.Pages(id).Select(p => ($"grave {id}", p)));
+        // The Grove's own lines are shown whole: each must be one clean page.
+        foreach (string key in GildedGrove.StringKeys.Where(k => !k.StartsWith("vale.echo.")))
+            shown.Add((key, PaintersGuide.Text(key)));
+
+        var coded = shown.Where(x => Codes.IsMatch(x.Page) || x.Page == "(no box)").ToList();
+        Check(monitor, "guide: no codes on screen", coded.Count == 0,
+            coded.Count == 0 ? $"{shown.Count} pages from {shown.Select(x => x.Where).Distinct().Count()} places"
+                : string.Join("; ", coded.Select(x => $"{x.Where}: '{(x.Page.Length > 60 ? x.Page[..60] + "..." : x.Page)}'")));
+    }
+
     // ---- The way in and the way back, as real warps over the next few seconds ----
 
     private sealed record Step(string What, Func<bool> Ready, Action Then);
@@ -816,9 +932,9 @@ internal static class GuideTests
         // A splash holds the player for its time (1.5 s, or 3 s grand), then lets go and calls back.
         int splashTicks = 0;
         bool splashDone = false, heldThrough = true;
-        void StartSplash(bool grand)
+        void StartSplash(bool grand, float? hold = null)
         {
-            PaintSplash.HoldAt = null;
+            PaintSplash.HoldAt = hold;
             who.CanMove = true;
             splashTicks = 0;
             splashDone = false;
@@ -832,6 +948,31 @@ internal static class GuideTests
                 heldThrough = false;
             return !PaintSplash.Playing;
         }
+        // A splash whatever its hold says, or one a box took over halfway, ends at last (or after
+        // 200 ticks the check gives up and stops it).
+        bool menuMidway = false, splashEnded = false;
+        bool SplashOverOrStuck()
+        {
+            SplashOver();
+            if (splashTicks == 30 && menuMidway)
+            {
+                Game1.activeClickableMenu = new DialogueBox("busy");
+                who.CanMove = false;
+            }
+            return !PaintSplash.Playing || splashTicks > 200;
+        }
+        void EndStuck()
+        {
+            splashEnded = !PaintSplash.Playing;
+            if (!splashEnded)
+                PaintSplash.Stop();
+        }
+        int guideSlot = -1;
+        bool guideAdded = false;
+        int toolBefore = who.CurrentToolIndex;
+        Vector2 walkFrom = Vector2.Zero;
+        int walkTicks = 0, walkDir = 0, waited = 0, walked = 0;
+        string arrival = "";
         void SplashCheck(string what, int ticks) =>
             Check(monitor, what, splashDone && heldThrough && who.CanMove && Math.Abs(splashTicks - ticks) <= 2,
                 $"{splashTicks} ticks (expected {ticks}), held {heldThrough}, called back {splashDone}, can move {who.CanMove}");
@@ -845,10 +986,64 @@ internal static class GuideTests
                 SplashCheck("guide: a splash ends and lets go", 90);
                 StartSplash(true);
             }),
-            new("guide: the grand splash ends and lets go", SplashOver, () => SplashCheck("guide: the grand splash ends and lets go", 180)),
-            new("grove: warp in", () => true, () => Game1.warpFarmer(ValeBus.Vale, 20, 7, 2)),
+            new("guide: the grand splash ends and lets go", SplashOver, () =>
+            {
+                SplashCheck("guide: the grand splash ends and lets go", 180);
+                // museart_splashhold left set: the splash still ends, a second past its time, and the hold goes with it.
+                StartSplash(false, 0.5f);
+            }),
+            new("guide: a held splash still ends", SplashOverOrStuck, () =>
+            {
+                EndStuck();
+                bool holdGone = PaintSplash.HoldAt == null;
+                PaintSplash.HoldAt = null;
+                Check(monitor, "guide: a held splash still ends", splashEnded && splashTicks <= 90 + 60 + 2 && holdGone && who.CanMove,
+                    $"ended {splashEnded} after {splashTicks} ticks, hold cleared {holdGone}, can move {who.CanMove}");
+                // A box opens halfway through: the splash leaves the box's hold alone, and lets go once it closes.
+                menuMidway = true;
+                StartSplash(false);
+            }),
+            new("guide: a splash leaves a box's hold alone", SplashOverOrStuck, () =>
+            {
+                menuMidway = false;
+                EndStuck();
+                bool kept = !who.CanMove && Game1.activeClickableMenu is DialogueBox;
+                Game1.activeClickableMenu = null;
+                Game1.dialogueUp = false;
+                walkTicks = 0;
+                arrival = $"ended {splashEnded} after {splashTicks} ticks, box's hold kept {kept}";
+                Check(monitor, "guide: a splash leaves a box's hold alone", splashEnded && kept, arrival);
+                // Nor does it hold or let go of a player an event, or passing out, has.
+                bool before = PaintSplash.OwnedElsewhere();
+                Game1.eventUp = true;
+                bool inEvent = PaintSplash.OwnedElsewhere();
+                Game1.eventUp = false;
+                who.passedOut = true;
+                bool passedOut = PaintSplash.OwnedElsewhere();
+                who.passedOut = false;
+                Check(monitor, "guide: a splash minds events and passing out", !before && inEvent && passedOut,
+                    $"free {before}, event {inEvent}, passed out {passedOut}");
+            }),
+            new("guide: a splash lets go after the box", () => ++walkTicks > 3, () =>
+                Check(monitor, "guide: a splash lets go after the box", who.CanMove, $"{arrival}; can move {who.CanMove} once it closed")),
+            new("grove: warp in", () => Settled(), () => Game1.warpFarmer(ValeBus.Vale, 20, 7, 2)),
             new("grove: warp in", () => In(ValeBus.Vale), () =>
             {
+                // As a player does it: the guide in hand, used, and yes.
+                guideSlot = who.Items.ToList().FindIndex(i => i?.QualifiedItemId == "(O)" + PaintersGuide.GuideItemId);
+                if (guideSlot < 0 || guideSlot >= 12)
+                {
+                    guideSlot = Enumerable.Range(0, 12).Where(i => i >= who.Items.Count || who.Items[i] == null).DefaultIfEmpty(-1).First();
+                    if (guideSlot >= 0)
+                    {
+                        while (who.Items.Count <= guideSlot)
+                            who.Items.Add(null);
+                        who.Items[guideSlot] = ItemRegistry.Create("(O)" + PaintersGuide.GuideItemId);
+                        guideAdded = true;
+                    }
+                }
+                if (guideSlot >= 0)
+                    who.CurrentToolIndex = guideSlot;
                 PaintersGuide.UseGuide(who);
                 SayYes(vale);
             }),
@@ -857,6 +1052,39 @@ internal static class GuideTests
                 Check(monitor, "grove: warp in", who.TilePoint == GildedGrove.ArrivalTile, $"at {who.TilePoint}, arrival {GildedGrove.ArrivalTile}");
                 Check(monitor, "grove: paint motes in the Grove", GildedGrove.MoteTotal > 0, $"{GildedGrove.MoteTotal} motes");
                 dayLight = Light();
+                // Then walk, as held keys would, towards an open tile beside the arrival.
+                arrival = PlayerState();
+                var here = who.currentLocation;
+                (int dx, int dy, int dir)[] ways = { (-1, 0, 8), (1, 0, 2), (0, 1, 4), (0, -1, 1) };
+                walkDir = ways.Where(w => GildedGrove.Open(here, new Point(who.TilePoint.X + w.dx, who.TilePoint.Y + w.dy)))
+                    .Select(w => w.dir).DefaultIfEmpty(8).First();
+                walkFrom = who.Position;
+                waited = walked = 0;
+            }),
+            // The screen fades in first (the game holds the farmer for that); then they walk.
+            // (waited and walked are counted from the arrival step.)
+            new("grove: arrive free", () =>
+            {
+                if (walked == 0 && !who.CanMove && waited < 180)
+                {
+                    waited++;
+                    walkFrom = who.Position;
+                    return false;
+                }
+                who.setMoving((byte)walkDir);
+                return ++walked > 20;
+            }, () =>
+            {
+                float moved = Vector2.Distance(walkFrom, who.Position);
+                who.Halt();
+                var sprite = who.FarmerSprite;
+                bool posed = sprite.PauseForSingleAnimation || who.UsingTool || who.freezePause > 0;
+                Check(monitor, "grove: arrive free", moved >= 32 && !posed && Context.IsPlayerFree && who.CanMove,
+                    $"free to move after {waited} ticks, then walked {moved:0} px in 20 holding {who.CurrentItem?.Name ?? "nothing"}"
+                    + $" (carried overhead {who.IsCarrying()}, posed {posed}); on arrival: {arrival}");
+                if (guideAdded && guideSlot >= 0 && guideSlot < who.Items.Count)
+                    who.Items[guideSlot] = null;
+                who.CurrentToolIndex = toolBefore;
                 Game1.timeOfDay = 2200;
             }),
             new("grove: golden at night", () => ++nightTicks > 30, () =>
