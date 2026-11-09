@@ -31,6 +31,8 @@
     { "Action": "Include", "FromFile": "data/jet.json" },
     // ... and their heart events (tools/build_corrie_events.py)
     { "Action": "Include", "FromFile": "data/corrie_events.json" },
+    // ... and their stained-glass furniture: the counter's and the keepsakes (tools/corrie_furniture.py)
+    { "Action": "Include", "FromFile": "data/corrie_furniture.json" },
     { "Action": "Include", "FromFile": "data/vale_town_trips.json" },
     // Their shops and Bea's room for the night (not behind the switch: with nobody at a
     // counter they open on trust), and Lupini's letter opening the Vale.

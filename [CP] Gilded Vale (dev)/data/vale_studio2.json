@@ -23,6 +23,7 @@
         "blinxxy.MuseArt_Vale.studio2.mabel_window": "{{i18n:vale.studio2.mabel_window}}",
         "blinxxy.MuseArt_Vale.studio2.offcuts": "{{i18n:vale.studio2.offcuts}}",
         "blinxxy.MuseArt_Vale.studio2.racks": "{{i18n:vale.studio2.racks}}",
+        "blinxxy.MuseArt_Vale.studio2.sunflower": "{{i18n:vale.studio2.sunflower}}",
         "blinxxy.MuseArt_Vale.studio2.window": "{{i18n:vale.studio2.window}}"
       }
     },
@@ -62,7 +63,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 67,
+          "SetIndex": 47,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.glass_lamp"
           }
@@ -74,7 +75,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 67,
+          "SetIndex": 47,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.glass_lamp"
           }
@@ -86,7 +87,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 35
+          "SetIndex": 15
         },
         {
           "Position": {
@@ -95,7 +96,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 35
+          "SetIndex": 15
         },
         {
           "Position": {
@@ -104,7 +105,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 51
+          "SetIndex": 31
         },
         {
           "Position": {
@@ -113,7 +114,94 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 51
+          "SetIndex": 31
+        }
+      ]
+    },
+    {
+      "LogName": "Studio II: opal8",
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio2",
+      "When": {
+        "HasFlag": "blinxxy.MuseArt_Opal8Seen"
+      },
+      "Update": "OnLocationChange",
+      "MapTiles": [
+        {
+          "Position": {
+            "X": 7,
+            "Y": 1
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
+          "SetIndex": 55
+        },
+        {
+          "Position": {
+            "X": 8,
+            "Y": 1
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
+          "SetIndex": 56
+        },
+        {
+          "Position": {
+            "X": 7,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
+          "SetIndex": 71
+        },
+        {
+          "Position": {
+            "X": 8,
+            "Y": 2
+          },
+          "Layer": "Front",
+          "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
+          "SetIndex": 72
+        },
+        {
+          "Position": {
+            "X": 8,
+            "Y": 3
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.sunflower"
+          }
+        },
+        {
+          "Position": {
+            "X": 8,
+            "Y": 2
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.sunflower"
+          }
+        },
+        {
+          "Position": {
+            "X": 7,
+            "Y": 3
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.sunflower"
+          }
+        },
+        {
+          "Position": {
+            "X": 7,
+            "Y": 2
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.sunflower"
+          }
         }
       ]
     },
@@ -192,7 +280,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 54,
+          "SetIndex": 69,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.bench_used"
           }
@@ -204,7 +292,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 55,
+          "SetIndex": 70,
           "SetProperties": {
             "Action": "Message blinxxy.MuseArt_Vale.studio2.bench_used"
           }
@@ -288,7 +376,7 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 38
+          "SetIndex": 53
         },
         {
           "Position": {
@@ -297,51 +385,31 @@
           },
           "Layer": "Front",
           "SetTilesheet": "z_blinxxy.MuseArt_ValeStudio2Interior",
-          "SetIndex": 39
-        },
-        {
-          "Position": {
-            "X": 9,
-            "Y": 2
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
-        },
-        {
-          "Position": {
-            "X": 10,
-            "Y": 3
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
-        },
-        {
-          "Position": {
-            "X": 12,
-            "Y": 3
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
-        },
-        {
-          "Position": {
-            "X": 10,
-            "Y": 2
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
+          "SetIndex": 54
         },
         {
           "Position": {
             "X": 11,
+            "Y": 2
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 12,
+            "Y": 3
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 10,
             "Y": 3
           },
           "Layer": "Buildings",
@@ -352,6 +420,16 @@
         {
           "Position": {
             "X": 12,
+            "Y": 2
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 10,
             "Y": 2
           },
           "Layer": "Buildings",
@@ -372,6 +450,16 @@
         {
           "Position": {
             "X": 11,
+            "Y": 3
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 9,
             "Y": 2
           },
           "Layer": "Buildings",

@@ -90,8 +90,7 @@ a rainy day, with 2+ hearts with Jet.
 - He picks up his tools and walks off down the path. The seedhouse door opens behind you and Fern
   looks out, yawning, at a pane that's whole. By then he's gone.
 
-**After:** you get the blue offcut (a small keepsake to stand in a window: furniture art, to make with
-the rest after the PixelLab refill). His Mon2 line ("for the air") stands on this.
+**After:** you get the Blue Offcut (furniture, a small keepsake to stand in a window). His Mon2 line ("for the air") stands on this.
 
 ### 4 hearts: Mabel's bench (Studio II, an afternoon)
 
@@ -178,7 +177,7 @@ with Opal and her 6-heart event seen.
 - Opal laughs, crying a bit. `$u` "She did! It's in the loft somewhere. Oh, Jet."
 
 **After:** her Mon8 line (her hands remembering) stands on this. The cracked sunflower hangs in her
-half of the studio from now on (a small piece of art, after the refill).
+half of the studio from now on, over her drawing board (the studio's stage "opal8").
 
 ### 10 hearts: morning light (the Exhibition Hall, at sunrise)
 
@@ -206,8 +205,8 @@ the tea room's wall, the colour across the tea tables. Bea brings three cups of 
 herself, and sits down, which she never does. Bea: "My aunt always wanted a window like that." Opal:
 `$l` "I know. She told me. I was nine."
 
-**After:** you get a small stained-glass window of your own (spring, the first of the four: a new
-furniture item, after the refill). The Hall's windows (or the tea room's) stay coloured for good.
+**After:** "On the way out, Opal presses a small parcel into your hands: a window of your own.
+Spring, the first of the four." You get the Spring Window (furniture). The Hall's windows (or the tea room's) stay coloured for good.
 
 ## Jet
 
@@ -286,7 +285,8 @@ between 6am and 9am, with 10 hearts with Jet and his 8-heart event seen.
   - (Look at the light.) → Nobody says anything for a long time.
 
 **After:** the studio's 10-heart stage: Mabel's window in the studio's window, her bench in use (they
-take turns at it). You get the window he drew for your farmhouse (a furniture item, after the refill).
+take turns at it). "Before you go, Jet hands you a small window wrapped in newspaper: the one he drew
+for your farmhouse." You get the Farmhouse Window (furniture).
 
 ---
 
@@ -299,9 +299,9 @@ take turns at it). You get the window he drew for your farmhouse (a furniture it
   (`blinxxy.MuseArt_Opal6Seen`, `_Jet8Seen`, `_Jet10Seen`) that `data/vale_studio2.json` waits for;
   Jet's 8 and 10 also change the room on screen (`removeTile`, `changeMapTile`).
 - Props: the game's own Modern and Ornate Lamps in Opal's 2; the coloured light of the 10s.
-- Rewards still to make (art after the PixelLab refill): Jet's blue offcut (2), the cracked sunflower
-  (Opal 8), Opal's spring window (10), Jet's window for your farmhouse (10). Opal's 2 gives the
-  game's own Candle Lamp.
+- Rewards (Higgsfield art, 2026-11-09; tools/corrie_furniture.py): Jet's Blue Offcut (2), Opal's
+  Spring Window (10), Jet's Farmhouse Window (10), all furniture; Opal's cracked sunflower hangs in
+  Studio II after her 8. Opal's 2 gives the game's own Candle Lamp.
 - No animations yet (kneeling, cutting, puttying): standing poses, the props doing the work.
 
 ---

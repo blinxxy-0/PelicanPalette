@@ -9,7 +9,7 @@ A picture with its own transparency (Higgsfield's background "transparent") uses
 the flood (anything under 200 alpha is background: the model's soft edge). "stretch" fills W x H
 exactly instead of keeping the shape (for a window, which the model never draws quite 2:1).
 
-Usage: object_fit.py <generated.png> <out.png> <W> <H> [stretch]"""
+Usage: object_fit.py <generated.png> <out.png> <W> <H> [stretch] [nodark]"""
 import sys
 from collections import deque
 import numpy as np
@@ -17,6 +17,7 @@ from PIL import Image
 
 src, out, W, H = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
 stretch = "stretch" in sys.argv[5:]
+nodark = "nodark" in sys.argv[5:]       # (tiny pieces: outlines win too many cells, so no tie-break for them)
 src_im = Image.open(src)
 has_alpha = src_im.mode in ("RGBA", "LA") and src_im.getchannel("A").getextrema()[0] < 200
 im = src_im.convert("RGB")
@@ -76,7 +77,7 @@ for ty in range(th):
         counts = Counter(solid)
         best = counts.most_common(1)[0]
         darks = [(n, c) for c, n in counts.items() if sum(c) < 180 and n >= best[1]]   # (a tie only: more thickened outlines)
-        c = max(darks)[1] if darks else best[0]
+        c = max(darks)[1] if darks and not nodark else best[0]
         o[ty, tx, :3] = c
         o[ty, tx, 3] = 255
 canvas = Image.new("RGBA", (W, H))

@@ -11,8 +11,19 @@ Where each piece comes from (`tools/build_vale_buildings.py`, spec "studio2", it
   "as detailed as" the bench beside it).
 - **Higgsfield** (`gpt_image_2_6`, the six PixelLab pieces as the style reference), shrunk to their
   footprints by `tools/art/object_fit.py` (a majority vote per pixel, not averaging): `higgsfield/`
-  `design_sketches_3`, `glass_lamp_3`, `offcut_bins_2`, `mabel_bench_used_1`. Shrinking loses detail:
-  if any of these looks soft next to the PixelLab ones, redo it in PixelLab the drafting table's way.
+  `glass_lamp_3`; and the second round (`higgsfield/v2/`, picked by the user 2026-11-09, before the
+  Higgsfield account ran out): `designs_3`, `offcut_bins_2`, `bench_used_2` (read back on its own
+  grid, `_grid`), and Opal's cracked sunflower (`sunC_4_fix`, the stage after her 8 hearts).
+  Shrinking loses detail: if any looks soft next to the PixelLab ones, redo it in PixelLab.
+- **The twins' furniture** (`higgsfield/v2/`, packed by `tools/corrie_furniture.py` into
+  `assets/corrie_furniture.png`, each window with a night frame and each lamp a lit one beside it):
+  the counter's Rose, Vale and Arched Windows, Leaded Table and Floor Lamps (the floor lamp is the
+  room's `glass_lamp_3`), Sun and River Mosaics, the Suncatcher; the keepsakes from their events,
+  the Blue Offcut, the Spring Window and the Farmhouse Window. `picks.png` shows them all.
+- **Clean outlines** (the user, 2026-11-09: the first farmhouse window, sunflower and suncatcher had
+  "the outline is broken"): shrink once, `tools/art/outline_fix.py` (redraws one unbroken dark-brown
+  edge), then send that back to Higgsfield blown up into big blocks to clean up on the same grid, and
+  read it back block by block (`farmC_1_cs`, `sunC_4_cs`; then `outline_fix.py` again: `_fix`).
 - **Drawn in code** (`tools/art/vale_corrie_art.py`):
   - the big window and Mabel's window (Jet's 10 hearts) and the small window behind the racks: drawn
     the way the studio's outside glass is, with its own code (`tools/vale_studio_sale.py`: the frame

@@ -145,6 +145,7 @@ ART = {
     "colour_pool":   (2, 2, -2),    # the colour the racks throw on the floor
     "small_window":  (2, 2, 0),     # a small window behind the racks: where that light comes from
     "design_sketches": (3, 2, 0),   # Opal's window designs, coloured in, pinned up any old how
+    "cracked_sunflower": (2, 2, 0), # her first panel, a sunflower, cracked in the kiln, hung on a chain (her 8 hearts)
     "drafting_table": (2, 2, 1),    # her tilted drawing board, a design half coloured, pencils everywhere
     "studio_window": (4, 2, 0),     # the big studio window over Mabel's bench, plain glass
     "mabel_window":  (4, 2, 0),     # ... with Mabel's finished design in it (Jet's 10 hearts)
@@ -576,8 +577,13 @@ BUILDINGS = {
                # Higgsfield (the user, 2026-11-09: "use higgsfield credits for the objects"), fitted to
                # their footprints by tools/art/object_fit.py (art/gilded_vale/interiors/studio2/README.md)
                **{k: f"art/gilded_vale/interiors/studio2/higgsfield/{k}_{n}_fit" for k, n in (
-                   ("design_sketches", 3),
-                   ("glass_lamp", 3), ("offcut_bins", 2), ("mabel_bench_used", 1))},
+                   ("glass_lamp", 3),)},
+               # the second Higgsfield round, picked by the user 2026-11-09 (higgsfield/v2/)
+               **{k: "art/gilded_vale/interiors/studio2/higgsfield/v2/" + v for k, v in (
+                   ("design_sketches", "designs_3_fit"), ("offcut_bins", "offcut_bins_2_fit"),
+                   ("mabel_bench_used", "bench_used_2_grid"),
+                   # Opal's first panel, cracked in the kiln (her 8 hearts: STUDIO2_STAGES)
+                   ("cracked_sunflower", "sunC_4_fix"))},
                # PixelLab, Pro Flash (the user, 2026-11-09)
                **{k: "art/gilded_vale/interiors/studio2/pixellab/" + k for k in (
                    "glass_counter", "cutting_bench", "light_table", "mabel_bench", "glass_racks", "modern_kiln",
@@ -618,7 +624,8 @@ BUILDINGS = {
                "East: Jet's half, spotless grey: the light table under a small window, a sleek city kiln, his cutting bench, offcuts sorted by colour.",
                "The middle: the big studio window and, under it on the line, Mabel's bench, kept and never used. The ladder goes up to the loft.",
                "City money: a Modern Lamp (the game's own) by each bed, the steel kiln. A bed at each end.",
-               "Hearts: Opal 6+, their own glass lamps replace the city ones. Jet 8+, the line has a gap by the bench.",
+               "Hearts: Opal 6+, their own glass lamps replace the city ones. Opal 8+, her cracked sunflower on her wall.",
+               "Jet 8+, the line has a gap by the bench.",
                "Jet 10+, Mabel's bench in use and her finished window in the studio's window. Orange = new hand-drawn piece."]),
 }
 
@@ -715,6 +722,8 @@ BUILDINGS["hall_closed"] = closed_hall(BUILDINGS["hall"])
 STUDIO2_STAGES = {
     # their own glass lamps replace the city ones
     "opal6": ({"HasFlag": "blinxxy.MuseArt_Opal6Seen"}, {"swap": {"city_lamp": "glass_lamp"}, "describe": {"glass_lamp": "glass_lamp"}}),
+    # her first panel, cracked in the kiln, hung on her wall over the drawing board
+    "opal8": ({"HasFlag": "blinxxy.MuseArt_Opal8Seen"}, {"add": [("cracked_sunflower", 7, 1)], "describe": {"cracked_sunflower": "sunflower"}}),
     # the line gets a gap by the bench, where they've started sharing the middle
     "jet8": ({"HasFlag": "blinxxy.MuseArt_Jet8Seen"}, {"remove": ["split_line", "split_line#6", "split_line#7",
                                                                   "split_line_b", "split_line_b#6", "split_line_b#7"]}),
@@ -740,12 +749,14 @@ def studio2_stage(spec, stages):
                 tag = p[0][len(key):]
                 p = (change["swap"][key] + tag, *p[1:])
             pieces.append(p)
-        out["pieces"] = pieces
+        out["pieces"] = pieces + list(change.get("add", []))
         described = {}
         for k, v in out["describe"].items():
             key = k.split("#")[0]
             to = change.get("swap", {}).get(key, key)
             described[to + k[len(key):]] = change.get("describe", {}).get(to, v)
+        for p in change.get("add", []):
+            described[p[0]] = change["describe"][p[0]]
         out["describe"] = described
     return out
 

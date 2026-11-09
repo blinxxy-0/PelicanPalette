@@ -15,8 +15,9 @@ Opal's 6 and 10 have two versions each: the Exhibition Hall reopened (Lupini's 8
 flag blinxxy.MuseArt_ValeHallOpen) or still shut (docs/design/vale_newcomers.md, section 3).
 Whichever plays first sets blinxxy.MuseArt_Opal6Seen / _Opal10Seen, and the other then never plays.
 
-Rewards still waiting for their art (after the PixelLab refill): Jet's blue offcut (2), the cracked
-sunflower (Opal 8), Opal's spring window (10), Jet's window for your farmhouse (10).
+The keepsakes are furniture (tools/corrie_furniture.py): Jet's blue offcut (his 2), Opal's spring
+window (her 10), the window Jet drew for your farmhouse (his 10). Opal's cracked sunflower hangs in
+Studio II after her 8 (the stage "opal8").
 
 Usage: build_corrie_events.py        (from the repository root)
 """
@@ -35,6 +36,7 @@ HALL_OPEN = "G PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeHallOpen Any"
 HALL_SHUT = "G !PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeHallOpen Any"
 PROPS = "Mods\\blinxxy.MuseArt\\CorrieEventProps"         # 32x32 each: 0 spring light, 1 Mabel's dawn light
 FURN = "TileSheets\\furniture"
+GIFT = {k: f"(F)blinxxy.MuseArt_Corrie{k}" for k in ("BlueOffcut", "SpringWindow", "FarmWindow")}
 LAMPS = {"modern": (112, 720), "ornate": (480, 864)}       # Data/Furniture 1447, 1758: the city's chrome and red
 
 
@@ -205,7 +207,8 @@ def events():
     )
 
     # ---- 10 hearts: morning light (the Hall at sunrise; or Bea's tea room) -------------
-    ten = ["addMailReceived blinxxy.MuseArt_Opal10Seen"]
+    ten = [say("On the way out, Opal presses a small parcel into your hands: a window of your own. Spring, the first of the four."),
+           f"addItem {GIFT['SpringWindow']}", "addMailReceived blinxxy.MuseArt_Opal10Seen"]
     hall[f"blinxxy.MuseArt_Opal10hHall/{F(O, 10)}/Time 600 800/{mail('OpalLetterHall')}/{no_mail('Opal10Seen')}"] = script(
         "continue", "14 18", f"farmer 14 21 0 {O} 13 18 0 {J} 15 18 0", "skippable",
         "pause 600", "move farmer 0 -2 0", "pause 300",
@@ -265,7 +268,7 @@ def events():
         f"faceDirection {J} 2", "pause 400",
         say("He takes an offcut of blue glass from his apron and holds it out to you."),
         speak(J, "Keep it in a window.$l"),
-        # (the offcut itself: a furniture item, after the PixelLab refill)
+        f"addItem {GIFT['BlueOffcut']}",
         "globalFade 0.02", f"warp {J} -100 -100", "warp FernAster 17 39", "faceDirection FernAster 0",
         "globalFadeToClear 0.02", "pause 400",
         say("The seedhouse door opens behind you and Fern looks out, yawning, at a pane that's whole. By then he's gone."),
@@ -364,7 +367,8 @@ def events():
             ("Now you can make your own.", [speak(J, "Already started.$h"), say("He shows you a drawing: a window for your farmhouse.")]),
             ("(Look at the light.)", [say("Nobody says anything for a long time.")]),
         ]),
-        # (his window for your farmhouse: a furniture item, after the PixelLab refill)
+        say("Before you go, Jet hands you a small window wrapped in newspaper: the one he drew for your farmhouse."),
+        f"addItem {GIFT['FarmWindow']}",
         "addMailReceived blinxxy.MuseArt_Jet10Seen", "pause 300", "end",
     )
     return studio, vale, hall, house
