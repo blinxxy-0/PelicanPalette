@@ -181,6 +181,39 @@ internal static class GuideTests
                 Settle();
                 who.currentLocation = place;
                 Check(monitor, "grove: no warp in while busy", !warpedBusy && noWarp, $"returned {warpedBusy}, warp {(noWarp ? "none" : Game1.locationRequest?.Name)}");
+
+                // The warp at the end of the paint wash checks again: not at 2am, not with a box up.
+                who.currentLocation = vale;
+                int timeBefore = Game1.timeOfDay;
+                Game1.timeOfDay = 2600;
+                bool late = GildedGrove.FinishWarp(who, true);
+                bool lateNone = Game1.locationRequest == null;
+                Game1.timeOfDay = timeBefore;
+                Game1.activeClickableMenu = new DialogueBox("busy");
+                bool busy = GildedGrove.FinishWarp(who, true);
+                bool busyNone = Game1.locationRequest == null;
+                Settle();
+                who.currentLocation = place;
+                Check(monitor, "grove: the wash's end checks again", !late && lateNone && !busy && busyNone,
+                    $"at 2am returned {late} (warp {(lateNone ? "none" : "started")}), busy returned {busy} (warp {(busyNone ? "none" : "started")})");
+
+                // The frame never sets you down in water, nor on a tile walled in on every side.
+                Point? water = null, shut = null;
+                var back = vale.Map.GetLayer("Back");
+                for (int y = 1; y < back.LayerHeight - 1; y++)
+                    for (int x = 1; x < back.LayerWidth - 1; x++)
+                    {
+                        var v = new Vector2(x, y);
+                        if (water == null && vale.isWaterTile(x, y))
+                            water = new Point(x, y);
+                        else if (shut == null && !vale.isWaterTile(x, y) && vale.isTilePassable(v)
+                                 && new[] { new Vector2(x + 1, y), new Vector2(x - 1, y), new Vector2(x, y + 1), new Vector2(x, y - 1) }.All(n => !vale.isTilePassable(n)))
+                            shut = new Point(x, y);
+                    }
+                bool wet = water != null && GildedGrove.Landable(vale, water.Value);
+                bool walled = shut != null && GildedGrove.Landable(vale, shut.Value);
+                Check(monitor, "grove: the frame never lands in water or walled in", water != null && !wet && !walled,
+                    $"water {water?.ToString() ?? "none found"} landable {wet}, walled-in {shut?.ToString() ?? "none found"} landable {walled}");
             }
 
             var bad = PaintersGuide.StringKeys.Where(k => { string t = PaintersGuide.Text(k); return t.Length == 0 || t == k; }).ToList();
@@ -258,6 +291,12 @@ internal static class GuideTests
         var vale = Game1.getLocationFromName(ValeBus.Vale);
         var gate = new Vector2(GildedGrove.ReturnTile.X, GildedGrove.ReturnTile.Y);
         SObject? blocker = null;
+        NPC? stander = null;
+        int timeBefore = Game1.timeOfDay;
+        Color lightBefore = Game1.outdoorLight;
+        string dayLight = "", nightLight = "";
+        int nightTicks = 0;
+        string Light() => $"lighting {Game1.drawLighting}, outdoor {Game1.outdoorLight}";
 
         bool Settled() => Context.IsPlayerFree && !Game1.isWarping && Game1.locationRequest == null && !PaintSplash.Playing && !GildedGrove.WarpPending;
         bool In(string name) => Game1.currentLocation?.Name == name && Settled();
@@ -284,6 +323,15 @@ internal static class GuideTests
             {
                 Check(monitor, "grove: warp in", who.TilePoint == GildedGrove.ArrivalTile, $"at {who.TilePoint}, arrival {GildedGrove.ArrivalTile}");
                 Check(monitor, "grove: paint motes in the Grove", GildedGrove.MoteTotal > 0, $"{GildedGrove.MoteTotal} motes");
+                dayLight = Light();
+                Game1.timeOfDay = 2200;
+            }),
+            new("grove: golden at night", () => ++nightTicks > 30, () =>
+            {
+                nightLight = Light();
+                Game1.timeOfDay = timeBefore;
+                Check(monitor, "grove: golden at night", nightLight == dayLight && Game1.drawLighting && Game1.outdoorLight == GildedGrove.GroveLight,
+                    $"day: {dayLight}; 10pm: {nightLight}");
                 GildedGrove.OnFrame(who);
                 SayYes(who.currentLocation);
             }),
@@ -309,12 +357,35 @@ internal static class GuideTests
                 int far = Math.Max(Math.Abs(at.X - gateTile.X), Math.Abs(at.Y - gateTile.Y));
                 Check(monitor, "grove: the frame home, blocked", blocker != null && at != gateTile && far == 1 && GildedGrove.Open(vale, at),
                     $"at {at}, gate {gateTile}, {far} away, blocker {blocker != null}");
+                // Now someone standing on the gate instead of a chest.
+                if (blocker != null && vale.Objects.TryGetValue(gate, out var placed) && placed == blocker)
+                    vale.Objects.Remove(gate);
+                blocker = null;
+                stander = new NPC(new AnimatedSprite("Characters/Abigail", 0, 16, 32), gate * 64f, 2, ModEntry.Id + "_GateTester");
+                vale.characters.Add(stander);
+                GildedGrove.WarpIn(who, false);
+            }),
+            new("grove: the frame home, someone on the gate", () => In(GildedGrove.Location), () =>
+            {
+                GildedGrove.OnFrame(who);
+                SayYes(who.currentLocation);
+            }),
+            new("grove: the frame home, someone on the gate", () => In(ValeBus.Vale), () =>
+            {
+                Point at = who.TilePoint, gateTile = GildedGrove.ReturnTile;
+                int far = Math.Max(Math.Abs(at.X - gateTile.X), Math.Abs(at.Y - gateTile.Y));
+                Check(monitor, "grove: the frame home, someone on the gate", stander != null && at != gateTile && far == 1 && GildedGrove.Landable(vale, at),
+                    $"at {at}, gate {gateTile}, {far} away, {stander?.Name} at {stander?.TilePoint}");
             }),
         };
         RunSteps(monitor, steps, () =>
         {
             if (blocker != null && vale.Objects.TryGetValue(gate, out var o) && o == blocker)
                 vale.Objects.Remove(gate);
+            if (stander != null)
+                vale.characters.Remove(stander);
+            Game1.timeOfDay = timeBefore;
+            Game1.outdoorLight = lightBefore;
             if (!hadGrove)
                 who.mailReceived.Remove(PaintersGuide.GroveOpenFlag);
             Game1.activeClickableMenu = null;

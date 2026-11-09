@@ -12,7 +12,7 @@ namespace ArtStudio.Vale;
 // favourite place, a small map of its own, reached only through the guide's last page and left only
 // by the painted frame at its edge (section 3). It's always fall there (its location context's
 // SeasonOverride, so the game's seasonal sheets show their fall faces all year) and always sunny;
-// the gold light is a warm wash over the world, and paint motes drift while you're in it.
+// its light is held at a warm late-afternoon gold day and night, and paint motes drift while you're in it.
 internal static class GildedGrove
 {
     public const string Location = ModEntry.Id + "_GildedGrove";
@@ -29,12 +29,15 @@ internal static class GildedGrove
     // TODO(Task 6): the graveyard's gate. Replace with ValeGraves.GraveyardGateTile once it exists.
     public static readonly Point ReturnTile = new(8, 23);
 
-    // The paint wash's gold, and the warm light over the Grove.
+    // The paint wash's gold.
     private static readonly Color[] Gold =
     {
         new(236, 180, 40), new(252, 216, 96), new(200, 140, 32), new(255, 238, 168), new(222, 150, 72),
     };
-    private static readonly Color Wash = new Color(255, 190, 90) * 0.10f;
+
+    // The Grove's light, held all day and night: the game's lighting takes this colour away from the
+    // scene, so a little green and more blue taken out leaves a warm late-afternoon gold.
+    public static readonly Color GroveLight = new(0, 24, 64);
 
     public static IMonitor? Monitor;
 
@@ -74,8 +77,7 @@ internal static class GildedGrove
         if (!Context.IsPlayerFree || PaintSplash.Playing || who.currentLocation?.Name != ValeBus.Vale
             || !who.mailReceived.Contains(PaintersGuide.GroveOpenFlag))
             return false;
-        Go(who, effects, () => Game1.warpFarmer(Location, ArrivalTile.X, ArrivalTile.Y, 0));
-        return true;
+        return Go(who, effects, true);
     }
 
     // The frame: back to the Vale, on the graveyard's gate or the nearest open tile to it.
@@ -83,22 +85,13 @@ internal static class GildedGrove
     {
         if (!Context.IsPlayerFree || PaintSplash.Playing || !InGrove(who))
             return false;
-        Go(who, effects, () =>
-        {
-            var vale = Game1.getLocationFromName(ValeBus.Vale);
-            Point tile = vale == null ? ReturnTile : HomeTile(vale);
-            Game1.warpFarmer(ValeBus.Vale, tile.X, tile.Y, 2);
-        });
-        return true;
+        return Go(who, effects, false);
     }
 
-    private static void Go(Farmer who, bool effects, Action warp)
+    private static bool Go(Farmer who, bool effects, bool into)
     {
         if (!effects)
-        {
-            warp();
-            return;
-        }
+            return FinishWarp(who, into);
         Game1.flashAlpha = 1f;
         who.currentLocation.playSound("wand");
         var rng = Game1.random;
@@ -106,12 +99,41 @@ internal static class GildedGrove
             who.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(354, rng.Next(25, 75), 6, 1,
                 new Vector2(rng.Next((int)who.Position.X - 192, (int)who.Position.X + 128), rng.Next((int)who.Position.Y - 192, (int)who.Position.Y + 64)),
                 false, rng.NextDouble() < 0.5));
-        PaintSplash.Play(Gold, false, warp);
+        PaintSplash.Play(Gold, false, () => FinishWarp(who, into));
+        return true;
     }
 
-    // ReturnTile if it's open; otherwise the nearest open tile, searching outward ring by ring.
+    // The warp itself, at the end of the paint wash. Everything is checked again, since a second and a
+    // half has passed: a box may have opened, or it may be 2am and time to pass out. If anything's
+    // wrong, nothing happens and the player can move again.
+    public static bool FinishWarp(Farmer who, bool into)
+    {
+        bool ok = Context.IsWorldReady && Context.IsPlayerFree && !Game1.eventUp && !Game1.isWarping
+            && Game1.timeOfDay < 2600 && !who.passedOut
+            && who.currentLocation?.Name == (into ? ValeBus.Vale : Location)
+            && (!into || who.mailReceived.Contains(PaintersGuide.GroveOpenFlag));
+        if (!ok)
+        {
+            if (!Game1.eventUp && Game1.activeClickableMenu == null)
+                who.CanMove = true;
+            return false;
+        }
+        if (into)
+            Game1.warpFarmer(Location, ArrivalTile.X, ArrivalTile.Y, 0);
+        else
+        {
+            var vale = Game1.getLocationFromName(ValeBus.Vale);
+            Point tile = vale == null ? ReturnTile : HomeTile(vale);
+            Game1.warpFarmer(ValeBus.Vale, tile.X, tile.Y, 2);
+        }
+        return true;
+    }
+
+    // ReturnTile if it's open and reachable on foot from the Vale's paths; otherwise the nearest such
+    // tile, searching outward ring by ring.
     public static Point HomeTile(GameLocation vale)
     {
+        var reach = Reachable(vale);
         for (int r = 0; r <= 8; r++)
         {
             Point? best = null;
@@ -123,7 +145,7 @@ internal static class GildedGrove
                         continue;
                     var p = new Point(ReturnTile.X + dx, ReturnTile.Y + dy);
                     double d = dx * dx + dy * dy;
-                    if (d < bestDist && Open(vale, p))
+                    if (d < bestDist && Open(vale, p) && (reach.Count == 0 || reach.Contains(p)))
                         (best, bestDist) = (p, d);
                 }
             if (best != null)
@@ -133,16 +155,60 @@ internal static class GildedGrove
         return ReturnTile;
     }
 
-    // Walkable ground nothing stands on (a placed object, furniture, an NPC, a tree). Other farmers
-    // don't count: farmers walk through each other.
+    // Dry, walkable ground nothing stands on (a placed object, furniture, an NPC, a tree). Other farmers
+    // don't count (farmers walk through each other), nor do things you walk over (grass, flooring).
     public static bool Open(GameLocation location, Point p)
     {
         var tile = new Vector2(p.X, p.Y);
         return location.isTileOnMap(tile)
             && location.isTilePassable(tile)
-            && !location.IsTileOccupiedBy(tile, CollisionMask.All & ~CollisionMask.Farmers)
+            && !location.isWaterTile(p.X, p.Y)
+            && !location.IsTileOccupiedBy(tile, CollisionMask.All & ~CollisionMask.Farmers, CollisionMask.All)
             && location.getObjectAtTile(p.X, p.Y) == null
             && location.isCharacterAtTile(tile) == null;
+    }
+
+    // Whether the frame may set you down here: open, and reachable on foot from the Vale's paths.
+    public static bool Landable(GameLocation vale, Point p)
+    {
+        var reach = Reachable(vale);
+        return Open(vale, p) && (reach.Count == 0 || reach.Contains(p));
+    }
+
+    // Where the Vale's paths start: the bus stop (tools/vale_routes.py PLACES, "bus stop").
+    public static readonly Point PathStart = new(12, 8);
+
+    // Every tile you can walk to from the bus stop over the map's own ground: not water, nothing solid
+    // on it, no tree or bush in the way. Empty if the bus stop itself isn't walkable (then Open alone
+    // decides).
+    public static HashSet<Point> Reachable(GameLocation vale)
+    {
+        var seen = new HashSet<Point>();
+        bool Walk(Point p)
+        {
+            var v = new Vector2(p.X, p.Y);
+            return vale.isTileOnMap(v) && vale.isTilePassable(v) && !vale.isWaterTile(p.X, p.Y)
+                && !vale.IsTileOccupiedBy(v, CollisionMask.TerrainFeatures, CollisionMask.All);
+        }
+        if (!Walk(PathStart))
+        {
+            Monitor?.Log($"The Vale's bus stop {PathStart} isn't walkable; the frame lands on any open tile.", LogLevel.Warn);
+            return seen;
+        }
+        var queue = new Queue<Point>();
+        seen.Add(PathStart);
+        queue.Enqueue(PathStart);
+        while (queue.Count > 0)
+        {
+            var p = queue.Dequeue();
+            foreach (var n in new[] { new Point(p.X + 1, p.Y), new Point(p.X - 1, p.Y), new Point(p.X, p.Y + 1), new Point(p.X, p.Y - 1) })
+                if (!seen.Contains(n) && Walk(n))
+                {
+                    seen.Add(n);
+                    queue.Enqueue(n);
+                }
+        }
+        return seen;
     }
 
     // The frame's tile action: the question, then home.
@@ -192,6 +258,7 @@ internal static class GildedGrove
                 _pending = ticks > 1 ? (who, into, ticks - 1) : null;
         }
 
+        HoldLight();
         if (!ShowingGrove)
         {
             Motes.Clear();
@@ -219,12 +286,34 @@ internal static class GildedGrove
             });
     }
 
+    // The game works its light out again every tick (Game1.UpdateGameClock and UpdateOther), before
+    // this runs and before the frame is drawn. In the Grove it's set back to the gold, so night never
+    // falls there. The game's own outdoor light is kept and put back on the way out, because by day
+    // the game doesn't work it out again.
+    private static Color? _gameLight;
+
+    private static void HoldLight()
+    {
+        if (ShowingGrove)
+        {
+            if (Game1.outdoorLight != GroveLight)
+                _gameLight = Game1.outdoorLight;
+            Game1.outdoorLight = GroveLight;
+            Game1.drawLighting = true;
+        }
+        else if (_gameLight is Color light)
+        {
+            if (Game1.outdoorLight == GroveLight)
+                Game1.outdoorLight = light;
+            _gameLight = null;
+        }
+    }
+
     private static void OnRenderedWorld(object? sender, RenderedWorldEventArgs e)
     {
         if (!ShowingGrove)
             return;
         var view = Game1.viewport;
-        e.SpriteBatch.Draw(Game1.staminaRect, new Rectangle(0, 0, view.Width, view.Height), Wash);
         foreach (var m in Motes)
         {
             // Fade in and out over each mote's life, and twinkle a little.
