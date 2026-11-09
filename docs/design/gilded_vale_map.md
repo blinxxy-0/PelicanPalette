@@ -47,11 +47,12 @@
 | **The wildflower meadow** | 6 to 28, 61 to 72 | Fern's. Forage, bees, the 2-heart event |
 | **The riverside walk** | 53, 50 to 66, 56 | Stairs down from the plaza, along the river to the lake |
 | **The lake** | 54 to 80, 55 to 71 | Fishing; the lower bridge over the inlet (64, 56) |
-| **The overlook** | 76 to 91, 56 to 73 | A bluff across the lake, as high as the upper terrace, up stairs at (82, 58). A bench at the edge, facing north over the lake, the terraces and the waterfall. Lupini's 10-heart event at dawn |
+| **The overlook** | 88 to 95, 55 to 73 (built, 2026-11-08) | A bluff across the lake, one level high. The top is about 7 by 9 tiles, its rim on row 55. Steps climb its south face, from a trail along its foot (the game has no flight that climbs south through a rim). A bench at the north-west edge, the Town side bench facing west over the lake. The easels' row (88 to 92, 57 to 58) is beside it, a plank shed with its door facing south (93 to 95, 61 to 64), the Three Trees and a stump at the north-east, a picnic table at the bluff's foot (88 to 90, 72 to 74). Lupini's 10-heart event at dawn |
 
 ## 2. The river
 
 - **Where it runs:** a **waterfall** in the north-east, into a pool below Lupini's atelier. Then south-west past the pottery, down a **cascade** over each cliff, and into the lake.
+- **The waterfall, as built (2026-11-08):** `tools/vale_falls.py`, in the box x 74 to 89, y 0 to 13. A cliff runs along the map's top, x 76 to 87, seven rows tall (shading on row 7), with the river's four water columns (x 80 to 83) dropping over a notch in it. The fall is nine rows (spray, lip, falling water, foam), taller than the Town's seven. Its falling rows repeat, and each repeat starts its animation a few frames on, so the water runs on from the row above (16 new tile animations in the map's Waterfalls tileset). The pool below is a basin about x 78 to 85, y 8 to 12, with two boulders and two pebbles in it. The cliff has no corners to turn: both ends are the Town stairs' side walls, and woods hide them (a pine at (75, 4), the maple at (75, 1), the top edge's trees). The orchard (x 88 and east) is untouched. The sound is the Town falls' big waterfall (BrookSounds `82 8 5`).
 - **Bridges:** three, one on each terrace. They're the only ways across, so the river splits the Vale into a west side (the inn, Fern, the amphitheatre) and an east side (Lupini, the Old Studios, the overlook).
 - **Fishing:** the river and the lake use the game's own river and lake fish. Fish of the Vale's own could come later.
 - **To check:** which waterfall and cascade tiles the game has (the Mountain's lake, the Forest's river). The waterfall may need a small animated piece of our own.
@@ -103,9 +104,9 @@ The concept sheet's hidden things (its section 7), placed:
 | A hidden easel overlooking the Vale | The Painter's clearing |
 | A painting hung backward | The open Old Studio |
 | A weathered sign listing former studios | By the Old Studios |
-| A sculpture almost hidden by plants | The sculpture garden's south-west corner, behind a hedge |
+| A sculpture almost hidden by plants | The sculpture garden's south-west corner, behind a hedge. **Built:** a head and shoulders in the hedge at (6 to 7, 44 to 45). It is the west statue's own head, between two bushes cut from the lower bed beside it. The head and the hedge's top are on Front, so you walk behind them; only the hedge's foot (6 to 7, 45) is solid. Examine it from (7, 44) for the message `vale.garden.hidden_statue`. All four seasons (the winter hedge keeps its snow caps) |
 | A sketch tucked in a desk | The Vale House attic (Bea's 4-heart event) |
-| A bench that gives Lupini a special line | The overlook |
+| A bench that gives Lupini a special line | The overlook: the bench at (89, 58), the Town side bench facing west over the lake. **Built:** a solid seat tile, as the Vale's other benches are. In game the farmer sits on it; Lupini and Emmett reach it on their schedules but stand upright on the seat (their sprites have no sit pose yet) |
 | A mural that changes with the story | The Exhibition Hall's west wall: faded, then repainted after Lupini's 8-heart event |
 | An abandoned exhibition room | The Hall's back room, before it reopens |
 | The old painters' guide to the viewpoints | The Vale House noticeboard |
@@ -128,6 +129,14 @@ The concept sheet's hidden things (its section 7), placed:
 **Progress (2026-11-03):**
 - **The greybox is built** (`tools/build_vale.py` → `[CP] Gilded Vale (dev)/assets/GildedVale.tmx` (a Debug-only content pack, never released), location `blinxxy.MuseArt_GildedVale`; in a dev game, `museart_warp blinxxy.MuseArt_GildedVale 20 7`). It stamps the vanilla Town's own cliffs, stairs, river, waterfalls and bridges, so the seasons change by themselves (shots: `art/gilded_vale/greybox_seasons.png`). Every area is reachable from the bus, checked with `museart_route` in segments. Simplified for now: the river runs straight down x 56 to 64, the cliffs are straight, the lake has no banks, and there's no overlook bluff or amphitheatre yet.
 - **The building guides** (`tools/art/vale_building_guides.py`) were redone after the user's review: front gables like the game's own houses, about 60% roof (`art/gilded_vale/buildings/guides_vs_vanilla.png`). Fern's seedhouse follows the farm's greenhouse (the user: use the game's own one as the reference). First candidates: `batch_v2.json`.
+
+**Progress (2026-11-08):** three pieces patched onto the committed map, each by its own script that works on the map in place (`tools/vale_falls.py`, `vale_overlook.py`, `vale_sculpture.py`, on `build_vale.VALE_PIECES`, with `tools/vale_patch.py` under them and `tools/test_vale_pieces.py` guarding them).
+- **The north-east waterfall:** a taller cliff and fall than the Town's, ending in woods (section 2).
+- **The south-east overlook:** the bluff, its steps, bench, easels, shed and Three Trees (section 1).
+- **The hidden sculpture:** in the garden's south-west corner (section 8).
+- **Changes from the design,** as built: the steps climb the bluff's south face, not up from (82, 58). The bench is the Town side bench facing west, not north. The shed's door faces south. The picnic table is at the bluff's foot. The top is about 7 by 9 tiles with its rim on row 55. The bluff is one level high, not as high as the upper terrace.
+- **Rerun after any rebuild:** `build_vale.py` doesn't reproduce the committed map, and a rebuild loses all three. Run `python tools/vale_falls.py`, `vale_overlook.py` and `vale_sculpture.py` on the map afterwards, each as `<script> "[CP] Gilded Vale (dev)/assets/GildedVale.tmx" <exports>`. Do the same on a merge conflict in `GildedVale.tmx`, rather than hand-merging its tile data.
+- **Not yet seen in game:** Lupini and Emmett on the bench (stand, don't sit). Everything else was checked in a test copy in all four seasons.
 
 **The order:**
 1. **Greybox** (no art, no generations): `tools/build_vale.py` writes the TMX from vanilla tiles, with plain boxes for the buildings. A debug warp in, then walk it in-game in all four seasons: terraces, stairs, bridges, distances.
