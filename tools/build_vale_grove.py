@@ -471,7 +471,7 @@ def check_room(g, F):
 
 
 def main():
-    exports =sys.argv[1] if len(sys.argv) > 1 else EXPORTS
+    exports = sys.argv[1] if len(sys.argv) > 1 else EXPORTS
     g = {l: [[0] * W for _ in range(H)] for l in LAYERS}
     F = forest_mask()
     table = Table(exports)
@@ -482,15 +482,16 @@ def main():
     Woods(exports).lay(g, F, skip=view)
     # The ground's stacks sometimes bring the game's invisible wall (outdoors tile 102, blank in every
     # season) out into the open grass, where it stopped you for no reason: only the woods keep it.
-    for y in range(H):
-        for x in range(W):
-            if g["Buildings"][y][x] == INVISIBLE_WALL and (x, y) not in F:
-                g["Buildings"][y][x] = 0
+    walls = [(x, y) for y in range(H) for x in range(W) if g["Buildings"][y][x] == INVISIBLE_WALL and (x, y) not in F and (x, y) not in view]
+    for x, y in walls:
+        g["Buildings"][y][x] = 0
+    print(f"invisible walls cleared from the open grass: {len(walls)} {walls}")
+    # (three, as built 2026-11-09: a new count means the ground changed, so look at the map again)
+    assert len(walls) <= 3, walls
     # Beside the view, a woods cell the canopy doesn't cover showed the light grass, a bright notch
     # at the panorama's east end: the woods' shadowed floor there instead.
     for x, y in F:
         if y < py + ph and (x, y) not in view and not g["AlwaysFront"][y][x] and not g["Front"][y][x] and g["Back"][y][x] in LIGHT_GRASS:
-            print("woods floor under no canopy at", x, y)
             g["Back"][y][x] = WOODS_FLOOR
 
     # the panorama: the picture on Back, an invisible wall over it (you can't walk off the drop)
