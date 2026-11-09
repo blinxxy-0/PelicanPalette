@@ -20,7 +20,8 @@ Lines marked *(Claude's call)* are Claude's drafting, open to change.
   notice (Fall) and Robin's renovation *(the user)*. In her first week she carves a new III over the door
   herself, plain and ungilded *(the user)*.
 - **Role in the mod:**
-  - sells carved and, later, built wooden furniture at her counter *(the user)*
+  - sells carved and, later, built wooden furniture at her counter: new pieces (carved figures and
+    animals, stools, frames; no signs) beside a selection of the game's own wooden furniture *(the user)*
   - the Vale's youngest resident, and the first of its grandchildren to come back
   - her story is how the player finds out the Vale's past isn't finished
 
@@ -101,8 +102,8 @@ Sample lines:
   who she is. That evening the Vale knows (Jet first, who already guessed). Bram's photograph comes out of
   the drawer.
 - **8 hearts (the graveyard):** she goes to Bram's grave for the first time, with you: the plain stone
-  nobody carved. She reads him one of his own letters, and asks if she may carve his stone. *(Claude's
-  call: whether she then does, and the stone changes, is for the user and the graveyard design.)*
+  nobody carved. She reads him one of his own letters, and asks if she may carve his stone. She does
+  *(the user)*: from then on Bram's stone is carved, in her own style.
 - **10 hearts (dating):** the chair. The first piece of furniture she's built that isn't in his style.
   She asks you to sit in it first. Bram's carving is finished *(Claude's call: at 10, her last friendship-
   arc event, so players who date her see the carving finished)*.

@@ -143,6 +143,17 @@ Both are new interior maps behind the existing doors, the size of Leah's cottage
 from the studios' footprints)*. Both change with hearts, through content-pack conditions on the residents'
 friendship. Floor canvases and leaning pieces lean on a wall or furniture.
 
+### The counters' stock *(the user)*
+
+Both counters sell **a mix: new items, and a selection of the game's own placeable furniture** that fits
+(for Tess, the game's existing wooden pieces and carvings; for the twins, its glass and lamp pieces). The
+new items fill the gaps, because the game has some of these but not nearly enough:
+- **The Corries:** stained-glass windows, lamps, mosaic tiles.
+- **Tess:** carved wooden figures and animals, stools, frames. **No signs** *(the user: they'd be complex)*.
+- **Art:** drawn by hand in the Vale's style, like the Old Studios' signs, so no PixelLab credits
+  *(Claude's call)*; PixelLab only with the user's OK and an estimate.
+- Tess's stock grows with her hearts (section 5); the twins' starts full.
+
 ### Studio II, the Corries *(the user: a workshop with a counter, city money showing, split down the middle)*
 
 - **The split:** a line down the middle of the floor. **Opal's half** is a riot of colour, sketches and
@@ -166,7 +177,7 @@ friendship. Floor canvases and leaning pieces lean on a wall or furniture.
 - **Bram's photograph** is hidden in a drawer until the reveal; after it, it's on the shelf *(the user)*.
 - **As her hearts grow** she learns woodworking (furniture, not only carving) *(the user)*: Bram's pieces
   get mended or replaced with her own, and the room gets homier. Her **counter** starts with a few carved
-  animals and gains stools, frames and signs *(Claude's call)*.
+  animals and gains stools and frames *(Claude's call)*. No carved signs *(the user: too complex)*.
 - **If you marry her,** the studio stays her workshop *(Claude's call)*; her spouse room is in her brief.
 
 ## 6. What it changes in the 1.4 plan *(the user: all three are in 1.4)*
@@ -195,11 +206,14 @@ friendship. Floor canvases and leaning pieces lean on a wall or furniture.
   - **Bram Fairlie is buried there** *(the user)*, under the one **plain, uncarved stone** with only his
     name scratched on it: he died about twenty years ago, after the studios had emptied, with nobody left
     to carve one.
-- **Bram's timeline** *(Claude's call, reconciling the sign with the graveyard)*: the sign's "31 summers"
+- **Bram's timeline** *(Claude's proposal, the user agreed 2026-11-08)*: the sign's "31 summers"
   is his time *in Studio III*, not his life. When he got too old for the studio he handed it to Ida Venn
   (12 summers) and kept carving at home: Agnes's, Hollis's and Mabel's stones were among the last things
   he made. He died about twenty years ago, around when the twins left for the city, and when Tess was a
   baby. So the twins and Lupini remember him well.
+- **Tess carves Bram's stone** *(the user, 2026-11-08)*: at her 8-heart event she asks to, and afterwards
+  his plain stone is carved, in her own style, for good. The graveyard design's "one plain stone" stays
+  true until that event; the stone's art needs a second, carved version.
 - **The twins are alive** and must not appear in the graveyard.
 - **Lupini came about thirty years ago** when "twenty of us" filled the studios. The Corries were there
   (they left about twenty years ago), so he knew them. The studios were boarded "years ago".
@@ -219,10 +233,5 @@ friendship. Floor canvases and leaning pieces lean on a wall or furniture.
 
 ## 9. Open (the user's calls)
 
-1. **The counters' stock:** new custom furniture (stained-glass windows, lamps, mosaic tiles; carved animals,
-   stools, frames, signs), or a selection of vanilla items like the other Vale shops? Custom means two growing
-   catalogues of new art, against a PixelLab budget the user wants kept for the characters.
-2. **Bram's timeline** (section 7): OK to reconcile the sign and the graveyard by having Bram hand Studio III
-   to Ida Venn and keep carving at home until he died about twenty years ago?
-3. **Tess and Bram's stone:** at her 8-heart event, does she carve his plain stone, so it changes afterwards?
-   (Needs the graveyard design to agree.)
+Nothing open. Answered 2026-11-08: the counters' stock (section 5, a mix of new and the game's own
+furniture, no signs), Bram's timeline (section 7, agreed), and Tess carving Bram's stone (section 7).

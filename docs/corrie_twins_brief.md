@@ -21,7 +21,8 @@ Lines marked *(Claude's call)* are Claude's drafting, open to change.
 - **Arrival:** Spring 1, Year 3, after the For Sale notice (Fall, Year 2), the Sold notice (Winter) and
   Robin's renovation *(the user)*.
 - **Role in the mod:**
-  - sell stained-glass furniture at their counter: windows, lamps, mosaic tiles *(the user)*
+  - sell stained-glass furniture at their counter: new windows, lamps and mosaic tiles beside a selection
+    of the game's own glass and lamp pieces *(the user)*
   - restore the Exhibition Hall's old windows once the Hall reopens (Lupini's 8-heart event)
   - the Vale's living memory of its full days, from the inside: they grew up in it
 
