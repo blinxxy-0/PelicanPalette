@@ -276,7 +276,7 @@ def lay_steps(m, ctx, x, y):
                 m.g["Back2"][ty][x + i] = m.g["Back2"][sy][fx + i]
             else:
                 m.g["Buildings2"][ty][x + i] = m.g["Buildings2"][sy][fx + i]
-    for j in range(-1, 8):
+    for j in range(6):                        # the rows with the flight's art
         for i in range(4):
             _laid(m, x + i, y + j)
     for i in (1, 2):
