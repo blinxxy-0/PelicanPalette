@@ -7,8 +7,9 @@ Compares ArtStudio/assets/furniture.png and items.png in the working tree with t
 base commit (default c154397, the last before the Founders' Frame existed). Every pixel outside the
 founders' slots must be identical; where the sheet has grown since, every pixel outside them must be
 fully transparent. The slots come from ArtStudio/Painting/ArtItems.cs's own constants: the item at
-MoreFrameSprite + its place in MoreFrameIds, and the framed paintings at MoreFrameFurnitureIndex
-(2x2 at the index, 3x3 at index + 2, 1x1 at index + SmallFrameRow). Exits non-zero on a failure.
+MoreFrameSprite + its place in MoreFrameIds (the released ids, then DebugOnlyFrameIds), and the
+framed paintings at MoreFrameFurnitureIndex (2x2 at the index, 3x3 at index + 2, 1x1 at index +
+SmallFrameRow). Exits non-zero on a failure.
 """
 import io
 import os
@@ -33,8 +34,11 @@ def const(text, name):
 def founders_slots():
     """{sheet path: [(x0, y0, x1, y1)]} for the Founders' Frame's sprites, in pixels."""
     text = open(ART_ITEMS, encoding="utf-8").read()
-    ids_block = re.search(r"MoreFrameIds\s*=\s*\{(.*?)\};", text, re.S).group(1)
-    ids = re.findall(r'"([a-z-]+)"', ids_block)          # (the #if DEBUG lines hold no quotes)
+    # MoreFrameIds: the released frames, then DebugOnlyFrameIds (the #if DEBUG lines hold no quotes).
+    ids_block = re.search(r"MoreFrameIds\s*=(.*?);", text, re.S).group(1)
+    ids = re.findall(r'"([a-z-]+)"', ids_block)
+    if "DebugOnlyFrameIds" in ids_block:
+        ids += re.findall(r'"([a-z-]+)"', re.search(r"DebugOnlyFrameIds\s*=\s*\{(.*?)\};", text, re.S).group(1))
     n = ids.index("founders")
     first_band, second_band = const(text, "FirstBandFrames"), const(text, "SecondBandFurniture")
     small = const(text, "MoreFrameFurniture") + 5 * n if n < first_band else second_band + 5 * (n - first_band)

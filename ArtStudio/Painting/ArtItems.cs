@@ -55,14 +55,19 @@ internal static class ArtItems
     // Qi's. What each does when it hangs is in Frames.
     // The Founders' Frame (the Gilded Vale, Debug only for now) comes last, so no released frame's
     // sprite moves: the Founders' easel in the Gilded Grove gives it, once, for a masterpiece.
-    private static readonly string[] MoreFrameIds =
+    // DebugOnlyFrameIds are the frames that exist only in Debug builds; the public wiki
+    // (museart_wikidata) leaves them out.
+    private static readonly string[] DebugOnlyFrameIds =
     {
-        "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi",
 #if DEBUG
         "founders",
 #endif
     };
+    private static readonly string[] MoreFrameIds =
+        new[] { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi" }.Concat(DebugOnlyFrameIds).ToArray();
     public static readonly FrameStyle[] MoreFrames = MoreFrameIds.Select(SetFrame).ToArray();
+
+    public static bool IsDebugOnly(FrameStyle style) => DebugOnlyFrameIds.Contains(style.Id);
     private const int MoreFrameSprite = 67, MoreFrameFurniture = 35;
 
     // The furniture sheet's first band (rows 0-3, 80 tiles a row) is full after the ninth of these;
