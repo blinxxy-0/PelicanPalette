@@ -86,6 +86,9 @@
     },
 
     // ---- What she says (data/tess_dialogue.json, written by tools/tess_dialogue.py) ----
-    { "Action": "Include", "FromFile": "data/tess_dialogue.json" }
+    { "Action": "Include", "FromFile": "data/tess_dialogue.json" },
+
+    // ---- Her heart events (data/tess_events.json, written by tools/build_tess_events.py) ----
+    { "Action": "Include", "FromFile": "data/tess_events.json" }
   ]
 }

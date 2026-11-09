@@ -6,7 +6,8 @@
       "LogName": "Studio III: its stage",
       "Action": "Load",
       "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
-      "FromFile": "assets/ValeStudio3_{{TessStudioStage}}.tmx"
+      "FromFile": "assets/ValeStudio3_{{TessStudioStage}}.tmx",
+      "Update": "OnLocationChange"
     },
     {
       "LogName": "Studio III: Bram's carving, state 1",
@@ -15,6 +16,7 @@
       "When": {
         "TessCarving": "1"
       },
+      "Update": "OnLocationChange",
       "MapTiles": [
         {
           "Position": {
@@ -85,6 +87,7 @@
       "When": {
         "TessCarving": "2"
       },
+      "Update": "OnLocationChange",
       "MapTiles": [
         {
           "Position": {
@@ -155,6 +158,7 @@
       "When": {
         "TessCarving": "3"
       },
+      "Update": "OnLocationChange",
       "MapTiles": [
         {
           "Position": {
@@ -225,6 +229,7 @@
       "When": {
         "TessCarving": "4"
       },
+      "Update": "OnLocationChange",
       "MapTiles": [
         {
           "Position": {
@@ -295,6 +300,7 @@
       "When": {
         "TessCarving": "5"
       },
+      "Update": "OnLocationChange",
       "MapTiles": [
         {
           "Position": {
@@ -365,6 +371,7 @@
       "When": {
         "HasSeenEvent": "blinxxy.MuseArt_TessHeart6"
       },
+      "Update": "OnLocationChange",
       "MapTiles": [
         {
           "Position": {

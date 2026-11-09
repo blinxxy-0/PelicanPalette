@@ -744,8 +744,10 @@ def studio3_build(exports, assets, data):
         slots = build(f"studio3_{st}", exports, assets)
     sheet_id = "z_blinxxy.MuseArt_ValeStudio3Interior"
     cx, cy = CARVING_AT
+    # (each re-checked when you walk into a location, so the room changes as soon as you come
+    # back in after one of her events, not only the next morning)
     changes = [{"LogName": "Studio III: its stage", "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
-                "FromFile": "assets/ValeStudio3_{{TessStudioStage}}.tmx"}]
+                "FromFile": "assets/ValeStudio3_{{TessStudioStage}}.tmx", "Update": "OnLocationChange"}]
     for n in range(1, 6):
         first, cols, rows = slots[f"bram_carving_{n}"]
         tiles = []
@@ -758,11 +760,11 @@ def studio3_build(exports, assets, data):
                 tiles.append(t)
         changes.append({"LogName": f"Studio III: Bram's carving, state {n}", "Action": "EditMap",
                         "Target": "Maps/blinxxy.MuseArt_ValeStudio3", "When": {"TessCarving": str(n)},
-                        "MapTiles": tiles})
+                        "Update": "OnLocationChange", "MapTiles": tiles})
     px_, py_ = PHOTOS_AT
     changes.append({"LogName": "Studio III: Bram's photographs, after the reveal", "Action": "EditMap",
                     "Target": "Maps/blinxxy.MuseArt_ValeStudio3", "When": {"HasSeenEvent": TESS_EVENTS[6]},
-                    "MapTiles": [
+                    "Update": "OnLocationChange", "MapTiles": [
                         {"Position": {"X": px_, "Y": py_}, "Layer": "Front", "SetTilesheet": "zz_furniture", "SetIndex": 1605},
                         {"Position": {"X": px_, "Y": py_ + 1}, "Layer": "Front", "SetTilesheet": "zz_furniture", "SetIndex": 1637},
                         {"Position": {"X": px_, "Y": py_ + 2}, "Layer": "Buildings",
