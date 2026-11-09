@@ -14,7 +14,8 @@ Writes:
     row), so styles after the ninth go in a second band at y 96 (row 6, under
     Margot's study board), 80 pixels apart from x 0 (sprite indices 480/482,
     ...), and the sheet is made 160 tall for their 1x1s (frame_1x1.py)
-  - ArtStudio/assets/items.png: each style's frame item at sprites 67 to 76,
+  - ArtStudio/assets/items.png: each style's frame item at sprites 67 to 75, then 77 (76 is
+    the Carved Ash Frame's, tools/art/ash_frame.py),
     from the Picture Frame at sprite 8
 Safe to run again: it redraws the same places from the plain originals.
 
@@ -175,7 +176,9 @@ def main():
         icon = recolour(items.crop((x, y, x + 16, y + 16)).copy(), palette, keep_inside=False)
         if kind:
             icon = touch(icon, kind, palette[0])
-        tx, ty = at(FIRST_ITEM + n)
+        # (Tess's Carved Ash Frame, tools/art/ash_frame.py, holds sprite 76, the first after Qi's:
+        # it's drawn on a sheet of its own but its item comes before the Debug-only frames here)
+        tx, ty = at(FIRST_ITEM + n + (1 if n >= FIRST_BAND else 0))
         items.paste((0, 0, 0, 0), (tx, ty, tx + 16, ty + 16))
         items.alpha_composite(icon, (tx, ty))
     furniture.save(furniture_path)

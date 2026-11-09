@@ -53,6 +53,9 @@ internal static class ArtItems
     // And the rest (1.3, section 5 of the plan; tools/art/frame_styles.py):
     // common, from Sable's shop; uncommon, as Painting levels up; legendary,
     // Qi's. What each does when it hangs is in Frames.
+    // (1.4: "ash", the Carved Ash Frame, sold only by Tess in the Gilded Vale; its framed paintings
+    // are on a sheet of their own, MoreFramesTexture. It comes before the Debug-only frames, so its
+    // sprite is the same in every build.)
     // The Founders' Frame (the Gilded Vale, Debug only for now) comes last, so no released frame's
     // sprite moves: the Founders' easel in the Gilded Grove gives it, once, for a masterpiece.
     // DebugOnlyFrameIds are the frames that exist only in Debug builds; the public wiki
@@ -64,7 +67,7 @@ internal static class ArtItems
 #endif
     };
     private static readonly string[] MoreFrameIds =
-        new[] { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi" }.Concat(DebugOnlyFrameIds).ToArray();
+        new[] { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi", "ash" }.Concat(DebugOnlyFrameIds).ToArray();
     public static readonly FrameStyle[] MoreFrames = MoreFrameIds.Select(SetFrame).ToArray();
 
     public static bool IsDebugOnly(FrameStyle style) => DebugOnlyFrameIds.Contains(style.Id);
@@ -88,6 +91,10 @@ internal static class ArtItems
 
     public const string BigCraftablesTexture = "Mods/" + ModEntry.Id + "/BigCraftables";
     public const string FurnitureTexture = "Mods/" + ModEntry.Id + "/Furniture";
+    // Frames that don't fit furniture.png (tools/art/ash_frame.py): a style's 2x2 at 0, 3x3 at 2,
+    // 1x1 at 15 (5 tiles a row), five tiles across per style.
+    public const string MoreFramesTexture = "Mods/" + ModEntry.Id + "/FurnitureMore";
+    private static readonly string[] OwnSheetFrames = { "ash" };
 
     // Sprite indices in the items sheet (16 columns of 16×16).
     private const int CanvasSprite = 1, BrushSprite = 4, FrameSprite = 8, PigmentSprite = 16, TubeSprite = 48;
@@ -354,7 +361,16 @@ internal static class ArtItems
         for (int n = 0; n < MoreFrames.Length; n++)
         {
             var style = MoreFrames[n];
-            int small = MoreFrameFurnitureIndex(n);
+            int own = System.Array.IndexOf(OwnSheetFrames, style.Id);
+            if (own >= 0)
+            {
+                string more = MoreFramesTexture.Replace('/', '\\');
+                furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{own * 5 + 15}/{more}/true";
+                furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{own * 5 + 2}/{more}/true";
+                continue;
+            }
+            // (counted among the frames on furniture.png only: the ash frame has its own sheet)
+            int small = MoreFrameFurnitureIndex(n - MoreFrames.Take(n).Count(s => OwnSheetFrames.Contains(s.Id)));
             furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{small + SmallFrameRow}/{texture}/true";
             furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
         }

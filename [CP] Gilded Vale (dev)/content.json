@@ -21,7 +21,20 @@
     { "Name": "ValeSeasonNumber", "Value": "1", "When": { "Season": "summer" } },
     { "Name": "ValeSeasonNumber", "Value": "2", "When": { "Season": "fall" } },
     { "Name": "ValeSeasonNumber", "Value": "3", "When": { "Season": "winter" } },
-    { "Name": "ValeDate", "Value": "{{Query: ({{Year}} - 1) * 112 + {{ValeSeasonNumber}} * 28 + {{Day}}}}" }
+    { "Name": "ValeDate", "Value": "{{Query: ({{Year}} - 1) * 112 + {{ValeSeasonNumber}} * 28 + {{Day}}}}" },
+    // Tess's Studio III (data/tess_studio.json): which stage of the room loads, after her 4-, 8-
+    // and 10-heart events; and how far Bram's carving has got, a state after each of her 2- to
+    // 10-heart events (later lines win)
+    { "Name": "TessStudioStage", "Value": "0" },
+    { "Name": "TessStudioStage", "Value": "1", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart4" } },
+    { "Name": "TessStudioStage", "Value": "2", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart8" } },
+    { "Name": "TessStudioStage", "Value": "3", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart10" } },
+    { "Name": "TessCarving", "Value": "0" },
+    { "Name": "TessCarving", "Value": "1", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart2" } },
+    { "Name": "TessCarving", "Value": "2", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart4" } },
+    { "Name": "TessCarving", "Value": "3", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart6" } },
+    { "Name": "TessCarving", "Value": "4", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart8" } },
+    { "Name": "TessCarving", "Value": "5", "When": { "HasSeenEvent": "blinxxy.MuseArt_TessHeart10" } }
   ],
   "Changes": [
     // The Gilded Vale (1.4), in development: the map built by tools/build_vale.py
@@ -263,6 +276,8 @@
     // The Old Studios' sale (docs/design/vale_newcomers.md): the notices, Robin's scaffolding
     // and her days in the Vale, the renovated studios, on the calendar.
     { "Action": "Include", "FromFile": "data/vale_studios.json" },
+    // Studio III, Tess Brand's (after the sale above: its door opens when she moves in).
+    { "Action": "Include", "FromFile": "data/tess_studio.json" },
     // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
     // its stops (ArtStudio/Vale/ValeBus.cs is the bus without it). Open once the route's
     // letter has come and the bus is mended, as for the Desert.

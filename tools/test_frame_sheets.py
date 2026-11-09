@@ -40,9 +40,14 @@ def founders_slots():
     if "DebugOnlyFrameIds" in ids_block:
         ids += re.findall(r'"([a-z-]+)"', re.search(r"DebugOnlyFrameIds\s*=\s*\{(.*?)\};", text, re.S).group(1))
     n = ids.index("founders")
+    # frames drawn on a sheet of their own (OwnSheetFrames: Tess's Carved Ash Frame) take an item
+    # sprite but no place on furniture.png; their item sprites are new too, so they're slots as well
+    own = re.findall(r'"([a-z-]+)"', re.search(r"OwnSheetFrames\s*=\s*\{(.*?)\};", text, re.S).group(1))
+    on_sheet = n - sum(1 for i in ids[:n] if i in own)
     first_band, second_band = const(text, "FirstBandFrames"), const(text, "SecondBandFurniture")
-    small = const(text, "MoreFrameFurniture") + 5 * n if n < first_band else second_band + 5 * (n - first_band)
+    small = const(text, "MoreFrameFurniture") + 5 * on_sheet if on_sheet < first_band else second_band + 5 * (on_sheet - first_band)
     item = const(text, "MoreFrameSprite") + n
+    own_items = [const(text, "MoreFrameSprite") + ids.index(i) for i in own]
     row = const(text, "SmallFrameRow")
 
     def tiles(sheet, index, size):
@@ -52,7 +57,7 @@ def founders_slots():
     furniture, items = SHEETS
     return {
         furniture: [tiles(furniture, small, 2), tiles(furniture, small + 2, 3), tiles(furniture, small + row, 1)],
-        items: [tiles(items, item, 1)],
+        items: [tiles(items, item, 1)] + [tiles(items, i, 1) for i in own_items],
     }
 
 

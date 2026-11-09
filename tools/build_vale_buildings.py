@@ -52,6 +52,26 @@ VANILLA = {
     # the brick fireplace (Haley's, the Saloon's), built into a back wall: x, t+1
     "fireplace":    [{"F": [667, 668]}, {"F": [699, 700]}, {"F": [731, 732]}, {"B": [763, 764]}, {"B": [795, 796]}],
     "fireplace_stone": [{"F": [669, 670]}, {"F": [701, 702]}, {"F": [733, 734]}, {"B": [765, 766]}, {"B": [797, 798]}],
+    # Robin's carpentry (ScienceHouse): her axe in its stump, her log pile
+    "axe_stump":    [{"F": [930]}, {"B": [962]}],
+    "log_pile":     [{"F": [2489]}, {"B": [2521]}],
+}
+# The game's own furniture (TileSheets/furniture, which the map loads straight from the game
+# as ../TileSheets/furniture): key -> (sprite index of its top-left tile, tiles wide, tall,
+# solid bottom rows; -2 lies on the floor). Sprite indexes from Data/Furniture.
+GAME_FURN = {
+    "city_lamp":      (1447, 1, 3, 1),   # the twins' Studio II
+    "stove":          (1798 + 32, 2, 4, 1),   # Stove Fireplace: a little iron stove, its pipe up the wall
+    "walnut_dresser": (709, 2, 2, 1),
+    "oak_chair":      (0, 1, 2, 1),
+    "walnut_chair":   (3, 1, 2, 1),
+    "wood_panel":     (2633, 1, 3, 1),        # boards: stood on the floor, leaning on the wall
+    "log_panel":      (2635, 1, 3, 1),
+    "bed_wood":       (2048, 2, 4, 3),        # Bed: a plain wooden bed, a carved headboard
+    "little_photos":  (1605, 1, 2, 0),        # Little Photos, on the wall
+    "woodcut_rug":    (1777, 2, 2, -2),       # Woodcut Rug: a slice of a log's end
+    "birch_chair":    (6, 1, 2, 1),
+    "birch_end_table": (1395, 1, 2, 1),
 }
 # Our own PixelLab pieces (the game has none): key -> (tiles wide, tall, solid bottom rows).
 # A solid of 0 hangs on the wall; -2 lies on the floor.
@@ -183,7 +203,6 @@ for _id, _wh in GAME_PAINTINGS.items():
     LUPINI[f"game_{_id}"] = _id
 # The game's own furniture standing on the floor, from TileSheets/furniture: key -> (its sprite
 # index, tiles wide, tall, solid bottom rows). The Modern Lamp is the twins' city lamp.
-GAME_FURN = {"city_lamp": (1447, 1, 3, 1)}
 # wall pieces hung from the top of their cells, BEAM_DROP px down (Emmett's beams: one height, so
 # they join, clear of the ceiling's outline)
 TOP_ALIGNED = {"beam", "moss_wall", "beam_l", "beam_r", "moss_wall_l", "moss_wall_r"}
@@ -714,6 +733,154 @@ def closed_hall(hall):
 
 BUILDINGS["hall_closed"] = closed_hall(BUILDINGS["hall"])
 
+# Studio III, Tess Brand's (docs/design/vale_newcomers.md section 5; docs/tess_brief.md).
+# Bram Fairlie's studio for 31 summers, renovated by Robin: one room the size of Leah's
+# cottage (plan approved by the user 2026-11-09). She moves in Winter 1, Year 3, broke,
+# and makes do with what Bram left; the room gets homier after her 4-, 8- and 10-heart
+# events. Bram's unfinished carving (the Gilded Tree) stands in the back corner under a
+# dust sheet, a state further on after each of her events; his photograph is in the
+# locked drawer until her 6-heart reveal, then on the dresser. Those two are overlays on
+# whichever stage is loaded.
+# The game's own pieces wherever it has the thing (GAME_FURN, VANILLA: the user,
+# 2026-11-09, hand-drawn pieces were "rough"); the rest from spare candidates of earlier
+# batches, edited by tools/art/vale_studio3_art.py.
+ART.update({
+    "chisel_board":    (2, 2, 0),   # his chisels on a board over the dresser
+    "workbench":       (3, 2, 1),   # Bram's workbench under the north light, a block of ash on it
+    "bram_carving":    (2, 3, 1),   # the unfinished carving on its stand, against the wall
+    **{f"bram_carving_{n}": (2, 3, 1) for n in range(1, 6)},   # its later states (overlays)
+    "bedroll":         (2, 1, -2),  # her bedroll on the floor by the stove
+    "shavings":        (1, 1, -2),  # wood shavings ("they're insulation")
+    "counter":         (3, 2, 1),   # Bram's old counter: a cash tin and a few carved animals
+})
+
+
+def studio3(stage):
+    """Studio III's floor plan at one stage: 0 as she moves in; 1 after her 4-heart event (a rug,
+    Fern's fern, fewer shavings); 2 after her 8-heart event (the bed she built, a table of her
+    own); 3 after her 10-heart event (her chair, the 10-heart chair, beside Bram's). Bram's
+    carving (bram_carving_*.png, by event) and his photographs (on the wall from her 6-heart
+    reveal) are overlays: data/tess_studio.json."""
+    base = [
+        # the back wall: the iron stove in its corner; Bram's dresser, his chisels on the wall
+        # over it; the north light (the skylight outside) over his workbench; his timber
+        # leaning on the wall; the carving in the corner
+        ("stove", 1, 1), ("walnut_dresser", 3, 3), ("chisel_board", 3, 1),
+        ("north_window", 6, 1), ("workbench", 7, 3), ("stool", 8, 5),
+        ("wood_panel", 11, 2), ("log_panel", 12, 2), ("bram_carving", 13, 2), ("cobweb#2", 14, 1),
+        ("log_pile", 1, 5), ("axe_stump", 1, 8), ("counter", 11, 9),
+        # Bram's two chairs against the walls (the user, 2026-11-09: no chairs standing about in
+        # the middle of the room): the oak one by his dresser, the walnut one by the counter
+        ("oak_chair", 5, 3), ("walnut_chair", 14, 9),
+    ]
+    if stage == 0:
+        # broke: a bedroll by the stove, an upturned crate beside it; shavings everywhere; a
+        # cobweb still where his photographs will hang
+        rest = [("bedroll", 2, 6), ("crate_table", 4, 6), ("cobweb", 5, 1),
+                ("shavings", 6, 6), ("shavings#2", 9, 6), ("shavings#3", 7, 8), ("shavings#4", 4, 9),
+                ("shavings#5", 12, 6)]
+    elif stage == 1:
+        # after 4 hearts: the woodcut rug by her bedroll, Fern's fern by the stove where it's
+        # warm; she's swept (some)
+        rest = [("bedroll", 2, 6), ("crate_table", 4, 6), ("woodcut_rug", 5, 6),
+                ("fern_pot", 1, 10), ("shavings", 9, 6), ("shavings#2", 7, 8), ("shavings#3", 12, 6)]
+    elif stage == 2:
+        # after 8 hearts: the bed she built, a birch table of her own beside it, the rug
+        rest = [("bed_wood", 2, 6), ("birch_end_table", 4, 6), ("woodcut_rug", 5, 7),
+                ("fern_pot", 1, 10), ("plant_b", 14, 5), ("shavings", 9, 6), ("shavings#2", 12, 6)]
+    else:
+        # after 10 hearts (dating): the red rug, a lamp by the bed, the shavings swept up at
+        # last; her birch chair, the 10-heart chair, at Bram's workbench where his stool was
+        rest = [("bed_wood", 2, 6), ("birch_end_table", 4, 6), ("rug", 5, 6, 5, 4), ("floor_lamp", 4, 8),
+                ("plant", 9, 6), ("birch_chair", 10, 3), ("fern_pot", 1, 10), ("plant_b", 14, 5)]
+    return dict(
+        title="Studio III", location="blinxxy.MuseArt_ValeStudio3", tmx=f"ValeStudio3_{stage}.tmx",
+        W=16, H=15, outside=(91, 38),
+        rooms={"studio": dict(a=1, b=14, t=0, f=11, label="Studio III")},
+        doors=[], front=("studio", 9), zones=[],
+        wall=103,                                   # plastered by Robin, as outside
+        picks={**{k: "art/gilded_vale/interiors/studio3/" + k for k in (
+                   "chisel_board", "workbench", "bedroll", "shavings", "counter", "north_window")},
+               "bram_carving": "art/gilded_vale/interiors/studio3/bram_carving_0",
+               **{f"bram_carving_{n}": f"art/gilded_vale/interiors/studio3/bram_carving_{n}" for n in range(1, 6)},
+               "stool": "art/gilded_vale/interiors/pottery/pottery_v2/stool_1_1",
+               "crate_table": EMMETT_PICKS["crate_table"], "fern_pot": EMMETT_PICKS["fern_pot"],
+               "cobweb": "art/gilded_vale/interiors/studio/cobweb"},
+        sheet="ValeStudio3Interior.png",
+        sheet_picks=["chisel_board", "workbench", "bedroll", "shavings", "counter", "north_window", "stool",
+                     "crate_table", "fern_pot", "cobweb", "bram_carving"] + [f"bram_carving_{n}" for n in range(1, 6)],
+        lights=[(1, 4), (8, 6), (12, 8)] + ([(4, 9)] if stage == 3 else []),
+        pieces=base + rest,
+        # one text per piece whatever the stage (vale.studio3.<key>; a key with a dot is used as it is)
+        describe={k: "studio3." + v for k, v in {
+            "bram_carving": "carving", "walnut_dresser": "drawers", "chisel_board": "chisels",
+            "workbench": "workbench", "wood_panel": "timber", "log_panel": "timber", "stove": "stove",
+            "counter": "counter", "birch_chair": "chair", "bed_wood": "bed",
+            "oak_chair": "bram_chair", "walnut_chair": "bram_chair"}.items()},
+        notes=["Studio III, stage %d of 3 (0 as she moves in; 1 after her 4-heart event; 2 after 8; 3 after 10)." % stage,
+               "Bram's workbench under the north light, his chisels over his dresser, his timber, the carving in the corner;",
+               "the room gets homier stage by stage. Orange outline = our own art; the rest is the game's furniture."],
+    )
+
+
+for _s in range(4):
+    BUILDINGS[f"studio3_{_s}"] = studio3(_s)
+
+# Tess's heart events (written later, for the user's approval): the room, the carving and the
+# photographs follow them.
+TESS_EVENTS = {h: f"blinxxy.MuseArt_TessHeart{h}" for h in (2, 4, 6, 8, 10, 14)}
+CARVING_AT = (13, 2)                # bram_carving's top-left tile in every stage
+PHOTOS_AT = (5, 1)                  # Bram's photographs, on the wall, from the 6-heart reveal
+
+
+def studio3_build(exports, assets, data):
+    """Builds Studio III's four stages on one shared sheet, and writes the content pack's
+    patches for them (data/tess_studio_stages.json): which stage loads (content.json's
+    TessStudioStage token), the carving's state after each event (TessCarving), the photographs."""
+    import json
+    slots = None
+    for st in range(4):
+        slots = build(f"studio3_{st}", exports, assets)
+    sheet_id = "z_blinxxy.MuseArt_ValeStudio3Interior"
+    cx, cy = CARVING_AT
+    # (each re-checked when you walk into a location, so the room changes as soon as you come
+    # back in after one of her events, not only the next morning)
+    changes = [{"LogName": "Studio III: its stage", "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio3",
+                "FromFile": "assets/ValeStudio3_{{TessStudioStage}}.tmx", "Update": "OnLocationChange"}]
+    for n in range(1, 6):
+        first, cols, rows = slots[f"bram_carving_{n}"]
+        tiles = []
+        for j in range(3):
+            for i in range(2):
+                t = {"Position": {"X": cx + i, "Y": cy + j}, "Layer": "Buildings" if j == 2 else "Front",
+                     "SetTilesheet": sheet_id, "SetIndex": first + j * SHEET_COLS + i}
+                if j == 2:
+                    t["SetProperties"] = {"Action": f"Message blinxxy.MuseArt_Vale.studio3.carving_{n}"}
+                tiles.append(t)
+        changes.append({"LogName": f"Studio III: Bram's carving, state {n}", "Action": "EditMap",
+                        "Target": "Maps/blinxxy.MuseArt_ValeStudio3", "When": {"TessCarving": str(n)},
+                        "Update": "OnLocationChange", "MapTiles": tiles})
+    px_, py_ = PHOTOS_AT
+    changes.append({"LogName": "Studio III: Bram's photographs, after the reveal", "Action": "EditMap",
+                    "Target": "Maps/blinxxy.MuseArt_ValeStudio3", "When": {"HasSeenEvent": TESS_EVENTS[6]},
+                    "Update": "OnLocationChange", "MapTiles": [
+                        {"Position": {"X": px_, "Y": py_}, "Layer": "Front", "SetTilesheet": "zz_furniture", "SetIndex": 1605},
+                        {"Position": {"X": px_, "Y": py_ + 1}, "Layer": "Front", "SetTilesheet": "zz_furniture", "SetIndex": 1637},
+                        {"Position": {"X": px_, "Y": py_ + 2}, "Layer": "Buildings",
+                         "SetProperties": {"Action": "Message blinxxy.MuseArt_Vale.studio3.photos"}},
+                        {"Position": {"X": 3, "Y": 4}, "Layer": "Buildings",
+                         "SetProperties": {"Action": "Message blinxxy.MuseArt_Vale.studio3.drawers_open"}},
+                        {"Position": {"X": 4, "Y": 4}, "Layer": "Buildings",
+                         "SetProperties": {"Action": "Message blinxxy.MuseArt_Vale.studio3.drawers_open"}}]})
+    out = os.path.join(data, "tess_studio_stages.json")
+    with open(out, "w", encoding="utf-8") as f:
+        f.write("// Written by tools/build_vale_buildings.py studio3: Studio III's stage, Bram's carving and his" + chr(10)
+                + "// photographs, by Tess's heart events (TessStudioStage and TessCarving are content.json's)." + chr(10))
+        json.dump({"Changes": changes}, f, indent=2)
+        f.write(chr(10))
+    print("wrote", out)
+
+
 # Studio II through the twins' hearts (docs/design/vale_newcomers.md, section 5; the brief's "The
 # interior through their hearts"): stage -> (the condition, as a Content Patcher When: the mail
 # flag the heart event that changes the room sets, tools/build_corrie_events.py; and the change
@@ -807,7 +974,7 @@ def footprint(p):
     if key in LUPINI:
         return (*GAME_PAINTINGS.get(LUPINI[key], (2, 2)), 0)
     if key in GAME_FURN:
-        return GAME_FURN[key][1:]
+        return GAME_FURN[key][1], GAME_FURN[key][2], max(GAME_FURN[key][3], 0)
     if key in VANILLA:
         rows = VANILLA[key]
         w = max(len(g) for r in rows for g in r.values())
@@ -1078,13 +1245,18 @@ def build(name, exports, assets):
         for x in range(W):
             g["Back"][y][x] = g["Buildings"][y][x] = 1            # the void round the house
 
-    picks = {k: v for k, v in {**INN_PICKS, **spec["picks"]}.items()
-             if k in spec["picks"] and spec.get("all_picks")
-             or any(p[0].split("#")[0] == k for p in spec["pieces"])}   # (all_picks: a stage's pieces too)
+    if "sheet" in spec:
+        # several maps sharing one sheet (Studio III's stages): every pick packed, in one order,
+        # so a tile's index is the same in each, and overlays can swap pieces whatever is loaded
+        picks = {k: spec["picks"][k] for k in spec["sheet_picks"]}
+    else:
+        picks = {k: v for k, v in {**INN_PICKS, **spec["picks"]}.items()
+                 if k in spec["picks"] and spec.get("all_picks")
+                 or any(p[0].split("#")[0] == k for p in spec["pieces"])}   # (all_picks: a stage's pieces too)
     sheet, slots, shade = pack(picks)
     furn_first = WF + 16 * 43
     FURN = furn_first + (sheet.width // 16) * (sheet.height // 16)       # the game's furniture sheet
-    sheet_name = spec["tmx"][:-4] + "Interior.png"
+    sheet_name = spec.get("sheet", spec["tmx"][:-4] + "Interior.png")
     sheet.save(os.path.join(assets, sheet_name))
 
     floors = floor_cells(spec)
@@ -1184,11 +1356,16 @@ def build(name, exports, assets):
                 for i in range(pw):
                     g["Front2" if g["Front"][py + j][px + i] else "Front"][py + j][px + i] = FURN + n + 32 * j + i
         elif key in GAME_FURN:
-            n, pw, ph, sol = GAME_FURN[key]
-            for j in range(ph):
-                for i in range(pw):
-                    x, y, gid = px + i, py + j, FURN + n + 32 * j + i
-                    if j >= ph - sol:
+            first, fw, fh, solid = GAME_FURN[key]
+            for j in range(fh):
+                for i in range(fw):
+                    gid = FURN + first + 32 * j + i
+                    x, y = px + i, py + j
+                    if solid == -2:
+                        g["Back2"][y][x] = gid
+                    elif j >= fh - solid:
+                        if g["Buildings"][y][x] and y in walls:
+                            g["Back"][y][x] = g["Buildings"][y][x]      # the wainscot, behind
                         g["Buildings"][y][x] = gid
                     else:
                         g["Front2" if g["Front"][y][x] else "Front"][y][x] = gid
@@ -1273,6 +1450,7 @@ def build(name, exports, assets):
     for rn, r in rooms.items():
         ok = route(walk, (d, f + 1), (r["a"] + (r["b"] - r["a"]) // 2, r["f"] - 1)) or              any(route(walk, (d, f + 1), (x, r["f"] - 1)) for x in range(r["a"], r["b"] + 1))
         print(f"  route to {rn}: {'ok' if ok else 'BLOCKED'}")
+    return slots
 
 
 def write_raw(path, W, H, g, props, tilesets, tile_props, LAYERS):
@@ -1308,5 +1486,7 @@ def write_raw(path, W, H, g, props, tilesets, tile_props, LAYERS):
 if __name__ == "__main__":
     if sys.argv[1] == "plan":
         plan(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "studio3":
+        studio3_build(sys.argv[2], sys.argv[3], sys.argv[4])
     else:
         build(sys.argv[2], sys.argv[3], sys.argv[4])

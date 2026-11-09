@@ -1,0 +1,118 @@
+// Tess's everyday words (docs/tess_writing_batch1.md, approved by the user 2026-11-09).
+// Written by tools/tess_dialogue.py: edit the lines there and run it again.
+// Portraits: $0 neutral, $h happy, $s sad, $u her dry half-smile, $l love, $a angry.
+// Lines that know who she is wait for her events: the 6-heart lines for her reveal
+// (blinxxy.MuseArt_TessHeart6), the 8-heart lines for her 8-heart event.
+{
+  "Changes": [
+    {
+      "Action": "Load",
+      "Target": "Characters/Dialogue/TessBrand",
+      "FromFile": "data/blank.json",
+      "When": {
+        "ValeResidents": "true",
+        "HasFile:assets/tess/sprites.png": "true",
+        "HasFile:assets/tess/portraits.png": "true"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/TessBrand",
+      "When": {
+        "ValeResidents": "true",
+        "HasFile:assets/tess/sprites.png": "true",
+        "HasFile:assets/tess/portraits.png": "true"
+      },
+      "Entries": {
+        "Introduction": "{{i18n:tess.dialogue.Introduction}}",
+        "Mon": "{{i18n:tess.dialogue.Mon}}",
+        "Tue": "{{i18n:tess.dialogue.Tue}}",
+        "Wed": "{{i18n:tess.dialogue.Wed}}",
+        "Thu": "{{i18n:tess.dialogue.Thu}}",
+        "Fri": "{{i18n:tess.dialogue.Fri}}",
+        "Sat": "{{i18n:tess.dialogue.Sat}}",
+        "Sun": "{{i18n:tess.dialogue.Sun}}",
+        "Mon2": "{{i18n:tess.dialogue.Mon2}}",
+        "Wed2": "{{i18n:tess.dialogue.Wed2}}",
+        "Fri2": "{{i18n:tess.dialogue.Fri2}}",
+        "Sun2": "{{i18n:tess.dialogue.Sun2}}",
+        "Mon4": "{{i18n:tess.dialogue.Mon4}}",
+        "Tue4": "{{i18n:tess.dialogue.Tue4}}",
+        "Wed4": "{{i18n:tess.dialogue.Wed4}}",
+        "Thu4": "{{i18n:tess.dialogue.Thu4}}",
+        "Sat4": "{{i18n:tess.dialogue.Sat4}}",
+        "Sun4": "{{i18n:tess.dialogue.Sun4}}",
+        "winter_Mon": "{{i18n:tess.dialogue.winter_Mon}}",
+        "winter_Thu": "{{i18n:tess.dialogue.winter_Thu}}",
+        "spring_Tue": "{{i18n:tess.dialogue.spring_Tue}}",
+        "spring_Fri": "{{i18n:tess.dialogue.spring_Fri}}",
+        "summer_Wed": "{{i18n:tess.dialogue.summer_Wed}}",
+        "summer_Sat": "{{i18n:tess.dialogue.summer_Sat}}",
+        "fall_Mon": "{{i18n:tess.dialogue.fall_Mon}}",
+        "fall_Thu": "{{i18n:tess.dialogue.fall_Thu}}",
+        "winter_1": "{{i18n:tess.dialogue.winter_1}}",
+        "spring_1": "{{i18n:tess.dialogue.spring_1}}",
+        "summer_1": "{{i18n:tess.dialogue.summer_1}}",
+        "fall_1": "{{i18n:tess.dialogue.fall_1}}",
+        "fall_25": "{{i18n:tess.dialogue.fall_25}}",
+        "AcceptGift_(O)709": "{{i18n:tess.dialogue.AcceptGift_709}}",
+        "AcceptGift_(O)726": "{{i18n:tess.dialogue.AcceptGift_726}}",
+        "AcceptGift_(O)236": "{{i18n:tess.dialogue.AcceptGift_236}}",
+        "AcceptBirthdayGift_Positive": "{{i18n:tess.dialogue.AcceptBirthdayGift_Positive}}",
+        "AcceptBirthdayGift_Negative": "{{i18n:tess.dialogue.AcceptBirthdayGift_Negative}}",
+        "AcceptBouquet": "{{i18n:tess.dialogue.AcceptBouquet}}",
+        "RejectBouquet_VeryLowHearts": "{{i18n:tess.dialogue.RejectBouquet_VeryLowHearts}}",
+        "RejectBouquet_LowHearts": "{{i18n:tess.dialogue.RejectBouquet_LowHearts}}",
+        "RejectBouquet": "{{i18n:tess.dialogue.RejectBouquet}}",
+        "RejectMermaidPendant": "{{i18n:tess.dialogue.RejectMermaidPendant}}",
+        "RejectMermaidPendant_NeedHouseUpgrade": "{{i18n:tess.dialogue.RejectMermaidPendant_NeedHouseUpgrade}}",
+        "dating_TessBrand": "{{i18n:tess.dialogue.dating_TessBrand}}"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/TessBrand",
+      "When": {
+        "ValeResidents": "true",
+        "HasFile:assets/tess/sprites.png": "true",
+        "HasFile:assets/tess/portraits.png": "true",
+        "HasSeenEvent": "blinxxy.MuseArt_TessHeart6"
+      },
+      "Entries": {
+        "Mon6": "{{i18n:tess.dialogue.Mon6_reveal}}",
+        "Wed6": "{{i18n:tess.dialogue.Wed6_reveal}}",
+        "Fri6": "{{i18n:tess.dialogue.Fri6_reveal}}",
+        "Sun6": "{{i18n:tess.dialogue.Sun6_reveal}}",
+        "AcceptGift_(O)726": "{{i18n:tess.dialogue.AcceptGift_726_reveal}}"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/TessBrand",
+      "When": {
+        "ValeResidents": "true",
+        "HasFile:assets/tess/sprites.png": "true",
+        "HasFile:assets/tess/portraits.png": "true",
+        "HasSeenEvent": "blinxxy.MuseArt_TessHeart8"
+      },
+      "Entries": {
+        "Mon8": "{{i18n:tess.dialogue.Mon8}}",
+        "Wed8": "{{i18n:tess.dialogue.Wed8}}",
+        "Fri8": "{{i18n:tess.dialogue.Fri8}}",
+        "Sun8": "{{i18n:tess.dialogue.Sun8}}"
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/rainy",
+      "When": {
+        "ValeResidents": "true",
+        "HasFile:assets/tess/sprites.png": "true",
+        "HasFile:assets/tess/portraits.png": "true"
+      },
+      "Entries": {
+        "TessBrand": "{{i18n:tess.dialogue.rainy}}"
+      }
+    }
+  ]
+}

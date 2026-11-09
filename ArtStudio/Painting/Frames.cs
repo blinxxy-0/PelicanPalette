@@ -46,6 +46,7 @@ internal static class Frames
         ["driftwood"] = (FrameRarity.Rare, FrameTrait.Sparks),
         ["iron"] = (FrameRarity.Rare, FrameTrait.Learning),
         ["sandstone"] = (FrameRarity.Rare, FrameTrait.Light),
+        ["ash"] = (FrameRarity.Rare, FrameTrait.Thrift),       // 1.4: Tess's, carved in the Gilded Vale
         ["gold-leaf"] = (FrameRarity.Epic, FrameTrait.Value),
         ["dwarvish"] = (FrameRarity.Epic, FrameTrait.Thrift),
         ["prismatic"] = (FrameRarity.Legendary, FrameTrait.Sparks),
