@@ -25,9 +25,11 @@ What the vanilla maps say (read off their stacks, 2026-11-08):
 - A cliff ends, with no corner turned, the way the Town ledge ends at its stairs:
   the stairs' side walls are the cliff's end columns (build_vale.stairs). The west end
   is the right wall (Town x 22, rows 43-47: a rounded left edge), the east end the
-  left wall (Town x 19, rows 44-48: a rounded right edge), with their middle rows
-  repeated as the face's are. Trees stand in front: the woods at the top edge, a pine
-  added below them at the west end, and the orchard's own trees at the east end.
+  left wall (Town x 19, rows 44-48: a rounded right edge). Made taller, they repeat
+  only the row whose rounded edge runs on into itself (END_ROWS), and the west wall
+  is laid without the cast shadow it throws on the Town's stair treads (BAND_W).
+  Trees stand in front: the woods at the top edge, a pine added below them at the
+  west end, and the orchard's own trees at the east end.
 
 Laid in order: the corners (the notch and the basin, sand round them), the ground by
 the painter's rules (vale_patch.repaint_terrain), the cliff, the fall, the river
@@ -36,7 +38,8 @@ falls has it).
 
 Run as: python tools/vale_falls.py <GildedVale.tmx> <exports>   (build_vale.VALE_PIECES)
 Re-runnable: the cliff's cells are put back to plain ground for their corners first,
-so each run paints from the same start.
+so each run paints from the same start; the west wall's pieces reuse their own slots
+in the Vale's seasonal sheets.
 """
 import os, random, re, sys
 
@@ -51,9 +54,18 @@ BASIN_V = (78, 6, 86, 12)    # the basin's water corners
 CLIFF_X0, CLIFF_X1 = 76, 87  # the rim's end columns: into the woods west, against the orchard east
 FOOT = 6                     # the face's last row; its shading is on FOOT + 1
 FACE_ROWS = (0, 1, 1, 2, 2, 3)          # CLIFF_FACE's rows for y 1-6 (its middle rows doubled)
-END_ROWS = (0, 1, 2, 2, 3, 3, 4)        # the end walls' Town rows for y 0-6 (middle rows doubled)
+# The end walls' Town rows for y 0-6. Their rounded outer edge only runs on where one
+# piece's bottom meets the next one's top: 446 -> 492 -> 517 -> 517 does (edge 5 px in
+# -> 5, 1 -> 1, 1 -> 1); 492 on 492 or 517 on 492 steps 4 px in (a sawtooth). So the
+# 517 row, which runs on into itself, is the one repeated, three times.
+END_ROWS = (0, 1, 2, 3, 3, 3, 4)
 WEST_END = (22, 43)                     # Town x 22 from row 43: the stairs' right wall
 EAST_END = (19, 44)                     # Town x 19 from row 44: the stairs' left wall
+# The west wall's pieces carry a soft cast shadow down their left edge (3-6 px, alpha 89,
+# 66 in winter): in Town it falls on the stair treads; on open grass or snow it read as a
+# flat bar. The east wall has none. So the west wall is laid from copies of the game's
+# own pieces, each season's, with that band taken off, in the Vale's seasonal sheet.
+BAND_W = 6                              # how far in from the left edge the band can reach
 # The fall's rows on ours (y 0-8): (Town falls row, animation frames on). Sheet row 6
 # (Town row 2) is the falling water repeated; the rows above it start 4 frames on each.
 FALL_ROWS = ((0, 8), (1, 8), (2, 8), (2, 4), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0))
@@ -149,19 +161,25 @@ def reset(m, V, ctx):
                     m.g[layer][y][x] = 0
 
 
-def lay_cliff(m, V, ctx):
+def lay_cliff(m, V, ctx, west):
     """The rim, by the cliff rule (build_vale.cliff), its middle rows doubled, its ends
     the stairs' walls. Where the water runs under the face (the notch, the basin, its
     banks) the water stays; a bank's overlay under the face's last row moves to Back2,
     under the face, so its rocky edge still shows below the face's open foot."""
     rnd = random.Random(SEED)
     pat = lambda x, y: (V[y][x], V[y][x + 1], V[y + 1][x], V[y + 1][x + 1])
+
+    def wall(x, y):
+        if x == CLIFF_X0:
+            return west[END_ROWS[y]]
+        return ctx.tget("Buildings", EAST_END[0], EAST_END[1] + END_ROWS[y])
+
     for x in range(CLIFF_X0, CLIFF_X1 + 1):
         end = WEST_END if x == CLIFF_X0 else EAST_END if x == CLIFF_X1 else None
         # the lip: grass behind the edge piece, never shore (the water of the notch stays)
         r = rnd.random()
         if end:
-            m.g["Buildings"][0][x] = ctx.tget("Buildings", end[0], end[1] + END_ROWS[0])
+            m.g["Buildings"][0][x] = wall(x, 0)
         elif not notch(x):
             m.g["Buildings"][0][x] = CLIFF_LIP[0][0] if r < CLIFF_LIP[0][1] else CLIFF_LIP[1][0]
         if not notch(x):
@@ -172,7 +190,7 @@ def lay_cliff(m, V, ctx):
             if gid in CLIFF_FACE_VARIANT and rnd.random() < 0.08:
                 gid = CLIFF_FACE_VARIANT[gid]
             if end:
-                gid = ctx.tget("Buildings", end[0], end[1] + END_ROWS[1 + k])
+                gid = wall(x, y)
             if y < FOOT and not end:
                 # (an end wall is open at its outer edge: the ground there stays the painter's)
                 m.g["Back"][y][x] = (1230 if notch(x) else CLIFF_SHADE[0][0] if y == FOOT - 1 else GRASS)
@@ -198,6 +216,51 @@ def lay_cliff(m, V, ctx):
         y = FOOT + 1
         if set(pat(x, y)) <= set("GD"):
             m.g["Back"][y][x] = CLIFF_SHADE[2][0]
+
+
+def unband(tile):
+    """A wall piece without its cast shadow: the see-through pixels left of its
+    solid edge, in each row, within BAND_W of the tile's left side."""
+    tile = tile.copy()
+    px = tile.load()
+    for y in range(16):
+        solid = [x for x in range(16) if px[x, y][3] == 255]
+        for x in range(min(solid[0] if solid else 16, BAND_W)):
+            if 0 < px[x, y][3] < 255:
+                px[x, y] = (0, 0, 0, 0)
+    return tile
+
+
+def west_wall(m, ctx, exports):
+    """The west wall's pieces (Town x 22's, by Town row) without their cast shadow,
+    in the Vale's four seasonal sheets: their gids, Town row -> gid. They take this
+    piece's own slots if it ran before (read off the wall before it is reset), else
+    new ones at the sheets' end."""
+    from PIL import Image
+    from vale_sculpture import Sheets, re_tileset
+    from vale_feature_fixes import FEATURE_FIRST, SEASONS
+    sheets = Sheets(ctx.assets)
+    rows = sorted(set(END_ROWS))
+    first = {r: END_ROWS.index(r) for r in rows}           # the wall's row each piece first sits on
+    own = [m.g["Buildings"][first[r]][CLIFF_X0] for r in rows]
+    if all(FEATURE_FIRST <= v < FEATURE_FIRST + 10000 for v in own) and len(set(own)) == len(own):
+        gids = dict(zip(rows, own))
+    else:
+        gids = {r: FEATURE_FIRST + sheets.end + i for i, r in enumerate(rows)}
+    sheets.grow(max(gids.values()) - FEATURE_FIRST + 1)
+    for se in SEASONS:
+        src = Image.open(os.path.join(exports, "sheets_" + se, "spring_outdoorsTileSheet.png")).convert("RGBA")
+        cols = src.width // 16
+        for r, gid in gids.items():
+            k = ctx.tget("Buildings", WEST_END[0], WEST_END[1] + r) - 1     # the outdoors sheet is first, at gid 1
+            piece = src.crop((k % cols * 16, k // cols * 16, k % cols * 16 + 16, k // cols * 16 + 16))
+            box = sheets.box(gid)
+            sheets.im[se].paste(unband(piece), box[:2])
+    for se in SEASONS:
+        sheets.im[se].save(sheets.path(se))
+    h = sheets.im["spring"].height
+    m.text = re_tileset(m.text, h // 16 * sheets.cols, h)
+    return gids
 
 
 def shift(tid, p, anims):
@@ -293,12 +356,13 @@ def patch_file(tmx_path, exports):
         ctx = context(tmx_path, exports)
     m = load(tmx_path)
     H, W = len(m.g["Back"]), len(m.g["Back"][0])
+    west = west_wall(m, ctx, exports)
     V = corner_grid(m.g, bv.GROUND)
     design(V, H, W)
     reset(m, V, ctx)
     repaint_terrain(m, V, FALLS_BOX, ctx)
     fence_ground(m, V, ctx)
-    lay_cliff(m, V, ctx)
+    lay_cliff(m, V, ctx, west)
     anims = tileset_anims(m.text)
     used = lay_fall(m, ctx, anims)
     m.text = add_anims(m.text, used, anims)

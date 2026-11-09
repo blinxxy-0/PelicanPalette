@@ -18,7 +18,7 @@ PLACES = {
     "Old Studio (big)": (73, 39), "studio B": (84, 39), "studio C": (90, 39),
     "amphitheatre stage": (37, 56), "Emmett's door": (18, 62), "Emmett's yard": (11, 58),
     "Gilded Tree": (38, 69), "lakeside bench": (47, 60), "jetty": (48, 66), "picnic table": (90, 66),
-    "overlook bench": (86, 27), "hidden sculpture": (7, 44), "falls basin bank": (82, 13),
+    "overlook bench": (86, 27), "hidden sculpture": (7, 44), "falls basin bank": (81, 13),
 }
 # Schedule spots that are a seat (a bench or chair, solid itself): reachable if a neighbour is
 SEATS = {"nursery bench", "lakeside bench", "overlook bench"}
