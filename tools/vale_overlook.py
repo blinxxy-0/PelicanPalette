@@ -280,8 +280,8 @@ def snow_treads(im):
     snowed() lays it on a feature's top: the stairs art is a stack of slabs, each a lit
     tread (4 rows, its nose the lightest) over a dark riser and a shadow line. The
     treads go white, their ends and first row a shade of the snow, their nose the
-    snow's shaded edge; the risers stay stone. (Winter only: the terraces' flights,
-    outside the overlook, keep their bare winter look.)"""
+    snow's shaded edge; the risers stay stone. (Winter only. The terraces' flights take
+    the same copies: vale_terrace_stairs.)"""
     im = im.copy()
     px = im.load()
     W, H = im.size
@@ -310,7 +310,10 @@ def flight_pieces(m, ctx):
     """The lower terrace's flight (FLIGHT_FROM: treads on Back2, side walls on
     Buildings2) as this module's own copies in the Vale's seasonal sheets: the same art
     in spring, summer and fall, snow on its treads in winter (snow_treads). Their gid
-    -> our gid. The terraces' flights keep the shared originals."""
+    -> our gid. The terraces' flights are laid from the same copies (vale_terrace_stairs),
+    so the source flight may already hold them: every season is built from its spring
+    art (the stairs art is one picture in all four seasons; build_vale.place_buildings),
+    never from a winter tile that is already snowed on, and the same slots come back."""
     from PIL import Image
     from vale_sculpture import Sheets
     from vale_feature_fixes import FEATURE_FIRST, SEASONS
@@ -318,13 +321,11 @@ def flight_pieces(m, ctx):
     cells = [(i, j, "Back2" if i in (1, 2) else "Buildings2") for j in range(6) for i in range(4)]
     gids = [m.g[layer][ft + j][fx + i] for i, j, layer in cells]
     sheets = Sheets(ctx.assets)
-    art = {}
-    for se in SEASONS:
-        im = Image.new("RGBA", (64, 96))
-        for (i, j, _), g in zip(cells, gids):
-            if FEATURE_FIRST <= g < FEATURE_FIRST + 10000:
-                im.paste(sheets.im[se].crop(sheets.box(g)), (i * 16, j * 16))
-        art[se] = snow_treads(im) if se == "winter" else im
+    im = Image.new("RGBA", (64, 96))
+    for (i, j, _), g in zip(cells, gids):
+        if FEATURE_FIRST <= g < FEATURE_FIRST + 10000:
+            im.paste(sheets.im["spring"].crop(sheets.box(g)), (i * 16, j * 16))
+    art = {se: snow_treads(im) if se == "winter" else im for se in SEASONS}
     wants = [{se: art[se].crop((i * 16, j * 16, i * 16 + 16, j * 16 + 16)) for se in SEASONS} for i, j, _ in cells]
     slots = own_slots(m, ctx, wants)
     return {g: v for g, v in zip(gids, slots) if FEATURE_FIRST <= g < FEATURE_FIRST + 10000}
@@ -501,11 +502,21 @@ LUPINI_STAND = (90, 61)
 # Its door opens onto the steps' landing.
 SHED = (93, 61, 95, 64)
 SHED_ART = ((1748, 1749, 1750), (1773, 1774, 1775), (1916, 1917, 1918), (1941, 1942, 1943))
+# What the shed says when you right-click it (its foot row; the door is at x 93-94): the
+# easels for Lupini's 10-heart dawn are kept in it, two used and the third not yet ("There's
+# a third easel in the shed, if you're staying": docs/vale_events.md). i18n vale.overlook.shed, via Strings/StringsFromMaps (content.json).
+SHED_ACTION = "Message blinxxy.MuseArt_Vale.overlook.shed"
 # The Three Trees (Paths markers: 9 oak, 10 maple, 11 pine) and the stump of the fourth, at
 # the north-east, inward: a tree's crown is 3 wide and stands 2-5 rows above its trunk, so
 # these hang out over the rim and the lower ground, on the map, clear of the bench, the
 # easels' row and the shed's roof. The woods behind them (rows 53-54) go, so they stand apart.
 TREES = ((94, 56, 10), (93, 58, 9), (94, 60, 11))
+# The Three Trees can't be felled ("He swears there used to be four": the stump is enough).
+# Their trunk tiles carry KEEP_TREE on Back, its value the game's tree type for the marker;
+# the game side (ArtStudio/Vale/ValeGrounds.cs) turns the axe and bombs away from them and
+# replants any that's missing each morning (in saves from before the overlook too).
+KEEP_TREE = "blinxxy.MuseArt_KeepTree"
+TREE_TYPE = {9: "1", 10: "2", 11: "3"}   # Paths marker -> Tree type: oak, maple, pine
 STUMP = (93, 60, 128)        # the game's own stump with its roots (outdoors 128, Forest (33,2)): a map tile, it can't be chopped
 THIN = (88, 53, 95, 54)      # the woods north of the rim that go
 # The woods that ring the Vale, round the bluff: down the east edge below the face, and
@@ -692,9 +703,13 @@ def patch_file(tmx_path, exports):
         for i, gid in enumerate(row):
             _inside(sx0 + i, y)
             m.g[layer][y][sx0 + i] = gid
+    for x in range(sx0, sx1 + 1):
+        m.props[("Buildings", x, sy1)] = {"Action": SHED_ACTION}
     for x, y, k in TREES + FRINGE:
         _inside(x, y)
         m.g["Paths"][y][x] = ctx.paths_first + k
+    for x, y, k in TREES:
+        m.props[("Back", x, y)] = {KEEP_TREE: TREE_TYPE[k]}
     x, y, gid = STUMP
     _inside(x, y)
     m.g["Buildings"][y][x] = gid

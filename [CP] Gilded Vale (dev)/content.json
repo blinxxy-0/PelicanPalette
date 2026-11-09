@@ -13,6 +13,16 @@
       "Description": "The residents' days in Pelican Town, by bus (data/vale_town_trips.json). Reload the save after changing it."
     }
   },
+  // The calendar as one number, for patches that run from one date to another (the Old
+  // Studios' sale, data/vale_studios.json): (Year - 1) * 112 + season * 28 + day, so
+  // Spring 1, Year 1 is 1 and Fall 1, Year 2 is 169.
+  "DynamicTokens": [
+    { "Name": "ValeSeasonNumber", "Value": "0" },
+    { "Name": "ValeSeasonNumber", "Value": "1", "When": { "Season": "summer" } },
+    { "Name": "ValeSeasonNumber", "Value": "2", "When": { "Season": "fall" } },
+    { "Name": "ValeSeasonNumber", "Value": "3", "When": { "Season": "winter" } },
+    { "Name": "ValeDate", "Value": "{{Query: ({{Year}} - 1) * 112 + {{ValeSeasonNumber}} * 28 + {{Day}}}}" }
+  ],
   "Changes": [
     // The Gilded Vale (1.4), in development: the map built by tools/build_vale.py
     // (painted terrain, the five buildings, PixelLab stairs; other buildings still
@@ -120,6 +130,8 @@
         "blinxxy.MuseArt_Vale.hall_closed.frames": "{{i18n:vale.hall_closed.frames}}",
         "blinxxy.MuseArt_Vale.hall_closed.hook": "{{i18n:vale.hall_closed.hook}}",
         "blinxxy.MuseArt_Vale.garden.hidden_statue": "{{i18n:vale.garden.hidden_statue}}",
+        "blinxxy.MuseArt_Vale.overlook.shed": "{{i18n:vale.overlook.shed}}",
+        "blinxxy.MuseArt_Vale.overlook.three_trees": "{{i18n:vale.overlook.three_trees}}",
         "blinxxy.MuseArt_Vale.studio.unfinished": "{{i18n:vale.studio.unfinished}}",
         "blinxxy.MuseArt_Vale.studio.note": "{{i18n:vale.studio.note}}",
         "blinxxy.MuseArt_Vale.studio.sketches": "{{i18n:vale.studio.sketches}}",
@@ -129,6 +141,12 @@
         "blinxxy.MuseArt_Vale.studio.cot": "{{i18n:vale.studio.cot}}",
         "blinxxy.MuseArt_Vale.studio.washstand": "{{i18n:vale.studio.washstand}}",
         "blinxxy.MuseArt_Vale.studio.trunk": "{{i18n:vale.studio.trunk}}",
+        "blinxxy.MuseArt_Vale.studio.rules": "{{i18n:vale.studio.rules}}",
+        // the Old Studios outside (tools/vale_studio_signs.py): the weathered sign, and the plaques
+        "blinxxy.MuseArt_Vale.studios.sign": "{{i18n:vale.studios.sign}}",
+        "blinxxy.MuseArt_Vale.studios.plaque_1": "{{i18n:vale.studios.plaque_1}}",
+        "blinxxy.MuseArt_Vale.studios.plaque_2": "{{i18n:vale.studios.plaque_2}}",
+        "blinxxy.MuseArt_Vale.studios.plaque_3": "{{i18n:vale.studios.plaque_3}}",
         "blinxxy.MuseArt_Vale.pottery.kiln": "{{i18n:vale.pottery.kiln}}",
         "blinxxy.MuseArt_Vale.pottery.hardwood": "{{i18n:vale.pottery.hardwood}}",
         "blinxxy.MuseArt_Vale.pottery.wheel": "{{i18n:vale.pottery.wheel}}",
@@ -227,6 +245,11 @@
     { "Action": "Include", "FromFile": "data/residents.json" },
     // The Vale on the world map (M), a region of its own.
     { "Action": "Include", "FromFile": "data/vale_worldmap.json" },
+    // The Vale's own fish, and the game's river and lake fish in its water.
+    { "Action": "Include", "FromFile": "data/vale_fish.json" },
+    // The Old Studios' sale (docs/design/vale_newcomers.md): the notices, Robin's scaffolding
+    // and her days in the Vale, the renovated studios, on the calendar.
+    { "Action": "Include", "FromFile": "data/vale_studios.json" },
     // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
     // its stops (ArtStudio/Vale/ValeBus.cs is the bus without it). Open once the route's
     // letter has come and the bus is mended, as for the Desert.

@@ -36,7 +36,7 @@ internal static class ValeTests
     // The counters and the tile actions the dev pack puts on them (data/vale_shops.json).
     private static readonly (string Location, Point Tile, string ActionStart, string Shop)[] Counters =
     {
-        (ValeResidents.ValeHouse, new Point(20, 21), ModEntry.Id + "_ValeTeaCounter", ValeResidents.TeaRoomShop),
+        (ValeResidents.ValeHouse, new Point(20, 22), ModEntry.Id + "_ValeTeaCounter", ValeResidents.TeaRoomShop),
         (ModEntry.Id + "_ValeFern", new Point(23, 18), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValeSeeds FernAster", ModEntry.Id + "_ValeSeeds"),
         (ModEntry.Id + "_ValePottery", new Point(4, 18), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValePottery TobinClay", ModEntry.Id + "_ValePottery"),
     };
@@ -301,6 +301,35 @@ internal static class ValeTests
             string expected = Game1.characterData.ContainsKey(name) ? "Door " + name : "Door";
             Check(monitor, $"{name}'s bedroom door ({locationName} {tile}) is '{expected}'", action == expected, action ?? "no action");
         }
+
+        // the artists' room: locked to everyone, even at 10 hearts with Bea, until her key
+        GameLocation? house = Game1.getLocationFromName(ValeResidents.ValeHouse);
+        if (house == null)
+            return;
+        Farmer who = Game1.player;
+        bool keyed = who.mailReceived.Contains(ValeResidents.ArtistsRoomMail);
+        string artists = house.doesTileHaveProperty(15, 11, "Action", "Buildings");
+        string want = Game1.characterData.ContainsKey(ValeResidents.Bea) && !keyed ? "Door " + ValeResidents.ArtistsRoomDoor : "Door";
+        Check(monitor, $"the artists' room door (15 11) is '{want}'", artists == want, artists ?? "no action");
+        if (artists != "Door " + ValeResidents.ArtistsRoomDoor)
+            return;
+        bool hadBea = who.friendshipData.TryGetValue(ValeResidents.Bea, out Friendship? old);
+        int points = old?.Points ?? 0;
+        if (!hadBea)
+            who.friendshipData[ValeResidents.Bea] = new Friendship();
+        who.friendshipData[ValeResidents.Bea].Points = 2500;
+        house.interiorDoors.TryGetValue(new Point(15, 11), out bool wasOpen);
+        var menu = Game1.activeClickableMenu;
+        house.performAction(artists.Split(' '), who, new xTile.Dimensions.Location(15, 11));
+        house.interiorDoors.TryGetValue(new Point(15, 11), out bool open);
+        string? said = (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.getCurrentString();
+        Check(monitor, "at 10 hearts with Bea the artists' room stays shut", !open || wasOpen, open ? "it opened" : "");
+        Check(monitor, "and its card says it's not let out", said?.Contains("Not let out") == true, said ?? "no dialogue");
+        Game1.activeClickableMenu = menu;
+        if (hadBea)
+            who.friendshipData[ValeResidents.Bea].Points = points;
+        else
+            who.friendshipData.Remove(ValeResidents.Bea);
     }
 
     // ---- Lupini's letter, the residents' letters, and the Vale's letter paper ----

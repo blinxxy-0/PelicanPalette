@@ -307,6 +307,27 @@ def test_overlook_trees_and_fringe():
     assert not any(m.g["Paths"][y][x] for y in (53, 54) for x in range(88, 96))
 
 
+def test_overlook_keep_trees_and_shed():
+    # the Three Trees' trunk tiles carry KeepTree with their tree type (the game side won't
+    # let them be felled and replants them); the shed's foot says its line, which is in
+    # Strings/StringsFromMaps (content.json) and the i18n
+    from vale_overlook import KEEP_TREE, SHED, SHED_ACTION, TREE_TYPE, TREES
+    m = load(TMX)
+    kept = {(x, y): p[KEEP_TREE] for (layer, x, y), p in m.props.items() if layer == "Back" and KEEP_TREE in p}
+    assert kept == {(x, y): TREE_TYPE[k] for x, y, k in TREES}, kept
+    assert TREE_TYPE == {9: "1", 10: "2", 11: "3"}
+    x0, _, x1, y1 = SHED
+    acts = {(x, y) for (layer, x, y), p in m.props.items() if layer == "Buildings" and p.get("Action") == SHED_ACTION}
+    assert acts == {(x, y1) for x in range(x0, x1 + 1)}, acts
+    pack = os.path.join(ROOT, "[CP] Gilded Vale (dev)")
+    content = open(os.path.join(pack, "content.json"), encoding="utf-8").read()
+    i18n = load_jsonc(os.path.join(pack, "i18n", "default.json"))
+    for key in (SHED_ACTION.split(" ", 1)[1], "blinxxy.MuseArt_Vale.overlook.three_trees"):
+        short = key.replace("blinxxy.MuseArt_Vale.", "vale.")
+        assert f'"{key}": "{{{{i18n:{short}}}}}"' in content, key
+        assert i18n.get(short), short
+
+
 def test_overlook_props_inside():
     # the painting spot and the flowers stand at least a tile in from the side and the
     # face's lip; the bench alone stands against the side, facing over the lake
@@ -315,6 +336,23 @@ def test_overlook_props_inside():
         assert sx >= SIDE_X + 2 and sy - 1 >= RIM_Y + 2 and sy <= FACE_TOP - 2, (sx, sy)
     for x, y, _ in FLOWERS:
         assert x >= SIDE_X + 2 and RIM_Y + 2 <= y <= FACE_TOP - 2, (x, y)
+
+
+def test_terrace_stairs_snowed():
+    # the terraces' four flights are the overlook flight's tiles, tile for tile: the stairs
+    # art in spring, summer and fall, snow on the treads in winter
+    from PIL import Image
+    from vale_overlook import FACE_TOP, STAIRS_X
+    from vale_terrace_stairs import cells
+    from vale_sculpture import Sheets
+    m = load(TMX)
+    sheets = Sheets(os.path.dirname(TMX))
+    overlook = [m.g[l][y][x] for x, y, l in cells(STAIRS_X, FACE_TOP)]
+    for sx, top in build_vale.STAIR_SPOTS:
+        assert [m.g[l][y][x] for x, y, l in cells(sx, top)] == overlook, (sx, top)
+    tread = m.g["Back2"][FACE_TOP + 2][STAIRS_X + 1]
+    crop = lambda se: sheets.im[se].crop(sheets.box(tread)).tobytes()
+    assert crop("spring") == crop("summer") == crop("fall") != crop("winter")
 
 
 def test_overlook_lake_corner():
