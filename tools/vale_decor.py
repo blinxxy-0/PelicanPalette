@@ -18,7 +18,9 @@ import random
 
 # Ground the decor pass will use, kept free by props placed before it (build_vale.py
 # reachable_spot): fenced yards and the orchard's trees, (x0, y0, x1, y1) inclusive.
-RESERVED = [(82, 13, 90, 22), (9, 55, 14, 60), (87, 2, 94, 10), (84, 25, 88, 26)]   # (the last: the overlook bench)
+# The last two: the atelier's bench, and the overlook (vale_patch.OVERLOOK_BOX: the bluff
+# tools/vale_overlook.py raises there, with the lake's painting spot on it).
+RESERVED = [(82, 13, 90, 22), (9, 55, 14, 60), (87, 2, 94, 10), (84, 25, 88, 26), (80, 53, 95, 75)]
 
 # Tile property objects for the writer: (layer, x, y) -> {name: value}
 TILE_PROPS = {}
@@ -204,10 +206,11 @@ def decor(g, ground, paths_first, W, H):
     for x, y in ((83, 15), (84, 16), (86, 15), (87, 16), (83, 19), (90, 20), (86, 22), (81, 18), (92, 22)):
         marker(x, y, GRASS, why="wild garden grass")
 
-    # P: the overlook bench at the upper cliff's edge, east of Lupini's stairs
+    # P: the atelier's bench at the upper cliff's edge, east of Lupini's stairs (the
+    # overlook's own bench is on its bluff: tools/vale_overlook.py)
     prop("bench", 85, 25)
-    marker(84, 26, BUSH_S, why="overlook bush")
-    marker(89, 26, BUSH_S, why="overlook bush")
+    marker(84, 26, BUSH_S, why="atelier bench bush")
+    marker(89, 26, BUSH_S, why="atelier bench bush")
 
     # G: the pottery's yard (clay pit and firewood come with the props)
     # (Town's "crates" at x 75, y 93 were a fragment of something else: the user, 2026-11-06)
@@ -231,7 +234,10 @@ def decor(g, ground, paths_first, W, H):
     for x, y, t in ((5, 57, MAPLE), (27, 60, OAK), (31, 72, PINE)):        # (the Gilded Tree's lawn is x 33-44)
         marker(x, y, t, why="lower trees")
 
-    # N: a picnic spot at the end of the east trail
+    # N: a picnic spot at the end of the east trail. (The overlook's bluff stands here now:
+    # tools/vale_overlook.py clears its box and lays the picnic table at its foot, PICNIC.
+    # These stay as they were, so the generator the decor shares draws the same for
+    # everything after them, outside the box.)
     prop("picnic", 89, 64)
     for x, y, k in ((88, 60, BUSH_M), (92, 69, BUSH_S), (93, 60, BUSH_S)):
         marker(x, y, k, BUSH_W[k], "picnic bush")
@@ -259,6 +265,8 @@ def decor(g, ground, paths_first, W, H):
     clump(91, 52, PINE)
     clump(26, 70, OAK)
     # stones here and there, as the game's grass has
+    # ((92, 62) is on the overlook now: vale_overlook clears it; it stays here so the
+    # shared generator draws the same for everything after it)
     for x, y in ((16, 12), (6, 25), (39, 24), (58, 30), (70, 44), (90, 43), (4, 50), (24, 57), (29, 66), (8, 72), (92, 62), (47, 66)):
         rock(x, y)
     # flowers through every open stretch (the meadow thickest)
@@ -269,7 +277,7 @@ def decor(g, ground, paths_first, W, H):
     flowers(64, 42, 95, 47, 0.05, 0.06)         # below the Old Studios
     flowers(2, 62, 31, 75, 0.12, 0.25)          # Fern's meadow
     flowers(0, 54, 50, 75, 0.03, 0.03)          # the rest of the lower terrace
-    flowers(84, 54, 95, 75, 0.04, 0.04)         # the picnic side
+    flowers(84, 54, 95, 75, 0.04, 0.04)         # the overlook's side (vale_overlook clears its box; the call stays for the generator)
     flowers(0, 26, 56, 27, 0.06)                # along the upper cliff's top
     flowers(0, 46, 95, 47, 0.05)                # and the lower one's
 

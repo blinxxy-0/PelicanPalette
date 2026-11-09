@@ -14,7 +14,7 @@
   // 4-heart event, the Saloon in Pelican Town: data/vale_town_trips.json).
   "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1700 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
   // Saturday: the whole Vale end to end, to the overlook bench.
-  "Sat": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 86 27 2/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  "Sat": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 89 58 3/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
   // Sunday: slow tunes on the stage, the fire early.
   "Sun": "1000 blinxxy.MuseArt_GildedVale 37 56 2/1700 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
   // Rain: his cottage, writing at his desk under the maps; the fire late.

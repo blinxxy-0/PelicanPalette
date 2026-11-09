@@ -7,6 +7,7 @@ earlier batches made and nothing used, edited to fit, and a few drawn here:
   unfinished_easel   a spare easel, half its canvas still bare sketch lines
   note_table         a spare paint table with a folded note on it
   backward_painting  drawn: a canvas hung facing the wall, its stretcher bars and a torn label
+  rules_board        drawn: the studios' house rules, signed in each artist's own ink
   cobweb, leaves     drawn
   (and Emmett's moss_patch: the moss of a candidate drawn on a floorboard, without the board)
 
@@ -142,6 +143,37 @@ def backward_painting():
     im.save(os.path.join(OUT, "backward_painting.png"))
 
 
+def rules_board():
+    """The studios' house rules (the user, 2026-11-08): an old sheet of rules pinned to a
+    board, every artist's signature under them in their own ink. 1 x 2 tiles, on the wall."""
+    rnd = random.Random(11)
+    im = Image.new("RGBA", (16, 32))
+    d = ImageDraw.Draw(im)
+    wood, wood_d, edge = (128, 90, 58, 255), (98, 66, 42, 255), (60, 38, 24, 255)
+    d.rectangle([1, 3, 14, 29], fill=wood, outline=edge)              # the board
+    for y in (9, 16, 23):
+        d.line([(2, y), (13, y)], fill=wood_d)
+    paper, paper_d = (226, 214, 184, 255), (186, 170, 136, 255)
+    d.rectangle([3, 5, 12, 27], fill=paper, outline=paper_d)          # the sheet, yellowed
+    d.point((12, 27), fill=wood)                                      # its corner curling off
+    d.point((11, 27), fill=paper_d)
+    d.point((7, 5), fill=(150, 150, 156, 255))                        # the tack
+    ink = (70, 54, 44, 255)
+    d.line([(5, 7), (10, 7)], fill=ink)                               # the heading
+    for y in (10, 12, 14, 16):                                        # the rules, each with its dash
+        d.point((4, y), fill=ink)
+        d.line([(6, y), (6 + rnd.randint(2, 5), y)], fill=ink)
+    for y, colour in ((19, (40, 64, 120, 255)), (21, (130, 46, 40, 255)), (23, (46, 96, 60, 255)),
+                      (25, (96, 62, 120, 255))):                      # the signatures, a different ink each
+        x = 4 + rnd.randint(0, 2)
+        for _ in range(3):
+            d.point((x, y - rnd.randint(0, 1)), fill=colour)
+            x += 1
+            d.point((x, y), fill=colour)
+            x += 1
+    im.save(os.path.join(OUT, "rules_board.png"))
+
+
 def cobweb():
     im = Image.new("RGBA", (16, 16))
     d = ImageDraw.Draw(im)
@@ -248,6 +280,6 @@ def beam_ends():
 
 
 if __name__ == "__main__":
-    for f in (beam, beam_ends, moss_patch, dusty_window, pinned_sketches, unfinished_easel, note_table, backward_painting, cobweb, leaves):
+    for f in (beam, beam_ends, moss_patch, dusty_window, pinned_sketches, unfinished_easel, note_table, backward_painting, rules_board, cobweb, leaves):
         f()
         print("wrote", f.__name__)
