@@ -152,6 +152,7 @@ FEATURES = {
 }
 
 W, H = 96, 76
+VALE_PIECES = []             # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
 STAMP_LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "AlwaysFront"]
 
@@ -265,7 +266,12 @@ def main():
     props = {"Outdoors": "T", "Spring_Objects": "T", "Summer_Objects": "T", "Fall_Objects": "T", "Winter_Objects": "T",
              "BrookSounds": f"{RIVER_X + 4} 3 0",
              "Light": "20 3 4 22 3 4"}             # the entrance sign's gold letters glow at dusk (two sconce lights)
-    write(os.path.join(assets, "GildedVale.tmx"), g, props, tilesets)
+    tmx_path = os.path.join(assets, "GildedVale.tmx")
+    write(tmx_path, g, props, tilesets)
+    # The pieces patched into the written map in place (tools/vale_patch.py).
+    import importlib
+    for name in VALE_PIECES:
+        importlib.import_module(name).patch_file(tmx_path, sys.argv[3] if len(sys.argv) > 3 else os.path.dirname(town_path))
 
 
 # The Town ledge's cliff, as a rule rather than a block (learned from Town x 23-46,

@@ -4,7 +4,7 @@
 
 Usage: python tools/vale_routes.py <GildedVale.tmx>
 """
-import collections, sys, os
+import collections, glob, re, sys, os
 import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from render_tmx import layer_data
@@ -20,6 +20,9 @@ PLACES = {
     "Gilded Tree": (38, 69), "lakeside bench": (47, 60), "jetty": (48, 66), "picnic table": (90, 66),
     "overlook bench": (86, 27),
 }
+# Schedule spots that are a seat (a bench or chair, solid itself): reachable if a neighbour is
+SEATS = {"nursery bench", "lakeside bench", "overlook bench"}
+DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "[CP] Gilded Vale (dev)", "data")
 
 
 def main():
@@ -56,6 +59,23 @@ def main():
         if not reach:
             bad += 1
         print(("ok      " if reach else "BLOCKED ") + name, p)
+    # Every `GildedVale <x> <y>` in the NPCs' schedules: standable (not solid, not water),
+    # reachable from the bus stop. A seat counts if a neighbouring tile is reachable.
+    seats = {PLACES[n] for n in SEATS}
+    water_back = lambda x, y: L["Back"][y * W + x] in bv.WATER_BACKS
+    spots = collections.defaultdict(set)
+    for path in sorted(glob.glob(os.path.join(glob.escape(DATA), "*_schedule.json"))):
+        for sx, sy in re.findall(r"GildedVale (\d+) (\d+)", open(path, encoding="utf-8").read()):
+            spots[(int(sx), int(sy))].add(os.path.basename(path).replace("_schedule.json", ""))
+    for (x, y), who in sorted(spots.items()):
+        standable = ok(x, y) and not water_back(x, y)
+        if (x, y) in seats:
+            good = (standable and (x, y) in seen) or any((x + dx, y + dy) in seen for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+        else:
+            good = standable and (x, y) in seen
+        if not good:
+            bad += 1
+        print(("ok      " if good else "BLOCKED ") + "schedule spot", (x, y), "(" + ", ".join(sorted(who)) + ")")
     print(bad, "blocked")
 
 
