@@ -523,5 +523,17 @@
   "vale.grove.founders.taken": "The easel takes your painting gently, the way a friend takes your coat. Its colours sink into the Grove's gold. In your hands is an old frame, warm, as if it had just been carved.",
   "vale.grove.founders.thanks": "The old easel holds a finished canvas now, glowing in the Grove's light. It isn't waiting any more. Somehow, that feels like thanks.",
   "vale.grove.founders.not_masterpiece": "The easel waits. It wants a masterpiece, and nothing less.",
-  "vale.grove.founders.framed": "The easel won't take a painting in a frame. It wants the bare canvas. A Framer's Bench can take it out."
+  "vale.grove.founders.framed": "The easel won't take a painting in a frame. It wants the bare canvas. A Framer's Bench can take it out.",
+
+  // The Vale's own fish (data/vale_fish.json)
+  "fish.loach.name": "Claybank Loach",
+  "fish.loach.description": "A little red fish that lives in the clay banks of the river, the same colour as the mud it hides in.",
+  "fish.trout.name": "Cascade Trout",
+  "fish.trout.description": "Leaps up the cascades when the rain swells the river. Nothing rhymes with it.",
+  "fish.sculpin.name": "Falls Sculpin",
+  "fish.sculpin.description": "Hides under the river stones below the falls, and comes out on cold nights.",
+  "fish.shiner.name": "Lakeblue Shiner",
+  "fish.shiner.description": "So blue that the painters who saw it were told they'd made it up.",
+  "fish.carp.name": "Gilt Carp",
+  "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake."
 }

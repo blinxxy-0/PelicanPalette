@@ -19,6 +19,8 @@ internal static class GildedVale
         ValeTests.Register(helper, monitor);
         GuideTests.Register(helper, monitor);
         ValeGrounds.Register(helper, monitor);
+        ValeOrchard.Register(helper, monitor);
+        ValeFish.Register(helper, monitor);
 
         // Lupini's painting spots are found, not easels (the painters' guide design, section 4):
         // touch a stool with the guide to find its view. blinxxy.MuseArt_PaintSpot <spotId>;

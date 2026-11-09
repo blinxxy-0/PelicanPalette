@@ -168,7 +168,7 @@ tools/art/vale_road.py draws the road and its turning circle from the Bus Stop's
 - **Collision.** `walkable()` makes a tile walkable if it is mostly path or empty, solid otherwise. Art goes on Back2 if walkable, on Buildings if solid, and on Buildings2 over the map's own Buildings pieces, which are never removed.
 - **Dark grass is kept out from under features**, as it is from under the road.
 - **Fences use the game's own placeable-fence sprites** (LooseSprites/Fence1 wood, Fence2 stone; 3 × 11 pieces of 16 × 32, one for every position in a fence; see the modding wiki's "How Fences Work"). The map tileset image is `../LooseSprites/Fence1`, loaded straight from the game's content, never copied. Each piece's lower half goes on Buildings and its upper half on Front a row above. Checked in game 2026-11-06.
-- **Paths-layer markers** (GameLocation.loadPathsLayerObjectsInArea): 9 oak, 10 maple, 11 pine, 22 tall grass, 24/25/26 large/medium/small bush, and 34 plus a "SpawnTree" TileData property (`fruit <id>`) for fruit trees.
+- **Paths-layer markers** (GameLocation.loadPathsLayerObjectsInArea): 9 oak, 10 maple, 11 pine, 22 tall grass, 24/25/26 large/medium/small bush, and 34 plus a "SpawnTree" TileData property (`fruit <id> 4 4`) for fruit trees. Keep the `4 4` (growth stage on load and on overnight regrowth): without it the game regrows a missing tree as a sapling, and a sapling with anything beside it (the orchard's wild trees) tells the player every morning it "wasn't able to grow". A full-grown fruit tree never does.
 - **Building sheet width.** It is 32 columns, so a piece up to 32 tiles wide packs without wrapping.
 
 ## Seasons, collision and routes for painted features (2026-11-07)

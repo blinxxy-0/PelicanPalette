@@ -230,6 +230,8 @@
     { "Action": "Include", "FromFile": "data/vale_guide.json" },
     // The Vale on the world map (M), a region of its own.
     { "Action": "Include", "FromFile": "data/vale_worldmap.json" },
+    // The Vale's own fish, and the game's river and lake fish in its water.
+    { "Action": "Include", "FromFile": "data/vale_fish.json" },
     // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
     // its stops (ArtStudio/Vale/ValeBus.cs is the bus without it). Open once the route's
     // letter has come and the bus is mended, as for the Desert.
