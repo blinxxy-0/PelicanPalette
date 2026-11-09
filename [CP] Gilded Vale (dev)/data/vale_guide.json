@@ -1,5 +1,5 @@
 // The old painters' guide (the Vale painters' guide design, section 4): the book itself and the
-// quest that counts its eight spots. ArtStudio/Vale/PaintersGuide.cs gives both (TakeGuide) and
+// quest that counts its eight spots; and the Gilded Grove (section 5), where its last page leads. ArtStudio/Vale/PaintersGuide.cs gives both (TakeGuide) and
 // writes the quest's objective as spots are found.
 //
 // The guide is a Quest-type object that can't be given, trashed or sold. Its icon is a
@@ -35,6 +35,45 @@
         // Basic: Type/Title/Description/Objective/NextQuests/Money/Reward/Cancellable/Reaction.
         // Not cancellable; no reward (the Grove is the reward).
         "blinxxy.MuseArt_PaintersGuide": "Basic/{{i18n:quest.painters_guide.title}}/{{i18n:quest.painters_guide.description}}/{{i18n:quest.painters_guide.objective|found=0}}/null/-1/0/-1/false"
+      }
+    },
+    // The Grove's own context: painted light doesn't change, so it's fall there all year (the game
+    // swaps the map's spring_ sheets for their fall faces by the location's season) and never rains.
+    // The map names this context itself (its LocationContext property): Data/Locations has no field for it.
+    {
+      "Action": "EditData",
+      "Target": "Data/LocationContexts",
+      "Entries": {
+        "blinxxy.MuseArt_GroveContext": {
+          "SeasonOverride": "fall",
+          "AllowRainTotem": false,
+          "WeatherConditions": [ { "Id": "Sun", "Weather": "Sun" } ]
+        }
+      }
+    },
+    // The Grove (tools/build_vale_grove.py): reached only by the guide, left only by its frame
+    // (ArtStudio/Vale/GildedGrove.cs). Nothing grows or spawns there, and it isn't on anyone's way.
+    // Its pool is fishable; its fish (the painted fish) comes with Task 9, so none yet.
+    {
+      "Action": "EditData",
+      "Target": "Data/Locations",
+      "Entries": {
+        "blinxxy.MuseArt_GildedGrove": {
+          "DisplayName": "{{i18n:location.gilded-grove}}",
+          "DefaultArrivalTile": { "X": 12, "Y": 11 },
+          "CreateOnLoad": { "MapPath": "Maps/blinxxy.MuseArt_GildedGrove" },
+          "ExcludeFromNpcPathfinding": true,
+          "CanPlantHere": false,
+          "ArtifactSpots": [],
+          "Forage": [],
+          "Fish": [],
+          "MinDailyWeeds": 0,
+          "MaxDailyWeeds": 0,
+          "FirstDayWeedMultiplier": 0,
+          "MinDailyForageSpawn": 0,
+          "MaxDailyForageSpawn": 0,
+          "ChanceForClay": 0
+        }
       }
     }
   ]

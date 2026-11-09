@@ -174,7 +174,8 @@
         "quest.painters_guide.title": "{{i18n:quest.painters_guide.title}}",
         "quest.painters_guide.description": "{{i18n:quest.painters_guide.description}}",
         "quest.painters_guide.objective": "{{i18n:quest.painters_guide.objective|found=[found]}}",
-        "vale.guide.item.description": "{{i18n:vale.guide.item.description}}"
+        "vale.guide.item.description": "{{i18n:vale.guide.item.description}}",
+        "vale.grove.frame": "{{i18n:vale.grove.frame}}"
       }
     }
   ]

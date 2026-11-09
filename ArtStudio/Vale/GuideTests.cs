@@ -1,23 +1,32 @@
 #if DEBUG
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using ArtStudio.Painting;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Objects;
 using StardewValley.Quests;
 using SObject = StardewValley.Object;
 
 namespace ArtStudio.Vale;
 
 // museart_guidetest: checks the painters' guide's rules in a running game (Debug only):
-// the spots are found only with the guide, once each, and the eighth opens the Grove.
-// The player's flags are saved and put back, so a run changes nothing.
+// the spots are found only with the guide, once each, and the eighth opens the Grove; then
+// the Grove itself, and (over the next few seconds, as real warps) the way in and the way back.
+// The player's flags, season and place are saved and put back, so a run changes nothing.
 internal static class GuideTests
 {
+    private static IModHelper? _helper;
+
     public static void Register(IModHelper helper, IMonitor monitor)
     {
+        _helper = helper;
         DevTools.AddCommand(helper, "museart_guidetest",
-            "Checks the painters' guide's rules: no guide no find, a first find, a repeat, the eighth completes, an unknown id is refused.",
+            "Checks the painters' guide's rules (no guide no find, a first find, a repeat, the eighth completes, an unknown id is refused), then the Gilded Grove: its season, the warp in and the frame home.",
             (_, _) => Run(monitor));
     }
 
@@ -46,6 +55,7 @@ internal static class GuideTests
         var heldBefore = who.Items.Select((it, slot) => (it, slot)).Where(x => x.it?.QualifiedItemId == itemId).ToList();
         var questBefore = who.questLog.Where(q => q.id.Value == PaintersGuide.QuestId).ToList();
         var place = who.currentLocation;
+        var seasonBefore = Game1.season;
         var menuBefore = Game1.activeClickableMenu;
         // Whatever box a use opened is closed again, so the player counts as free for the next one.
         void Settle() { Game1.activeClickableMenu = menuBefore; Game1.dialogueUp = false; who.CanMove = true; }
@@ -135,12 +145,51 @@ internal static class GuideTests
             who.currentLocation = place;
             Check(monitor, "guide: in the Vale, open", usedInVale && asked, $"returned {usedInVale}, asked {asked}");
 
+            // The right-click hook leaves the game's own clicks alone: people, objects, furniture, tile actions.
+            Check(monitor, "guide: right-click leaves NPCs, objects, furniture and tile actions alone", HookLeavesClicks(vale, out string hook), hook);
+
+            // ---- The Gilded Grove ----
+            var grove = Game1.getLocationFromName(GildedGrove.Location);
+            Check(monitor, "grove: the location exists", grove != null);
+            if (grove != null)
+            {
+                var seasons = new List<string>();
+                var views = new List<string>();
+                foreach (Season s in Enum.GetValues<Season>())
+                {
+                    Game1.season = s;
+                    seasons.Add($"{s}: {grove.GetSeason()}");
+                    views.Add(Views.SubjectFor(grove));
+                }
+                Check(monitor, "grove: always fall", seasons.All(x => x.EndsWith(": Fall")), string.Join(", ", seasons));
+                Check(monitor, "grove: one view", views.All(v => v.EndsWith(":fall")), string.Join(", ", views.Distinct()));
+                Game1.season = Season.Spring;
+                grove.updateSeasonalTileSheets();
+                var sheets = grove.Map.TileSheets.Select(t => t.ImageSource).Where(src => src.Contains("outdoorsTileSheet")).ToList();
+                Check(monitor, "grove: fall sheets in spring", sheets.Count > 0 && sheets.All(src => src.Contains("fall_")), string.Join(", ", sheets));
+                Game1.season = seasonBefore;
+                grove.updateSeasonalTileSheets();
+                var weather = grove.GetWeather();
+                Check(monitor, "grove: always sunny", weather.Weather == "Sun" && !grove.IsRainingHere() && !grove.IsSnowingHere(), weather.Weather);
+
+                // Answering the question happens in its box: with the player not free, WarpIn does nothing.
+                who.mailReceived.Add(PaintersGuide.GroveOpenFlag);
+                who.currentLocation = vale;
+                Game1.activeClickableMenu = new DialogueBox("busy");
+                bool warpedBusy = GildedGrove.WarpIn(who, false);
+                bool noWarp = Game1.locationRequest == null;
+                Settle();
+                who.currentLocation = place;
+                Check(monitor, "grove: no warp in while busy", !warpedBusy && noWarp, $"returned {warpedBusy}, warp {(noWarp ? "none" : Game1.locationRequest?.Name)}");
+            }
+
             var bad = PaintersGuide.StringKeys.Where(k => { string t = PaintersGuide.Text(k); return t.Length == 0 || t == k; }).ToList();
             Check(monitor, "guide: every guide string resolves", bad.Count == 0,
                 bad.Count == 0 ? $"{PaintersGuide.StringKeys.Count()} strings" : "missing: " + string.Join(", ", bad));
         }
         finally
         {
+            Game1.season = seasonBefore;
             who.currentLocation = place;
             Settle();
             Clear();
@@ -150,6 +199,172 @@ internal static class GuideTests
             foreach (var q in who.questLog.Where(q => q.id.Value == PaintersGuide.QuestId).ToList()) who.questLog.Remove(q);
             foreach (var q in questBefore) who.questLog.Add(q);
         }
+        if (Game1.getLocationFromName(GildedGrove.Location) != null)
+            GroveWarps(monitor);
+    }
+
+    // The game's own click, for each thing the hook must leave alone; true only if it leaves them all
+    // and still opens the guide on bare ground.
+    private static bool HookLeavesClicks(GameLocation vale, out string detail)
+    {
+        var tile = new Vector2(GildedGrove.ReturnTile.X, GildedGrove.ReturnTile.Y);
+        var results = new List<string>();
+        bool bare = PaintersGuide.ClickOpensGuide(vale, tile);
+        results.Add($"bare {bare}");
+
+        bool obj = false, furn = false;
+        if (!vale.Objects.ContainsKey(tile))
+        {
+            vale.Objects.Add(tile, ItemRegistry.Create<SObject>("(O)390"));
+            try { obj = !PaintersGuide.ClickOpensGuide(vale, tile); }
+            finally { vale.Objects.Remove(tile); }
+        }
+        results.Add($"object {obj}");
+        var chair = Furniture.GetFurnitureInstance("0", tile);
+        vale.furniture.Add(chair);
+        try { furn = !PaintersGuide.ClickOpensGuide(vale, tile); }
+        finally { vale.furniture.Remove(chair); }
+        results.Add($"furniture {furn}");
+
+        // Someone already in the world, wherever they are: their feet and their head.
+        var npc = Utility.getAllCharacters().FirstOrDefault(c => c.currentLocation != null && c.IsVillager);
+        bool feet = npc != null && !PaintersGuide.ClickOpensGuide(npc.currentLocation, npc.Tile);
+        bool head = npc != null && !PaintersGuide.ClickOpensGuide(npc.currentLocation, npc.Tile - new Vector2(0, 1));
+        results.Add($"{npc?.Name ?? "no NPC"} feet {feet} head {head}");
+
+        Vector2? action = null;
+        var layer = vale.Map.GetLayer("Buildings");
+        for (int y = 0; y < layer.LayerHeight && action == null; y++)
+            for (int x = 0; x < layer.LayerWidth && action == null; x++)
+                if (vale.doesTileHaveProperty(x, y, "Action", "Buildings") != null)
+                    action = new Vector2(x, y);
+        bool act = action != null && !PaintersGuide.ClickOpensGuide(vale, action.Value);
+        results.Add($"tile action {act}");
+        detail = string.Join(", ", results);
+        return bare && obj && furn && feet && head && act;
+    }
+
+    // ---- The way in and the way back, as real warps over the next few seconds ----
+
+    private sealed record Step(string What, Func<bool> Ready, Action Then);
+
+    private static void GroveWarps(IMonitor monitor)
+    {
+        var who = Game1.player;
+        string placeBefore = who.currentLocation.NameOrUniqueName;
+        Point tileBefore = who.TilePoint;
+        int facingBefore = who.FacingDirection;
+        bool hadGrove = who.mailReceived.Contains(PaintersGuide.GroveOpenFlag);
+        var vale = Game1.getLocationFromName(ValeBus.Vale);
+        var gate = new Vector2(GildedGrove.ReturnTile.X, GildedGrove.ReturnTile.Y);
+        SObject? blocker = null;
+
+        bool Settled() => Context.IsPlayerFree && !Game1.isWarping && Game1.locationRequest == null && !PaintSplash.Playing && !GildedGrove.WarpPending;
+        bool In(string name) => Game1.currentLocation?.Name == name && Settled();
+        // Says yes to the question just asked, the way its box would, and closes the box.
+        void SayYes(GameLocation where)
+        {
+            var answer = where.afterQuestion;
+            where.afterQuestion = null;
+            Game1.activeClickableMenu = null;
+            Game1.dialogueUp = false;
+            answer?.Invoke(who, "Yes");
+        }
+
+        who.mailReceived.Add(PaintersGuide.GroveOpenFlag);
+        var steps = new List<Step>
+        {
+            new("grove: warp in", () => true, () => Game1.warpFarmer(ValeBus.Vale, 20, 7, 2)),
+            new("grove: warp in", () => In(ValeBus.Vale), () =>
+            {
+                PaintersGuide.UseGuide(who);
+                SayYes(vale);
+            }),
+            new("grove: warp in", () => In(GildedGrove.Location), () =>
+            {
+                Check(monitor, "grove: warp in", who.TilePoint == GildedGrove.ArrivalTile, $"at {who.TilePoint}, arrival {GildedGrove.ArrivalTile}");
+                Check(monitor, "grove: paint motes in the Grove", GildedGrove.MoteTotal > 0, $"{GildedGrove.MoteTotal} motes");
+                GildedGrove.OnFrame(who);
+                SayYes(who.currentLocation);
+            }),
+            new("grove: the frame home", () => In(ValeBus.Vale), () =>
+            {
+                Check(monitor, "grove: the frame home", who.TilePoint == GildedGrove.ReturnTile, $"at {who.TilePoint}, gate {GildedGrove.ReturnTile}");
+                Check(monitor, "grove: the motes stop outside it", GildedGrove.MoteTotal == 0, $"{GildedGrove.MoteTotal} motes");
+                if (!vale.Objects.ContainsKey(gate))
+                {
+                    blocker = ItemRegistry.Create<SObject>("(BC)130");      // a chest on the gate tile
+                    vale.Objects.Add(gate, blocker);
+                }
+                GildedGrove.WarpIn(who, false);
+            }),
+            new("grove: the frame home, blocked", () => In(GildedGrove.Location), () =>
+            {
+                GildedGrove.OnFrame(who);
+                SayYes(who.currentLocation);
+            }),
+            new("grove: the frame home, blocked", () => In(ValeBus.Vale), () =>
+            {
+                Point at = who.TilePoint, gateTile = GildedGrove.ReturnTile;
+                int far = Math.Max(Math.Abs(at.X - gateTile.X), Math.Abs(at.Y - gateTile.Y));
+                Check(monitor, "grove: the frame home, blocked", blocker != null && at != gateTile && far == 1 && GildedGrove.Open(vale, at),
+                    $"at {at}, gate {gateTile}, {far} away, blocker {blocker != null}");
+            }),
+        };
+        RunSteps(monitor, steps, () =>
+        {
+            if (blocker != null && vale.Objects.TryGetValue(gate, out var o) && o == blocker)
+                vale.Objects.Remove(gate);
+            if (!hadGrove)
+                who.mailReceived.Remove(PaintersGuide.GroveOpenFlag);
+            Game1.activeClickableMenu = null;
+            Game1.dialogueUp = false;
+            who.CanMove = true;
+            Game1.warpFarmer(placeBefore, tileBefore.X, tileBefore.Y, facingBefore);
+            monitor.Log("Grove warp checks done; back where you were.", LogLevel.Info);
+        });
+    }
+
+    // Each step waits (up to 15 seconds) until it's ready, then runs; a step that times out or throws
+    // fails and ends the run. The cleanup always runs.
+    private static void RunSteps(IMonitor monitor, List<Step> steps, Action cleanup)
+    {
+        int i = 0, waited = 0;
+        void Done()
+        {
+            _helper!.Events.GameLoop.UpdateTicked -= Tick;
+            cleanup();
+        }
+        void Tick(object? sender, UpdateTickedEventArgs e)
+        {
+            Step? current = i < steps.Count ? steps[i] : null;
+            try
+            {
+                if (current == null)
+                {
+                    Done();
+                    return;
+                }
+                if (!current.Ready())
+                {
+                    if (++waited > 900)
+                    {
+                        Check(monitor, current.What, false, "timed out");
+                        Done();
+                    }
+                    return;
+                }
+                waited = 0;
+                i++;
+                current.Then();
+            }
+            catch (Exception ex)
+            {
+                Check(monitor, current?.What ?? "grove: warps", false, ex.ToString());
+                Done();
+            }
+        }
+        _helper!.Events.GameLoop.UpdateTicked += Tick;
     }
 }
 #endif

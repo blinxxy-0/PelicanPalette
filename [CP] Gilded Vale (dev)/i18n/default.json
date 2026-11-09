@@ -7,6 +7,7 @@
   "location.vale-fern": "Fern's Cottage",
   "location.vale-emmett": "Emmett's Cottage",
   "location.vale-studio": "The Old Studio",
+  "location.gilded-grove": "The Gilded Grove",
 
   // CJB Cheats Menu's Warps tab (content.json); the buildings use their location names.
   "warp.bus-stop": "Bus Stop",
@@ -516,5 +517,6 @@
   "quest.painters_guide.title": "The Old Painters' Spots",
   "quest.painters_guide.description": "An old guide from the Vale House names eight places where the Vale's painters liked to sit. Find each one, and see what they saw.",
   "quest.painters_guide.objective": "{{found}} of 8 spots found",
-  "vale.guide.item.description": "A thin book spotted with old paint. Right-click to turn its pages, or touch a worn stool with it."
+  "vale.guide.item.description": "A thin book spotted with old paint. Right-click to turn its pages, or touch a worn stool with it.",
+  "vale.grove.frame": "A painted frame at the Grove's edge. Through it, faint as a sketch, a low stone wall and a gate. Step back into the Vale?"
 }

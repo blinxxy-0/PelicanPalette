@@ -130,7 +130,8 @@ internal static class PaintersGuide
     }
 
     // Using the guide (right-click with it held). Before the last find, anywhere: its page, the eight
-    // spots found so far. After it, in the Vale: the question about stepping in. After it, elsewhere:
+    // spots found so far. After it, in the Vale: the question about stepping in (yes: GildedGrove,
+    // once the box has closed). After it, elsewhere:
     // the page says it only comes alive in the Vale, and that's false (nothing was done). False and
     // nothing shown, too, when the player isn't free or a splash is playing.
     public static bool UseGuide(Farmer who)
@@ -155,7 +156,7 @@ internal static class PaintersGuide
         }, (_, answer) =>
         {
             if (answer == "Yes")
-                WarpToGrove(who);
+                GildedGrove.RequestWarpIn(who);
         });
         return true;
     }
@@ -164,9 +165,6 @@ internal static class PaintersGuide
         Text("vale.guide.page.title") + "^^" + string.Join("^", Spots.Select(s => who.mailReceived.Contains(FoundFlag(s.Id))
             ? "[x] " + Text($"vale.guide.spot.{s.Id}.name")
             : "[ ] " + Text("vale.guide.page.unfound")));
-
-    // The one call site for the Grove: Task 7 (GildedGrove.WarpIn) replaces it.
-    private static void WarpToGrove(Farmer who) => Monitor?.Log("WarpIn: Task 7", LogLevel.Info);
 
     // The game's own data can't say "never dropped" (CanBeTrashed and CanBeGivenAsGift are all it has),
     // so the guide's canBeDropped is false here: toss it from the bag and it stays in your hands.
@@ -184,18 +182,31 @@ internal static class PaintersGuide
             __result = false;
     }
 
-    // Right-click with the guide held. Facing a spot's stool (or anything with a tile action) is a
-    // touch, not a use: that's the game's own action, left alone.
+    // Right-click with the guide held. Facing a spot's stool, a person, an object, furniture or
+    // anything with a tile action is the game's own click, left alone; anywhere else it opens the guide.
     public static void Register(IModHelper helper) => helper.Events.Input.ButtonPressed += (_, e) =>
     {
         if (!Context.IsPlayerFree || !e.Button.IsActionButton() || Game1.player.CurrentItem?.QualifiedItemId != "(O)" + GuideItemId)
             return;
-        Vector2 tile = e.Cursor.GrabTile;
-        if (Game1.currentLocation.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Action", "Buildings") != null)
+        if (!ClickOpensGuide(Game1.currentLocation, e.Cursor.GrabTile))
             return;
         helper.Input.Suppress(e.Button);
         UseGuide(Game1.player);
     };
+
+    // False where the game has something of its own to do with a right-click on that tile.
+    public static bool ClickOpensGuide(GameLocation location, Vector2 tile)
+    {
+        int x = (int)tile.X, y = (int)tile.Y;
+        if (location.doesTileHaveProperty(x, y, "Action", "Buildings") != null)
+            return false;
+        // An NPC stands two tiles tall: a click on their head is on the tile above their feet.
+        if (location.isCharacterAtTile(tile) != null || location.isCharacterAtTile(tile + new Vector2(0, 1)) != null)
+            return false;
+        if (location.getObjectAtTile(x, y) != null || location.GetFurnitureAt(tile) != null)
+            return false;
+        return true;
+    }
 
     // The tile action: blinxxy.MuseArt_PaintSpot <spotId>. An old tile with no id does nothing.
     public static bool OnTouch(Farmer who, string[] args)
@@ -238,7 +249,8 @@ internal static class PaintersGuide
         Spots.SelectMany(s => new[] { $"vale.guide.spot.{s.Id}.name", $"vale.guide.spot.{s.Id}.line" })
             .Concat(new[] { "vale.guide.plain_stool", "vale.guide.last_page", "vale.guide.board", "vale.guide.take", "vale.guide.again",
                 "vale.guide.page.title", "vale.guide.page.unfound", "vale.guide.step_in", "vale.guide.not_here",
-                "quest.painters_guide.title", "quest.painters_guide.description", "quest.painters_guide.objective", "vale.guide.item.description" });
+                "quest.painters_guide.title", "quest.painters_guide.description", "quest.painters_guide.objective", "vale.guide.item.description" })
+            .Concat(GildedGrove.StringKeys);
 
     public static IMonitor? Monitor;
     private static readonly HashSet<string> Warned = new();

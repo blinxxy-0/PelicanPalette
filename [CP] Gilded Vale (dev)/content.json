@@ -224,7 +224,9 @@
     // The five residents (1.4): data, gifts, schedules and dialogue, switched off until
     // their art exists (data/residents.json says what turns each one on).
     { "Action": "Include", "FromFile": "data/residents.json" },
-    // The old painters' guide and its quest (data/vale_guide.json).
+    // The old painters' guide and its quest, and the Gilded Grove its last page leads to
+    // (data/vale_guide.json; the Grove's map is built by tools/build_vale_grove.py).
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_GildedGrove", "FromFile": "assets/GildedGrove.tmx" },
     { "Action": "Include", "FromFile": "data/vale_guide.json" },
     // The Vale on the world map (M), a region of its own.
     { "Action": "Include", "FromFile": "data/vale_worldmap.json" },

@@ -30,6 +30,8 @@ internal static class GildedVale
         GameLocation.RegisterTileAction(TakeGuideAction, (_, _, who, _) => PaintersGuide.OnTake(who));
         PaintersGuide.Register(helper);
         PaintersGuide.Patch(harmony);
+        // The Grove the guide's last page leads to, and the frame back (GildedGrove.cs).
+        GildedGrove.Register(helper, monitor);
     }
 }
 #endif
