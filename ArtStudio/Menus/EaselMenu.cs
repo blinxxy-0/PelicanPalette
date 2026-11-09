@@ -57,10 +57,14 @@ internal sealed partial class EaselMenu : IClickableMenu
     internal Frames.Studio DevStudio => _studio;
     private Views.Capture? _view;
 
-    public EaselMenu(Farmer who, BrushSpec? brush = null, Vector2? easelTile = null)
+    // Sparks already caught when the painting starts (the Gilded Grove's hidden easel gives one).
+    private readonly int _startingSparks;
+
+    public EaselMenu(Farmer who, BrushSpec? brush = null, Vector2? easelTile = null, int startingSparks = 0)
         : base(0, 0, 0, 0, showUpperRightCloseButton: true)
     {
         _who = who;
+        _sparksCaught = _startingSparks = startingSparks;
         if (easelTile.HasValue)
             _easelTile = easelTile.Value;
         // The framed paintings on this room's walls (1.3).

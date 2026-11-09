@@ -8,6 +8,7 @@
   "location.vale-emmett": "Emmett's Cottage",
   "location.vale-studio": "The Old Studio",
   "location.vale-studio2": "Studio II",
+  "location.gilded-grove": "The Gilded Grove",
 
   // CJB Cheats Menu's Warps tab (content.json); the buildings use their location names.
   "warp.bus-stop": "Bus Stop",
@@ -391,6 +392,8 @@
   "tobin.dialogue.AcceptGift_395": "Coffee. Black. You've been paying attention.$h",
   "tobin.dialogue.AcceptBirthdayGift_Positive": "For my birthday. ...Thank you. I'm not good at this part. It's a good gift.$l",
   "tobin.dialogue.AcceptBirthdayGift_Negative": "For my birthday. Hm. I'll find it a shelf.$0",
+  // Said once, from 4 hearts, after you've read a stone in the graveyard (data/tobin_dialogue.json)
+  "tobin.dialogue.urns": "The urns in the clearing. Ada built a kiln outdoors just for those. Every one glazed in the colour that person loved.$0#$b#Never met her. I fire it now, when somebody asks. Bea's aunt was heather. Amos was hedge green. Took me three firings. He'd have said four.$u",
   "lupini.name": "Lupini",
   "lupini.gift.love": "My friend! This is perfect. You've got an eye, you know. Don't waste it.$h",
   "lupini.gift.like": "How kind. The colour alone! Thank you.$h",
@@ -447,6 +450,8 @@
   "lupini.dialogue.AcceptGift_330": "Clay. Tobin's given me enough clay to last a lifetime, my friend. He calls it 'perspective'.$u",
   "lupini.dialogue.AcceptBirthdayGift_Positive": "For my birthday! You remembered. I'm touched, my friend. Truly.$l",
   "lupini.dialogue.AcceptBirthdayGift_Negative": "For my birthday. Ah. It has... a strong composition.$s",
+  // Said once, after you've read Bram's stone (data/lupini_dialogue.json)
+  "lupini.dialogue.bram": "Bram carved the stones for his friends in the clearing, every one. When he went, nobody was left who could carve his. I scratched his name on with a palette knife. He'd have hated my lettering.$s",
   "fern.name": "Fern",
   "fern.gift.love": "Oh! Oh, you lovely thing. And you, too. Thank you!$h",
   "fern.gift.like": "Thank you! Something to plant, or something to plant near. Either way.$h",
@@ -672,6 +677,9 @@
   "vale.hall_closed.bench": "A bench under a dust sheet, still facing the mural.",
   "vale.hall_closed.frames": "The paintings from the walls, taken down and leaning under a sheet.",
   "vale.hall_closed.hook": "A nail, and a paler square where a painting hung.",
+  "vale.garden.hidden_statue": "Carved into the plinth, mostly under leaves: \"For the one who kept the hedges square.\"",
+  "vale.overlook.shed": "Latched with a twist of wire. Through a gap in the planks: three folded easels. Two are crusted with paint. The third has never been used.",
+  "vale.overlook.three_trees": "Your axe stops short. One stump up here is enough.",
   "vale.studio.unfinished": "An unfinished painting of the Vale at sunset. Half of it is still pencil lines. Nobody knows who painted it.",
   "vale.studio.note": "A folded note in a careful hand. It isn't addressed to anyone.",
   "vale.studio.sketches": "Charcoal studies for the painting on the easel: the valley, a figure, a pair of hands, over and over.",
@@ -771,6 +779,61 @@
   "vale.house.blank_canvases": "Blank canvases leaning on the bed's foot, waiting for whoever stays next.",
   "vale.house.accounts": "The inn's accounts, in Bea's tidy hand. The column for repairs is a good deal longer than the column for guests.",
   "vale.house.flowers": "A painting of flowers that never wilt. Bea hung it to make a point to Fern.",
+  "vale.guide.spot.rooftops.name": "The Rooftops",
+  "vale.guide.spot.rooftops.line": "From here the high street is nothing but roofs, every red there is. Come after rain, when the tiles shine and the cobbles turn the colour of a pigeon.",
+  "vale.guide.spot.northlight.name": "The North Light",
+  "vale.guide.spot.northlight.line": "Face north. The light here stays the same all day and never throws a hard shadow, which is why painters fight over it. The sunflowers turn their backs on you. Paint them anyway.",
+  "vale.guide.spot.wildflowers.name": "The Wildflower Field",
+  "vale.guide.spot.wildflowers.line": "Don't try to paint every flower. You'll be here till winter. Paint the wind going through them, a poppy here, a cornflower there, and let the green do the rest.",
+  "vale.guide.spot.lakewindow.name": "The Lake Window",
+  "vale.guide.spot.lakewindow.line": "Come at dawn, before the wind gets up. For a few minutes the lake is a window: sky above, sky below, and you in the middle. By noon it's only water.",
+  "vale.guide.spot.parterre.name": "The Lost Parterre",
+  "vale.guide.spot.parterre.line": "The gardener says nothing here is lost, only resting. From this stool you can see the old pattern under the hedges, like a drawing showing through the paint.",
+  "vale.guide.spot.falls.name": "The Falls",
+  "vale.guide.spot.falls.line": "Listen first, paint second. Leave the canvas bare where the water's white. You can't paint white water. You can only leave room for it.",
+  "vale.guide.spot.tree.name": "Under the Gilded Tree",
+  "vale.guide.spot.tree.line": "Everyone paints the tree from across the lawn. Sit under it instead, and look up. In the fall it's gold leaf all the way to the sky. The Vale was named for this.",
+  "vale.guide.spot.stage.name": "The Old Stage",
+  "vale.guide.spot.stage.line": "Sit off to the side. From the seats you see the stage; from here you see the stage and the seats, which is the whole of a theatre. On quiet days, paint the ivy.",
+  "vale.guide.plain_stool": "The stool's seat is worn smooth. Someone sat here for years, looking at something.",
+  "vale.guide.last_page": "The guide's last page has always been blank. Now colour runs into it like water into paper: old trees, a still pool, grass gone gold in a light that doesn't move.#$b#It's nowhere you've seen in the Vale. Under it, in faded ink: 'Our favourite place. We painted it together, so it would keep.' The page is warm, like a window left open.",
+  "vale.guide.board": "A small frame by the guest books. Inside it, a thin book spotted with old paint: The Old Painters' Guide to the Viewpoints.",
+  "vale.guide.take": "The painters' guide? They left that here, oh, long before my time. My aunt kept it out for whoever asked.$0#$b#Nobody's asked in years. Take it. If you find all eight, come and tell me. I've only ever found the tea room.$u",
+  "vale.guide.again": "Tucked behind the frame's backing is another copy, just as spotted with paint. The painters must have known people lose things.",
+  "vale.guide.page.title": "The Old Painters' Guide to the Viewpoints",
+  "vale.guide.page.unfound": "...",
+  "vale.guide.step_in": "Step into the last page?",
+  "vale.guide.not_here": "The page only seems to come alive in the Vale.",
+  // Said once, the morning after you've found all eight spots (data/bea_dialogue.json)
+  "bea.dialogue.grove_open": "All eight? Then you've seen more of this valley than I have. Don't tell me what's on the last page. I'd like to wonder.$h",
+  "vale.guide.in_grove": "You're already standing in the last page.",
+  "quest.painters_guide.title": "The Old Painters' Spots",
+  "quest.painters_guide.description": "An old guide from the Vale House names eight places where the Vale's painters liked to sit. Find each one, and see what they saw.",
+  "quest.painters_guide.objective": "{{found}} of 8 spots found",
+  "vale.guide.item.description": "A thin book spotted with old paint. Right-click to turn its pages, or touch a worn stool with it.",
+  "vale.grove.frame": "A painted frame at the Grove's edge. Through it, faint as a sketch, a low stone wall and a gate. Step back into the Vale?",
+  "vale.grove.founders.ask": "An old, empty easel, worn smooth by hands long gone. It seems to be waiting for your very best work. Leave your masterpiece on it? You won't get it back.",
+  "vale.grove.founders.taken": "The easel takes your painting gently, the way a friend takes your coat. Its colours sink into the Grove's gold. In your hands is an old frame, warm, as if it had just been carved.",
+  "vale.grove.founders.thanks": "The old easel holds a finished canvas now, glowing in the Grove's light. It isn't waiting any more. Somehow, that feels like thanks.",
+  "vale.grove.founders.not_masterpiece": "The easel waits. It wants a masterpiece, and nothing less.",
+  "vale.grove.founders.framed": "The easel won't take a painting in a frame. It wants the bare canvas. A Framer's Bench can take it out.",
+
+  // The painted echoes (docs/superpowers/specs/2026-11-08-vale-guide-text.md)
+  "vale.echo.agnes": "Same window. Same hills. Every morning since I came, and they still ask me why I keep painting the sky.#$b#Because it's never the same one. Look: yesterday's was all bruise and gold. Today's is milk. Not one sky the same. I could paint a thousand more.",
+  "vale.echo.hollis": "A woodcut's mostly what you take away. Every bit you cut prints white. Cut one line too many and the block's spoiled, and there's no painting over it.#$b#Took me years to learn what to leave out. Folk call that patience. It isn't. I'm just frightened of the knife.",
+  "vale.echo.mabel": "Glass on the bench is nothing much. Grey, a bit dusty. Hold it up to the window, though... There. That's the whole trick. You let the light through.#$b#Opal's at my bench again, loud as a kettle, and Jet's under it sorting the blues. They'll go off to the city one day, the pair of them. Good. Then they can come home and tell me all about it.",
+  "vale.echo.bram": "Every stone I carve, they want a line on it. Something to make the visitors stop. I pick each word with them, and cut it deep, so it lasts.#$b#Not mine. When it's my turn, leave it plain. Scratch the name on and let the stone do the talking. Stone's good at that. Better than me.",
+
+  // The graveyard in the old Painter's clearing (docs/superpowers/specs/2026-11-08-vale-guide-text.md; the
+  // user's one change: Tobin's T is pressed into the markers' foot, where the art shows it). ^^ ends a
+  // stone's first page (the marker), ^ is a line of what's written on it (ArtStudio/Vale/ValeGraves.cs).
+  "vale.grave.agnes": "A headstone, cut deep and clean. A small B in one corner.^^AGNES MORROW^Oils. 18 summers.^'Not one sky the same.'",
+  "vale.grave.hollis": "A headstone, cut deep and clean. A small B in one corner.^^HOLLIS PIKE^Woodcuts. 22 summers.^'He knew what to leave out.'",
+  "vale.grave.mabel": "A headstone, cut deep and clean. A small B in one corner.^^MABEL CORRIE^Stained glass. 24 summers.^'She let the light through.'",
+  "vale.grave.bram": "A plain stone, never carved. Scratched into it, not very neatly:^^BRAM FAIRLIE",
+  "vale.grave.ada": "A clay marker she glazed herself, years before it was needed.^^ADA BRANNOCK^Pots, and the kiln. 46 summers.^On her urn's lid, in her glaze: 'not yet'. Nobody has had the heart to change it.",
+  "vale.grave.hester": "A clay marker glazed heather-purple, a small T pressed into the foot.^^HESTER THISTLE^The Vale House. 50 summers.^'There was always tea, and always room.'",
+  "vale.grave.amos": "A clay marker glazed hedge-green, a small T pressed into its foot. Somebody keeps flowers growing beside it.^^AMOS REED^The gardens. 72 summers.^'A gardener's job is to listen.'",
 
   // The Vale's own fish (data/vale_fish.json)
   "fish.loach.name": "Claybank Loach",
@@ -783,6 +846,9 @@
   "fish.shiner.description": "So blue that the painters who saw it were told they'd made it up.",
   "fish.carp.name": "Gilt Carp",
   "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake.",
+  // The painted fish (data/vale_guide.json).
+  "fish.painted.name": "Brushfin",
+  "fish.painted.description": "A rare fish, drawn with visible brushstrokes. It only lives in the Gilded Grove's pool.",
 
   // The Old Studios' sale and Robin's job (tools/vale_studio_sale.py writes these)
   "vale.studios.sale.plaque_2_forsale": "A notice is pinned over the old gold II: FOR SALE. Enquire at the Vale House.",

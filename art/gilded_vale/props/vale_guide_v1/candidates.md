@@ -1,0 +1,36 @@
+# The guide, the Grove and the graveyard: art candidates (v1)
+
+## Final (the user's picks, 2026-11-09)
+
+Picked: A1, B1, C1, U1, W2, E1/E3/E5/E7, F2, H1, R2, V2, G2, P1, FF2. Tobin's T stays on the markers' foot; the Founders' easel shows F2's finished golden canvas after an offering; Ada's glaze is celadon. `tools/art/vale_guide_final.py` makes the final files from the picks below; the candidates here stay as they were.
+
+- **The graveyard** (for Task 6, `build_vale.py` PICKS and SEASONAL): `art/gilded_vale/props/vale_graveyard_v1/`. Each piece is `<name>.png` with its snowed `<name>_winter.png`: `headstone_agnes`, `headstone_hollis`, `headstone_mabel` (A1, moved down 3 px so the base sits on the tile's bottom), `stone_bram` (B1), `marker_ada`, `marker_hester`, `marker_amos` (C1), `urn_<agnes|hollis|mabel|bram|ada|hester|amos>` (U1), and the W2 wall: `wall_left`, `wall_mid`, `wall_right`, `wall_side`, `gatepost`, `gate`. `preview.png` shows them all, spring above winter. Nothing is on the map yet.
+- **The Grove** (`tools/build_vale_grove.py` lays them): `art/gilded_vale/props/vale_guide_final/`: `echo_<agnes|hollis|mabel|bram>_0.png` and `_1.png` (E1/E3/E5/E7 and the idle frame: the brush, gouge, glass or mallet moved a pixel), `hidden_easel` (H1), `founders_easel` (F2 empty), `founders_canvas` (F2 with the finished canvas), `return_frame` (R2), `panorama` (V2).
+- **The icons**: `guide_icon` (G2) and `painted_fish` (P1), copied to the dev pack as `assets/PaintersGuide.png` and `assets/PaintedFish.png`.
+- **The Founders' Frame** (FF2): drawn into `ArtStudio/assets/furniture.png` and `items.png` by `tools/art/frame_styles.py` (its `founders` style), then `frame_1x1.py`.
+
+Contact sheet: `candidates.png` (everything at 3x, each row beside the game's own tombstone and our Easel item for scale). Pick by id. Nothing is wired into a map yet.
+
+Made by `tools/art/vale_guide_candidates.py` (re-run it to rebuild every file here). PixelLab outputs, their prompts and style images are in `pixellab/` (`batch.json`). 55 generations spent, 137 down to 82.
+
+| Id | What | How it was made |
+|---|---|---|
+| A1, A2, A3 | Carved headstone, 1x2. Each id is one stone shape, shown three times with the carving each artist gets: Agnes (a brush), Hollis (a woodblock with a gouge cut), Mabel (a leaded diamond pane). Every one has Bram's small "b" in the lower right corner and two short name lines. A1 is pale granite with a rounded top, A2 warm sandstone with a gable, A3 blue-grey slate with scrolled shoulders | PixelLab Pro Flash, 16x32, with the game's tombstone as the style image (5 generations each). The carvings are cut in by script: a darker shade of the face, lit along the lower lip |
+| B1, B2 | Bram's plain stone: rough and never carved, with BRAM scratched pale and a bit crooked (Lupini's palette knife). B1 is an upright fieldstone (1x2), B2 a low split slab (1x1) | Script, in the vanilla tombstone's greys |
+| C1, C2 | Glazed clay marker, slimmer and lower than the stones. Ada (celadon, her own), Hester (heather purple), Amos (hedge green). Unglazed terracotta foot, glaze drips, a slip-trailed name. Tobin's small T is pressed into the foot of Hester's and Amos's. C1 is a rounded tablet, C2 a flat-topped tile with a rolled rim and a fired hole | Script |
+| U1, U2 | Urn, 1x1, seven glazes in order: Agnes (sky blue), Hollis (printer's-ink black), Mabel (ruby glass red), Bram (oak brown), Ada (celadon, with her iron-brown "not yet" squiggle on the lid), Hester (heather), Amos (hedge green). U1 has a round belly and a knob on the lid, U2 is tall with a flat lid | Script, one shape per id with seven palette swaps |
+| W1, W2 | Low wall and gate. Shown left to right: a run with its end pieces, a square gatepost (1x2), a 2-wide gate, the other post, and the side piece for the north-south runs. W1 is grey stone with a wooden picket gate. W2 keeps the warm vanilla stone, with a wrought-iron gate tipped in gilt | The game's bridge parapet (`spring_town.png`, row 29), recoloured by lightness. The posts, gates and side piece are drawn by script |
+| E1 to E8 | The painted echoes, 2x3 tiles (32x48). E1/E2 Agnes painting at her easel, E3/E4 Hollis cutting a woodblock, E5/E6 Mabel holding blue glass to the light, E7/E8 Bram with mallet and chisel. Odd ids are sepia ink sketches with a cream wash, even ids loose gold and umber oil sketches. All are opaque: brushwork, not ghosts | PixelLab Pro Flash, 32x48, with Lupini's side walk frame as the scale reference (5 generations each). The idle frame (the tool moving) is made by script once a look is picked |
+| F1, F2 | Founders' easel, 1x2, in three states: empty, holding a finished golden canvas, and with the canvas under a cloth. F1 is weathered silver-grey wood. F2 is the Founders' Frame's honey wood, with notches cut down the mast | Script, from our Easel item's sprite (`easel.py`), recoloured, with the canvas taken off and the paint dabs dulled |
+| H1, H2 | Hidden easel with a blank canvas waiting for the view. H1 is fall-weathered with a few leaves caught on it. H2 is the usual easel wood with gilt corners and a gilt clamp | Script, from the Easel sprite |
+| R1, R2 | Return frame, 1x2. Inside, "faint as a sketch, a low stone wall and a gate". R1 is a gilt frame on a little stand. R2 is a painted wooden frame standing in the grass, its wood laid on in gold and umber strokes | Script |
+| V1, V2 | The Vale panorama, 22x7 tiles. V1 is the fall Vale shrunk, warmed and hazed, paler with distance. V2 is the same view made painterly: fewer colours, brush-sized blobs, a gold glaze and horizontal brush drags | Script: `render_tmx.py` over `GildedVale.tmx` with the fall sheets |
+| G1, G2 | Guide icon, 16x16: a thin book spotted with red, yellow and blue paint, with a pale title label. G1 has a sage cloth cover. G2 is brown leather with a red ribbon bookmark and more spatter | Script, pixel by pixel |
+| P1, P2 | Painted fish icon, 16x16, drawn the way the five Vale fish are (`vale_fish_icons.py`), with its scales laid on as dashed brushstrokes along the body. P1 is gold and cream with vermilion strokes. P2 is a painter's-palette fish in teal, ochre and rose | Script (imports `vale_fish_icons.draw_fish`) |
+| FF1, FF2, FF3 | Founders' Frame, each shown as a 2x2 framed painting and the item icon. FF1 is the current placeholder (honey wood, carved notches, gold corners and a gold leaf). FF2 is deeper Grove amber, with a fall leaf in each corner and a gold leaf on top. FF3 is pale wood laid on in loose strokes, like the echoes' brushwork | Script, `frame_styles.py`'s way (`set_frames.recolour` and its `carved` touch) |
+
+Notes for picking:
+- **The echoes are bigger than the placeholders.** They're 32x48, a figure plus an easel or bench, against the placeholders' 1x2. In `build_vale_grove.py` they'll need 2x3 slots, with a 2-wide foot that's solid and the rest on Front.
+- **Tobin's T is on the foot, where you can see it.** The drafted grave text says it's "pressed into the back". Either the line changes or the T comes off the art.
+- **Ada's glaze is my call (celadon).** The text doesn't name her colour.
+- No winter versions yet. After you pick, they get snow by script, like `SEASONAL` in `tools/build_vale.py`.

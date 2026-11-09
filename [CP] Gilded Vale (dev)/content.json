@@ -136,6 +136,9 @@
         "blinxxy.MuseArt_Vale.hall_closed.bench": "{{i18n:vale.hall_closed.bench}}",
         "blinxxy.MuseArt_Vale.hall_closed.frames": "{{i18n:vale.hall_closed.frames}}",
         "blinxxy.MuseArt_Vale.hall_closed.hook": "{{i18n:vale.hall_closed.hook}}",
+        "blinxxy.MuseArt_Vale.garden.hidden_statue": "{{i18n:vale.garden.hidden_statue}}",
+        "blinxxy.MuseArt_Vale.overlook.shed": "{{i18n:vale.overlook.shed}}",
+        "blinxxy.MuseArt_Vale.overlook.three_trees": "{{i18n:vale.overlook.three_trees}}",
         "blinxxy.MuseArt_Vale.studio.unfinished": "{{i18n:vale.studio.unfinished}}",
         "blinxxy.MuseArt_Vale.studio.note": "{{i18n:vale.studio.note}}",
         "blinxxy.MuseArt_Vale.studio.sketches": "{{i18n:vale.studio.sketches}}",
@@ -249,6 +252,10 @@
     // The five residents (1.4): data, gifts, schedules and dialogue, switched off until
     // their art exists (data/residents.json says what turns each one on).
     { "Action": "Include", "FromFile": "data/residents.json" },
+    // The old painters' guide and its quest, and the Gilded Grove its last page leads to
+    // (data/vale_guide.json; the Grove's map is built by tools/build_vale_grove.py).
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_GildedGrove", "FromFile": "assets/GildedGrove.tmx" },
+    { "Action": "Include", "FromFile": "data/vale_guide.json" },
     // The Vale on the world map (M), a region of its own.
     { "Action": "Include", "FromFile": "data/vale_worldmap.json" },
     // The Vale's own fish, and the game's river and lake fish in its water.

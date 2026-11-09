@@ -4181,8 +4181,9 @@ internal static class DevGame
         var furniture = DataLoader.Furniture(Game1.content);
         var missing = ArtItems.FrameStyles.Where(s => !objects.ContainsKey(s.ItemId) || !furniture.ContainsKey(s.SmallId) || !furniture.ContainsKey(s.LargeId)
             || !Frames.Styles.ContainsKey(s.Id) || ItemRegistry.Create("(O)" + s.ItemId).DisplayName.Contains("Error")).Select(s => s.Id).ToList();
-        Check(monitor, "all 16 frame styles have a frame, framed paintings, a rarity and a trait",
-            ArtItems.FrameStyles.Length == 16 && missing.Count == 0, missing.Count > 0 ? string.Join(", ", missing) : "");
+        // (16 released, and the Gilded Vale's Founders' Frame, Debug only for now)
+        Check(monitor, "all 17 frame styles have a frame, framed paintings, a rarity and a trait",
+            ArtItems.FrameStyles.Length == 17 && missing.Count == 0, missing.Count > 0 ? string.Join(", ", missing) : "");
 
         // A room's studio: the three strongest framed paintings count.
         SObject Painting(int quality = PaintingRules.Gold)

@@ -4,11 +4,17 @@ by lightness, each with a small touch of its own.
   - common: pine, oak, birch, painted white
   - uncommon: walnut, red lacquer, rope
   - legendary: prismatic, Qi's
+  - epic: the Founders' Frame (the Gilded Vale's Founders' easel; Debug-only
+    in the mod for now): the Gilded Grove's deep amber, a fall leaf in each
+    corner and a gold leaf over the top (the user's pick FF2, 2026-11-09)
 Writes:
-  - ArtStudio/assets/furniture.png, widened to 1280x48: each style's 2x2 and
+  - ArtStudio/assets/furniture.png, widened to 1280 (160 tall): each style's 2x2 and
     3x3 framed paintings, 80 pixels apart from x 560 (sprite indices
-    35/37, 40/42, ... 75/77)
-  - ArtStudio/assets/items.png: each style's frame item at sprites 67 to 75,
+    35/37, 40/42, ... 75/77). That fills the sheet's first band (80 tiles a
+    row), so styles after the ninth go in a second band at y 96 (row 6, under
+    Margot's study board), 80 pixels apart from x 0 (sprite indices 480/482,
+    ...), and the sheet is made 160 tall for their 1x1s (frame_1x1.py)
+  - ArtStudio/assets/items.png: each style's frame item at sprites 67 to 76,
     from the Picture Frame at sprite 8
 Safe to run again: it redraws the same places from the plain originals.
 
@@ -23,6 +29,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from set_frames import recolour
 
 FIRST_X, FIRST_ITEM, WIDTH = 560, 67, 1280
+FIRST_BAND, SECOND_BAND_Y, HEIGHT = 9, 96, 160    # (ArtItems.MoreFrameFurnitureIndex)
 
 # Darkest to lightest.
 STYLES = [
@@ -35,8 +42,11 @@ STYLES = [
     ("rope", [(96, 70, 40), (136, 104, 64), (170, 136, 88), (196, 164, 112), (218, 190, 140), (236, 214, 170)], "twist"),
     ("prismatic", [(70, 70, 90), (110, 110, 130), (150, 150, 170), (190, 190, 205), (220, 220, 232), (245, 245, 252)], "rainbow"),
     ("qi", [(40, 14, 58), (68, 24, 96), (98, 40, 134), (132, 64, 170), (168, 100, 204), (200, 140, 230)], "diamond"),
+    # The Grove's amber (it's always fall there), with its leaves.
+    ("founders", [(72, 30, 14), (128, 62, 24), (176, 98, 34), (214, 138, 48), (236, 176, 76), (250, 214, 130)], "leaves"),
 ]
 GOLD, GOLD_DARK = (236, 196, 84), (176, 128, 40)
+LEAF, LEAF_DARK = (214, 120, 40), (176, 72, 34)
 BRASS = (214, 178, 96)
 
 
@@ -96,6 +106,38 @@ def touch(tile, kind, dark):
             light = (r + g + b) / (3 * 255)
             rr, gg, bb = colorsys.hls_to_rgb(hue, 0.25 + 0.55 * light, 0.75)
             px[x, y] = (int(rr * 255), int(gg * 255), int(bb * 255), a)
+    elif kind == "carved":
+        # Notches cut across the wood at even steps round the frame, a gold leaf over the middle of
+        # the top, and gold in the corners.
+        def inner(x, y):
+            return all(0 <= x + dx < w and 0 <= y + dy < h and px[x + dx, y + dy][3]
+                       for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+        for x, y in frame:
+            if not inner(x, y):
+                continue
+            along = x if min(y, h - 1 - y) <= min(x, w - 1 - x) else y
+            if along % 4 == 0:
+                r, g, b, a = px[x, y]
+                px[x, y] = (max(0, r - 46), max(0, g - 40), max(0, b - 28), a)
+        # (only on the wood: the item's icon has empty corners round its frame)
+        for x, y in corners:
+            if px[x, y][3]:
+                px[x, y] = GOLD + (255,)
+        cx = w // 2
+        top = min(y for x, y in frame if x == cx)
+        for dx, dy, c in ((0, 0, GOLD), (-1, 0, GOLD_DARK), (0, 1, GOLD_DARK), (-1, 1, GOLD)):
+            if 0 <= cx + dx < w and top + dy < h and px[cx + dx, top + dy][3]:
+                px[cx + dx, top + dy] = c + (255,)
+    elif kind == "leaves":
+        # A fall leaf in each corner (only on the wood: the item's icon has empty corners), and a
+        # gold leaf over the middle of the top.
+        for (x, y), c in zip(corners, (LEAF, LEAF_DARK, LEAF_DARK, LEAF)):
+            if px[x, y][3]:
+                px[x, y] = c + (255,)
+        cx = w // 2
+        for dx, c in ((0, GOLD), (-1, GOLD_DARK)):
+            if px[cx + dx, 0][3]:
+                px[cx + dx, 0] = c + (255,)
     elif kind == "diamond":
         cx = w // 2
         for dx, dy, c in ((0, 0, GOLD), (-1, 1, GOLD_DARK), (1, 1, GOLD_DARK), (0, 1, GOLD), (0, 2, GOLD_DARK)):
@@ -112,6 +154,10 @@ def main():
         wider = Image.new("RGBA", (WIDTH, furniture.height), (0, 0, 0, 0))
         wider.paste(furniture.crop((0, 0, min(furniture.width, FIRST_X), furniture.height)), (0, 0))
         furniture = wider
+    if furniture.height < HEIGHT:
+        taller = Image.new("RGBA", (furniture.width, HEIGHT), (0, 0, 0, 0))
+        taller.paste(furniture, (0, 0))
+        furniture = taller
     items_path = os.path.join(assets, "items.png")
     items = Image.open(items_path).convert("RGBA")
     per_row = items.width // 16
@@ -120,11 +166,11 @@ def main():
         return (index % per_row * 16, index // per_row * 16)
 
     for n, (name, palette, kind) in enumerate(STYLES):
-        ox = FIRST_X + 80 * n
+        ox, oy = (FIRST_X + 80 * n, 0) if n < FIRST_BAND else (80 * (n - FIRST_BAND), SECOND_BAND_Y)
         for (sx, size), dx in (((0, 32), 0), ((32, 48), 32)):
             tile = recolour(furniture.crop((sx, 0, sx + size, size)).copy(), palette)
-            furniture.paste((0, 0, 0, 0), (ox + dx, 0, ox + dx + size, size))
-            furniture.paste(touch(tile, kind, palette[0]), (ox + dx, 0))
+            furniture.paste((0, 0, 0, 0), (ox + dx, oy, ox + dx + size, oy + size))
+            furniture.paste(touch(tile, kind, palette[0]), (ox + dx, oy))
         x, y = at(8)
         icon = recolour(items.crop((x, y, x + 16, y + 16)).copy(), palette, keep_inside=False)
         if kind:

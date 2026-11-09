@@ -53,9 +53,29 @@ internal static class ArtItems
     // And the rest (1.3, section 5 of the plan; tools/art/frame_styles.py):
     // common, from Sable's shop; uncommon, as Painting levels up; legendary,
     // Qi's. What each does when it hangs is in Frames.
-    private static readonly string[] MoreFrameIds = { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi" };
+    // The Founders' Frame (the Gilded Vale, Debug only for now) comes last, so no released frame's
+    // sprite moves: the Founders' easel in the Gilded Grove gives it, once, for a masterpiece.
+    // DebugOnlyFrameIds are the frames that exist only in Debug builds; the public wiki
+    // (museart_wikidata) leaves them out.
+    private static readonly string[] DebugOnlyFrameIds =
+    {
+#if DEBUG
+        "founders",
+#endif
+    };
+    private static readonly string[] MoreFrameIds =
+        new[] { "pine", "oak", "birch", "white", "walnut", "red-lacquer", "rope", "prismatic", "qi" }.Concat(DebugOnlyFrameIds).ToArray();
     public static readonly FrameStyle[] MoreFrames = MoreFrameIds.Select(SetFrame).ToArray();
+
+    public static bool IsDebugOnly(FrameStyle style) => DebugOnlyFrameIds.Contains(style.Id);
     private const int MoreFrameSprite = 67, MoreFrameFurniture = 35;
+
+    // The furniture sheet's first band (rows 0-3, 80 tiles a row) is full after the ninth of these;
+    // any more start a second band at row 6, under Margot's study board (rows 4-5), laid out the
+    // same way: each style's 2x2 and 3x3 frames 5 tiles apart, its 1x1 three rows under its 2x2.
+    private const int FirstBandFrames = 9, SecondBandFurniture = 480;
+    private static int MoreFrameFurnitureIndex(int n) =>
+        n < FirstBandFrames ? MoreFrameFurniture + 5 * n : SecondBandFurniture + 5 * (n - FirstBandFrames);
 
     private static FrameStyle SetFrame(string id) =>
         new(id, $"{ModEntry.Id}_{Pascal(id)}Frame", $"{ModEntry.Id}_{Pascal(id)}Painting", $"{ModEntry.Id}_{Pascal(id)}PaintingLarge");
@@ -334,7 +354,7 @@ internal static class ArtItems
         for (int n = 0; n < MoreFrames.Length; n++)
         {
             var style = MoreFrames[n];
-            int small = MoreFrameFurniture + 5 * n;
+            int small = MoreFrameFurnitureIndex(n);
             furniture[style.SmallId] = $"{style.SmallId}/painting/1 1/1 1/1/250/-1/{I18n.Get("item.framed")}/{small + SmallFrameRow}/{texture}/true";
             furniture[style.LargeId] = $"{style.LargeId}/painting/3 3/3 3/1/500/-1/{I18n.Get("item.framed")}/{small + 2}/{texture}/true";
         }

@@ -71,7 +71,10 @@
         "AcceptGift_(O)221": "{{i18n:bea.dialogue.AcceptGift_221}}",
         "AcceptGift_(O)341": "{{i18n:bea.dialogue.AcceptGift_341}}",
         "AcceptBirthdayGift_Positive": "{{i18n:bea.dialogue.AcceptBirthdayGift_Positive}}",
-        "AcceptBirthdayGift_Negative": "{{i18n:bea.dialogue.AcceptBirthdayGift_Negative}}"
+        "AcceptBirthdayGift_Negative": "{{i18n:bea.dialogue.AcceptBirthdayGift_Negative}}",
+
+        // ---- Once (conversation topics, added by the trigger action below) ----
+        "blinxxy.MuseArt_ValeGrove": "{{i18n:bea.dialogue.grove_open}}"
       }
     },
     // Rainy days (the game's own file for every villager).
@@ -80,6 +83,21 @@
       "Target": "Characters/Dialogue/rainy",
       "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"},
       "Entries": { "BeaThistle": "{{i18n:bea.dialogue.rainy}}" }
+    },
+    // The painters' guide (ArtStudio/Vale/PaintersGuide.cs): she asked you to come and tell her if you found all
+    // eight. Said once, the morning after the Grove opens, as a conversation topic.
+    {
+      "Action": "EditData",
+      "Target": "Data/TriggerActions",
+      "When": {"ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true"},
+      "Entries": {
+        "blinxxy.MuseArt_ValeGroveTalk": {
+          "Id": "blinxxy.MuseArt_ValeGroveTalk",
+          "Trigger": "DayStarted",
+          "Condition": "PLAYER_HAS_MAIL Current blinxxy.MuseArt_GroveOpen Any",
+          "Actions": [ "AddConversationTopic blinxxy.MuseArt_ValeGrove 112" ]
+        }
+      }
     }
   ]
 }

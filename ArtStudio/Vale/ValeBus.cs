@@ -30,6 +30,11 @@ namespace ArtStudio.Vale;
 internal static class ValeBus
 {
     public const string Vale = ModEntry.Id + "_GildedVale";
+
+    // Anywhere in the Gilded Vale: its outdoor map, or one of its interiors (the Vale House, the
+    // studios, the pottery...: every location named blinxxy.MuseArt_Vale<something>). Not the Grove.
+    public static bool IsInVale(GameLocation? location) =>
+        location != null && (location.Name == Vale || location.Name.StartsWith(ModEntry.Id + "_Vale", StringComparison.Ordinal));
     public const string OpenMail = ModEntry.Id + "_ValeOpen";       // the letter that opens the route (to come)
     public const int Fare = 300;
     private const string CentralStationId = "Pathoschild.CentralStation";

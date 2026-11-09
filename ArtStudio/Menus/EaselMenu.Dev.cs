@@ -236,6 +236,11 @@ internal sealed partial class EaselMenu
 
     internal bool DevIsPainting => _stage == EaselStage.Painting;
 
+    internal int DevSparksCaught => _sparksCaught;
+
+    // Starts painting straight away in this menu (as StartStillLife does in a new one).
+    internal void DevBeginStillLife(CanvasKind kind, System.Collections.Generic.IReadOnlyList<string> itemIds) => BeginPainting(kind, itemIds);
+
     // The setup screen showing creatures in place of the bag, one picked.
     internal void DevShowCreatures(string? pick = null) =>
         DevShowStudies(CreatureSlot, pick == null ? null : Painting.Creatures.SubjectFor(pick));
