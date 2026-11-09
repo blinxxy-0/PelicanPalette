@@ -157,6 +157,15 @@ internal static class GuideTests
             // The right-click hook leaves the game's own clicks alone: people, objects, furniture, tile actions.
             Check(monitor, "guide: right-click leaves NPCs, objects, furniture and tile actions alone", HookLeavesClicks(vale, out string hook), hook);
 
+            // The spots on the Vale's map, and the guide's frame in the Vale House, through their tile actions.
+            Clear();
+            SpotChecks(monitor, who, vale, Settle);
+            Clear();
+            DropGuides();
+            foreach (var q in who.questLog.Where(q => q.id.Value == PaintersGuide.QuestId).ToList()) who.questLog.Remove(q);
+            BoardCheck(monitor, who, Held, Quests, Settle);
+            Clear();
+
             // ---- The Gilded Grove ----
             var grove = Game1.getLocationFromName(GildedGrove.Location);
             Check(monitor, "grove: the location exists", grove != null);
@@ -250,6 +259,118 @@ internal static class GuideTests
         }
         if (Game1.getLocationFromName(GildedGrove.Location) != null)
             GroveWarps(monitor);
+    }
+
+    // ---- The spots on the map ----
+
+    // The four spots that stand on the map today (the painters' guide design, section 4); the
+    // other four come with the graveyard, the falls, the tree's lawn and the stage.
+    private static readonly string[] MapSpots = { "rooftops", "northlight", "wildflowers", "lakewindow" };
+
+    // Every PaintSpot tile on the Vale's map names one of the guide's spots, each on both foot tiles of
+    // one stool, and the four that stand today are there. Then each, through its tile action as the game
+    // runs it: without the guide, the plain line and no find; with it, that spot found (its splash
+    // starts); again, the line, and still one found.
+    private static void SpotChecks(IMonitor monitor, Farmer who, GameLocation vale, Action settle)
+    {
+        var tiles = new Dictionary<string, List<Point>>();
+        var bad = new List<string>();
+        var layer = vale.Map.GetLayer("Buildings");
+        for (int y = 0; y < layer.LayerHeight; y++)
+            for (int x = 0; x < layer.LayerWidth; x++)
+            {
+                string? action = vale.doesTileHaveProperty(x, y, "Action", "Buildings");
+                string[] words = action?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+                if (words.Length == 0 || words[0] != GildedVale.PaintSpotAction)
+                    continue;
+                if (words.Length != 2 || !PaintersGuide.Spots.Any(s => s.Id == words[1]))
+                {
+                    bad.Add($"'{action}' at ({x}, {y})");
+                    continue;
+                }
+                if (!tiles.TryGetValue(words[1], out var list))
+                    tiles[words[1]] = list = new List<Point>();
+                list.Add(new Point(x, y));
+            }
+        // found row by row, so a stool's two foot tiles come left then right
+        var notStools = tiles.Where(kv => kv.Value.Count != 2 || kv.Value[1] != kv.Value[0] + new Point(1, 0)).Select(kv => kv.Key).ToList();
+        var missing = MapSpots.Where(id => !tiles.ContainsKey(id)).ToList();
+        Check(monitor, "guide: spots on the map", bad.Count == 0 && notStools.Count == 0 && missing.Count == 0,
+            string.Join(", ", tiles.Select(kv => $"{kv.Key} at {kv.Value[0]}"))
+            + (bad.Count > 0 ? "; bad: " + string.Join(", ", bad) : "")
+            + (notStools.Count > 0 ? "; not on one stool: " + string.Join(", ", notStools) : "")
+            + (missing.Count > 0 ? "; missing: " + string.Join(", ", missing) : ""));
+
+        var placeBefore = who.currentLocation;
+        var detail = new List<string>();
+        bool all = true;
+        try
+        {
+            who.currentLocation = vale;
+            foreach (var (id, feet) in tiles)
+            {
+                foreach (var s in PaintersGuide.Spots)
+                    who.mailReceived.Remove(PaintersGuide.FoundFlag(s.Id));
+                who.mailReceived.Remove(PaintersGuide.GuideTakenFlag);
+                var foot = feet[feet.Count - 1];           // the stool's right foot: either tile works
+                string action = vale.doesTileHaveProperty(foot.X, foot.Y, "Action", "Buildings")!;
+                var at = new xTile.Dimensions.Location(foot.X, foot.Y);
+
+                bool noGuide = vale.performAction(action, who, at);
+                bool plainLine = Game1.activeClickableMenu is DialogueBox && !PaintSplash.Playing && PaintersGuide.FoundCount(who) == 0;
+                settle();
+
+                who.mailReceived.Add(PaintersGuide.GuideTakenFlag);
+                bool first = vale.performAction(action, who, at);
+                bool found = PaintSplash.Playing && who.mailReceived.Contains(PaintersGuide.FoundFlag(id)) && PaintersGuide.FoundCount(who) == 1;
+                PaintSplash.Stop();
+                settle();
+
+                bool again = vale.performAction(action, who, at);
+                bool line = Game1.activeClickableMenu is DialogueBox && !PaintSplash.Playing && PaintersGuide.FoundCount(who) == 1;
+                settle();
+
+                bool ok = noGuide && plainLine && first && found && again && line;
+                all &= ok;
+                detail.Add($"{id}: {(ok ? "ok" : $"no guide {noGuide}/{plainLine}, first {first}/{found}, again {again}/{line}")}");
+            }
+        }
+        finally
+        {
+            PaintSplash.Stop();
+            settle();
+            who.currentLocation = placeBefore;
+        }
+        Check(monitor, "guide: each spot's stool, through its tile action", all && tiles.Count > 0, string.Join("; ", detail));
+    }
+
+    // The guide's frame in the Vale House: its tile action, by the guest books, with floor in front
+    // of it; touched with no guide taken, it gives the guide and its quest.
+    private static void BoardCheck(IMonitor monitor, Farmer who, Func<int> held, Func<int> quests, Action settle)
+    {
+        var house = Game1.getLocationFromName(ValeResidents.ValeHouse);
+        var tile = PaintersGuide.BoardTile;
+        string? action = house?.doesTileHaveProperty(tile.X, tile.Y, "Action", "Buildings");
+        bool front = house != null && house.isTilePassable(new Vector2(tile.X, tile.Y + 1));
+        bool taken = false;
+        var placeBefore = who.currentLocation;
+        try
+        {
+            if (house != null && action != null)
+            {
+                who.currentLocation = house;
+                taken = house.performAction(action, who, new xTile.Dimensions.Location(tile.X, tile.Y));
+            }
+        }
+        finally
+        {
+            Game1.afterDialogues = null;
+            settle();
+            who.currentLocation = placeBefore;
+        }
+        bool gave = who.mailReceived.Contains(PaintersGuide.GuideTakenFlag) && held() == 1 && quests() == 1;
+        Check(monitor, "guide: the frame in the Vale House", action == GildedVale.TakeGuideAction && front && taken && gave,
+            $"{tile}: '{action ?? "(no action)"}', floor in front {front}, handled {taken}, flag {who.mailReceived.Contains(PaintersGuide.GuideTakenFlag)}, held {held()}, quests {quests()}");
     }
 
     // ---- The Grove's two easels ----

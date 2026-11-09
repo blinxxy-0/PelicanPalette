@@ -82,6 +82,10 @@ internal static class PaintersGuide
 
     private static bool Holds(Farmer who) => who.Items.Any(i => i?.QualifiedItemId == "(O)" + GuideItemId);
 
+    // The guide's frame in the Vale House's tea room, right of the guest-book case: the wall tile in
+    // front of it, which you face from the floor below (tools/build_vale_house.py, guide_frame).
+    public static readonly Point BoardTile = new(13, 19);
+
     // The tile action: blinxxy.MuseArt_TakeGuide, on the frame by the Vale House's guest books.
     // The first time: the frame's words, Bea's, the guide in your bag and its quest. After that,
     // if the guide's gone from your bag, another copy; if you still have it, only the frame's words.

@@ -64,9 +64,8 @@ PICKS = {
     # plaza: the user, 2026-11-06, "doesn't fit in the center of the town"); gold in fall
     "old_tree": ("props/vale_props_v1/old_tree_1_1", 35, 68, (1, 3, 4), 0),
     # 6: Lupini's painting spots (he paints at a different viewpoint each day): a stool
-    # with his paint box, and the rock he wipes his brushes on
-    "spot_clearing_stool": ("props/vale_props_v2/painters_stool_1_3", 6, 15, 1, 0),
-    "spot_clearing_rock": ("props/vale_props_v2/paint_rock_clean", 9, 18, 1, 0),
+    # with his paint box, and the rock he wipes his brushes on. (The clearing's went: the
+    # clearing is the graveyard now, the painters' guide design section 6.)
     # (by the high street's hedge, side by side: the user, 2026-11-07, "can't be two
     # right next to each other" in the top right)
     "spot_street_stool": ("props/vale_props_v2/painters_stool_1_3", 43, 4, 1, 0),
@@ -154,7 +153,7 @@ FEATURES = {
 }
 
 W, H = 96, 76
-VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook", "vale_terrace_stairs"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
+VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook", "vale_terrace_stairs", "vale_spots"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
 STAMP_LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "AlwaysFront"]
 
@@ -1081,6 +1080,10 @@ def amphitheatre_art(path):
 # Painting spots laid where PICKS has them: the lake's is on the overlook's bluff, which
 # tools/vale_overlook.py raises after the build (reachable_spot would find it reserved).
 FIXED_SPOTS = {"spot_lake_stool", "spot_lake_rock"}
+# Each stool's name in the painters' guide (ArtStudio/Vale/PaintersGuide.cs Spots): its foot
+# gets `blinxxy.MuseArt_PaintSpot <id>`. The rocks are scenery, with no action (tools/vale_spots.py).
+SPOT_IDS = {"spot_street_stool": "rooftops", "spot_atelier_stool": "northlight",
+            "spot_meadow_stool": "wildflowers", "spot_lake_stool": "lakewindow"}
 
 
 def reachable_spot(name, im, left, bottom, pieces):
@@ -1333,10 +1336,10 @@ def place_buildings(g, assets):
                 if j >= rows - n and c0 <= i <= c1:
                     g["Buildings"][ty][tx] = gid
                     g["Front"][ty][tx] = 0
-                    if name.startswith("spot_"):
-                        # Lupini's painting spots paint the view (ArtStudio/Vale/GildedVale.cs)
+                    if name in SPOT_IDS:
+                        # a painting spot's stool is found with the painters' guide (ArtStudio/Vale/PaintersGuide.cs)
                         from vale_decor import TILE_PROPS
-                        TILE_PROPS[("Buildings", tx, ty)] = {"Action": "blinxxy.MuseArt_PaintSpot"}
+                        TILE_PROPS[("Buildings", tx, ty)] = {"Action": f"blinxxy.MuseArt_PaintSpot {SPOT_IDS[name]}"}
                 elif j >= rows - n:
                     g["Back2"][ty][tx] = gid          # (the rest of a solid row, under the farmer: a tree's roots)
                 elif PICKS.get(name, ("",))[0].startswith("buildings/") and ty <= bottom - 2:

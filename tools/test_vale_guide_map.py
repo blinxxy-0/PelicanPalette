@@ -293,6 +293,178 @@ def test_return_tile_walkable():
     assert vale.walkable(x, y), (x, y)
 
 
+# ---- The spots on the map (design section 4) ----
+
+GUIDE_CS = os.path.join(ROOT, "ArtStudio", "Vale", "PaintersGuide.cs")
+HOUSE_TMX = os.path.join(PACK, "assets", "ValeHouse.tmx")
+PAINT_SPOT = "blinxxy.MuseArt_PaintSpot"
+FEATURE_FIRST, FEATURE_COLS = 20000, 32         # the Vale's own building sheet (build_vale.BUILD_FIRST, SHEET_COLS)
+CLEARING = (3, 10, 12, 22)                      # the old Painter's clearing, now the graveyard's
+EXISTING = ("rooftops", "northlight", "wildflowers", "lakewindow")
+
+
+def guide_ids():
+    """The eight spots' ids, in PaintersGuide.Spots."""
+    text = open(GUIDE_CS, encoding="utf-8").read()
+    start = text.index("Spot[] Spots")
+    ids = re.findall(r'new\("(\w+)"', text[start:text.index("};", start)])
+    assert len(ids) == 8, ids
+    return ids
+
+
+_PIECES = {}
+
+
+def spot_pieces(m):
+    """{(x, y): 'stool' | 'rock'} for the left foot tile of every painting-spot piece on the
+    Vale's map, known by its pixels: the spring sheet's tiles under it are the bottom row of
+    the stool's or the rock's art (build_vale PICKS, cut by tile_piece)."""
+    from PIL import Image
+    if not _PIECES:
+        import build_vale as bv
+        art = os.path.join(ROOT, "art", "gilded_vale", "props", "vale_props_v2")
+        for kind, name in (("stool", "painters_stool_1_3"), ("rock", "paint_rock_clean")):
+            im = bv.tile_piece(Image.open(os.path.join(art, name + ".png")).convert("RGBA"), 0)
+            _PIECES[kind] = tuple(im.crop((i * 16, 16, i * 16 + 16, 32)).tobytes() for i in (0, 1))
+        _PIECES["sheet"] = Image.open(os.path.join(PACK, "assets", "spring_GildedValeBuildings.png")).convert("RGBA")
+    sheet = _PIECES["sheet"]
+    slots = (sheet.width // 16) * (sheet.height // 16)
+
+    def px(gid):
+        i = gid - FEATURE_FIRST
+        if not 0 <= i < slots:
+            return None
+        x, y = i % FEATURE_COLS * 16, i // FEATURE_COLS * 16
+        return sheet.crop((x, y, x + 16, y + 16)).tobytes()
+    out = {}
+    for y in range(m.h):
+        for x in range(m.w - 1):
+            pair = (px(m.at("Buildings", x, y)), px(m.at("Buildings", x + 1, y)))
+            for kind in ("stool", "rock"):
+                if pair == _PIECES[kind]:
+                    out[(x, y)] = kind
+    return out
+
+
+def spot_actions(m):
+    """{(layer, x, y): [args]} for every PaintSpot action, on any layer."""
+    out = {}
+    for (layer, x, y), p in m.tile_data.items():
+        words = p.get("Action", "").split()
+        if words and words[0] == PAINT_SPOT:
+            out[(layer, x, y)] = words[1:]
+    return out
+
+
+def vale_map():
+    return Map(VALE_TMX)
+
+
+def test_rocks_have_no_action():
+    m = vale_map()
+    rocks = [p for p, k in spot_pieces(m).items() if k == "rock"]
+    assert rocks, "no paint rocks found"
+    acting = {(x + dx, y) for x, y in rocks for dx in (0, 1)} & {(x, y) for (_, x, y) in spot_actions(m)}
+    assert not acting, f"PaintSpot on a rock: {sorted(acting)}"
+
+
+def test_every_spot_action_has_a_known_id():
+    ids = set(guide_ids())
+    bad = {k: a for k, a in spot_actions(vale_map()).items() if k[0] != "Buildings" or len(a) != 1 or a[0] not in ids}
+    assert not bad, bad
+
+
+def test_existing_spots_present():
+    # each of the four kept spots is on both foot tiles of exactly one stool, and only there
+    m = vale_map()
+    stools = [p for p, k in spot_pieces(m).items() if k == "stool"]
+    acts = spot_actions(m)
+    for sid in EXISTING:
+        tiles = sorted((x, y) for (_, x, y), a in acts.items() if a == [sid])
+        on = [s for s in stools if tiles == [s, (s[0] + 1, s[1])]]
+        assert len(on) == 1, f"{sid}: on {tiles}, stools {stools}"
+
+
+def test_clearing_spot_gone():
+    m = vale_map()
+    x0, y0, x1, y1 = CLEARING
+    inside = lambda x, y: x0 <= x <= x1 and y0 <= y <= y1
+    acts = [k for k in spot_actions(m) if inside(k[1], k[2])]
+    pieces = [p for p in spot_pieces(m) if inside(*p) or inside(p[0] + 1, p[1])]
+    assert not acts and not pieces, (acts, pieces)
+    # nor the pieces' tops, left on Front2 over where they stood
+    for x, y in ((8, 14), (9, 14), (9, 17), (10, 17)):
+        assert not m.at("Front2", x, y), (x, y, m.at("Front2", x, y))
+
+
+def _base():
+    """What this branch's map is compared with: env VALE_BASE, else where it left main
+    (main has moved on since, with map edits of its own)."""
+    import subprocess
+    if os.environ.get("VALE_BASE"):
+        return os.environ["VALE_BASE"]
+    p = subprocess.run(["git", "merge-base", "main", "HEAD"], cwd=ROOT, capture_output=True, text=True)
+    assert p.returncode == 0 and p.stdout.strip(), p.stderr
+    return p.stdout.strip()
+
+
+def test_only_spot_boxes_changed():
+    # compared with main, the map's tiles and TileData change only inside vale_spots' boxes
+    import subprocess, tempfile
+    from vale_spots import BOXES as SPOT_BOXES
+    rel = os.path.relpath(VALE_TMX, ROOT).replace(os.sep, "/")
+    text = subprocess.run(["git", "show", f"{_base()}:{rel}"], cwd=ROOT, capture_output=True, check=True).stdout
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, "old.tmx")
+        open(path, "wb").write(text)
+        old = Map(path)
+    new = vale_map()
+    inside = lambda x, y: any(x0 <= x <= x1 and y0 <= y <= y1 for x0, y0, x1, y1 in SPOT_BOXES.values())
+    assert set(old.layers) == set(new.layers) and old.props == new.props
+    for name in new.layers:
+        for y in range(new.h):
+            for x in range(new.w):
+                if not inside(x, y):
+                    assert old.at(name, x, y) == new.at(name, x, y), (name, x, y)
+    assert {k: v for k, v in old.tile_data.items() if not inside(k[1], k[2])} == \
+           {k: v for k, v in new.tile_data.items() if not inside(k[1], k[2])}
+
+
+def test_spots_in_routes():
+    # vale_routes.PLACES stands in front of each kept stool, on walkable ground
+    import vale_routes
+    m = vale_map()
+    acts = spot_actions(m)
+    places = set(vale_routes.PLACES.values())
+    for sid in EXISTING:
+        x, y = min((x, y) for (_, x, y), a in acts.items() if a == [sid])
+        front = [p for p in ((x, y + 1), (x + 1, y + 1)) if p in places]
+        assert front and all(m.walkable(*p) for p in front), f"{sid}: in front of ({x}, {y}): {front}"
+
+
+# ---- The guide's board in the Vale House (controller Ruling 9) ----
+
+def board_tile():
+    t = re.search(r"BoardTile\s*=\s*new\s*(?:Point)?\(\s*(\d+)\s*,\s*(\d+)\s*\)", open(GUIDE_CS, encoding="utf-8").read())
+    assert t, "PaintersGuide.BoardTile not found"
+    return int(t.group(1)), int(t.group(2))
+
+
+def test_guide_board():
+    # the TakeGuide action is on the board's wall tiles by the guest-book case (11, 18), the C#
+    # tile among them, and there's floor right in front of it, reached from the front door
+    m = Map(HOUSE_TMX)
+    tiles = sorted(m.actions("blinxxy.MuseArt_TakeGuide"))
+    assert tiles, "no TakeGuide action in the Vale House"
+    bx, by = board_tile()
+    assert (bx, by) in tiles, ((bx, by), tiles)
+    assert all(abs(x - 11) <= 3 and abs(y - 18) <= 2 for x, y in tiles), f"not by the guest books: {tiles}"
+    assert m.walkable(bx, by + 1), "nowhere to stand in front of the board"
+    door = (15, 29)                          # just inside the front door (build_vale_house FRONT_DOOR)
+    assert m.walkable(*door)
+    assert (bx, by + 1) in m.reach(door), "the board's front isn't reachable from the door"
+
+
 if __name__ == "__main__":
     for name, fn in [(n, f) for n, f in list(globals().items()) if n.startswith("test_") and callable(f)]:
         try:

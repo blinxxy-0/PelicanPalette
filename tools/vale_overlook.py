@@ -494,6 +494,9 @@ EASELS = (90, 92, 58)
 STOOL = (90, 60)
 ROCK = (90, 63)
 LUPINI_STAND = (90, 61)
+# Its name in the painters' guide (ArtStudio/Vale/PaintersGuide.cs Spots): only the stool
+# carries the action, `blinxxy.MuseArt_PaintSpot lakewindow`; the rock is scenery (tools/vale_spots.py)
+SPOT_ID = "lakewindow"
 # The shed, where the third easel is kept: the game's own little plank hut (outdoors sheet,
 # Town numbering): its plank roof with the vent (sheet x 22-24, rows 69-70) over its walls
 # with the window and the door (x 15-17, rows 76-77). The sheet keeps the two halves apart,
@@ -588,17 +591,17 @@ def lay_test_strip(tmx_path, exports):
 PAINT_SPOT = "blinxxy.MuseArt_PaintSpot"
 
 
-def _spot_pieces(m):
-    """Lupini's lake painting spot as it stands in the box: its two 2 x 2 pieces (the
-    stool above the rock), each [(dx, dy, layer, gid)] from its left base tile, found by
-    their PaintSpot actions (wherever reachable_spot, or an earlier run, put them)."""
-    bx0, by0, bx1, by1 = OVERLOOK_BOX
-    bases = sorted((y, x) for (layer, x, y), p in m.props.items()
-                   if layer == "Buildings" and p.get("Action") == PAINT_SPOT and bx0 <= x <= bx1 and by0 <= y <= by1)
-    lefts = [(y, x) for y, x in bases if (y, x - 1) not in bases]
-    assert len(lefts) == 2 and len(bases) == 4, f"the lake spot's pieces in the box: {bases}"
+def _spot_pieces(m, assets):
+    """Lupini's lake painting spot as it stands in the box: its two 2 x 2 pieces, the stool
+    and the rock, each [(dx, dy, layer, gid)] from its left base tile, known by their pixels
+    (vale_spots.Pieces; wherever reachable_spot, or an earlier run, put them)."""
+    from vale_spots import Pieces
+    found = Pieces(assets).find(m, OVERLOOK_BOX)
+    kinds = sorted(found.values())
+    assert kinds == ["rock", "stool"], f"the lake spot's pieces in the box: {found}"
     pieces = []
-    for y, x in lefts:          # by row: the stool first, then the rock
+    for kind in ("stool", "rock"):
+        (x, y), = [p for p, k in found.items() if k == kind]
         cells = []
         for dx in (0, 1):
             cells.append((dx, 0, "Buildings", m.g["Buildings"][y][x + dx]))
@@ -652,13 +655,13 @@ def patch_file(tmx_path, exports):
     markers and decor; the corners (_design) and the ground; the rim, side, face and steps
     (one map object, so their working corners carry from one to the next); the lake's
     corner; then the bench, the painting spot, the shed, the trees and the stump, the picnic
-    table, the woods that stay, flowers; the PaintSpot actions at the spot's new tiles."""
+    table, the woods that stay, flowers; the stool's PaintSpot action, with the spot's id."""
     import contextlib, io
     from vale_decor import PROPS
     with contextlib.redirect_stdout(io.StringIO()):
         ctx = context(tmx_path, exports)
     m = load(tmx_path)
-    stool, rock = _spot_pieces(m)
+    stool, rock = _spot_pieces(m, os.path.dirname(os.path.abspath(tmx_path)))
     x0, y0, x1, y1 = CLEAR_BOX
     for y in range(y0, y1 + 1):
         for x in range(x0, x1 + 1):
@@ -681,8 +684,8 @@ def patch_file(tmx_path, exports):
     _lay_cells(m, BENCH[0], BENCH[1] - 1, PROPS["bench_w"])
     for (sx, sy), cells in ((STOOL, stool), (ROCK, rock)):
         _lay_cells(m, sx, sy, cells)
-        for dx in (0, 1):
-            m.props[("Buildings", sx + dx, sy)] = {"Action": PAINT_SPOT}
+    for dx in (0, 1):           # only the stool is touched; the rock is scenery
+        m.props[("Buildings", STOOL[0] + dx, STOOL[1])] = {"Action": f"{PAINT_SPOT} {SPOT_ID}"}
     sx0, sy0, sx1, sy1 = SHED
     for j, row in enumerate(SHED_ART):
         y = sy0 + j

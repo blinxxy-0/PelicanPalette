@@ -55,6 +55,9 @@ internal static class PaintSplash
         Game1.playSound("wand");
     }
 
+    // For the checks (museart_guidetest): ends a splash at once, without its closing box.
+    internal static void Stop() => Finish(false);
+
     private static void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
         if (!Playing)

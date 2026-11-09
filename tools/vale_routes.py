@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from render_tmx import layer_data
 from vale_overlook import BENCH, FACE_TOP, STAIRS_X
+from vale_spots import SPOTS
 
 # name: a tile the player must be able to stand on (in front of it)
 PLACES = {
@@ -24,6 +25,9 @@ PLACES = {
     # with no tile in front of it: the seat itself, reached from beside it (SEATS).
     "overlook bench": BENCH, "overlook easels": (BENCH[0] + 2, BENCH[1]),
     "overlook steps top": (STAIRS_X + 1, FACE_TOP - 1), "overlook steps foot": (STAIRS_X + 1, FACE_TOP + 6),
+    # Lupini's painting spots (tools/vale_spots.py): in front of each stool, where you touch it
+    # with the painters' guide
+    **{f"{sid} stool": (stool[0], stool[1] + 1) for sid, (stool, _) in SPOTS.items()},
 }
 # Schedule spots that are a seat (a bench or chair, solid itself): reachable if a neighbour is
 SEATS = {"nursery bench", "lakeside bench", "overlook bench"}

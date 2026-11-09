@@ -1,9 +1,9 @@
 """Patches the committed Gilded Vale map in place, for the pieces added after
 build_vale.py stopped reproducing it exactly (its rebuild doesn't give the committed
-map back, 2026-11-08): the waterfall, the overlook, the hidden sculpture and the
-terraces' snowed stairs.
+map back, 2026-11-08): the waterfall, the overlook, the hidden sculpture, the
+terraces' snowed stairs and the painting spots' names.
 
-Shared by tools/vale_falls.py, vale_overlook.py, vale_sculpture.py and vale_terrace_stairs.py:
+Shared by tools/vale_falls.py, vale_overlook.py, vale_sculpture.py, vale_terrace_stairs.py and vale_spots.py:
 - load() / save(): the map's tile layers, TileData objects and map properties, written
   back as vale_yards._patch writes them, so loading and saving changes nothing.
 - context(): the vanilla ground table and Town's tiles, as build_vale.paint_ground has them.
@@ -21,7 +21,12 @@ OVERLOOK_BOX = (80, 53, 95, 75)      # the bluff, its steps, the lake's east sho
 SCULPTURE_BOX = (6, 43, 7, 45)       # the corner pocket (x 6-7, y 44-45) and the tile above it
 # the terraces' four flights (build_vale.STAIR_SPOTS), their art's rows only: snowed on in winter
 STAIR_BOXES = {f"stairs_{sx}_{top}": (sx, top, sx + 3, top + 5) for sx, top in bv.STAIR_SPOTS}
-BOXES = {"falls": FALLS_BOX, "overlook": OVERLOOK_BOX, "sculpture": SCULPTURE_BOX, **STAIR_BOXES}
+# Lupini's painting spots (tools/vale_spots.py): each spot's stool and rock, both 2 x 2
+# pieces (the foot row and its top above it); and the clearing's, taken away
+SPOT_BOXES = {"spot_rooftops": (43, 3, 47, 4), "spot_northlight": (79, 15, 80, 19),
+              "spot_wildflowers": (28, 64, 32, 66), "spot_lakewindow": (90, 59, 91, 63),
+              "spot_clearing": (8, 14, 10, 18)}
+BOXES = {"falls": FALLS_BOX, "overlook": OVERLOOK_BOX, "sculpture": SCULPTURE_BOX, **STAIR_BOXES, **SPOT_BOXES}
 
 
 class ValeMap:

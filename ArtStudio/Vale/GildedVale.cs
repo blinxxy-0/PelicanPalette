@@ -29,7 +29,7 @@ internal static class GildedVale
         PaintersGuide.Monitor = monitor;
         PaintSplash.Register(helper);
         GameLocation.RegisterTileAction(PaintSpotAction, (_, args, who, _) => PaintersGuide.OnTouch(who, args));
-        // The frame by the Vale House's guest books holds the guide. (Placed on the map later.)
+        // The frame by the Vale House's guest books holds the guide (ValeHouse.tmx, PaintersGuide.BoardTile).
         GameLocation.RegisterTileAction(TakeGuideAction, (_, _, who, _) => PaintersGuide.OnTake(who));
         PaintersGuide.Register(helper);
         PaintersGuide.Patch(harmony);
