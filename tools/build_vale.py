@@ -257,6 +257,10 @@ def main():
             edge = x < 5 or x > 90 or y < 2 or y > 72
             if edge and (x + y) % 2 == 0 and tree_ok(x, y) and not (3 <= y <= 12 and x < 6):       # the high street runs out west, clear of the woods
                 g["Paths"][y][x] = paths_first + rnd.choice((9, 10, 11))
+    # No trees on or against a building, none hiding its front, and nothing spawning on
+    # its door's approach (the user, 2026-11-08: trees walled in the east Old Studio).
+    from vale_yards import clear
+    clear(g, paths_first, TILE_PROPS, W, H)
 
     props = {"Outdoors": "T", "Spring_Objects": "T", "Summer_Objects": "T", "Fall_Objects": "T", "Winter_Objects": "T",
              "BrookSounds": f"{RIVER_X + 4} 3 0",
@@ -1190,7 +1194,10 @@ def place_buildings(g, assets):
                         px[xx, yy] = (0, 0, 0, 0)
         else:
             im = cutout(src.crop(box), lawn=True)
+        from vale_feature_fixes import apply_walk, keep_winter, mirror
+        mirror(name, im, left, top)             # (the tea garden's east hedge)
         walk = walkable(im)
+        apply_walk(name, walk, left, top)        # (hand fixes where the guess was wrong)
         if isinstance(box, tuple) and len(rest) > 2:
             walk["front_above"] = rest[2]
         arts = {"spring": im}
@@ -1221,6 +1228,15 @@ def place_buildings(g, assets):
                     if c[3] and c[1] > c[0] + 12 and c[1] > c[2] + 12:
                         wpx[xx, yy] = (0, 0, 0, 0)
             arts["winter"] = wim
+        if arts["winter"] is im:
+            arts["winter"] = im.copy()
+        keep_winter(name, im, arts["winter"], left, top)   # (Fern's compost heap, snowed on)
+        mirror(name, arts["winter"], left, top)
+        # the tops of tall things (vale_feature_fixes.py FRONT), lifted out to lay on
+        # Front over the farmer; the path round them stays in the feature, underfoot
+        from vale_feature_fixes import split_front
+        for k, (fx, fy, lifted) in enumerate(split_front(name, arts, left, top)):
+            pieces.append((f"featurefront:{name}:{k}", lifted, fx, fy, None))
         pieces.append(("feature:" + name, arts, left, top, walk))
     slots, x, y, row_h = [], 0, 0, 0
     for _, arts, *_ in pieces:
@@ -1270,7 +1286,13 @@ def place_buildings(g, assets):
                         g["Buildings"][ty][tx] = gid
                     g["Paths"][ty][tx] = 0
             print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {bottom}-{bottom + rows - 1},",
-                  sum(1 for v in walk.values() if not v), "solid")
+                  sum(1 for k, v in walk.items() if isinstance(k, tuple) and not v), "solid")
+            continue
+        if name.startswith("featurefront:"):
+            for j in range(rows):
+                for i in range(cols):
+                    if im.crop((i * 16, j * 16, i * 16 + 16, j * 16 + 16)).getbbox() is not None:
+                        g["Front"][bottom + j][left + i] = BUILD_FIRST + (sy + j) * SHEET_COLS + sx + i
             continue
         if name == "amphitheatre":
             # Over the cliff and under the farmer (Buildings2); where it fully covers a
@@ -1304,6 +1326,15 @@ def place_buildings(g, assets):
                         TILE_PROPS[("Buildings", tx, ty)] = {"Action": "blinxxy.MuseArt_PaintSpot"}
                 elif j >= rows - n:
                     g["Back2"][ty][tx] = gid          # (the rest of a solid row, under the farmer: a tree's roots)
+                elif PICKS.get(name, ("",))[0].startswith("buildings/") and ty <= bottom - 2:
+                    # A building's roof and upper walls, 2+ rows above its base: on
+                    # AlwaysFront. The game sorts a Front tile by its own row, so a
+                    # roof tile 2 rows above the farmer's feet drew under him, and
+                    # walking down behind a building his head poked out through the
+                    # roof (the user, 2026-11-08). Nobody standing in front of the
+                    # base reaches that high, and the yards keep trees clear
+                    # (vale_yards.py), so always-on-top is the building's real depth.
+                    g["AlwaysFront"][ty][tx] = gid
                 else:
                     g["Front2"][ty][tx] = gid
         print(name, f"{cols}x{rows} tiles at x {left}-{left + cols - 1}, y {top}-{bottom}")

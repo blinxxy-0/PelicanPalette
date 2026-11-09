@@ -210,6 +210,12 @@ BUILDINGS = {
             ("wardrobe", 18, 2), ("nightstand", 21, 3), ("bed", 22, 4), ("plant_b", 24, 4),
             ("chest", 22, 8), ("rug", 18, 6, 3, 3), ("sketch_wall", 19, 1), ("window", 23, 1),
         ],
+        # right-click to read (i18n vale.pottery.<key>); "wheel" is his, "wheel#2" the one he teaches on
+        describe={"kiln": "kiln", "logs": "hardwood", "logs#2": "hardwood", "wheel": "wheel", "wheel#2": "wheel_b",
+                  "drying_rack": "drying_rack", "glaze_shelf": "glazes", "pot_shelf": "pot_shelf",
+                  "pot_shelf_b": "pot_shelf_b", "price_board": "price_board", "sales_counter": "counter",
+                  "packing_crate": "crate", "clay_sacks": "clay", "clay_sacks#2": "clay", "tool_board": "tools",
+                  "bookcase": "bookcase", "bed": "bed"},
         wall=65, walls={"kitchen": 75, "bedroom": 100},     # the game's wallpapers: limewashed brick, plaster, stripes
         picks={k: "art/gilded_vale/interiors/pottery/pottery_v1/" + v for k, v in {
             "kiln": "kiln_2_6", "drying_rack": "drying_rack_1_14", "pot_shelf": "pot_shelf_1_1",
@@ -266,6 +272,10 @@ BUILDINGS = {
             ("rug", 11, 17, 6, 3), ("bench", 12, 18), ("display_easel", 17, 17), ("hat_stand", 8, 18),
             ("plant", 2, 17), ("plant_b", 19, 18), ("canvas_stack#2", 3, 18),
         ],
+        # right-click to read (i18n vale.atelier.<key>): painting_1..7 as in LUPINI, Red Eagle on the easel
+        describe={**{f"painting_{i}": f"painting_{i}" for i in range(1, 8)}, "display_easel": "display_easel",
+                  "empty_hook": "empty_hook", "easel_big": "easel", "north_window": "window",
+                  "hat_stand": "hat_stand", "bust": "bust", "bench": "bench", "paint_table": "paint_table"},
         notes=["Lupini's atelier: one floor plan, like Leah's cottage. The front door opens into the hall.",
                "The hall: his canon paintings on the wall, the empty hook of the one on his boat this week,",
                "a bench to sit and look, a display easel with another, his hat stand by the door.",
@@ -386,6 +396,12 @@ BUILDINGS = {
             ("wardrobe", 2, 2), ("window", 5, 1), ("bed", 6, 4), ("nightstand", 8, 3),
             ("pressed_flowers#2", 9, 1), ("plant_b", 10, 4), ("rug", 2, 6, 4, 3), ("chest", 6, 8),
         ],
+        # right-click to read (i18n vale.fern.<key>); the vine hints at her 8 hearts, no more
+        describe={"vine_trellis": "vine", "mushroom_pot": "mushroom", "seed_drawers": "seed_drawers",
+                  "potting_bench": "potting_bench", "seed_counter": "seed_counter", "seed_trays": "seed_trays",
+                  "seed_trays#2": "seed_trays", "pressed_flowers": "pressed_flowers",
+                  "pressed_flowers#2": "pressed_flowers_b", "soil_sacks": "soil", "watering_can": "watering_can",
+                  "bed": "bed"},
         notes=["Fern's cottage and seedhouse: one floor plan. Two doors in, as outside: the cottage's and the seedhouse's.",
                "The cottage end: the fireplace, couch, coffee table and armchair on one rug, her pressed flowers;",
                "the kitchen and her table. A row of her plants marks where the glass room starts.",
@@ -433,6 +449,10 @@ BUILDINGS = {
             ("beam_l", 2, 1), ("sconce", 2, 1), ("moss_wall#3", 3, 1), ("beam_r", 4, 1), ("sconce#2", 4, 1),
             ("beam_l#2", 6, 1), ("sconce#3", 6, 1), ("moss_wall#4", 7, 1), ("beam_r#2", 8, 1), ("sconce#4", 8, 1), ("moss_patch#5", 4, 6), ("moss_patch#6", 8, 6),
         ],
+        # right-click to read (i18n vale.emmett.<key>); "chest#2" is the trunk he travelled with
+        describe={"pinned_maps": "maps", "instrument_stand": "instruments", "music_stand": "music_stand",
+                  "coat_rack": "coat", "writing_desk": "desk", "chest#2": "trunk", "bookcase": "songbooks",
+                  "stump_stool": "stump", "crate_table": "crate", "bed": "bed"},
         notes=["Emmett's cottage: small, one floor plan, cream plaster walls as outside. The front door opens into his room.",
                "By the stone fireplace (under the chimney outside): his armchair turned to it on a rug, a mossy stump for a guest, a crate for a side table, logs.",
                "Over the desk where he writes on rainy days: maps of everywhere he's played, pinned up.",

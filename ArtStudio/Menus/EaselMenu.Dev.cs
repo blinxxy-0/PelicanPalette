@@ -283,6 +283,16 @@ internal sealed partial class EaselMenu
         RefreshPreview();
     }
 
+    // Picking a size as clicking its button does (linen follows what's in the bag).
+    internal void DevClickCanvas(CanvasKind kind)
+    {
+        _setupCanvas = kind;
+        MatchLinen();
+        RefreshPreview();
+    }
+
+    internal bool DevLinen => _setupLinen;
+
     internal bool DevSitterOffered(string npc) => _sitterSlots.Any(s => s.Npc == npc);
 
     // Plein air: look at the view (as clicking its slot does).

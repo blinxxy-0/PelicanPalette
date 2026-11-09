@@ -415,6 +415,16 @@
           ]
         }
       }
+    },
+    // CJB Cheats Menu's Warps tab, when it's installed: the shop's door in CJB's own Forest
+    // section ("forest") (the tile its exit puts you on, the Warp in ArtShop.tmx).
+    {
+      "Action": "EditData",
+      "Target": "Mods/CJBok.CheatsMenu/Warps",
+      "When": { "HasMod": "CJBok.CheatsMenu" },
+      "Entries": {
+        "{{ModId}}_ArtShop": { "Id": "{{ModId}}_ArtShop", "SectionId": "forest", "DisplayName": "{{i18n:location.art-shop}}", "Location": "Forest", "Tile": "83, 34" }
+      }
     }
   ]
 }

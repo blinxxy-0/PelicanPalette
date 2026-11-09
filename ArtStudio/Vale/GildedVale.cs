@@ -17,6 +17,7 @@ internal static class GildedVale
         ValeBus.Register(helper, harmony, monitor);
         ValeResidents.Register(helper, harmony);
         ValeTests.Register(helper, monitor);
+        ValeGrounds.Register(helper, monitor);
         ValeOrchard.Register(helper, monitor);
 
         // Lupini's painting spots: sit at one and paint the view in front of it,

@@ -36,7 +36,7 @@ internal static class ValeTests
     // The counters and the tile actions the dev pack puts on them (data/vale_shops.json).
     private static readonly (string Location, Point Tile, string ActionStart, string Shop)[] Counters =
     {
-        (ValeResidents.ValeHouse, new Point(20, 21), ModEntry.Id + "_ValeTeaCounter", ValeResidents.TeaRoomShop),
+        (ValeResidents.ValeHouse, new Point(20, 22), ModEntry.Id + "_ValeTeaCounter", ValeResidents.TeaRoomShop),
         (ModEntry.Id + "_ValeFern", new Point(23, 18), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValeSeeds FernAster", ModEntry.Id + "_ValeSeeds"),
         (ModEntry.Id + "_ValePottery", new Point(4, 18), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValePottery TobinClay", ModEntry.Id + "_ValePottery"),
     };
@@ -59,6 +59,51 @@ internal static class ValeTests
         DevTools.AddCommand(helper, "museart_valetest",
             "Checks the Gilded Vale's residents: their data and art, schedules (every leg walkable), shops, Bea's room, the bedroom doors, Lupini's letter, the bus route for their town days, and the town's talk.",
             (_, _) => Run(monitor));
+        // museart_valepassout [booked]: a throwaway dev game only (it ends the day). Stands you on
+        // the Vale House floor at 1:50am; at 2am you pass out, and the morning after checks Bea
+        // put you to bed: no clinic or Joja letter, woke in the guest bed, 200g or nothing taken.
+        DevTools.AddCommand(helper, "museart_valepassout",
+            "Dev game only: passes out on the Vale House floor at 2am, then checks the morning (no clinic letter, woke in the guest bed). 'booked' books the room first.",
+            (_, args) => StartPassOut(monitor, args.Length > 0 && args[0] == "booked"));
+        helper.Events.GameLoop.DayStarted += (_, _) => CheckPassOut(monitor);
+    }
+
+    private static (int Money, bool Booked)? _passOut;
+
+    private static void StartPassOut(IMonitor monitor, bool booked)
+    {
+        if (!Context.IsWorldReady)
+        {
+            monitor.Log("Load a save first.", LogLevel.Warn);
+            return;
+        }
+        var who = Game1.player;
+        Game1.saveOnNewDay = false;
+        if (booked)
+            who.modData[ValeResidents.RoomNightKey] = Game1.Date.TotalDays.ToString();
+        else
+            who.modData.Remove(ValeResidents.RoomNightKey);
+        who.mailReceived.Remove(ValeResidents.ArtistsRoomMail);
+        who.mailForTomorrow.Clear();
+        _passOut = (who.Money, booked);
+        Game1.warpFarmer(ValeResidents.ValeHouse, 12, 8, 2);
+        Game1.timeOfDay = 2550;
+        Info(monitor, $"on the Vale House floor at 1:50am ({(booked ? "booked" : "not booked")}, {who.Money}g); passing out at 2am");
+    }
+
+    private static void CheckPassOut(IMonitor monitor)
+    {
+        if (_passOut is not var (money, booked))
+            return;
+        _passOut = null;
+        var who = Game1.player;
+        var letters = who.mailbox.Concat(who.mailForTomorrow).Where(m => m.StartsWith("passedOut")).ToList();
+        Check(monitor, "passing out in the Vale House: no clinic or Joja letter", letters.Count == 0, string.Join(", ", letters));
+        int expected = booked ? 0 : ValeResidents.RoomPrice;
+        Check(monitor, $"passing out in the Vale House: {expected}g taken", money - who.Money == expected, $"{money}g -> {who.Money}g");
+        Check(monitor, "passing out in the Vale House: you wake there", who.currentLocation?.Name == ValeResidents.ValeHouse, who.currentLocation?.Name ?? "nowhere");
+        Check(monitor, "passing out in the Vale House: in the guest bed", who.TilePoint == new Point(8, 6), who.TilePoint.ToString());
+        Check(monitor, "passing out in the Vale House: Bea's morning note", Game1.hudMessages.Any(h => h.message.Contains("Bea")), string.Join(" | ", Game1.hudMessages.Select(h => h.message)));
     }
 
     private static void Check(IMonitor monitor, string what, bool ok, string detail = "") =>
@@ -256,6 +301,35 @@ internal static class ValeTests
             string expected = Game1.characterData.ContainsKey(name) ? "Door " + name : "Door";
             Check(monitor, $"{name}'s bedroom door ({locationName} {tile}) is '{expected}'", action == expected, action ?? "no action");
         }
+
+        // the artists' room: locked to everyone, even at 10 hearts with Bea, until her key
+        GameLocation? house = Game1.getLocationFromName(ValeResidents.ValeHouse);
+        if (house == null)
+            return;
+        Farmer who = Game1.player;
+        bool keyed = who.mailReceived.Contains(ValeResidents.ArtistsRoomMail);
+        string artists = house.doesTileHaveProperty(15, 11, "Action", "Buildings");
+        string want = Game1.characterData.ContainsKey(ValeResidents.Bea) && !keyed ? "Door " + ValeResidents.ArtistsRoomDoor : "Door";
+        Check(monitor, $"the artists' room door (15 11) is '{want}'", artists == want, artists ?? "no action");
+        if (artists != "Door " + ValeResidents.ArtistsRoomDoor)
+            return;
+        bool hadBea = who.friendshipData.TryGetValue(ValeResidents.Bea, out Friendship? old);
+        int points = old?.Points ?? 0;
+        if (!hadBea)
+            who.friendshipData[ValeResidents.Bea] = new Friendship();
+        who.friendshipData[ValeResidents.Bea].Points = 2500;
+        house.interiorDoors.TryGetValue(new Point(15, 11), out bool wasOpen);
+        var menu = Game1.activeClickableMenu;
+        house.performAction(artists.Split(' '), who, new xTile.Dimensions.Location(15, 11));
+        house.interiorDoors.TryGetValue(new Point(15, 11), out bool open);
+        string? said = (Game1.activeClickableMenu as StardewValley.Menus.DialogueBox)?.getCurrentString();
+        Check(monitor, "at 10 hearts with Bea the artists' room stays shut", !open || wasOpen, open ? "it opened" : "");
+        Check(monitor, "and its card says it's not let out", said?.Contains("Not let out") == true, said ?? "no dialogue");
+        Game1.activeClickableMenu = menu;
+        if (hadBea)
+            who.friendshipData[ValeResidents.Bea].Points = points;
+        else
+            who.friendshipData.Remove(ValeResidents.Bea);
     }
 
     // ---- Lupini's letter, the residents' letters, and the Vale's letter paper ----
