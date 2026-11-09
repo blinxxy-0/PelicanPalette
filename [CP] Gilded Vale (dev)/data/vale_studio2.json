@@ -301,7 +301,7 @@
         },
         {
           "Position": {
-            "X": 12,
+            "X": 11,
             "Y": 2
           },
           "Layer": "Buildings",
@@ -312,47 +312,7 @@
         {
           "Position": {
             "X": 10,
-            "Y": 2
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
-        },
-        {
-          "Position": {
-            "X": 9,
             "Y": 3
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
-        },
-        {
-          "Position": {
-            "X": 11,
-            "Y": 3
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
-        },
-        {
-          "Position": {
-            "X": 9,
-            "Y": 2
-          },
-          "Layer": "Buildings",
-          "SetProperties": {
-            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
-          }
-        },
-        {
-          "Position": {
-            "X": 11,
-            "Y": 2
           },
           "Layer": "Buildings",
           "SetProperties": {
@@ -372,7 +332,47 @@
         {
           "Position": {
             "X": 10,
+            "Y": 2
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 11,
             "Y": 3
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 9,
+            "Y": 3
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 12,
+            "Y": 2
+          },
+          "Layer": "Buildings",
+          "SetProperties": {
+            "Action": "Message blinxxy.MuseArt_Vale.studio2.mabel_window"
+          }
+        },
+        {
+          "Position": {
+            "X": 9,
+            "Y": 2
           },
           "Layer": "Buildings",
           "SetProperties": {
