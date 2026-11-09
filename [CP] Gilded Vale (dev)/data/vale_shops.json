@@ -1,5 +1,5 @@
-// The residents' shops (1.4): Bea's tea room, Fern's seed counter and Tobin's pottery
-// counter. Vanilla items for now: Tobin's own ware (bowls, vases, planters, tiles) needs
+// The residents' shops (1.4): Bea's tea room, Fern's seed counter, Tobin's pottery
+// counter and the Corries' glass counter. Vanilla items for now: Tobin's own ware (bowls, vases, planters, tiles) needs
 // its art first.
 //
 // Each counter carries a tile action handled by the C# mod (ArtStudio/Vale/ValeResidents.cs):
@@ -87,6 +87,53 @@
             { "Id": "GardenPot", "ItemId": "(BC)62", "Price": 300 },
             { "Id": "BrickFloor", "ItemId": "(O)293", "Price": 120 }
           ]
+        },
+        // ---- The Corries' counter in Studio II (from Spring 1, Year 3): the game's own glass
+        // and lamp furniture at its own prices. Their new stained-glass windows, lamps and mosaic
+        // tiles join it once their art exists (PixelLab, after the allowance refills). Either twin
+        // serves, whoever's in the studio, in their own voice.
+        "blinxxy.MuseArt_ValeGlass": {
+          "Owners": [
+            {
+              "Id": "Opal",
+              "Name": "OpalCorrie",
+              "Dialogues": [
+                { "Id": "Welcome", "Dialogue": "{{i18n:opal.shop.welcome}}" },
+                { "Id": "City", "Dialogue": "{{i18n:opal.shop.city}}" },
+                { "Id": "Windows", "Dialogue": "{{i18n:opal.shop.windows}}" }
+              ]
+            },
+            {
+              "Id": "Jet",
+              "Name": "JetCorrie",
+              "Dialogues": [
+                { "Id": "Tags", "Dialogue": "{{i18n:jet.shop.tags}}" },
+                { "Id": "Cut", "Dialogue": "{{i18n:jet.shop.cut}}" },
+                { "Id": "Time", "Dialogue": "{{i18n:jet.shop.time}}" }
+              ]
+            },
+            { "Id": "Closed", "Name": "None", "ClosedMessage": "{{i18n:glass.shop.closed}}" }
+          ],
+          "Items": [
+            // windows
+            { "Id": "BasicWindow", "ItemId": "(F)1614", "Price": 300 },
+            { "Id": "SmallWindow", "ItemId": "(F)1616", "Price": 300 },
+            { "Id": "MetalWindow", "ItemId": "(F)1749", "Price": 800 },
+            { "Id": "TriangleWindow", "ItemId": "(F)TriangleWindow", "Price": 800 },
+            { "Id": "OrnateWindow", "ItemId": "(F)1678", "Price": 900 },
+            { "Id": "CarvedWindow", "ItemId": "(F)1682", "Price": 900 },
+            // lamps and lights
+            { "Id": "DecorativeLantern", "ItemId": "(F)1369", "Price": 500 },
+            { "Id": "WallSconce", "ItemId": "(F)2734", "Price": 500 },
+            { "Id": "BoxLamp", "ItemId": "(F)1445", "Price": 750 },
+            { "Id": "ModernLamp", "ItemId": "(F)1447", "Price": 750 },
+            { "Id": "ClassicLamp", "ItemId": "(F)1449", "Price": 1000 },
+            { "Id": "CandleLamp", "ItemId": "(F)1751", "Price": 1000 },
+            { "Id": "OrnateLamp", "ItemId": "(F)1758", "Price": 1050 },
+            // glass
+            { "Id": "SmallCrystal", "ItemId": "(F)1368", "Price": 750 },
+            { "Id": "ElegantVase", "ItemId": "(F)ElegantVase", "Price": 5000 }
+          ]
         }
       }
     },
@@ -126,6 +173,18 @@
       ]
     },
 
+    // The Corries' counter in Studio II (3-5, 10); either twin serves from anywhere in the
+    // studio, so its whole floor is the area. (The map: tools/vale_studio2.py.)
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeStudio2",
+      "MapTiles": [
+        { "Position": { "X": 3, "Y": 10 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeGlass OpalCorrie 1 4 20 9" } },
+        { "Position": { "X": 4, "Y": 10 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeGlass OpalCorrie 1 4 20 9" } },
+        { "Position": { "X": 5, "Y": 10 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ValeShop blinxxy.MuseArt_ValeGlass OpalCorrie 1 4 20 9" } }
+      ]
+    },
+
     // ---- The counters' and Bea's room's texts, for the C# mod ----
     { "Action": "Load", "Target": "Mods/blinxxy.MuseArt/ValeStrings", "FromFile": "data/blank.json" },
     {
@@ -145,7 +204,54 @@
         "room.locked": "{{i18n:bea.room.locked}}",
         "artists.locked": "{{i18n:bea.artists.locked}}",
         "room.tucked": "{{i18n:bea.room.tucked}}",
-        "room.tucked.paid": "{{i18n:bea.room.tucked.paid}}"
+        "room.tucked.paid": "{{i18n:bea.room.tucked.paid}}",
+        "vale.guide.spot.rooftops.name": "{{i18n:vale.guide.spot.rooftops.name}}",
+        "vale.guide.spot.rooftops.line": "{{i18n:vale.guide.spot.rooftops.line}}",
+        "vale.guide.spot.northlight.name": "{{i18n:vale.guide.spot.northlight.name}}",
+        "vale.guide.spot.northlight.line": "{{i18n:vale.guide.spot.northlight.line}}",
+        "vale.guide.spot.wildflowers.name": "{{i18n:vale.guide.spot.wildflowers.name}}",
+        "vale.guide.spot.wildflowers.line": "{{i18n:vale.guide.spot.wildflowers.line}}",
+        "vale.guide.spot.lakewindow.name": "{{i18n:vale.guide.spot.lakewindow.name}}",
+        "vale.guide.spot.lakewindow.line": "{{i18n:vale.guide.spot.lakewindow.line}}",
+        "vale.guide.spot.parterre.name": "{{i18n:vale.guide.spot.parterre.name}}",
+        "vale.guide.spot.parterre.line": "{{i18n:vale.guide.spot.parterre.line}}",
+        "vale.guide.spot.falls.name": "{{i18n:vale.guide.spot.falls.name}}",
+        "vale.guide.spot.falls.line": "{{i18n:vale.guide.spot.falls.line}}",
+        "vale.guide.spot.tree.name": "{{i18n:vale.guide.spot.tree.name}}",
+        "vale.guide.spot.tree.line": "{{i18n:vale.guide.spot.tree.line}}",
+        "vale.guide.spot.stage.name": "{{i18n:vale.guide.spot.stage.name}}",
+        "vale.guide.spot.stage.line": "{{i18n:vale.guide.spot.stage.line}}",
+        "vale.guide.plain_stool": "{{i18n:vale.guide.plain_stool}}",
+        "vale.guide.last_page": "{{i18n:vale.guide.last_page}}",
+        "vale.guide.board": "{{i18n:vale.guide.board}}",
+        "vale.guide.take": "{{i18n:vale.guide.take}}",
+        "vale.guide.again": "{{i18n:vale.guide.again}}",
+        "vale.guide.page.title": "{{i18n:vale.guide.page.title}}",
+        "vale.guide.page.unfound": "{{i18n:vale.guide.page.unfound}}",
+        "vale.guide.step_in": "{{i18n:vale.guide.step_in}}",
+        "vale.guide.not_here": "{{i18n:vale.guide.not_here}}",
+        "vale.guide.in_grove": "{{i18n:vale.guide.in_grove}}",
+        "quest.painters_guide.title": "{{i18n:quest.painters_guide.title}}",
+        "quest.painters_guide.description": "{{i18n:quest.painters_guide.description}}",
+        "quest.painters_guide.objective": "{{i18n:quest.painters_guide.objective|found=[found]}}",
+        "vale.guide.item.description": "{{i18n:vale.guide.item.description}}",
+        "vale.grove.frame": "{{i18n:vale.grove.frame}}",
+        "vale.grove.founders.ask": "{{i18n:vale.grove.founders.ask}}",
+        "vale.grove.founders.taken": "{{i18n:vale.grove.founders.taken}}",
+        "vale.grove.founders.thanks": "{{i18n:vale.grove.founders.thanks}}",
+        "vale.grove.founders.not_masterpiece": "{{i18n:vale.grove.founders.not_masterpiece}}",
+        "vale.grove.founders.framed": "{{i18n:vale.grove.founders.framed}}",
+        "vale.echo.agnes": "{{i18n:vale.echo.agnes}}",
+        "vale.echo.hollis": "{{i18n:vale.echo.hollis}}",
+        "vale.echo.mabel": "{{i18n:vale.echo.mabel}}",
+        "vale.echo.bram": "{{i18n:vale.echo.bram}}",
+        "vale.grave.agnes": "{{i18n:vale.grave.agnes}}",
+        "vale.grave.hollis": "{{i18n:vale.grave.hollis}}",
+        "vale.grave.mabel": "{{i18n:vale.grave.mabel}}",
+        "vale.grave.bram": "{{i18n:vale.grave.bram}}",
+        "vale.grave.ada": "{{i18n:vale.grave.ada}}",
+        "vale.grave.hester": "{{i18n:vale.grave.hester}}",
+        "vale.grave.amos": "{{i18n:vale.grave.amos}}"
       }
     }
   ]

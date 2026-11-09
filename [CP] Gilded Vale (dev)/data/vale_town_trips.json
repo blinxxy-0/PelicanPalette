@@ -1,6 +1,7 @@
 // The residents' days in Pelican Town, from their briefs: Bea at Pierre's on Thursdays,
 // Fern at Pierre's and Evelyn's on Mondays, Lupini painting in town some Saturdays
-// (spring to fall), Emmett at the Saloon some Fridays after his 4-heart event.
+// (spring to fall), Emmett at the Saloon some Fridays after his 4-heart event, Opal
+// Corrie at Pierre's and the Saloon on Saturdays.
 //
 // A SECOND SWITCH, off by default: "ValeResidentsTownTrips" in this pack's config (on
 // top of each resident's own When). Turn it on to test them; changing it needs the save
@@ -97,6 +98,18 @@
       "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true", "Hearts:EmmettWren": "4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" },
       "Entries": {
         "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1430 Saloon 6 21 0/2200 blinxxy.MuseArt_ValeEmmett 6 6 2"
+      }
+    },
+    // Opal Corrie, Saturdays from Spring 1, Year 3 (docs/corrie_twins_brief.md): the morning
+    // bus to Pierre's, then the Saloon in the evening at Sable's table (from 6, after Julian's
+    // visits there on the 22nd to 24th end), and home at 9: it's a two-hour walk to Studio II
+    // from the Saloon, by the Vale's bus. Jet stays in the Vale.
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/OpalCorrie",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true" },
+      "Entries": {
+        "Sat": "800 SeedShop 12 20 0/1800 Saloon 6 21 0/2100 blinxxy.MuseArt_ValeStudio2 4 6 2"
       }
     }
   ]

@@ -103,10 +103,11 @@ internal static class ArtHooks
         return false;
     }
 
-    public static void OpenEasel(Farmer who, Vector2? easelTile = null)
+    // startingSparks: sparks already caught when the painting starts (the Gilded Grove's hidden easel).
+    public static void OpenEasel(Farmer who, Vector2? easelTile = null, int startingSparks = 0)
     {
         LearnPigments(who);
-        Game1.activeClickableMenu = new EaselMenu(who, easelTile: easelTile);
+        Game1.activeClickableMenu = new EaselMenu(who, easelTile: easelTile, startingSparks: startingSparks);
     }
 
     // A pigment is knowledge, like a recipe: the jar you buy, are given or

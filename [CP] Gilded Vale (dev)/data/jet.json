@@ -1,0 +1,75 @@
+// Jet Corrie (1.4): the quieter of the Vale's glassworker twins. He/him; a friend to ten
+// hearts, not marriageable. He cuts the glass, leads the joins and sets the mosaics. Home from
+// Zuzu City, where he ran Corrie Glass's workshop, to the studio he grew up in (and never wanted
+// to leave). See docs/corrie_twins_brief.md.
+//
+// SWITCHED OFF until the art exists: every patch here has the same When, so JetCorrie
+// only exists once the dev pack's config has ValeResidents: true AND both
+// assets/jet/sprites.png (Characters/JetCorrie) and assets/jet/portraits.png
+// (Portraits/JetCorrie) are in this pack. See data/residents.json.
+{
+  "Changes": [
+    // ---- Who he is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"},
+      "Entries": {
+        "JetCorrie": {
+          "DisplayName": "{{i18n:jet.name}}",
+          "Gender": "Male",
+          "Age": "Adult",
+          "Manner": "Neutral",
+          "SocialAnxiety": "Shy",
+          "Optimism": "Neutral",
+          "IsDarkSkinned": false,
+          // Summer 2, the twins' shared birthday: free in vanilla, this mod and Stardew Valley
+          // Expanded (checked 2026-11-09: SVE's summer birthdays are Martin 6, Scarlett 7, Victor 23).
+          "BirthSeason": "Summer",
+          "BirthDay": 2,
+          "HomeRegion": "Other",
+          "CanBeRomanced": false,
+          // The twins, for the game's family words.
+          "FriendsAndFamily": { "OpalCorrie": "[LocalizedText Strings\\Characters:Relative_Sister]" },
+          // Moves into Studio II on Spring 1, Year 3, after the sale and Robin's renovation
+          // (docs/design/vale_newcomers.md, section 3; data/vale_studios.json). Kent's way:
+          // vanilla's Kent has UnlockConditions "YEAR 2". And, like the other residents, not
+          // before the Vale's route is open (the mail flag blinxxy.MuseArt_ValeOpen).
+          "UnlockConditions": "YEAR 3, PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // Not at Pelican Town's festivals yet, not anyone's Winter Star secret friend, and no
+          // Ginger Island trips (as the other residents).
+          "FlowerDanceCanDance": false,
+          "WinterStarParticipant": "FALSE",
+          "CanVisitIsland": "FALSE",
+          "Home": [
+            // Studio II, by his bed at the east end (tools/vale_studio2.py).
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 17, "Y": 6 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/JetCorrie", "FromFile": "assets/jet/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"} },
+    { "Action": "Load", "Target": "Portraits/JetCorrie", "FromFile": "assets/jet/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"} },
+    // ---- Gifts: love / like / dislike / hate / neutral (docs/corrie_twins_dialogue.md) ----
+    // Paintings: the mod's rule; an art lover (data/residents.json).
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"},
+      "Entries": { "JetCorrie": "{{i18n:jet.gift.love}}/338 82 74 253 70/{{i18n:jet.gift.like}}/-2 -12 198 202 213 214 219 227 228 728 730/{{i18n:jet.gift.dislike}}/167 92 724 725 726/{{i18n:jet.gift.hate}}/168 747 172/{{i18n:jet.gift.neutral}}/" }
+    },
+    // ---- His days (data/jet_schedule.json), and the Exhibition Hall days once it reopens ----
+    { "Action": "Load", "Target": "Characters/schedules/JetCorrie", "FromFile": "data/jet_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true"} },
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/JetCorrie",
+      "When": {"ValeResidents": "true", "HasFile:assets/jet/sprites.png": "true", "HasFile:assets/jet/portraits.png": "true", "HasFlag": "blinxxy.MuseArt_ValeHallOpen"},
+      "Entries": {"Tue": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 17 6 2", "Thu": "600 blinxxy.MuseArt_GildedVale 19 37 3/900 blinxxy.MuseArt_GildedVale 40 40 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 17 6 2"}
+    },
+    // ---- What he says ----
+    { "Action": "Include", "FromFile": "data/jet_dialogue.json" }
+  ]
+}

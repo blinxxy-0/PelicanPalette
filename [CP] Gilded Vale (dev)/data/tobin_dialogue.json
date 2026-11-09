@@ -68,7 +68,10 @@
         "AcceptGift_(O)709": "{{i18n:tobin.dialogue.AcceptGift_709}}",
         "AcceptGift_(O)395": "{{i18n:tobin.dialogue.AcceptGift_395}}",
         "AcceptBirthdayGift_Positive": "{{i18n:tobin.dialogue.AcceptBirthdayGift_Positive}}",
-        "AcceptBirthdayGift_Negative": "{{i18n:tobin.dialogue.AcceptBirthdayGift_Negative}}"
+        "AcceptBirthdayGift_Negative": "{{i18n:tobin.dialogue.AcceptBirthdayGift_Negative}}",
+
+        // ---- Once (conversation topics, added by the trigger action below) ----
+        "blinxxy.MuseArt_ValeUrns": "{{i18n:tobin.dialogue.urns}}"
       }
     },
     // Rainy days (the game's own file for every villager).
@@ -77,6 +80,23 @@
       "Target": "Characters/Dialogue/rainy",
       "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"},
       "Entries": { "TobinClay": "{{i18n:tobin.dialogue.rainy}}" }
+    },
+    // The urns in the graveyard (the Vale painters' guide design, section 6): Tobin fires them now. One quiet
+    // line, said once: a conversation topic, added the morning after you're at 4 hearts with him and have
+    // read a stone there (ArtStudio/Vale/ValeGraves.cs sets the flag). Every day's 4-heart key is taken, and
+    // a topic leaves his everyday lines alone (as data/vale_town_talk.json does for the valley's talk).
+    {
+      "Action": "EditData",
+      "Target": "Data/TriggerActions",
+      "When": {"ValeResidents": "true", "HasFile:assets/tobin/sprites.png": "true", "HasFile:assets/tobin/portraits.png": "true"},
+      "Entries": {
+        "blinxxy.MuseArt_ValeUrnsTalk": {
+          "Id": "blinxxy.MuseArt_ValeUrnsTalk",
+          "Trigger": "DayStarted",
+          "Condition": "PLAYER_HEARTS Current TobinClay 4, PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeGraveRead Any",
+          "Actions": [ "AddConversationTopic blinxxy.MuseArt_ValeUrns 112" ]
+        }
+      }
     }
   ]
 }

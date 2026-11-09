@@ -1,0 +1,14 @@
+// JetCorrie's days (docs/corrie_twins_brief.md, "Schedule"). A time is when he sets off.
+// Studio II: his cutting bench 14 10, the light table 13 5, the kiln 16 5, his bed 17 6.
+// The Exhibition Hall days (two a week once Lupini's 8-heart event reopens it) are a patch
+// in data/jet.json.
+{
+  // At dawn up to Fern's seedhouse, by its glass (19 37 on the Vale: he mends the cracked
+  // panes and says nothing about it); then the workshop all day: his bench, the light
+  // table in the afternoon light, the kiln before supper.
+  "spring": "600 blinxxy.MuseArt_GildedVale 19 37 3/800 blinxxy.MuseArt_ValeStudio2 14 10 0/1300 blinxxy.MuseArt_ValeStudio2 13 5 0/1700 blinxxy.MuseArt_ValeStudio2 16 5 0/2100 blinxxy.MuseArt_ValeStudio2 17 6 2",
+  // Rain: no walk; the workshop all day.
+  "rain": "800 blinxxy.MuseArt_ValeStudio2 14 10 0/1300 blinxxy.MuseArt_ValeStudio2 13 5 0/2100 blinxxy.MuseArt_ValeStudio2 17 6 2",
+  // Winter: a later dawn walk, then the kiln keeps him in.
+  "winter": "630 blinxxy.MuseArt_GildedVale 19 37 3/830 blinxxy.MuseArt_ValeStudio2 16 5 0/1200 blinxxy.MuseArt_ValeStudio2 14 10 0/2100 blinxxy.MuseArt_ValeStudio2 17 6 2"
+}

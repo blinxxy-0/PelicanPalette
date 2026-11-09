@@ -4,10 +4,13 @@
 
 Usage: python tools/vale_routes.py <GildedVale.tmx>
 """
-import collections, sys, os
+import collections, glob, re, sys, os
 import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from render_tmx import layer_data
+from vale_overlook import BENCH, FACE_TOP, STAIRS_X
+from vale_spots import SPOTS
+from vale_graveyard import BENCH as GRAVEYARD_BENCH, GATE_INSIDE as GRAVEYARD_GATE
 
 # name: a tile the player must be able to stand on (in front of it)
 PLACES = {
@@ -17,9 +20,22 @@ PLACES = {
     "parterre east statue": (25, 43), "Hall door": (44, 40), "fountain": (48, 46), "noticeboard": (41, 43),
     "Old Studio (big)": (73, 39), "studio B": (84, 39), "studio C": (90, 39),
     "amphitheatre stage": (37, 56), "Emmett's door": (18, 62), "Emmett's yard": (11, 58),
-    "Gilded Tree": (38, 69), "lakeside bench": (47, 60), "jetty": (48, 66), "picnic table": (90, 66),
-    "overlook bench": (86, 27),
+    "Gilded Tree": (38, 69), "lakeside bench": (47, 60), "jetty": (48, 66), "picnic table": (89, 75),
+    "atelier bench": (86, 27), "hidden sculpture": (7, 44), "falls basin bank": (81, 13),
+    # The overlook (tools/vale_overlook.py). Its bench faces west against the bluff's side,
+    # with no tile in front of it: the seat itself, reached from beside it (SEATS).
+    "overlook bench": BENCH, "overlook easels": (BENCH[0] + 2, BENCH[1]),
+    "overlook steps top": (STAIRS_X + 1, FACE_TOP - 1), "overlook steps foot": (STAIRS_X + 1, FACE_TOP + 6),
+    # Lupini's painting spots (tools/vale_spots.py): in front of each stool, where you touch it
+    # with the painters' guide
+    **{f"{sid} stool": (stool[0], stool[1] + 1) for sid, (stool, _) in SPOTS.items()},
+    # The graveyard (tools/vale_graveyard.py): just inside its gate, and its bench's seat (the middle
+    # of the game's 3-wide bench, the row under its back)
+    "graveyard gate": GRAVEYARD_GATE, "graveyard bench": (GRAVEYARD_BENCH[0] + 1, GRAVEYARD_BENCH[1] + 1),
 }
+# Schedule spots that are a seat (a bench or chair, solid itself): reachable if a neighbour is
+SEATS = {"nursery bench", "lakeside bench", "overlook bench", "graveyard bench"}
+DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "[CP] Gilded Vale (dev)", "data")
 
 
 def main():
@@ -56,6 +72,23 @@ def main():
         if not reach:
             bad += 1
         print(("ok      " if reach else "BLOCKED ") + name, p)
+    # Every `GildedVale <x> <y>` in the NPCs' schedules: standable (not solid, not water),
+    # reachable from the bus stop. A seat counts if a neighbouring tile is reachable.
+    seats = {PLACES[n] for n in SEATS}
+    water_back = lambda x, y: L["Back"][y * W + x] in bv.WATER_BACKS
+    spots = collections.defaultdict(set)
+    for path in sorted(glob.glob(os.path.join(glob.escape(DATA), "*_schedule.json"))):
+        for sx, sy in re.findall(r"GildedVale (\d+) (\d+)", open(path, encoding="utf-8").read()):
+            spots[(int(sx), int(sy))].add(os.path.basename(path).replace("_schedule.json", ""))
+    for (x, y), who in sorted(spots.items()):
+        standable = ok(x, y) and not water_back(x, y)
+        if (x, y) in seats:
+            good = (standable and (x, y) in seen) or any((x + dx, y + dy) in seen for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+        else:
+            good = standable and (x, y) in seen
+        if not good:
+            bad += 1
+        print(("ok      " if good else "BLOCKED ") + "schedule spot", (x, y), "(" + ", ".join(sorted(who)) + ")")
     print(bad, "blocked")
 
 

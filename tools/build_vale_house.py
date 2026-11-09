@@ -80,6 +80,9 @@ PIECES = {
     "painting_flowers": ((26, 1), 0),                                                    # Bea's, over her bed
     # small ones: the gallery paintings not hung full size, in miniature
     "mini_night": ((8, 10), 0), "mini_blocks": ((21, 10), 0), "mini_fruit_jug": ((7, 17), 0), "mini_stripes": ((24, 1), 0),
+    # The painters' guide's frame, by the guest books (the Vale painters' guide design, section 3):
+    # the guide itself under glass, in the miniatures' frame. Touch it to take the guide (ACTIONS).
+    "guide_frame": ((13, 17), 0),
 }
 # The game's own furniture, tile for tile as its houses lay it (townInterior, gids from 1;
 # townInterior_2 from 2177). Each piece is its rows, top first; each row names its layers:
@@ -128,8 +131,8 @@ FURNISH = [
     # the kids' corner below it, for visitors' children (the user, 2026-11-07)
     ("bear", 1, 25), ("kids_table", 4, 26), ("pouf", 3, 27), ("pouf", 5, 27), ("dollhouse", 6, 26),
     ("teddy", 3, 28), ("toy", 1, 27),
-    # the tea room
-    ("plant", 13, 19), ("plant_b", 22, 27),
+    # the tea room (the plant left of the guest books, so you can stand under the guide's frame)
+    ("plant", 10, 19), ("plant_b", 22, 27),
     # the kitchen
     # (a tile in from the tea room, leaving Bea's way behind her counter at 23)
     ("kitchen", 24, 17), ("dining", 24, 23), ("plant", 29, 27),
@@ -150,6 +153,9 @@ DESCRIBE = {
     ("clock", 12, 12): "clock", ("hall_table", 3, 12): "photo", ("bear", 1, 25): "bear",
     ("dollhouse", 6, 26): "dollhouse", ("kitchen", 24, 17): "kitchen", "fireplace": "fireplace",
 }
+# A piece's own tile action instead of a description: on the same tiles a description would take
+ACTIONS = {"guide_frame": "blinxxy.MuseArt_TakeGuide"}
+GUIDE_ICON = "[CP] Gilded Vale (dev)/assets/PaintersGuide.png"     # the guide's item icon (data/vale_guide.json)
 BEDS = {"guest": (8, 4), "artists": (17, 4), "bea": (26, 4)}   # the Saloon's spare bed, top-left
 SLEEP_IN = "guest"
 RUGS = [(4, 21, 5, 4), (10, 21, 4, 7), (17, 24, 4, 5), (2, 26, 6, 3), (14, 5, 3, 3)]          # Haley's red rug, 9-sliced: x, y, w, h
@@ -187,10 +193,12 @@ def main():
     for name in [k for k in PIECES if k.startswith("mini_")]:
         mini(where, shop, name[5:]).save(os.path.join(SHOP_DIR, name + ".png"))
         EXTRA_ART[name] = os.path.join(SHOP_DIR, name + ".png")
-    for name in [k for k in PIECES if k.startswith(("painting_", "mini_"))]:
+    guide_frame().save(os.path.join(SHOP_DIR, "guide_frame.png"))
+    EXTRA_ART["guide_frame"] = os.path.join(SHOP_DIR, "guide_frame.png")
+    for name in [k for k in PIECES if k.startswith(("painting_", "mini_")) or k == "guide_frame"]:
         hang(os.path.join(SHOP_DIR, name + ".png"))
     bvi.PICKS.update({k: os.path.relpath(v, bvi.ART)[:-4].replace("\\", "/") for k, v in EXTRA_ART.items()})
-    sheet, slots = bvi.pack(bvi.ART, raw={k for k in PIECES if k.startswith(("painting_", "mini_"))})
+    sheet, slots = bvi.pack(bvi.ART, raw={k for k in PIECES if k.startswith(("painting_", "mini_")) or k == "guide_frame"})
     furn_first = T2 + 1312
     wall_first = furn_first + (sheet.width // 16) * (sheet.height // 16)
     sheet.save(os.path.join(assets, SHEET))
@@ -338,7 +346,7 @@ def main():
     # (the teapot shelf over the counter) keeps only the wainscot the other doesn't cover.
     said, standing, hung = {(x, y) for _, x, y, k, _ in tile_props if k == "Action"}, [], []
     for key, ((px, py), solid) in PIECES.items():
-        text = DESCRIBE.get(key)
+        text = ACTIONS.get(key) or DESCRIBE.get(key) and f"Message blinxxy.MuseArt_Vale.house.{DESCRIBE[key]}"
         if not text:
             continue
         _, cols, rows = slots[key.split("#")[0]]
@@ -350,14 +358,15 @@ def main():
     for name, px, py in FURNISH:
         text = DESCRIBE.get((name, px, py))
         if text:
+            text = f"Message blinxxy.MuseArt_Vale.house.{text}"
             standing.append((text, [(px + i, py + j) for j, row in enumerate(VANILLA[name])
                                     for i, gid in enumerate(row.get("B", [])) if gid]))
-    standing.append((DESCRIBE["fireplace"], [(FIREPLACE_X + i, tt + 4 + j) for i in range(2) for j in range(2)]))
+    standing.append((f"Message blinxxy.MuseArt_Vale.house.{DESCRIBE['fireplace']}", [(FIREPLACE_X + i, tt + 4 + j) for i in range(2) for j in range(2)]))
     for text, cells in standing + hung:
         for x, y in cells:
             if g["Buildings"][y][x] and (x, y) not in said:
                 said.add((x, y))
-                tile_props.append(("Buildings", x, y, "Action", f"Message blinxxy.MuseArt_Vale.house.{text}"))
+                tile_props.append(("Buildings", x, y, "Action", text))
     props = {"Warp": f"{d} {f + 2} {VALE} {INN_DOOR[0]} {INN_DOOR[1] + 1}",
              "Light": " ".join(f"{x} {y} {bmr.LIGHT_TEXTURE}" for x, y in LIGHTS),
              "AllowWakeUpWithoutBed": "T",
@@ -388,6 +397,20 @@ def mini(where, shop, name):
     framed = Image.new("RGBA", (tw + 4, th + 4), (74, 40, 24, 255))
     framed.paste(Image.new("RGBA", (tw + 2, th + 2), (122, 74, 40, 255)), (1, 1))
     framed.paste(inner.resize((tw, th), Image.BOX), (2, 2))
+    return framed
+
+
+def guide_frame():
+    """The painters' guide under glass: its item icon (the book, without its outline's outer
+    columns) on a dark backing, in the miniatures' wooden frame (mini). 16 x 18."""
+    icon = Image.open(GUIDE_ICON).convert("RGBA")
+    book = icon.crop(icon.getbbox())
+    book = book.crop((1, 0, book.width - 1, book.height))
+    inner = Image.new("RGBA", book.size, (46, 58, 44, 255))
+    inner.alpha_composite(book)
+    framed = Image.new("RGBA", (inner.width + 4, inner.height + 4), (74, 40, 24, 255))
+    framed.paste(Image.new("RGBA", (inner.width + 2, inner.height + 2), (122, 74, 40, 255)), (1, 1))
+    framed.paste(inner, (2, 2))
     return framed
 
 

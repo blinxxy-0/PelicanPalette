@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="22" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="33">
+  <properties>
+    <property name="Warp" value="7 14 blinxxy.MuseArt_GildedVale 86 39" />
+    <property name="Light" value="1 9 4 10 3 4 13 4 4 20 9 4 4 9 4" />
+  </properties>
+  <tileset firstgid="1" name="indoor" tilewidth="16" tileheight="16" tilecount="2176" columns="32">
+    <image source="townInterior" width="512" height="1088" />
+  </tileset>
+  <tileset firstgid="2177" name="indoor2" tilewidth="16" tileheight="16" tilecount="1312" columns="32">
+    <image source="townInterior_2" width="512" height="656" />
+  </tileset>
+  <tileset firstgid="3489" name="zz_wallsfloors" tilewidth="16" tileheight="16" tilecount="688" columns="16">
+    <image source="walls_and_floors" width="256" height="688" />
+  </tileset>
+  <tileset firstgid="4177" name="z_blinxxy.MuseArt_ValeStudio2Interior" tilewidth="16" tileheight="16" tilecount="144" columns="16">
+    <image source="ValeStudio2Interior.png" width="256" height="144" />
+  </tileset>
+  <tileset firstgid="4321" name="zz_furniture" tilewidth="16" tileheight="16" tilecount="2976" columns="32">
+    <image source="../TileSheets/furniture" width="512" height="1488" />
+  </tileset>
+  <layer id="1" name="Back" width="22" height="16">
+    <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,3778,3778,3778,3778,3778,3778,3778,3778,3778,3778,3784,3784,3784,3784,3784,3784,3784,3784,3784,3784,1,
+1,3794,3794,3794,3794,3794,3794,3794,3794,3794,3794,3800,3800,3800,3800,3800,3800,3800,3800,3800,3800,1,
+1,3810,3810,3810,3810,3810,3810,3810,3810,3810,3810,3816,3816,3816,3816,3816,3816,3816,3816,3816,3816,1,
+1,574,576,575,576,575,576,575,576,575,576,3860,3859,3860,3859,3860,3859,3860,3859,3860,3859,1,
+1,607,608,607,608,607,608,607,608,607,608,3876,3875,3876,3875,3876,3875,3876,3875,3876,3875,1,
+1,639,640,639,640,639,640,639,640,639,640,3860,3859,3860,3859,3860,3859,3860,3859,3860,3859,1,
+1,607,608,607,608,607,608,607,608,607,608,3876,3875,3876,3875,3876,3875,3876,3875,3876,3875,1,
+1,639,640,639,640,639,640,639,640,639,640,3860,3859,3860,3859,3860,3859,3860,3859,3860,3859,1,
+1,607,608,607,608,607,608,607,608,607,608,3876,3875,3876,3875,3876,3875,3876,3875,3876,3875,1,
+1,639,640,639,640,639,640,639,640,639,640,3860,3859,3860,3859,3860,3859,3860,3859,3860,3859,1,
+1,607,608,607,608,607,608,607,608,607,608,3876,3875,3876,3875,3876,3875,3876,3875,3876,3875,1,
+1,639,640,639,640,639,640,639,640,639,640,3860,3859,3860,3859,3860,3859,3860,3859,3860,3859,1,
+1,1,1,1,1,1,1,23,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+    </data>
+  </layer>
+  <layer id="2" name="Back2" width="22" height="16">
+    <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,4305,4305,4305,4305,4305,4305,4305,4305,4305,4305,0,
+0,0,0,0,0,4177,4178,0,0,0,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,4193,4194,0,4181,0,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,2761,2762,2763,2764,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,4181,0,0,0,2793,2794,2795,2796,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,2825,2826,2827,2828,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,4182,4183,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="3" name="Buildings" width="22" height="16">
+    <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+65,80,81,81,81,81,81,81,81,81,81,81,81,81,81,81,81,81,81,81,82,69,
+65,112,113,113,113,113,113,113,113,113,113,113,113,113,113,113,113,113,113,113,114,69,
+65,144,81,81,0,4291,4292,4279,4280,0,4273,4274,0,4239,4240,4297,4293,4294,81,81,146,69,
+65,0,357,358,0,0,0,0,0,0,0,0,0,0,0,0,0,0,357,358,0,69,
+65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
+65,0,321,322,0,0,0,0,0,0,0,0,0,0,0,0,0,0,321,322,0,69,
+65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,
+65,0,0,0,0,0,0,0,0,0,0,0,0,4236,4237,4238,0,0,0,0,0,69,
+65,5832,0,4233,4234,4235,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5832,69,
+65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4229,4230,69,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+    </data>
+  </layer>
+  <layer id="4" name="Front" width="22" height="16">
+    <data encoding="csv">
+0,2,3,2122,3,3,3,3,2122,3,3,3,3,2122,3,3,3,3,2122,3,4,0,
+33,42,4209,4210,4211,4179,4180,0,0,4184,4185,4186,4187,0,0,0,0,0,0,0,44,37,
+65,0,4225,4226,4227,4195,4196,0,0,4200,4201,4202,4203,0,0,4265,4261,4262,0,0,0,69,
+2153,0,0,0,0,4275,4276,4263,4264,0,4257,4258,0,4223,4224,4281,4277,4278,0,0,0,2154,
+65,0,325,326,0,0,0,0,0,0,0,0,0,0,0,0,0,0,325,326,0,69,
+65,0,419,420,0,0,0,0,0,0,0,0,0,0,0,0,0,0,419,420,0,69,
+65,0,451,452,0,0,0,0,0,0,0,0,0,0,0,0,0,0,451,452,0,69,
+2153,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2154,
+65,5768,0,0,0,0,0,0,0,0,0,0,0,4220,4221,4222,0,0,0,0,5768,69,
+65,5800,0,4217,4218,4219,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5800,69,
+65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4213,4214,69,
+2153,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2154,
+161,162,2121,166,166,166,163,0,164,166,166,166,166,166,2121,166,166,166,166,166,167,168,
+0,0,0,0,0,0,97,197,131,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="5" name="Front2" width="22" height="16">
+    <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,4259,4260,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    </data>
+  </layer>
+  <layer id="6" name="AlwaysFront" width="22" height="16">
+    <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    </data>
+  </layer>
+  <objectgroup id="9" name="Buildings">
+    <object id="1" name="TileData" x="16" y="160" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.city_lamp" /></properties>
+    </object>
+    <object id="2" name="TileData" x="80" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.racks" /></properties>
+    </object>
+    <object id="3" name="TileData" x="96" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.racks" /></properties>
+    </object>
+    <object id="4" name="TileData" x="32" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.designs" /></properties>
+    </object>
+    <object id="5" name="TileData" x="32" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.designs" /></properties>
+    </object>
+    <object id="6" name="TileData" x="48" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.designs" /></properties>
+    </object>
+    <object id="7" name="TileData" x="48" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.designs" /></properties>
+    </object>
+    <object id="8" name="TileData" x="64" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.designs" /></properties>
+    </object>
+    <object id="9" name="TileData" x="64" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.designs" /></properties>
+    </object>
+    <object id="10" name="TileData" x="112" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.drafting" /></properties>
+    </object>
+    <object id="11" name="TileData" x="128" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.drafting" /></properties>
+    </object>
+    <object id="12" name="TileData" x="144" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="13" name="TileData" x="144" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="14" name="TileData" x="160" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="15" name="TileData" x="160" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="16" name="TileData" x="176" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="17" name="TileData" x="176" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="18" name="TileData" x="192" y="32" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="19" name="TileData" x="192" y="48" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.window" /></properties>
+    </object>
+    <object id="20" name="TileData" x="160" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.bench" /></properties>
+    </object>
+    <object id="21" name="TileData" x="176" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.bench" /></properties>
+    </object>
+    <object id="22" name="TileData" x="208" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.light_table" /></properties>
+    </object>
+    <object id="23" name="TileData" x="224" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.light_table" /></properties>
+    </object>
+    <object id="24" name="TileData" x="240" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.ladder" /></properties>
+    </object>
+    <object id="25" name="TileData" x="256" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.kiln" /></properties>
+    </object>
+    <object id="26" name="TileData" x="272" y="64" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.kiln" /></properties>
+    </object>
+    <object id="27" name="TileData" x="320" y="160" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.city_lamp" /></properties>
+    </object>
+    <object id="28" name="TileData" x="208" y="144" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.cutting_bench" /></properties>
+    </object>
+    <object id="29" name="TileData" x="224" y="144" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.cutting_bench" /></properties>
+    </object>
+    <object id="30" name="TileData" x="240" y="144" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.cutting_bench" /></properties>
+    </object>
+    <object id="31" name="TileData" x="304" y="176" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.offcuts" /></properties>
+    </object>
+    <object id="32" name="TileData" x="320" y="176" width="16" height="16">
+      <properties><property name="Action" type="string" value="Message blinxxy.MuseArt_Vale.studio2.offcuts" /></properties>
+    </object>
+  </objectgroup>
+</map>

@@ -64,9 +64,10 @@ PICKS = {
     # plaza: the user, 2026-11-06, "doesn't fit in the center of the town"); gold in fall
     "old_tree": ("props/vale_props_v1/old_tree_1_1", 35, 68, (1, 3, 4), 0),
     # 6: Lupini's painting spots (he paints at a different viewpoint each day): a stool
-    # with his paint box, and the rock he wipes his brushes on
-    "spot_clearing_stool": ("props/vale_props_v2/painters_stool_1_3", 6, 15, 1, 0),
-    "spot_clearing_rock": ("props/vale_props_v2/paint_rock_clean", 9, 18, 1, 0),
+    # with his paint box, and the rock he wipes his brushes on. (The clearing's went: the
+    # clearing is the graveyard now, the painters' guide design section 6. Its wall, stones,
+    # urns and their winter art aren't PICKS: tools/vale_graveyard.py, one of VALE_PIECES,
+    # lays them on the written map and adds their tiles at the sheets' end.)
     # (by the high street's hedge, side by side: the user, 2026-11-07, "can't be two
     # right next to each other" in the top right)
     "spot_street_stool": ("props/vale_props_v2/painters_stool_1_3", 43, 4, 1, 0),
@@ -75,8 +76,23 @@ PICKS = {
     "spot_atelier_rock": ("props/vale_props_v2/paint_rock_clean", 79, 19, 1, 0),
     "spot_meadow_stool": ("props/vale_props_v2/painters_stool_1_3", 28, 65, 1, 0),
     "spot_meadow_rock": ("props/vale_props_v2/paint_rock_clean", 31, 66, 1, 0),
-    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 84, 62, 1, 0),
-    "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 87, 62, 1, 0),
+    # (the lake's: up on the overlook, along its west edge over the lake; laid where they
+    # are here, not by reachable_spot, and moved with the bluff by tools/vale_overlook.py)
+    "spot_lake_stool": ("props/vale_props_v2/painters_stool_1_3", 90, 60, 1, 0),
+    "spot_lake_rock": ("props/vale_props_v2/paint_rock_clean", 90, 63, 1, 0),
+    # (the painters' guide's new spots, design section 4: laid where they are here, and on the
+    # committed map by tools/vale_spots.py NEW_SPOTS from the rooftops' slots. The parterre's
+    # just inside its east gate, the falls' on the river's north bank west of the falls' cliff (well
+    # away from the north light's), the tree's on its lawn east of it, the Old Stage's under the
+    # cliff west of the amphitheatre, clear of the bowl)
+    "spot_parterre_stool": ("props/vale_props_v2/painters_stool_1_3", 25, 44, 1, 0),
+    "spot_parterre_rock": ("props/vale_props_v2/paint_rock_clean", 25, 39, 1, 0),
+    "spot_falls_stool": ("props/vale_props_v2/painters_stool_1_3", 72, 4, 1, 0),
+    "spot_falls_rock": ("props/vale_props_v2/paint_rock_clean", 68, 4, 1, 0),
+    "spot_tree_stool": ("props/vale_props_v2/painters_stool_1_3", 43, 66, 1, 0),
+    "spot_tree_rock": ("props/vale_props_v2/paint_rock_clean", 43, 63, 1, 0),
+    "spot_stage_stool": ("props/vale_props_v2/painters_stool_1_3", 25, 53, 1, 0),
+    "spot_stage_rock": ("props/vale_props_v2/paint_rock_clean", 22, 53, 1, 0),
     "bus_shelter": ("props/vale_props_v1/bus_shelter_1_4", 3, 4, 2, 0),      # A: above the road's straight
     "vale_sign": ("props/vale_sign_gilded", 19, 4, 1, 0),   # gold lettering drawn on; lit at night (map property Light)         # A: where the high street starts
     "noticeboard": ("props/vale_props_v1/noticeboard_1_1", 41, 42, 1, 0),    # H: by the Hall's door
@@ -152,6 +168,7 @@ FEATURES = {
 }
 
 W, H = 96, 76
+VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook", "vale_terrace_stairs", "vale_spots", "vale_graveyard"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
 STAMP_LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "AlwaysFront"]
 
@@ -265,7 +282,12 @@ def main():
     props = {"Outdoors": "T", "Spring_Objects": "T", "Summer_Objects": "T", "Fall_Objects": "T", "Winter_Objects": "T",
              "BrookSounds": f"{RIVER_X + 4} 3 0",
              "Light": "20 3 4 22 3 4"}             # the entrance sign's gold letters glow at dusk (two sconce lights)
-    write(os.path.join(assets, "GildedVale.tmx"), g, props, tilesets)
+    tmx_path = os.path.join(assets, "GildedVale.tmx")
+    write(tmx_path, g, props, tilesets)
+    # The pieces patched into the written map in place (tools/vale_patch.py).
+    import importlib
+    for name in VALE_PIECES:
+        importlib.import_module(name).patch_file(tmx_path, sys.argv[3] if len(sys.argv) > 3 else os.path.dirname(town_path))
 
 
 # The Town ledge's cliff, as a rule rather than a block (learned from Town x 23-46,
@@ -1070,6 +1092,20 @@ def amphitheatre_art(path):
     return im
 
 
+# Painting spots laid where PICKS has them: the lake's is on the overlook's bluff, which
+# tools/vale_overlook.py raises after the build (reachable_spot would find it reserved); the
+# guide's new spots are where the committed map has them (tools/vale_spots.py NEW_SPOTS).
+FIXED_SPOTS = {"spot_lake_stool", "spot_lake_rock", "spot_parterre_stool", "spot_parterre_rock",
+               "spot_falls_stool", "spot_falls_rock", "spot_tree_stool", "spot_tree_rock",
+               "spot_stage_stool", "spot_stage_rock"}
+# Each stool's name in the painters' guide (ArtStudio/Vale/PaintersGuide.cs Spots): its foot
+# gets `blinxxy.MuseArt_PaintSpot <id>`. The rocks are scenery, with no action (tools/vale_spots.py).
+SPOT_IDS = {"spot_street_stool": "rooftops", "spot_atelier_stool": "northlight",
+            "spot_meadow_stool": "wildflowers", "spot_lake_stool": "lakewindow",
+            "spot_parterre_stool": "parterre", "spot_falls_stool": "falls", "spot_tree_stool": "tree",
+            "spot_stage_stool": "stage"}
+
+
 def reachable_spot(name, im, left, bottom, pieces):
     """The nearest place to (left, bottom) where a small prop stands on open grass the
     farmer can reach: every tile of it and the row in front plain grass (no water, sand,
@@ -1135,7 +1171,7 @@ def place_buildings(g, assets):
                 print(season, "art for", name, "doesn't match its spring size; using spring")
                 continue
             arts[season] = im
-        if name.startswith("spot_"):
+        if name.startswith("spot_") and name not in FIXED_SPOTS:
             left, bottom = reachable_spot(name, spring, left, bottom, pieces)
         pieces.append((name, arts, left, bottom, solid))
     if os.path.exists(os.path.join(ART, AMPHITHEATRE[0] + ".png")):
@@ -1320,10 +1356,10 @@ def place_buildings(g, assets):
                 if j >= rows - n and c0 <= i <= c1:
                     g["Buildings"][ty][tx] = gid
                     g["Front"][ty][tx] = 0
-                    if name.startswith("spot_"):
-                        # Lupini's painting spots paint the view (ArtStudio/Vale/GildedVale.cs)
+                    if name in SPOT_IDS:
+                        # a painting spot's stool is found with the painters' guide (ArtStudio/Vale/PaintersGuide.cs)
                         from vale_decor import TILE_PROPS
-                        TILE_PROPS[("Buildings", tx, ty)] = {"Action": "blinxxy.MuseArt_PaintSpot"}
+                        TILE_PROPS[("Buildings", tx, ty)] = {"Action": f"blinxxy.MuseArt_PaintSpot {SPOT_IDS[name]}"}
                 elif j >= rows - n:
                     g["Back2"][ty][tx] = gid          # (the rest of a solid row, under the farmer: a tree's roots)
                 elif PICKS.get(name, ("",))[0].startswith("buildings/") and ty <= bottom - 2:

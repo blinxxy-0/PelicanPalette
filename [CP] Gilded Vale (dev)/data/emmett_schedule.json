@@ -1,7 +1,8 @@
 // EmmettWren's days. A time is when they set off; every tile was checked walkable and
 // reachable from the door or the bus (the Vale map and the interiors as built
-// 2026-11-07). No animations yet: the sprite sheet doesn't exist, so the work
-// poses (playing the fiddle) go in Data/AnimationDescriptions once it does.
+// 2026-11-07). His one animation so far: sitting on the overlook bench on Saturdays
+// (emmett_sit_left, data/emmett.json). The work poses (playing the fiddle) still need
+// their frames, then go in Data/AnimationDescriptions the same way.
 {
   // Mornings: practising on the amphitheatre's stage. Afternoons: out with his
   // notebook, somewhere different each day. Evenings: the Vale House fire, playing
@@ -14,7 +15,7 @@
   // 4-heart event, the Saloon in Pelican Town: data/vale_town_trips.json).
   "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1700 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
   // Saturday: the whole Vale end to end, to the overlook bench.
-  "Sat": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 86 27 2/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
+  "Sat": "900 blinxxy.MuseArt_GildedVale 37 56 2/1300 blinxxy.MuseArt_GildedVale 89 58 3 emmett_sit_left/1800 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
   // Sunday: slow tunes on the stage, the fire early.
   "Sun": "1000 blinxxy.MuseArt_GildedVale 37 56 2/1700 blinxxy.MuseArt_ValeHouse 10 21 3/2330 blinxxy.MuseArt_ValeEmmett 6 6 2",
   // Rain: his cottage, writing at his desk under the maps; the fire late.

@@ -75,6 +75,13 @@ internal static class DevMedia
             texture.SaveAsPng(stream, texture.Width, texture.Height);
             _monitor.Log($"Saved {path} ({texture.Width}x{texture.Height}).", LogLevel.Info);
         });
+        DevTools.AddCommand(helper, "museart_exportdata", "Saves a string-to-string data asset (Data/Furniture, Data/Objects' older kin) to media/export_<name>.json. Usage: museart_exportdata Data/Furniture", (_, args) =>
+        {
+            var data = Game1.content.Load<Dictionary<string, string>>(args[0]);
+            string path = "media/export_" + args[0].Replace('/', '_') + ".json";
+            _helper.Data.WriteJsonFile(path, data);
+            _monitor.Log($"Saved {path} ({data.Count} entries).", LogLevel.Info);
+        });
         DevTools.AddCommand(helper, "museart_signtext", "Renders a heading in the game's bold font to media/sign_<slug>.png. Usage: museart_signtext Features", (_, args) => SignText(string.Join(" ", args)));
         DevTools.AddCommand(helper, "museart_updatecard", "Renders the update card's parchment, lines and in-game icons to media/update_card.png (tools/art/update_card.py adds the sky, title and portraits).", (_, _) => UpdateCard());
         DevTools.AddCommand(helper, "museart_spriteaudit", "Every paintable item, creature and animal (1.3): which have see-through pixels and how much their true colours change the picture, and which small paintings are bigger than 16x16.", (_, _) => SpriteAudit());
@@ -129,6 +136,11 @@ internal static class DevMedia
             var tile = new xTile.Dimensions.Location(int.Parse(args[0]), int.Parse(args[1]));
             bool done = Game1.currentLocation.checkAction(tile, Game1.viewport, Game1.player);
             monitor.Log($"Action at {tile}: {(done ? "handled" : "nothing")}; menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}.", LogLevel.Info);
+        });
+        DevTools.AddCommand(helper, "museart_nextpage", "Turns an open dialogue box to its next page, as a click would (for screenshots of later pages).", (_, _) =>
+        {
+            if (Game1.activeClickableMenu is StardewValley.Menus.DialogueBox box)
+                box.receiveLeftClick(box.xPositionOnScreen + 8, box.yPositionOnScreen + 8);
         });
         DevTools.AddCommand(helper, "museart_stand", "Puts the farmer (and so the camera) on a tile, wherever it is, without the game nudging them aside. Usage: museart_stand 82 32", (_, args) =>
             Game1.player.Position = new Vector2(int.Parse(args[0]), int.Parse(args[1])) * 64f);
@@ -391,6 +403,23 @@ internal static class DevMedia
 
     private static readonly HashSet<string> Icons = new();
 
+    // The Gilded Vale's dev pack ([CP] Gilded Vale (dev), never released) loads all its art under this
+    // asset name, and names its own items with this prefix.
+    private const string DevPackAssets = "Mods/blinxxy.MuseArt.Vale/", DevPackItems = "blinxxy.MuseArt.Vale_";
+
+    // What the public wiki never shows, though a Debug game has it: a Debug-only frame (its frame item
+    // or its framed paintings), and any item from the dev pack (one drawn from its art, or named with its
+    // prefix: the painters' guide, the Vale's fish).
+    private static bool OffWiki(string qualifiedId)
+    {
+        if (ArtItems.FrameStyles.Where(ArtItems.IsDebugOnly)
+            .Any(f => qualifiedId == "(O)" + f.ItemId || qualifiedId == "(F)" + f.SmallId || qualifiedId == "(F)" + f.LargeId))
+            return true;
+        var data = ItemRegistry.GetData(qualifiedId);
+        return data != null && (data.ItemId.StartsWith(DevPackItems, StringComparison.Ordinal)
+            || data.TextureName?.StartsWith(DevPackAssets, StringComparison.OrdinalIgnoreCase) == true);
+    }
+
     private static string Name(string qualifiedId)
     {
         Icons.Add(qualifiedId);
@@ -552,10 +581,16 @@ internal static class DevMedia
         Icons.Clear();
         string prefix = ModEntry.Id + "_";
 
-        var objects = Game1.objectData.Where(kv => kv.Key.StartsWith(prefix)).Select(kv => Item("(O)" + kv.Key)).ToList();
-        var bigCraftables = Game1.bigCraftableData.Where(kv => kv.Key.StartsWith(prefix)).Select(kv => Item("(BC)" + kv.Key)).ToList();
+        var objects = Game1.objectData.Where(kv => kv.Key.StartsWith(prefix) && !OffWiki("(O)" + kv.Key)).Select(kv => Item("(O)" + kv.Key)).ToList();
+        var bigCraftables = Game1.bigCraftableData.Where(kv => kv.Key.StartsWith(prefix) && !OffWiki("(BC)" + kv.Key)).Select(kv => Item("(BC)" + kv.Key)).ToList();
 
-        var recipes = CraftingRecipe.craftingRecipes.Where(kv => kv.Key.StartsWith(prefix)).Select(kv =>
+        // (A recipe or a shop entry for an item the wiki leaves out is left out too.)
+        bool RecipeOffWiki(string raw)
+        {
+            var f = raw.Split('/');
+            return OffWiki((f[3] == "true" ? "(BC)" : "(O)") + f[2].Split(' ')[0]);
+        }
+        var recipes = CraftingRecipe.craftingRecipes.Where(kv => kv.Key.StartsWith(prefix) && !RecipeOffWiki(kv.Value)).Select(kv =>
         {
             var f = kv.Value.Split('/');
             var yield = f[2].Split(' ');
@@ -566,7 +601,7 @@ internal static class DevMedia
             return new { item = Name(id), id, makes = yield.Length > 1 ? int.Parse(yield[1]) : 1, ingredients = Ingredients(f[0]), level, known = ArtItems.StarterRecipes.Contains(kv.Key) };
         }).ToList();
 
-        var shop = DataLoader.Shops(Game1.content)[Shop.ArtShop.ShopId].Items.Select(i => new
+        var shop = DataLoader.Shops(Game1.content)[Shop.ArtShop.ShopId].Items.Where(i => !OffWiki(i.ItemId)).Select(i => new
         {
             item = Name(i.ItemId),
             id = i.ItemId,
@@ -617,7 +652,8 @@ internal static class DevMedia
             var tastes = DataLoader.NpcGiftTastes(Game1.content).TryGetValue(npc, out string raw) ? raw.Split('/') : Array.Empty<string>();
             object Taste(int field) => field < tastes.Length
                 ? tastes[field].Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(t => !t.StartsWith("-"))
-                    .Select(t => t.StartsWith("(") ? t : "(O)" + t).Select(id => { Icons.Add(id); return (object)new { id, name = Name(id) }; }).ToList()
+                    .Select(t => t.StartsWith("(") ? t : "(O)" + t).Where(id => !OffWiki(id))
+                    .Select(id => { Icons.Add(id); return (object)new { id, name = Name(id) }; }).ToList()
                 : new List<object>();
             return new
             {
@@ -628,8 +664,8 @@ internal static class DevMedia
             };
         }
 
-        // The frame styles (1.3): rarity, trait and the item.
-        var frames = ArtItems.FrameStyles.Select(f =>
+        // The frame styles (1.3): rarity, trait and the item. Not the Debug-only ones.
+        var frames = ArtItems.FrameStyles.Where(f => !ArtItems.IsDebugOnly(f)).Select(f =>
         {
             var (rarity, trait) = Painting.Frames.Of(f);
             string id = "(O)" + f.ItemId;
@@ -676,7 +712,9 @@ internal static class DevMedia
         };
         File.WriteAllText(Path.Combine(Dir, "wikidata.json"), JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true }));
 
-        // An icon for every item, at the game's 16px (the wiki scales them).
+        // An icon for every item, at the game's 16px (the wiki scales them). Never one for an item the
+        // wiki leaves out, however it was reached.
+        Icons.RemoveWhere(OffWiki);
         string iconDir = Path.Combine(Dir, "icons");
         Directory.CreateDirectory(iconDir);
         foreach (string id in Icons)

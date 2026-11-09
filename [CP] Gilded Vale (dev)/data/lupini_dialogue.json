@@ -77,7 +77,10 @@
         "AcceptGift_(O)167": "{{i18n:lupini.dialogue.AcceptGift_167}}",
         "AcceptGift_(O)330": "{{i18n:lupini.dialogue.AcceptGift_330}}",
         "AcceptBirthdayGift_Positive": "{{i18n:lupini.dialogue.AcceptBirthdayGift_Positive}}",
-        "AcceptBirthdayGift_Negative": "{{i18n:lupini.dialogue.AcceptBirthdayGift_Negative}}"
+        "AcceptBirthdayGift_Negative": "{{i18n:lupini.dialogue.AcceptBirthdayGift_Negative}}",
+
+        // ---- Once (conversation topics, added by the trigger action below) ----
+        "blinxxy.MuseArt_ValeBram": "{{i18n:lupini.dialogue.bram}}"
       }
     },
     // Rainy days (the game's own file for every villager).
@@ -86,6 +89,21 @@
       "Target": "Characters/Dialogue/rainy",
       "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"},
       "Entries": { "Lupini": "{{i18n:lupini.dialogue.rainy}}" }
+    },
+    // Bram's plain stone in the graveyard: Lupini scratched the name on. Said once, the morning after you've
+    // read it (ArtStudio/Vale/ValeGraves.cs sets the flag), as a conversation topic.
+    {
+      "Action": "EditData",
+      "Target": "Data/TriggerActions",
+      "When": {"ValeResidents": "true", "HasFile:assets/lupini/sprites.png": "true", "HasFile:assets/lupini/portraits.png": "true"},
+      "Entries": {
+        "blinxxy.MuseArt_ValeBramTalk": {
+          "Id": "blinxxy.MuseArt_ValeBramTalk",
+          "Trigger": "DayStarted",
+          "Condition": "PLAYER_HAS_MAIL Current blinxxy.MuseArt_ValeGraveRead_bram Any",
+          "Actions": [ "AddConversationTopic blinxxy.MuseArt_ValeBram 112" ]
+        }
+      }
     }
   ]
 }

@@ -1,0 +1,16 @@
+// OpalCorrie's days (docs/corrie_twins_brief.md, "Schedule"). A time is when she sets off.
+// Studio II: behind the counter 4 9, at her drawing board 7 5, her bed 4 6.
+// The Exhibition Hall days (two a week once Lupini's 8-heart event reopens it) are a patch
+// in data/opal.json; Saturday's bus to Pelican Town is data/vale_town_trips.json.
+{
+  // The counter in the mornings; afternoons out: the plaza, looking up at the Exhibition
+  // Hall's windows, then the Vale House tea room (the table by the dresser); her drawing
+  // board in the evening.
+  "spring": "800 blinxxy.MuseArt_ValeStudio2 4 9 2/1300 blinxxy.MuseArt_GildedVale 36 41 0/1530 blinxxy.MuseArt_ValeHouse 17 25 1/1900 blinxxy.MuseArt_ValeStudio2 7 5 0/2200 blinxxy.MuseArt_ValeStudio2 4 6 2",
+  // Rain: the colour's off the floor and she's in all day, the counter then her board.
+  "rain": "800 blinxxy.MuseArt_ValeStudio2 4 9 2/1300 blinxxy.MuseArt_ValeStudio2 7 5 0/2200 blinxxy.MuseArt_ValeStudio2 4 6 2",
+  // Winter: afternoons at Tobin's, by his wheel, arguing about whose workshop is warmer.
+  "winter": "800 blinxxy.MuseArt_ValeStudio2 4 9 2/1300 blinxxy.MuseArt_ValePottery 16 18 3/1700 blinxxy.MuseArt_ValeStudio2 7 5 0/2200 blinxxy.MuseArt_ValeStudio2 4 6 2",
+  // Saturday (when the town trips are off): a late start, the tea room all afternoon.
+  "Sat": "900 blinxxy.MuseArt_ValeStudio2 4 9 2/1200 blinxxy.MuseArt_ValeHouse 17 25 1/1800 blinxxy.MuseArt_ValeStudio2 7 5 0/2200 blinxxy.MuseArt_ValeStudio2 4 6 2"
+}

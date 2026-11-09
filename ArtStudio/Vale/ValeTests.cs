@@ -31,9 +31,12 @@ internal static class ValeTests
         new("EmmettWren", "emmett", ModEntry.Id + "_ValeEmmett", new Point(6, 6), "(O)281", "(O)766"),
         // Tess Brand, from Winter 1, Year 3 (Studio III, between her bed and the door)
         new("TessBrand", "tess", ModEntry.Id + "_ValeStudio3", new Point(4, 9), "(O)709", "(O)168"),
+        // the Corrie twins, from Spring 1, Year 3 (Studio II, their beds at either end)
+        new("OpalCorrie", "opal", ModEntry.Id + "_ValeStudio2", new Point(4, 6), "(O)595", "(O)168"),
+        new("JetCorrie", "jet", ModEntry.Id + "_ValeStudio2", new Point(17, 6), "(O)70", "(O)168"),
     };
 
-    private static readonly string[] ArtLovers = { "Lupini", "TobinClay", "FernAster", "EmmettWren", "TessBrand" };
+    private static readonly string[] ArtLovers = { "Lupini", "TobinClay", "FernAster", "EmmettWren", "TessBrand", "OpalCorrie", "JetCorrie" };
 
     // The counters and the tile actions the dev pack puts on them (data/vale_shops.json).
     private static readonly (string Location, Point Tile, string ActionStart, string Shop)[] Counters =
@@ -171,7 +174,12 @@ internal static class ValeTests
     // town also report how long the walk is, for setting their times.
     private static void CheckSchedule(IMonitor monitor, NPC npc)
     {
-        foreach (var (key, script) in npc.getMasterScheduleRawData())
+        if (npc.getMasterScheduleRawData() is not { } schedules)
+        {
+            Info(monitor, $"{npc.Name} has no schedule yet: stays home");
+            return;
+        }
+        foreach (var (key, script) in schedules)
         {
             if (key.StartsWith("marriage"))
                 continue;

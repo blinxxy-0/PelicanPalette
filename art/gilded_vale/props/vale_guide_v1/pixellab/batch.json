@@ -1,0 +1,187 @@
+{
+ "batch": "vale_guide_v1",
+ "date": "2026-11-09",
+ "balance_before": 137,
+ "balance_after": 82,
+ "generations_spent": 55,
+ "approved_cap": 55,
+ "jobs": {
+  "headstone_A1": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "24e242ee-c4c0-454d-9778-1fc90eefa8de",
+   "width": 16,
+   "height": 32,
+   "no_background": true,
+   "style_image": "style_ref_vanilla_tombstone.png (spring_town.png tile 0,9, 1x2)",
+   "style_usage": "Stardew Valley's own tombstone: match its palette, outline, shading and size exactly",
+   "description": "A small old carved stone headstone in a village graveyard, Stardew Valley style, front view slightly from above. Pale grey granite, rounded arched top, a smooth recessed face panel cut deep and clean (left blank, no text), a thin carved border, a short plinth at the base with a few grass tufts. Soft grey shading, darker grey outline.",
+   "charged_generations": 5
+  },
+  "headstone_A2": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "10a7fdd3-a5db-48df-9c72-11a5d172274b",
+   "width": 16,
+   "height": 32,
+   "no_background": true,
+   "style_image": "style_ref_vanilla_tombstone.png (spring_town.png tile 0,9, 1x2)",
+   "style_usage": "Stardew Valley's own tombstone: match its palette, outline, shading and size exactly",
+   "description": "A small old carved stone headstone in a village graveyard, Stardew Valley style, front view slightly from above. Warm grey sandstone, top with carved shoulders and a pointed gable, a flat face cut deep and clean (left blank, no text), a short base step, a little moss at the foot. Soft shading, darker grey outline.",
+   "charged_generations": 5
+  },
+  "headstone_A3": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "e959e3c6-8c07-4ba5-ac8f-1c31f3dbdcd3",
+   "width": 16,
+   "height": 32,
+   "no_background": true,
+   "style_image": "style_ref_vanilla_tombstone.png (spring_town.png tile 0,9, 1x2)",
+   "style_usage": "Stardew Valley's own tombstone: match its palette, outline, shading and size exactly",
+   "description": "A small old carved stone headstone in a village graveyard, Stardew Valley style, front view slightly from above. Blue-grey slate, a gently rounded top with two small carved scrolls at the shoulders, a smooth face cut deep and clean (left blank, no text), set on a low stone footing with grass tufts. Soft shading, darker blue-grey outline.",
+   "charged_generations": 5
+  },
+  "echo_agnes_ink": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "08a4def8-153b-44cd-9f9b-59fe3bc54d34",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "A loose unfinished pixel-art sketch of a woman painter at work, side view facing right, standing at a wooden easel with a small canvas, her brush raised mid-stroke, palette in her other hand, hair tied up, a long smock. Drawn as quick sepia-brown ink linework with a pale cream wash, lines trailing off unfinished at her skirt hem and the easel legs. Solid opaque strokes, not a ghost. Stardew Valley NPC scale."
+  },
+  "echo_agnes_oil": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "f55b9b4f-9dac-4897-950a-38104db08e68",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "A woman painter at work, side view facing right, standing at a wooden easel with a small canvas, her brush raised mid-stroke, palette in her other hand, hair tied up, a long smock. Painted in loose visible brushstrokes of gold, ochre and warm umber, like an unfinished oil sketch: edges left rough, the lower skirt and easel legs fading into a few loose strokes. Solid opaque paint, not a ghost. Stardew Valley NPC scale."
+  },
+  "echo_hollis_ink": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "bb26b227-1cf8-4fea-a1d3-29d495b24bd3",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "A loose unfinished pixel-art sketch of an old man woodcut artist at work, side view facing right, sitting on a stool at a low workbench, bent over a woodblock, cutting it with a small gouge in one hand, sleeves rolled up, a cap. Drawn as quick sepia-brown ink linework with a pale cream wash, lines trailing off unfinished at the stool legs and bench. Solid opaque strokes, not a ghost. Stardew Valley NPC scale."
+  },
+  "echo_hollis_oil": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "a98008b9-c5df-4f75-88fd-f8e274a8c57d",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "An old man woodcut artist at work, side view facing right, sitting on a stool at a low workbench, bent over a woodblock, cutting it with a small gouge in one hand, sleeves rolled up, a cap. Painted in loose visible brushstrokes of gold, ochre and warm umber, like an unfinished oil sketch: edges left rough, the stool and bench legs fading into a few loose strokes. Solid opaque paint, not a ghost. Stardew Valley NPC scale."
+  },
+  "echo_mabel_ink": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "d2082368-b9d2-4716-9fa4-15d44c47a84c",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "A loose unfinished pixel-art sketch of a woman stained-glass maker, side view facing right, standing by her workbench, holding a small piece of coloured glass up to the light at arm's length, looking at it, an apron, hair in a bun. The glass piece is the only bright colour, a jewel blue. Drawn as quick sepia-brown ink linework with a pale cream wash, lines trailing off unfinished at her skirt hem and the bench legs. Solid opaque strokes, not a ghost. Stardew Valley NPC scale."
+  },
+  "echo_mabel_oil": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "1f9434f1-fc65-4d18-b2d4-54a6df767f20",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "A woman stained-glass maker, side view facing right, standing by her workbench, holding a small piece of coloured glass up to the light at arm's length, looking at it, an apron, hair in a bun. Painted in loose visible brushstrokes of gold, ochre and warm umber, like an unfinished oil sketch, the glass a bright jewel blue: edges left rough, the skirt hem and bench legs fading into a few loose strokes. Solid opaque paint, not a ghost. Stardew Valley NPC scale."
+  },
+  "echo_bram_ink": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "c09ced39-fa7f-4921-a656-7ea573193e9c",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "A loose unfinished pixel-art sketch of a burly bearded stone carver at work, side view facing right, standing at a block of stone on a low stand, a mallet raised in one hand and a chisel held to the stone in the other, a leather apron. Drawn as quick sepia-brown ink linework with a pale cream wash, lines trailing off unfinished at his boots and the stand. Solid opaque strokes, not a ghost. Stardew Valley NPC scale."
+  },
+  "echo_bram_oil": {
+   "route": "MCP create_image_pro_flash",
+   "job_id": "92fe1bee-ba8a-4762-9bf7-e8f76edefed0",
+   "width": 32,
+   "height": 48,
+   "no_background": true,
+   "style_image": "style_ref_lupini_side.png (Lupini's side-facing walk frame, 16x32)",
+   "style_usage": "a Stardew Valley villager sprite: match its size, proportions and pixel scale (the figure about this tall)",
+   "style_options": {
+    "color_palette": false,
+    "outline": false,
+    "detail": true,
+    "shading": false
+   },
+   "look": "ink: sepia ink linework with a pale cream wash; oil: loose gold, ochre and umber brushstrokes",
+   "charged_generations": 5,
+   "description": "A burly bearded stone carver at work, side view facing right, standing at a block of stone on a low stand, a mallet raised in one hand and a chisel held to the stone in the other, a leather apron. Painted in loose visible brushstrokes of gold, ochre and warm umber, like an unfinished oil sketch: edges left rough, his boots and the stand fading into a few loose strokes. Solid opaque paint, not a ghost. Stardew Valley NPC scale."
+  }
+ }
+}
