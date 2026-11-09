@@ -1,8 +1,9 @@
 """Patches the committed Gilded Vale map in place, for the pieces added after
 build_vale.py stopped reproducing it exactly (its rebuild doesn't give the committed
-map back, 2026-11-08): the waterfall, the overlook and the hidden sculpture.
+map back, 2026-11-08): the waterfall, the overlook, the hidden sculpture and the
+terraces' snowed stairs.
 
-Shared by tools/vale_falls.py, vale_overlook.py and vale_sculpture.py:
+Shared by tools/vale_falls.py, vale_overlook.py, vale_sculpture.py and vale_terrace_stairs.py:
 - load() / save(): the map's tile layers, TileData objects and map properties, written
   back as vale_yards._patch writes them, so loading and saving changes nothing.
 - context(): the vanilla ground table and Town's tiles, as build_vale.paint_ground has them.
@@ -18,7 +19,9 @@ import build_vale as bv
 FALLS_BOX = (74, 0, 89, 13)          # the rim cliff, the fall and the basin
 OVERLOOK_BOX = (80, 53, 95, 75)      # the bluff, its steps, the lake's east shore below it (row 53: the woods behind its rim)
 SCULPTURE_BOX = (6, 43, 7, 45)       # the corner pocket (x 6-7, y 44-45) and the tile above it
-BOXES = {"falls": FALLS_BOX, "overlook": OVERLOOK_BOX, "sculpture": SCULPTURE_BOX}
+# the terraces' four flights (build_vale.STAIR_SPOTS), their art's rows only: snowed on in winter
+STAIR_BOXES = {f"stairs_{sx}_{top}": (sx, top, sx + 3, top + 5) for sx, top in bv.STAIR_SPOTS}
+BOXES = {"falls": FALLS_BOX, "overlook": OVERLOOK_BOX, "sculpture": SCULPTURE_BOX, **STAIR_BOXES}
 
 
 class ValeMap:

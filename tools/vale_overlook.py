@@ -280,8 +280,8 @@ def snow_treads(im):
     snowed() lays it on a feature's top: the stairs art is a stack of slabs, each a lit
     tread (4 rows, its nose the lightest) over a dark riser and a shadow line. The
     treads go white, their ends and first row a shade of the snow, their nose the
-    snow's shaded edge; the risers stay stone. (Winter only: the terraces' flights,
-    outside the overlook, keep their bare winter look.)"""
+    snow's shaded edge; the risers stay stone. (Winter only. The terraces' flights take
+    the same copies: vale_terrace_stairs.)"""
     im = im.copy()
     px = im.load()
     W, H = im.size
@@ -310,7 +310,10 @@ def flight_pieces(m, ctx):
     """The lower terrace's flight (FLIGHT_FROM: treads on Back2, side walls on
     Buildings2) as this module's own copies in the Vale's seasonal sheets: the same art
     in spring, summer and fall, snow on its treads in winter (snow_treads). Their gid
-    -> our gid. The terraces' flights keep the shared originals."""
+    -> our gid. The terraces' flights are laid from the same copies (vale_terrace_stairs),
+    so the source flight may already hold them: every season is built from its spring
+    art (the stairs art is one picture in all four seasons; build_vale.place_buildings),
+    never from a winter tile that is already snowed on, and the same slots come back."""
     from PIL import Image
     from vale_sculpture import Sheets
     from vale_feature_fixes import FEATURE_FIRST, SEASONS
@@ -318,13 +321,11 @@ def flight_pieces(m, ctx):
     cells = [(i, j, "Back2" if i in (1, 2) else "Buildings2") for j in range(6) for i in range(4)]
     gids = [m.g[layer][ft + j][fx + i] for i, j, layer in cells]
     sheets = Sheets(ctx.assets)
-    art = {}
-    for se in SEASONS:
-        im = Image.new("RGBA", (64, 96))
-        for (i, j, _), g in zip(cells, gids):
-            if FEATURE_FIRST <= g < FEATURE_FIRST + 10000:
-                im.paste(sheets.im[se].crop(sheets.box(g)), (i * 16, j * 16))
-        art[se] = snow_treads(im) if se == "winter" else im
+    im = Image.new("RGBA", (64, 96))
+    for (i, j, _), g in zip(cells, gids):
+        if FEATURE_FIRST <= g < FEATURE_FIRST + 10000:
+            im.paste(sheets.im["spring"].crop(sheets.box(g)), (i * 16, j * 16))
+    art = {se: snow_treads(im) if se == "winter" else im for se in SEASONS}
     wants = [{se: art[se].crop((i * 16, j * 16, i * 16 + 16, j * 16 + 16)) for se in SEASONS} for i, j, _ in cells]
     slots = own_slots(m, ctx, wants)
     return {g: v for g, v in zip(gids, slots) if FEATURE_FIRST <= g < FEATURE_FIRST + 10000}
