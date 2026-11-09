@@ -1,8 +1,8 @@
-# Opal and Jet Corrie's heart events (2 and 4 hearts approved by the user 2026-11-09; 6 to 10 a DRAFT)
+# Opal and Jet Corrie's heart events (approved by the user 2026-11-09; not built)
 
 From the brief's outlines (`docs/corrie_twins_brief.md`, "Heart events"). The 2- and 4-heart events
-were approved 2026-11-09; the 6- to 10-heart ones are further down, after Jet's 4. Nothing here is
-built yet.
+and the 6- to 10-heart ones (further down, after Jet's 4) were all approved 2026-11-09. Nothing here
+is built yet.
 
 Each twin has their own hearts and their own events, and both twins turn up in most of them: whose
 hearts trigger it decides whose story it is. Opal is loud and long, Jet says one sentence where she
@@ -111,6 +111,182 @@ hearts with Jet and his 2-heart event seen.
 
 **After:** his Mon4 line (learning at the bench) stands on this. He sits at it for the first time at
 10 hearts, to finish her design.
+
+---
+
+# 6 to 10 hearts
+
+Two of these depend on the Exhibition Hall, which reopens at Lupini's 8 hearts (the mail flag
+`blinxxy.MuseArt_ValeHallOpen`). Each has a version for a Hall that's still shut, so Opal's story can
+be finished without Lupini (`docs/design/vale_newcomers.md`, section 3).
+
+## Opal
+
+### 6 hearts: the Hall's windows (the plaza, an afternoon)
+
+**Trigger:** you're on the plaza between 1pm and 3:30pm (she's out looking up at the Hall), on a fine
+day, with 6+ hearts with Opal and her 4-heart event seen.
+
+**Scene (the Hall still shut):**
+- Opal is standing in front of the Exhibition Hall with a sketchbook held up against the light,
+  squinting from it to the dusty windows and back. `$h` "There you are! Stand here. No, here. Now
+  look up."
+- `$0` "Those windows went in the year we were born. Plain glass, cheap, because the Vale couldn't
+  afford anything else. Mabel said she'd do them properly one day. She never got round to it."
+- She turns the sketchbook round: the Hall's windows redrawn, each one a season of the Vale, in
+  coloured pencil. `$l` "Spring, summer, fall, winter. Four windows. I've been drawing them for
+  forty years. On napkins, in meetings. On a contract once."
+- **Choice:**
+  - "They're beautiful." → `$h` "They are, aren't they! I'm not even going to pretend to be modest."
+  - "Who would you have to ask?" → `$u` "Lupini, I suppose. He'd say yes and then forget. And somebody
+    would have to open the place first."
+  - "Make them anyway." → `$l` "...For a building nobody goes in. Yes. Why not."
+- She closes the sketchbook. `$s` "Twenty years ago I'd have had a team of forty on this by Friday.
+  Now it's me, and Jet, and our hands. If they still work."
+
+**Scene (the Hall open):** the same, but inside the gallery with Lupini, on one of their Hall days.
+Opal pitches the four seasons to him across the reception desk; he pretends to haggle, then says yes
+before she's finished. `$u` Opal: "He had one coat and no money when we met him. Now look at him,
+running a gallery." Lupini, to you: "She hasn't changed. Not one bit. Thank goodness."
+
+**After:** the studio's 6-heart stage: their own glass lamps replace the city ones (she gives the
+city lamps to the loft, "where they can be expensive in private").
+
+### 8 hearts: her first panel (Studio II, an evening)
+
+**Trigger:** you enter Studio II between 7pm and 10pm (she's at her drawing board), with 8+ hearts
+with Opal and her 6-heart event seen.
+
+**Scene:**
+- The kiln is open, still ticking as it cools. Opal is standing in front of it holding a small panel
+  in both hands: a sunflower, every piece cut and leaded by her, and a crack straight across the
+  middle.
+- `$s` "My first one. All mine, start to finish. The first in twenty years. And it cracked in the kiln."
+- `$s` "Do you know what I'm frightened of? That my hands have forgotten. That we didn't come home to
+  make things. We came home because they sold us, and we had nowhere else to go, and I'm just very
+  good at talking about it."
+- **Choice:**
+  - "One crack doesn't mean your hands forgot." → `$l` "No. It means I rushed the cooling. I know that.
+    I knew it this morning."
+  - "Show me how you made it." → She does: the cartoon, the cutting, the lead. Halfway through she
+    stops. `$l` "...I do remember. Don't I."
+  - "You came home because you wanted to." → `$s` "Did I? I'd like to believe that."
+- In the doorway behind her is Jet, back from somewhere, holding his coat. He heard. He doesn't say
+  anything. He crosses to the kiln, takes the cracked panel from her gently, and holds it up to the
+  lamp. The crack throws a thin bright line across the floor.
+- Jet: `$l` "Mabel's first one cracked too. She kept it."
+- Opal laughs, crying a bit. `$u` "She did! It's in the loft somewhere. Oh, Jet."
+
+**After:** her Mon8 line (her hands remembering) stands on this. The cracked sunflower hangs in her
+half of the studio from now on (a small piece of art, after the refill).
+
+### 10 hearts: morning light (the Exhibition Hall, at sunrise)
+
+**Trigger:** you get a letter from Opal ("Come to the Hall at six. Don't be late, the sun won't
+wait."), then go to the Exhibition Hall between 6am and 8am, with 10 hearts with Opal, her 8-heart
+event seen and the Hall reopened.
+
+**Scene (the Hall open):**
+- The gallery is empty and dim. Opal and Jet are standing in the middle of the floor, not talking,
+  which you've never seen.
+- The sun comes up. Through the first of the new windows (behind us, above the door), colour comes
+  across the floor: a pool of spring green and gold that slides slowly over the tiles as the sun
+  climbs.
+- Opal, very quietly for her: `$l` "Spring. The first of the four."
+- They watch it for a long time. Jet: `$l` "It's good, Opal."
+- `$h` "It's ours." She takes your arm on one side and Jet's on the other. "All three of ours. You held
+  the ladder."
+- **Choice:**
+  - "It's the most beautiful thing in the Vale." → `$u` "Don't tell Lupini." 
+  - "Mabel would be proud." → `$s` then `$l` "...She'd say the lead's too thick. And then she'd cry."
+  - (Watch the light.) → Nobody says anything until it's reached the far wall.
+
+**Scene (the Hall still shut):** the same, at Bea's: the Vale House tea room at dawn, a new window in
+the tea room's wall, the colour across the tea tables. Bea brings three cups of tea and a fourth for
+herself, and sits down, which she never does. Bea: "My aunt always wanted a window like that." Opal:
+`$l` "I know. She told me. I was nine."
+
+**After:** you get a small stained-glass window of your own (spring, the first of the four: a new
+furniture item, after the refill). The Hall's windows (or the tea room's) stay coloured for good.
+
+## Jet
+
+### 6 hearts: the loft (Studio II, an afternoon)
+
+**Trigger:** you enter Studio II between 1pm and 5pm, with 6+ hearts with Jet and his 4-heart event seen.
+
+**Scene:**
+- Jet is coming down the ladder from the loft with a box on his shoulder, coughing in the dust. More
+  boxes are stacked at its foot. `$u` "Opal's lamps need the room."
+- He hands you a box. `$0` "Sort. Keep, or bin." It's full of things the twins left behind twenty
+  years ago: a cracked mug, their school reports, a pair of tiny safety glasses.
+- At the bottom: a book with a cloth cover, its corners worn round. Jet goes still.
+- `$l` "Her pattern book."
+- He turns the pages: windows, years of them, each drawn and coloured and signed M.C. The last page
+  is a window of the Vale at dawn, the sun coming up over gold trees, the river running down the
+  middle. It's half coloured in. The other half is pencil.
+- `$s` "She never finished it. She was ill by then. We left it in the loft when we boarded up."
+- **Choice:**
+  - "You could finish it." → He looks at you a long time. `$s` "...Not yet."
+  - "Will you show Opal?" → `$u` "She'll cry. Then she'll want to change it."
+  - (Say nothing.) → He closes the book very carefully.
+- He puts the book on Mabel's bench, square to its edge, and goes back up the ladder.
+
+**After:** the pattern book lies on Mabel's bench (its right-click text changes to say so). His 10
+hearts is this window.
+
+### 8 hearts: the line (Studio II, an evening)
+
+**Trigger:** you enter Studio II between 7pm and 9pm, with 8+ hearts with Jet and his 6-heart event seen.
+
+**Scene:**
+- Raised voices before the door's even shut. Opal on her side of the line, Jet on his, for real this
+  time: a crate of her sketches has slid over the line into his offcuts.
+- `$a` Opal: "It's three inches, Jet! Three inches of floor!"
+- `$a` Jet: "It's my floor."
+- `$a` Opal: "It's Mabel's floor! You drew that line in the first week of the company and you've been
+  standing behind it ever since!"
+- Silence. Jet looks at you.
+- **Choice** (how to share the middle; each ends the same way):
+  - "Work at Mabel's bench. Both of you." → Opal: `$s` "We can't. It's hers." Jet: "It's in the middle."
+  - "Rub out a bit of the line." → Opal laughs despite herself. `$u` "With what? It's paint. Jet
+    painted it. Of course he did."
+  - "Why did you draw the line?" → Jet: `$s` "So I'd have somewhere that was mine."
+- Jet gets a scraper from his bench and, without a word, scrapes a gap in the line by Mabel's bench,
+  three tiles wide. Opal watches him.
+- Jet, to the floor: `$s` "I never wanted to leave."
+- Opal: `$s` "...I know. I've always known. I went anyway, and you came, and I never once asked you."
+- Jet: `$l` "You didn't have to ask."
+- Opal steps through the gap into the middle. After a moment, so does he.
+
+**After:** the studio's 8-heart stage: the line has a gap by the bench. His Wed8 line (the offcut)
+and her Wed8 line (his looks) stand on this.
+
+### 10 hearts: the window (Studio II, a morning)
+
+**Trigger:** you get a letter from Jet (four words: "Come tomorrow. Early. -J"), then enter Studio II
+between 6am and 9am, with 10 hearts with Jet and his 8-heart event seen.
+
+**Scene:**
+- Jet is sitting at Mabel's bench. You've never seen anyone sit there. Her pattern book is open at the
+  last page; beside it, the window, finished: the Vale at dawn, the sun over the gold trees, the river.
+- `$l` "Finished it last night. Her lines. My cuts."
+- Opal comes in in her dressing gown, sees him at the bench, and stops in the doorway. She doesn't say
+  anything at all, which is how you know.
+- Jet stands, lifts the panel, and the three of you carry it to the big window. He fits it into the
+  frame himself.
+- The sun comes through it. The Vale at dawn lands on the floor across the middle of the studio, right
+  where the line used to be.
+- Opal: `$l` "Oh, Mum."
+- Jet, to you: `$h` "Thank you for holding the ladder."
+- **Choice:**
+  - "She'd be proud of you both." → Opal: `$s` "She'd say we took our time." Jet: `$u` "We did."
+  - "Now you can make your own." → Jet: `$h` "Already started." He shows you a drawing: a window for
+    your farmhouse.
+  - (Look at the light.) → Nobody says anything for a long time.
+
+**After:** the studio's 10-heart stage: Mabel's window in the studio's window, her bench in use (they
+take turns at it). You get the window he drew for your farmhouse (a furniture item, after the refill).
 
 ---
 
