@@ -20,6 +20,7 @@ GUIDE_JSON = os.path.join(PACK, "data", "vale_guide.json")
 GROVE_CS = os.path.join(ROOT, "ArtStudio", "Vale", "GildedGrove.cs")
 ECHOES = ("agnes", "hollis", "mabel", "bram")
 SOLID_MARKERS = {9, 10, 11, 24, 25, 26}     # Paths: oak, maple, pine; large, medium, small bush
+GROVE_SHEET_FIRST = 40000                   # the Grove's own sheet's first gid (build_vale_grove.SHEET_FIRST)
 
 
 class Map:
@@ -127,27 +128,104 @@ def test_grove_closed():
     assert not open_, open_
 
 
+def echo_feet(m):
+    """{id: [foot tiles, left to right]}: an echo is 2 x 3 tiles, and both tiles of its foot carry its action."""
+    out = collections.defaultdict(list)
+    for p, a in sorted(m.actions("blinxxy.MuseArt_Echo").items()):
+        out[" ".join(a)].append(p)
+    return dict(out)
+
+
 def test_grove_actions():
-    # one frame home, one hidden easel, one Founders' easel, and an echo for each buried artist
+    # one frame home, one hidden easel, one Founders' easel, and an echo for each buried artist,
+    # its 2-wide foot both tiles of it
     m = grove()
     assert len(m.actions("blinxxy.MuseArt_GroveFrame")) == 1
     assert len(m.actions("blinxxy.MuseArt_HiddenEasel")) == 1
     assert len(m.actions("blinxxy.MuseArt_FoundersEasel")) == 1
-    echoes = sorted(a[0] for a in m.actions("blinxxy.MuseArt_Echo").values() if len(a) == 1)
-    assert echoes == sorted(ECHOES), echoes
+    feet = echo_feet(m)
+    assert sorted(feet) == sorted(ECHOES), feet
+    for name, tiles in feet.items():
+        (x, y) = tiles[0]
+        assert tiles == [(x, y), (x + 1, y)], f"{name}: foot {tiles}"
 
 
 def test_echo_tiles_animated():
-    # each echo (its foot on Buildings, its top on Front above it) has a TMX animation of 2+ frames
+    # each echo's six tiles (its foot on Buildings, the two rows above on Front) are TMX animations of
+    # 2+ frames, the first frame the tile itself, all at the same speed
     m = grove()
-    echoes = {a[0]: p for p, a in m.actions("blinxxy.MuseArt_Echo").items() if len(a) == 1}
-    assert sorted(echoes) == sorted(ECHOES), echoes
-    for name, (x, y) in echoes.items():
-        for layer, ty in (("Buildings", y), ("Front", y - 1)):
-            gid = m.at(layer, x, ty)
-            frames = m.animations.get(gid, [])
-            assert len(frames) >= 2 and len(set(frames)) >= 2, f"{name} {layer} tile {gid}: {frames}"
-            assert frames[0] == gid, f"{name} {layer}: first frame should be the tile itself"
+    for name, tiles in echo_feet(m).items():
+        x, y = tiles[0]
+        for layer, ty in (("Buildings", y), ("Front", y - 1), ("Front", y - 2)):
+            for tx in (x, x + 1):
+                gid = m.at(layer, tx, ty)
+                frames = m.animations.get(gid, [])
+                assert len(frames) >= 2 and len(set(frames)) >= 2, f"{name} {layer} {tx},{ty} tile {gid}: {frames}"
+                assert frames[0] == gid, f"{name} {layer}: first frame should be the tile itself"
+        assert not m.at("Front", x, y - 3) and not m.at("Front", x + 1, y - 3), f"{name}: something over its head"
+
+
+def piece_tiles(m):
+    """{(x, y): name} for every tile of the Grove's pieces: the action tiles on Buildings, and the
+    Grove-sheet tiles on Front above them."""
+    out = {}
+    for name in ("GroveFrame", "HiddenEasel", "FoundersEasel", "Echo"):
+        for (x, y), args in m.actions("blinxxy.MuseArt_" + name).items():
+            label = f"{name} {' '.join(args)}".strip()
+            out[(x, y)] = label
+            ty = y - 1
+            while ty >= 0 and m.at("Front", x, ty) >= GROVE_SHEET_FIRST:
+                out[(x, ty)] = label
+                ty -= 1
+    return out
+
+
+def test_tall_feet_only():
+    # only a piece's bottom row is solid; the rest is on Front, so you walk behind it
+    m = grove()
+    for (x, y), name in piece_tiles(m).items():
+        if m.at("Buildings", x, y) >= GROVE_SHEET_FIRST:
+            assert not m.walkable(x, y), (name, x, y)
+        else:
+            assert m.walkable(x, y), f"{name}: its top at {x},{y} should be walkable"
+
+
+def test_pieces_have_room():
+    # no piece in the woods or under their canopy (AlwaysFront), in the pool, or on another piece
+    m = grove()
+    tiles = piece_tiles(m)
+    for (x, y), name in tiles.items():
+        for i in (-1, 0, 1):
+            for j in (-1, 0, 1):
+                assert not m.at("AlwaysFront", x + i, y + j), f"{name} at {x},{y}: the woods' canopy beside it"
+                f = m.at("Front", x + i, y + j)
+                assert not f or f >= GROVE_SHEET_FIRST, f"{name} at {x},{y}: the woods beside it"
+        assert not m.water(x, y), (name, x, y)
+
+
+def test_finished_canvas_on_sheet():
+    # GildedGrove.cs draws the Founders' easel's finished canvas from the Grove's sheet: its source
+    # tile there is the finished easel's top (the canvas), and the rest of the easel matches the empty one
+    from PIL import Image
+    text = open(GROVE_CS, encoding="utf-8").read()
+    col = int(re.search(r"FinishedCanvasColumn\s*=\s*(\d+)", text).group(1))
+    row = int(re.search(r"FinishedCanvasRow\s*=\s*(\d+)", text).group(1))
+    sheet = Image.open(os.path.join(PACK, "assets", "GildedGrove.png")).convert("RGBA")
+    art = os.path.join(ROOT, "art", "gilded_vale", "props", "vale_guide_final")
+    canvas = Image.open(os.path.join(art, "founders_canvas.png")).convert("RGBA")
+    empty = Image.open(os.path.join(art, "founders_easel.png")).convert("RGBA")
+    got = sheet.crop((col * 16, row * 16, col * 16 + 16, row * 16 + 16))
+    assert got.tobytes() == canvas.crop((0, 0, 16, 16)).tobytes(), "the source isn't the finished canvas"
+    assert canvas.crop((0, 16, 16, 32)).tobytes() == empty.crop((0, 16, 16, 32)).tobytes(), "the easel's foot differs"
+    m = grove()
+    (fx, fy), = m.actions("blinxxy.MuseArt_FoundersEasel")
+    assert cs_point("FoundersEaselTile") == (fx, fy), (cs_point("FoundersEaselTile"), (fx, fy))
+    top = m.at("Front", fx, fy - 1) - GROVE_SHEET_FIRST
+    cols = sheet.width // 16
+    shown = sheet.crop((top % cols * 16, top // cols * 16, top % cols * 16 + 16, top // cols * 16 + 16))
+    assert shown.tobytes() == empty.crop((0, 0, 16, 16)).tobytes(), "the map's easel isn't the empty one"
+    (hx, hy), = m.actions("blinxxy.MuseArt_HiddenEasel")
+    assert cs_point("HiddenEaselTile") == (hx, hy), (cs_point("HiddenEaselTile"), (hx, hy))
 
 
 def test_grove_fish_only_here():
@@ -167,7 +245,7 @@ def test_grove_reachable():
     for name in ("GroveFrame", "HiddenEasel", "FoundersEasel", "Echo"):
         for p, args in m.actions("blinxxy.MuseArt_" + name).items():
             targets[f"{name} {' '.join(args)}".strip()] = p
-    assert len(targets) == 7, targets
+    assert len(targets) == 7, targets      # (an echo's two foot tiles count once)
     blocked = {n: p for n, p in targets.items()
                if not any((p[0] + dx, p[1] + dy) in seen for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
     assert not blocked, blocked

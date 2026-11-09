@@ -16,12 +16,12 @@ How it's made (docs/terrain_painting.md):
 - Along the north edge the Grove ends in a drop, and below it the Vale is a painted panorama;
   the hidden easel stands at the edge, looking at it (plein air paints what's in front of an easel).
 
-The panorama, the frame home, both easels and the echoes are PLACEHOLDER art until the art
-batch's picks land: each is one entry in PIECES (and PANORAMA), so the final art drops in there.
+The panorama, the frame home, both easels and the echoes are the art batch's picks (the user,
+2026-11-09), made final by tools/art/vale_guide_final.py in art/gilded_vale/props/vale_guide_final/.
 """
-import collections, math, os, random, re, subprocess, sys, tempfile
+import collections, math, os, random, re, sys
 import xml.etree.ElementTree as ET
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
+from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -31,6 +31,7 @@ from render_tmx import layer_data
 from vale_terrain import TOWN_SHEETS, Table
 
 ASSETS = os.path.join(ROOT, "[CP] Gilded Vale (dev)", "assets")
+ART = os.path.join(ROOT, "art", "gilded_vale", "props", "vale_guide_final")
 EXPORTS = os.environ.get("VALE_EXPORTS", "C:/Users/blinx/Desktop/MuseStardew/.devgame/exports_vale")
 VALE_TMX = os.path.join(ASSETS, "GildedVale.tmx")
 OUT_TMX = os.path.join(ASSETS, "GildedGrove.tmx")
@@ -43,34 +44,50 @@ ARRIVAL = (12, 11)                   # GildedGrove.ArrivalTile, and Data/Locatio
 LAYERS = ["Back", "Buildings", "Paths", "Front", "AlwaysFront"]
 CONTEXT = "blinxxy.MuseArt_GroveContext"
 BLOCKER = 126                        # the outdoors sheet's empty tile (index 125): solid, invisible
+INVISIBLE_WALL = 103                 # another (index 102), which the game's ground stacks carry
+WOODS_FLOOR = 1095                   # the shadowed ground under the woods' canopy
+LIGHT_GRASS = {352, 381}             # the woods' stacks' lighter grass
 
 # The view: the Vale below the drop, along the north edge (x, y, width, height in tiles).
 PANORAMA = (6, 0, 22, 7)
-# The pieces, each 1 x 2 tiles: the bottom tile (its foot) is solid and carries the action;
-# the top goes on Front, so you walk behind it (tall things: feet only).
-#   name: (foot x, foot y, Action)
+# The pieces: the bottom row (the foot) is solid on Buildings and every foot tile carries the action;
+# the rows above go on Front, so you walk behind them (tall things: feet only). The easels and the
+# frame are 1 x 2 tiles, the echoes 2 x 3 (a figure at an easel, a bench or a table).
+#   name: (foot's left x, foot y, Action, width, height)
 PIECES = {
-    "frame": (5, 13, "blinxxy.MuseArt_GroveFrame"),
-    "hidden_easel": (16, 8, "blinxxy.MuseArt_HiddenEasel"),
-    "founders_easel": (9, 21, "blinxxy.MuseArt_FoundersEasel"),
-    "echo_agnes": (22, 9, "blinxxy.MuseArt_Echo agnes"),
-    "echo_hollis": (8, 10, "blinxxy.MuseArt_Echo hollis"),
-    "echo_mabel": (17, 20, "blinxxy.MuseArt_Echo mabel"),
-    "echo_bram": (25, 20, "blinxxy.MuseArt_Echo bram"),
+    "frame": (5, 13, "blinxxy.MuseArt_GroveFrame", 1, 2),
+    "hidden_easel": (16, 8, "blinxxy.MuseArt_HiddenEasel", 1, 2),
+    "founders_easel": (9, 21, "blinxxy.MuseArt_FoundersEasel", 1, 2),
+    "echo_agnes": (22, 9, "blinxxy.MuseArt_Echo agnes", 2, 3),
+    "echo_hollis": (8, 10, "blinxxy.MuseArt_Echo hollis", 2, 3),
+    "echo_mabel": (17, 20, "blinxxy.MuseArt_Echo mabel", 2, 3),
+    "echo_bram": (25, 20, "blinxxy.MuseArt_Echo bram", 2, 3),
 }
 PIECE_ORDER = list(PIECES)
-# Art on the sheet that isn't laid on the map (the mod draws it), each 16 x 32, in the columns after
-# the pieces:
-#   founders_canvas: the Founders' easel with a finished canvas on it, drawn over the easel for a
-#   player who has offered it a masterpiece (GildedGrove.FinishedCanvasSource, column 7). Only the
-#   canvas is drawn (rows 0-17), so the rest must match founders_easel.
+PIECES_ROW = PANORAMA[3]            # the pieces' band on the sheet: three rows under the panorama,
+PIECES_ROWS = 3                     # each piece standing on the band's bottom
+# Art on the sheet that isn't laid on the map (the mod draws it), 16 x 32, after the pieces:
+#   founders_canvas: the Founders' easel holding the finished golden canvas, drawn over the easel for
+#   a player who has offered it a masterpiece (GildedGrove.FinishedCanvasSource: its column, the band's
+#   second row). Only the canvas's tile, the top one, is drawn, so the rest matches founders_easel.
 EXTRAS = ["founders_canvas"]
-# The echoes' second frames (the idle motion: a brush, a blade or a piece of glass moving), each 16 x 32,
-# in the columns after EXTRAS, top row and foot row like the pieces. Each echo's tiles (the top on Front,
-# the foot on Buildings) are TMX animations: frame 0 is the tile itself, frame 1 is here.
+# The echoes' second frames (the idle: a brush, a gouge, a piece of glass or a mallet moving a little),
+# 2 x 3 each, after EXTRAS. Each echo's six tiles (the top two rows on Front, the foot on Buildings)
+# are TMX animations: frame 0 is the tile itself, frame 1 the same tile of the second frame.
 ECHO_FRAMES = [n for n in PIECE_ORDER if n.startswith("echo_")]
-ECHO_FRAME_FIRST_COL = len(PIECE_ORDER) + len(EXTRAS)
 ECHO_FRAME_MS = 700
+
+
+def sheet_columns():
+    """{name: first column} on the sheet, for the pieces, the extras and the echoes' second frames
+    ("<echo>#1"), each as many columns wide as it is tiles wide."""
+    cols, c = {}, 0
+    for name in PIECE_ORDER + EXTRAS + [n + "#1" for n in ECHO_FRAMES]:
+        cols[name] = c
+        base = name.split("#")[0]
+        c += PIECES[base][3] if base in PIECES else 1
+    assert c <= SHEET_COLS, c
+    return cols
 # The pool: corners of its water (grid corners), its top corners cut on 45-degree diagonals
 # (west, east), its south shore flat. (The game's pieces turn a short diagonal into a staircase on
 # the west side; a longer one there joins up.)
@@ -332,109 +349,34 @@ def paint_ground(g, table, F):
 PIER_POSTS = set(range(1717, 1723))
 
 
-# ---- the Grove's own sheet: the panorama and the pieces (PLACEHOLDERS) ----
+# ---- the Grove's own sheet: the panorama and the pieces ----
 
-def render_vale_fall(exports):
-    """The Vale in fall, as a picture (tools/render_tmx.py over the fall sheets)."""
-    out = os.path.join(tempfile.gettempdir(), "grove_vale_fall.png")
-    subprocess.run([sys.executable, os.path.join(HERE, "render_tmx.py"), VALE_TMX, out,
-                    "--sheets", os.path.join(exports, "sheets_fall"), "--scale", "1"], check=True, capture_output=True)
-    return Image.open(out).convert("RGBA")
+def art(name):
+    return Image.open(os.path.join(ART, name + ".png")).convert("RGBA")
 
 
-def panorama_art(exports):
-    """PLACEHOLDER: the Vale seen from above in gold light, the drop's grassy lip along its foot.
-    A band of the village, shrunk, warmed and hazed with distance. Replace with the art batch's piece."""
-    pw, ph = PANORAMA[2] * 16, PANORAMA[3] * 16
-    vale = render_vale_fall(exports).crop((8 * 16, 12 * 16, 88 * 16, 44 * 16))
-    pic = vale.resize((pw, ph - 6), Image.BOX)
-    pic = ImageEnhance.Color(pic).enhance(0.8)
-    gold = Image.new("RGBA", pic.size, (255, 200, 110, 255))
-    pic = Image.blend(pic, gold, 0.28)
-    haze = Image.new("RGBA", pic.size)
-    d = ImageDraw.Draw(haze)
-    for y in range(pic.height):                      # farther (higher) is paler
-        d.line([(0, y), (pw, y)], fill=(255, 236, 190, int(150 * (1 - y / pic.height) ** 1.6)))
-    pic.alpha_composite(haze)
-    art = Image.new("RGBA", (pw, ph))
-    art.paste(pic, (0, 0))
-    # the lip: the Grove's grass ending at the drop, with a dark edge
-    lip = ImageDraw.Draw(art)
-    lip.rectangle([0, ph - 6, pw, ph], fill=(214, 120, 40, 255))
-    lip.line([(0, ph - 6), (pw, ph - 6)], fill=(110, 52, 26, 255), width=2)
-    for x in range(0, pw, 3):
-        lip.point((x, ph - 7 - (x * 7 % 3 == 0)), fill=(232, 150, 52, 255))
-    return art
-
-
-def easel_sprite():
-    return Image.open(os.path.join(ROOT, "ArtStudio", "assets", "bigcraftables.png")).convert("RGBA").crop((0, 0, 16, 32))
+def panorama_art():
+    """The Vale seen from above in gold light, painted (the pick V2), the drop's grassy lip along its foot."""
+    pan = art("panorama")
+    assert pan.size == (PANORAMA[2] * 16, PANORAMA[3] * 16), pan.size
+    return pan
 
 
 def piece_art(name, frame=0):
-    """PLACEHOLDERS, 16 x 32 each: the art batch's pieces replace these one by one. The echoes also
-    have a second frame (frame=1): the working arm lifted a little, as a brush moves."""
-    im = Image.new("RGBA", (16, 32))
-    d = ImageDraw.Draw(im)
-    if name == "frame":
-        # a gilt frame on a little stand; through it, faint as a sketch, a low wall and a gate
-        d.rectangle([1, 2, 14, 25], fill=(232, 220, 196, 255))
-        d.line([(3, 19), (12, 19)], fill=(150, 140, 130, 255))
-        d.line([(3, 17), (6, 17)], fill=(150, 140, 130, 255))
-        d.line([(9, 17), (12, 17)], fill=(150, 140, 130, 255))
-        d.line([(7, 14), (7, 19)], fill=(150, 140, 130, 255))
-        d.line([(8, 14), (8, 19)], fill=(150, 140, 130, 255))
-        d.rectangle([1, 2, 14, 25], outline=(196, 148, 40, 255))
-        d.rectangle([0, 1, 15, 26], outline=(124, 84, 24, 255))
-        d.line([(4, 27), (3, 31)], fill=(110, 70, 30, 255), width=2)
-        d.line([(11, 27), (12, 31)], fill=(110, 70, 30, 255), width=2)
-    elif name == "hidden_easel":
-        im = easel_sprite()
-    elif name == "founders_easel":
-        # an old, empty easel: the stand without its canvas, greyed by the years
-        im = easel_sprite()
-        px = im.load()
-        for y in range(2, 18):
-            for x in range(1, 15):
-                r, g_, b, a = px[x, y]
-                if a and not (r > g_ + 20 and r > b + 20 and r < 200):        # keep the wood, drop the canvas
-                    px[x, y] = (0, 0, 0, 0)
-        im = ImageEnhance.Color(im).enhance(0.45)
-    elif name == "founders_canvas":
-        # the same easel, holding a finished canvas: a little golden landscape (any painting, not yours)
-        im = piece_art("founders_easel")
-        d = ImageDraw.Draw(im)
-        d.rectangle([2, 4, 13, 16], fill=(246, 214, 140, 255))          # gold sky
-        d.ellipse([9, 5, 12, 8], fill=(255, 244, 196, 255))             # low sun
-        d.polygon([(2, 12), (6, 9), (10, 11), (13, 9), (13, 16), (2, 16)], fill=(204, 120, 48, 255))   # fall hills
-        d.rectangle([5, 13, 10, 14], fill=(110, 150, 170, 255))         # the pool
-        d.line([(4, 8), (4, 12)], fill=(92, 52, 30, 255))               # a tree
-        d.ellipse([2, 6, 6, 9], fill=(176, 72, 34, 255))
-    else:
-        # an echo: loose pale linework of a figure at work (Task 9 draws the real ones)
-        tint = {"echo_agnes": (240, 200, 120), "echo_hollis": (200, 160, 110), "echo_mabel": (150, 200, 230), "echo_bram": (190, 170, 150)}[name]
-        line = tint + (210,)
-        d.ellipse([5, 5, 10, 10], outline=line)
-        d.line([(7, 11), (7, 22)], fill=line)
-        if frame == 0:
-            d.line([(7, 14), (12, 17)], fill=line)
-        else:
-            d.line([(7, 14), (12, 14)], fill=line)
-            d.point([(13, 13)], fill=line)                      # the tool's tip, lifted
-        d.line([(7, 14), (3, 18)], fill=line)
-        d.line([(7, 22), (4, 30)], fill=line)
-        d.line([(7, 22), (10, 30)], fill=line)
+    """A piece's picture at its own size (width x height tiles); frame 1 is an echo's idle frame."""
+    im = art(f"{name}_{frame}" if name.startswith("echo_") else {"frame": "return_frame"}.get(name, name))
+    w, h = PIECES[name][3:] if name in PIECES else (1, 2)
+    assert im.size == (w * 16, h * 16), (name, im.size)
     return im
 
 
-def build_sheet(exports):
-    pan = panorama_art(exports)
-    sheet = Image.new("RGBA", (SHEET_COLS * 16, (PANORAMA[3] + 2) * 16))
-    sheet.paste(pan, (0, 0))
-    for i, name in enumerate(PIECE_ORDER + EXTRAS):
-        sheet.paste(piece_art(name), (i * 16, PANORAMA[3] * 16))
-    for i, name in enumerate(ECHO_FRAMES):
-        sheet.paste(piece_art(name, 1), ((ECHO_FRAME_FIRST_COL + i) * 16, PANORAMA[3] * 16))
+def build_sheet():
+    sheet = Image.new("RGBA", (SHEET_COLS * 16, (PIECES_ROW + PIECES_ROWS) * 16))
+    sheet.paste(panorama_art(), (0, 0))
+    for name, col in sheet_columns().items():
+        base, frame = (name[:-2], 1) if name.endswith("#1") else (name, 0)
+        im = piece_art(base, frame)
+        sheet.paste(im, (col * 16, (PIECES_ROW + PIECES_ROWS) * 16 - im.height))
     sheet.save(os.path.join(ASSETS, SHEET))
     return sheet
 
@@ -453,13 +395,15 @@ def vanilla_tilesets():
 
 
 def animated_tiles():
-    """{local tile id: [frame local ids]} for the echoes' top and foot tiles."""
+    """{local tile id: [frame local ids]} for every tile of the echoes."""
     out = {}
-    ph = PANORAMA[3]
-    for i, name in enumerate(ECHO_FRAMES):
-        col = PIECE_ORDER.index(name)
-        for row in (ph, ph + 1):
-            out[row * SHEET_COLS + col] = [row * SHEET_COLS + col, row * SHEET_COLS + ECHO_FRAME_FIRST_COL + i]
+    cols = sheet_columns()
+    for name in ECHO_FRAMES:
+        w, h = PIECES[name][3:]
+        for dx in range(w):
+            for row in range(PIECES_ROW + PIECES_ROWS - h, PIECES_ROW + PIECES_ROWS):
+                first = row * SHEET_COLS + cols[name] + dx
+                out[first] = [first, row * SHEET_COLS + cols[name + "#1"] + dx]
     return out
 
 
@@ -506,8 +450,28 @@ def write(g, props, tile_props, sheet):
     print("wrote", OUT_TMX)
 
 
+def check_room(g, F):
+    """Each piece stands on open ground with room round it: none of its tiles in the woods or beside
+    them, under their canopy, on the panorama, on anything solid (the pool's banks included), under a
+    tree or on another piece; and its foot has open ground in front to stand on."""
+    taken = {}
+    for name in PIECE_ORDER:
+        x, y, _, w, h = PIECES[name]
+        for tx, ty in [(x + dx, y - dy) for dx in range(w) for dy in range(h)]:
+            near = [(tx + i, ty + j) for i in (-1, 0, 1) for j in (-1, 0, 1)]
+            assert 1 <= tx < W - 1 and 1 <= ty < H - 1, (name, tx, ty)
+            assert not any(c in F for c in near), f"{name} at {tx},{ty} is by the woods"
+            assert not any(g["AlwaysFront"][j][i] or g["Front"][j][i] for i, j in near), f"{name} at {tx},{ty} is under the canopy"
+            assert ty >= PANORAMA[1] + PANORAMA[3], f"{name} at {tx},{ty} is on the panorama"
+            assert not g["Buildings"][ty][tx], f"{name} at {tx},{ty} is on something solid"
+            assert not any(ax - 1 <= tx <= ax + 1 and ay - 5 <= ty <= ay + 1 for (ax, ay), _ in TREES), f"{name} at {tx},{ty} is under a tree"
+            assert (tx, ty) not in taken, f"{name} at {tx},{ty} is on {taken[(tx, ty)]}"
+            taken[(tx, ty)] = name
+        assert any(not g["Buildings"][y + 1][x + dx] for dx in range(w)), f"{name}: no ground in front to stand on"
+
+
 def main():
-    exports = sys.argv[1] if len(sys.argv) > 1 else EXPORTS
+    exports =sys.argv[1] if len(sys.argv) > 1 else EXPORTS
     g = {l: [[0] * W for _ in range(H)] for l in LAYERS}
     F = forest_mask()
     table = Table(exports)
@@ -516,9 +480,21 @@ def main():
     px, py, pw, ph = PANORAMA
     view = {(x, y) for y in range(py, py + ph) for x in range(px, px + pw)}
     Woods(exports).lay(g, F, skip=view)
+    # The ground's stacks sometimes bring the game's invisible wall (outdoors tile 102, blank in every
+    # season) out into the open grass, where it stopped you for no reason: only the woods keep it.
+    for y in range(H):
+        for x in range(W):
+            if g["Buildings"][y][x] == INVISIBLE_WALL and (x, y) not in F:
+                g["Buildings"][y][x] = 0
+    # Beside the view, a woods cell the canopy doesn't cover showed the light grass, a bright notch
+    # at the panorama's east end: the woods' shadowed floor there instead.
+    for x, y in F:
+        if y < py + ph and (x, y) not in view and not g["AlwaysFront"][y][x] and not g["Front"][y][x] and g["Back"][y][x] in LIGHT_GRASS:
+            print("woods floor under no canopy at", x, y)
+            g["Back"][y][x] = WOODS_FLOOR
 
     # the panorama: the picture on Back, an invisible wall over it (you can't walk off the drop)
-    sheet = build_sheet(exports)
+    sheet = build_sheet()
     for x, y in view:
         g["Back"][y][x] = sheet_gid(x - px, y - py)
         g["Buildings"][y][x] = BLOCKER
@@ -531,11 +507,18 @@ def main():
                 g["Buildings"][y][x] = BLOCKER
 
     tile_props = {}
-    for i, name in enumerate(PIECE_ORDER):
-        x, y, action = PIECES[name]
-        g["Buildings"][y][x] = sheet_gid(i, ph + 1)
-        g["Front"][y - 1][x] = sheet_gid(i, ph)
-        tile_props[("Buildings", x, y)] = {"Action": action}
+    cols = sheet_columns()
+    check_room(g, F)
+    for name in PIECE_ORDER:
+        x, y, action, w, h = PIECES[name]
+        for dx in range(w):
+            for dy in range(h):
+                gid = sheet_gid(cols[name] + dx, PIECES_ROW + PIECES_ROWS - 1 - dy)
+                if dy == 0:
+                    g["Buildings"][y][x + dx] = gid
+                    tile_props[("Buildings", x + dx, y)] = {"Action": action}
+                else:
+                    g["Front"][y - dy][x + dx] = gid
 
     paths_first = 1976
     for (x, y), kind in TREES:

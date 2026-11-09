@@ -121,6 +121,12 @@ internal static class GuideTests
             Check(monitor, "guide: it can't be given, trashed or sold",
                 !item.canBeTrashed() && !item.canBeDropped() && !item.canBeShipped() && !(item is SObject o && o.canBeGivenAsGift()),
                 $"trash {item.canBeTrashed()}, drop {item.canBeDropped()}, ship {item.canBeShipped()}, gift {(item as SObject)?.canBeGivenAsGift()}");
+            var guideIcon = ItemRegistry.GetDataOrErrorItem(itemId);
+            string guideTexture = Game1.objectData.TryGetValue(PaintersGuide.GuideItemId, out var guideData) ? guideData.Texture : "(no data)";
+            Check(monitor, "guide: its own icon",
+                !guideIcon.IsErrorItem && guideIcon.GetTexture() != null && guideIcon.GetSourceRect().Width == 16
+                && guideTexture == "Mods/blinxxy.MuseArt.Vale/PaintersGuide",
+                guideTexture);
 
             who.mailReceived.Add(PaintersGuide.GroveOpenFlag);
             var farm = Game1.getLocationFromName("Farm");
@@ -360,12 +366,14 @@ internal static class GuideTests
 
     // ---- The painted echoes ----
 
-    // Four Echo actions on the Grove's map (ids agnes, hollis, mabel, bram), each showing its own
-    // memory: two pages, with the page-break marker never on screen.
+    // Four echoes on the Grove's map (ids agnes, hollis, mabel, bram), each 2 x 3 tiles with its
+    // action on both tiles of its foot, each showing its own memory: two pages, with the page-break
+    // marker never on screen.
     private static void EchoChecks(IMonitor monitor, Farmer who, GameLocation grove)
     {
-        var found = new List<string>();
+        var feet = new List<string>();
         int animated = 0;
+        static bool Animated(xTile.Tiles.Tile? t) => t is xTile.Tiles.AnimatedTile { TileFrames.Length: >= 2 };
         for (int y = 0; y < grove.Map.Layers[0].LayerHeight; y++)
             for (int x = 0; x < grove.Map.Layers[0].LayerWidth; x++)
             {
@@ -373,13 +381,17 @@ internal static class GuideTests
                 var words = action?.Split(' ');
                 if (words != null && words[0] == GildedGrove.EchoAction)
                 {
-                    found.Add(words.Length > 1 ? words[1] : "");
-                    if (grove.Map.GetLayer("Buildings").Tiles[x, y] is xTile.Tiles.AnimatedTile { TileFrames.Length: >= 2 }
-                        && grove.Map.GetLayer("Front").Tiles[x, y - 1] is xTile.Tiles.AnimatedTile { TileFrames.Length: >= 2 })
+                    feet.Add(words.Length > 1 ? words[1] : "");
+                    // the foot tile and the two Front tiles above it
+                    if (Animated(grove.Map.GetLayer("Buildings").Tiles[x, y])
+                        && Animated(grove.Map.GetLayer("Front").Tiles[x, y - 1])
+                        && Animated(grove.Map.GetLayer("Front").Tiles[x, y - 2]))
                         animated++;
                 }
             }
-        bool ids = found.OrderBy(i => i).SequenceEqual(GildedGrove.EchoIds.OrderBy(i => i));
+        var found = feet.Distinct().ToList();
+        bool ids = found.OrderBy(i => i).SequenceEqual(GildedGrove.EchoIds.OrderBy(i => i))
+            && found.All(id => feet.Count(f => f == id) == 2);
         var menuBefore = Game1.activeClickableMenu;
         var placeBefore = who.currentLocation;
         var detail = new List<string>();
@@ -402,8 +414,8 @@ internal static class GuideTests
             Game1.activeClickableMenu = null;
             bool unknown = GildedGrove.OnEcho(who, "nobody") || GildedGrove.OnEcho(who, null);
             bool noMenu = Game1.activeClickableMenu == null;
-            Check(monitor, "echoes: four", found.Count == 4 && ids, $"found [{string.Join(",", found)}]");
-            Check(monitor, "echoes: each idles (foot and top are animated tiles)", animated == 4, $"{animated} of 4");
+            Check(monitor, "echoes: four, each with a 2-wide foot", found.Count == 4 && ids, $"foot tiles [{string.Join(",", feet)}]");
+            Check(monitor, "echoes: each idles (all six tiles animated)", animated == 8, $"{animated} of 8 columns");
             Check(monitor, "echoes: each shows its own memory, two pages, no marker", allShown, string.Join("; ", detail));
             Check(monitor, "echoes: an unknown id shows nothing", !unknown && noMenu);
         }

@@ -5,7 +5,8 @@ by lightness, each with a small touch of its own.
   - uncommon: walnut, red lacquer, rope
   - legendary: prismatic, Qi's
   - epic: the Founders' Frame (the Gilded Vale's Founders' easel; Debug-only
-    in the mod for now, and PLACEHOLDER art until the art batch's piece lands)
+    in the mod for now): the Gilded Grove's deep amber, a fall leaf in each
+    corner and a gold leaf over the top (the user's pick FF2, 2026-11-09)
 Writes:
   - ArtStudio/assets/furniture.png, widened to 1280x48: each style's 2x2 and
     3x3 framed paintings, 80 pixels apart from x 560 (sprite indices
@@ -41,10 +42,11 @@ STYLES = [
     ("rope", [(96, 70, 40), (136, 104, 64), (170, 136, 88), (196, 164, 112), (218, 190, 140), (236, 214, 170)], "twist"),
     ("prismatic", [(70, 70, 90), (110, 110, 130), (150, 150, 170), (190, 190, 205), (220, 220, 232), (245, 245, 252)], "rainbow"),
     ("qi", [(40, 14, 58), (68, 24, 96), (98, 40, 134), (132, 64, 170), (168, 100, 204), (200, 140, 230)], "diamond"),
-    # PLACEHOLDER: old honey-coloured wood, warm as if just carved, with carved notches and a gold leaf.
-    ("founders", [(78, 44, 22), (122, 74, 36), (164, 110, 52), (198, 146, 72), (224, 180, 102), (244, 214, 146)], "carved"),
+    # The Grove's amber (it's always fall there), with its leaves.
+    ("founders", [(72, 30, 14), (128, 62, 24), (176, 98, 34), (214, 138, 48), (236, 176, 76), (250, 214, 130)], "leaves"),
 ]
 GOLD, GOLD_DARK = (236, 196, 84), (176, 128, 40)
+LEAF, LEAF_DARK = (214, 120, 40), (176, 72, 34)
 BRASS = (214, 178, 96)
 
 
@@ -126,6 +128,16 @@ def touch(tile, kind, dark):
         for dx, dy, c in ((0, 0, GOLD), (-1, 0, GOLD_DARK), (0, 1, GOLD_DARK), (-1, 1, GOLD)):
             if 0 <= cx + dx < w and top + dy < h and px[cx + dx, top + dy][3]:
                 px[cx + dx, top + dy] = c + (255,)
+    elif kind == "leaves":
+        # A fall leaf in each corner (only on the wood: the item's icon has empty corners), and a
+        # gold leaf over the middle of the top.
+        for (x, y), c in zip(corners, (LEAF, LEAF_DARK, LEAF_DARK, LEAF)):
+            if px[x, y][3]:
+                px[x, y] = c + (255,)
+        cx = w // 2
+        for dx, c in ((0, GOLD), (-1, GOLD_DARK)):
+            if px[cx + dx, 0][3]:
+                px[cx + dx, 0] = c + (255,)
     elif kind == "diamond":
         cx = w // 2
         for dx, dy, c in ((0, 0, GOLD), (-1, 1, GOLD_DARK), (1, 1, GOLD_DARK), (0, 1, GOLD), (0, 2, GOLD_DARK)):

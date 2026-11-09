@@ -2,10 +2,15 @@
 // quest that counts its eight spots; and the Gilded Grove (section 5), where its last page leads. ArtStudio/Vale/PaintersGuide.cs gives both (TakeGuide) and
 // writes the quest's objective as spots are found.
 //
-// The guide is a Quest-type object that can't be given, trashed or sold. Its icon is a
-// placeholder: the vanilla Lost Book (Maps/springobjects, 102) until the art task draws its own.
+// The guide is a Quest-type object that can't be given, trashed or sold. Its icon is a thin,
+// paint-spotted leather book with a red ribbon (assets/PaintersGuide.png, tools/art/vale_guide_final.py).
 {
   "Changes": [
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt.Vale/PaintersGuide",
+      "FromFile": "assets/PaintersGuide.png"
+    },
     {
       "Action": "EditData",
       "Target": "Data/Objects",
@@ -17,8 +22,8 @@
           "Type": "Quest",
           "Category": 0,
           "Price": 0,
-          "Texture": "Maps/springobjects",
-          "SpriteIndex": 102,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/PaintersGuide",
+          "SpriteIndex": 0,
           "CanBeGivenAsGift": false,
           "CanBeTrashed": false,
           "ExcludeFromRandomSale": true,
@@ -54,7 +59,8 @@
     // ---- The painted fish: bites only in the Grove's pool (Data/Locations below), and in no other water.
     // Not one of the Vale's five (data/vale_fish.json) and not a paint ingredient. Its id carries the
     // Vale fish prefix (not the mod's own blinxxy.MuseArt_), so a still life of it fills the painting
-    // record's Fish tab like theirs do. The icon is a placeholder (tools: a recoloured Gilt Carp). ----
+    // record's Fish tab like theirs do. Its icon is gold and cream, its scales laid on in vermilion brushstrokes
+    // (assets/PaintedFish.png, tools/art/vale_guide_final.py). ----
     {
       "Action": "Load",
       "Target": "Mods/blinxxy.MuseArt.Vale/PaintedFish",
@@ -74,7 +80,7 @@
           "Texture": "Mods/blinxxy.MuseArt.Vale/PaintedFish",
           "SpriteIndex": 0,
           "Edibility": 10,
-          "ContextTags": [ "color_blue", "fish_has_roe", "fish_lake", "season_spring", "season_summer", "season_fall", "season_winter" ]
+          "ContextTags": [ "color_yellow", "fish_has_roe", "fish_lake", "season_spring", "season_summer", "season_fall", "season_winter" ]
         }
       }
     },

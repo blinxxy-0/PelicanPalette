@@ -209,6 +209,7 @@ tools/build_vale_grove.py closes the Grove with the Secret Woods' own canopy (ou
 - **The woods' ground ends in its dark grass**, so every corner within three cells of the woods is painted dark grass too (with noise reaching further in, so it doesn't meet the light grass in a line). Keep the pool's sand at least three corners clear of that band; the builder asserts it.
 - **Small pools: no diagonal on the north-west corner.** A short north-west diagonal (two to five tiles) always came out as a staircase; the north-east one joins up. The Vale's own rounded corners are PixelLab inpaints (tools/art/vale_shore.py). A square north-west corner is clean.
 - **The game's contexts can put a pier's posts (1717-1722) in open water.** The builder clears them.
+- **The ground's stacks can carry the game's invisible wall** (outdoors tile 102, blank in every season) out into open grass: three cells of the Grove's meadow stopped you for no reason. The builder clears it outside the woods. A woods cell beside the view that the canopy doesn't cover gets the woods' shadowed floor (1095), not the light grass (it showed as a bright notch at the panorama's end).
 - **The season.** The map uses the game's spring_ sheets and its location context's SeasonOverride (fall): the game swaps in the fall sheets whatever the date, and trees planted from Paths markers are fall trees. Checked in game (museart_guidetest, "grove: fall sheets in spring").
 
 ## A raised bluff: its rim, side and steps (2026-11-08)

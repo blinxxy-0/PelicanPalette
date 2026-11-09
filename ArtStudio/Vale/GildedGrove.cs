@@ -308,15 +308,16 @@ internal static class GildedGrove
         return true;
     }
 
-    // Afterwards, for that player, the easel holds a finished canvas (any canvas, not theirs). It's
-    // drawn over the empty easel from the Grove's own sheet, so each player (and each split screen)
-    // sees their own: the art sits in the column after the map's pieces, at the pieces' top row
-    // (tools/build_vale_grove.py EXTRAS). Only the canvas is drawn (the top tile and the canvas's
-    // last two rows), so a farmer standing below the easel isn't covered.
+    // Afterwards, for that player, the easel holds the finished golden canvas (any canvas, not theirs).
+    // It's drawn over the empty easel from the Grove's own sheet, so each player (and each split
+    // screen) sees their own: the art sits in the column after the map's 1x2 and 2x3 pieces, its top
+    // tile on the pieces' band's second row (tools/build_vale_grove.py EXTRAS; test_vale_guide_map.py
+    // test_finished_canvas_on_sheet checks these). Only that tile is drawn: the canvas is all in it, so
+    // a farmer standing below the easel isn't covered.
     public static bool ShowsFinishedCanvas(Farmer who) => who.mailReceived.Contains(FoundersFlag);
 
-    private const int FinishedCanvasColumn = 7, PiecesRow = 7;
-    private static readonly Rectangle FinishedCanvasSource = new(FinishedCanvasColumn * 16, PiecesRow * 16, 16, 18);
+    private const int FinishedCanvasColumn = 11, FinishedCanvasRow = 8;
+    private static readonly Rectangle FinishedCanvasSource = new(FinishedCanvasColumn * 16, FinishedCanvasRow * 16, 16, 16);
 
     private static Texture2D? _sheet;
     private static string? _sheetSource;

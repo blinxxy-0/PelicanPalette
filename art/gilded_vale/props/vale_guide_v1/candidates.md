@@ -1,5 +1,14 @@
 # The guide, the Grove and the graveyard: art candidates (v1)
 
+## Final (the user's picks, 2026-11-09)
+
+Picked: A1, B1, C1, U1, W2, E1/E3/E5/E7, F2, H1, R2, V2, G2, P1, FF2. Tobin's T stays on the markers' foot; the Founders' easel shows F2's finished golden canvas after an offering; Ada's glaze is celadon. `tools/art/vale_guide_final.py` makes the final files from the picks below; the candidates here stay as they were.
+
+- **The graveyard** (for Task 6, `build_vale.py` PICKS and SEASONAL): `art/gilded_vale/props/vale_graveyard_v1/`. Each piece is `<name>.png` with its snowed `<name>_winter.png`: `headstone_agnes`, `headstone_hollis`, `headstone_mabel` (A1, moved down 3 px so the base sits on the tile's bottom), `stone_bram` (B1), `marker_ada`, `marker_hester`, `marker_amos` (C1), `urn_<agnes|hollis|mabel|bram|ada|hester|amos>` (U1), and the W2 wall: `wall_left`, `wall_mid`, `wall_right`, `wall_side`, `gatepost`, `gate`. `preview.png` shows them all, spring above winter. Nothing is on the map yet.
+- **The Grove** (`tools/build_vale_grove.py` lays them): `art/gilded_vale/props/vale_guide_final/`: `echo_<agnes|hollis|mabel|bram>_0.png` and `_1.png` (E1/E3/E5/E7 and the idle frame: the brush, gouge, glass or mallet moved a pixel), `hidden_easel` (H1), `founders_easel` (F2 empty), `founders_canvas` (F2 with the finished canvas), `return_frame` (R2), `panorama` (V2).
+- **The icons**: `guide_icon` (G2) and `painted_fish` (P1), copied to the dev pack as `assets/PaintersGuide.png` and `assets/PaintedFish.png`.
+- **The Founders' Frame** (FF2): drawn into `ArtStudio/assets/furniture.png` and `items.png` by `tools/art/frame_styles.py` (its `founders` style), then `frame_1x1.py`.
+
 Contact sheet: `candidates.png` (everything at 3x, each row beside the game's own tombstone and our Easel item for scale). Pick by id. Nothing is wired into a map yet.
 
 Made by `tools/art/vale_guide_candidates.py` (re-run it to rebuild every file here). PixelLab outputs, their prompts and style images are in `pixellab/` (`batch.json`). 55 generations spent, 137 down to 82.

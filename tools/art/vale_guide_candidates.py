@@ -30,7 +30,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 import vale_fish_icons as fishes          # noqa: E402
 from set_frames import recolour as frame_recolour   # noqa: E402
-from frame_styles import STYLES as FRAME_STYLES, touch as frame_touch   # noqa: E402
+from frame_styles import touch as frame_touch   # noqa: E402
 from vanillafy import outline_shade      # noqa: E402
 
 EXPORTS = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
@@ -819,11 +819,12 @@ def founders_frames():
     per_row = items.width // 16
     icon_src = items.crop((8 % per_row * 16, 8 // per_row * 16, 8 % per_row * 16 + 16, 8 // per_row * 16 + 16))
     plain = furniture.crop((0, 0, 32, 32))
-    founders = dict((n, (p, k)) for n, p, k in FRAME_STYLES)["founders"]
+    # FF1: the placeholder the Founders' Frame had before the pick (frame_styles.py's founders now is FF2)
+    honey = [(78, 44, 22), (122, 74, 36), (164, 110, 52), (198, 146, 72), (224, 180, 102), (244, 214, 146)]
     grove = [(72, 30, 14), (128, 62, 24), (176, 98, 34), (214, 138, 48), (236, 176, 76), (250, 214, 130)]
     sketch = [(96, 62, 36), (140, 98, 58), (182, 140, 92), (212, 176, 128), (232, 206, 162), (246, 230, 196)]
     out = {}
-    for fid, palette, how in (("FF1", founders[0], lambda t, d: frame_touch(t, "carved", d)),
+    for fid, palette, how in (("FF1", honey, lambda t, d: frame_touch(t, "carved", d)),
                               ("FF2", grove, leaves),
                               ("FF3", sketch, brushed)):
         tile = how(frame_recolour(plain.copy(), palette), palette[0])
