@@ -127,8 +127,9 @@ def room(exports, sheet, slots, out):
     for (x, y), first in (((4, 4), 313), ((5, 4), 312), ((4, 6), 312), ((5, 6), 313)):
         grid["Front"][y][x] = ("townInterior_2", first)
         grid["Buildings"][y + 1][x] = ("townInterior_2", first + 32)
-    put_furn(grid, "rug", 2, 5, 2, 2, layer="Back2")
-    put(grid, slots, "chest", 0, 5, solid=1)                  # Bram's letters, in the box she made,
+    put_furn(grid, "rug", 0, 5, 2, 2, layer="Back2")           # (left, where the box was)
+    put(grid, slots, "chest", 2, 5, solid=1)                  # Bram's letters, in the box she made, bottom middle
+                                                              # (the user, 2026-11-09),
                                                               # the Little Gilded Tree standing on it
     for y in range(H):
         for x in range(W):
