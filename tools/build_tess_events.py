@@ -165,7 +165,7 @@ def heart8():
     stones with their feet on row 18 (Bram's the last, at x 12) and urns on row 19; the column x 11
     between his and Mabel's is open ground. She honours his wish (his echo: "leave it plain"): his name
     cut properly and one leaf, not a carved headstone. Bram's stone changes for good once this event's
-    been seen (the graveyard's swap: tools/art/bram_carved_stone.py)."""
+    been seen (tools/build_tess_bram_stone.py; its art: tools/art/bram_carved_stone.py)."""
     key = f"{EV[8]}/{F} 2000/Time 1600 1800/Weather sunny/SawEvent {EV[6]}"
     return key, script(
         "continue", "10 15", f"farmer 10 9 2 {T} 8 11 2", "skippable",
@@ -174,7 +174,8 @@ def heart8():
         speak(T, "I come up here every night. I've never gone in.$0#$b#...Come with me?$0"),
         f"move {T} 1 0 1", f"move {T} 0 3 2", f"move {T} 2 0 1", f"move {T} 0 4 2", f"faceDirection {T} 1",
         "move farmer 0 3 2", "move farmer 1 0 1", "move farmer 0 3 2", "faceDirection farmer 1",
-        "pause 600",
+        # the camera down with you to the stones (from the gate, the talk's boxes hid them)
+        "viewport move 0 4 1200", "pause 600",
         "message " + q("Past Agnes's carved stone, and Hollis's, and Mabel's, to the plain one at the end of the row."),
         speak(T, "BRAM FAIRLIE. Lupini did that. With a palette knife. He told me he'd hated every letter.$s#$b#He was right. The R's backwards.$u"),
         "message " + q("She takes a letter out of her apron, unfolds it, and reads it to the stone."),

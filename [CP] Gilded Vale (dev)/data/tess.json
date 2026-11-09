@@ -88,6 +88,8 @@
 
     // ---- Her heart events (data/tess_events.json, written by tools/build_tess_events.py) ----
     { "Action": "Include", "FromFile": "data/tess_events.json" },
+    // ... and what her 8-heart event leaves: Bram's stone, carved (tools/build_tess_bram_stone.py)
+    { "Action": "Include", "FromFile": "data/tess_bram_stone.json" },
 
     // ---- Married (data/tess_marriage.json, written by tools/build_tess_marriage.py) ----
     { "Action": "Include", "FromFile": "data/tess_marriage.json" }
