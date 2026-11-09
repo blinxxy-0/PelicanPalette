@@ -209,16 +209,17 @@
     },
 
     // ---- Fish tanks: cells 0-4 of the Vale's aquarium sheet, laid out like the game's ----
-    // index/type/idle/dart start/dart hold/dart end/texture
+    // index/type/idle/dart start/dart hold/dart end/texture. The texture's path takes
+    // backslashes: the game splits these fields on '/', path and all.
     {
       "Action": "EditData",
       "Target": "Data/AquariumFish",
       "Entries": {
-        "blinxxy.MuseArt.Vale_ClaybankLoach": "0/fish/////Mods/blinxxy.MuseArt.Vale/FishAquarium",
-        "blinxxy.MuseArt.Vale_CascadeTrout": "1/fish/////Mods/blinxxy.MuseArt.Vale/FishAquarium",
-        "blinxxy.MuseArt.Vale_FallsSculpin": "2/fish/////Mods/blinxxy.MuseArt.Vale/FishAquarium",
-        "blinxxy.MuseArt.Vale_LakeblueShiner": "3/fish/////Mods/blinxxy.MuseArt.Vale/FishAquarium",
-        "blinxxy.MuseArt.Vale_GiltCarp": "4/fish/////Mods/blinxxy.MuseArt.Vale/FishAquarium"
+        "blinxxy.MuseArt.Vale_ClaybankLoach": "0/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_CascadeTrout": "1/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_FallsSculpin": "2/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_LakeblueShiner": "3/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium",
+        "blinxxy.MuseArt.Vale_GiltCarp": "4/fish/////Mods\\blinxxy.MuseArt.Vale\\FishAquarium"
       }
     }
   ]

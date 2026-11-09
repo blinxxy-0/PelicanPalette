@@ -54,6 +54,12 @@ internal static class ValeFish
         DevTools.AddCommand(helper, "museart_fishtest",
             "Checks the Vale's own fish: data, art, collection, painting record, pond, tank, and where and when each one bites.",
             (_, _) => Test(monitor));
+        // museart_fishshow bag|tank: stages a look at the art in a dev game. 'bag' gives the five
+        // and opens the inventory; 'tank' fills the biggest fish tank with them in the farmhouse
+        // and stands you in front of it. Then museart_frame <name> [hud].
+        DevTools.AddCommand(helper, "museart_fishshow",
+            "Dev game: 'bag' gives the Vale's five fish and opens the inventory; 'tank' puts them in a fish tank in the farmhouse.",
+            (_, args) => Show(monitor, args.FirstOrDefault() ?? "bag"));
         DevTools.AddCommand(helper, "museart_fishdump",
             "Writes Data/Fish, Data/FishPondData, Data/AquariumFish and some locations' fish to fishdump/ in the mod folder.",
             (_, _) => Dump(helper, monitor));
@@ -121,6 +127,17 @@ internal static class ValeFish
             Check(monitor, $"{id} can live in a Fish Pond and gives roe", pond != null && pond.ProducedItems.Any(p => p.ItemId == "(O)812"), pond?.Id ?? "no pond data");
             Check(monitor, $"{id} can go in a fish tank", aquarium.ContainsKey(id) && tank != null && tank.CanBeDeposited(item), aquarium.GetValueOrDefault(id) ?? "no aquarium data");
         }
+        // In a tank, each one swims as itself: the game draws the error sprite for a fish whose
+        // tank data or sheet it can't read (a '/' in the sheet's path splits the fields).
+        if (tank != null)
+        {
+            foreach (var fish in All)
+                tank.heldItems.Add(ItemRegistry.Create(fish.Id));
+            tank.UpdateFish();
+            foreach (var swimmer in tank.tankFish)
+                Check(monitor, $"{swimmer.fishItemId} swims in a tank as itself", !swimmer.isErrorFish, $"frame {swimmer.currentFrame}");
+            tank.heldItems.Clear();
+        }
         // The extras the ponds give (data/vale_fish.json); the Trout and Shiner give roe only.
         Check(monitor, "a Loach pond sometimes gives Clay", FishPond.GetRawData("blinxxy.MuseArt.Vale_ClaybankLoach")?.ProducedItems.Any(p => p.ItemId == "(O)330") == true);
         Check(monitor, "a Gilt Carp pond sometimes gives Gold Ore", FishPond.GetRawData("blinxxy.MuseArt.Vale_GiltCarp")?.ProducedItems.Any(p => p.ItemId == "(O)384") == true);
@@ -168,6 +185,30 @@ internal static class ValeFish
             weather.IsRaining = rain;
             Game1.isRaining = worldRain;
         }
+    }
+
+    private static void Show(IMonitor monitor, string what)
+    {
+        if (!Context.IsWorldReady) { monitor.Log("Load a save first (museart_devgame).", LogLevel.Warn); return; }
+        var fish = All.Select(f => ItemRegistry.Create(f.Id)).ToList();
+        if (what == "bag")
+        {
+            foreach (var item in fish)
+                Game1.player.addItemToInventoryBool(item);
+            Game1.activeClickableMenu = new StardewValley.Menus.GameMenu();
+            return;
+        }
+        var house = Game1.getLocationFromName("FarmHouse");
+        var tank = DataLoader.Furniture(Game1.content).Keys.Select(id => ItemRegistry.Create("(F)" + id)).OfType<FishTankFurniture>()
+            .OrderBy(t => System.Math.Abs(t.getTilesWide() - 4)).First();
+        var spot = new Vector2(2, 9);
+        tank.TileLocation = spot;
+        house.furniture.Add(tank);
+        foreach (var item in fish)
+            tank.heldItems.Add(item);
+        tank.UpdateFish();
+        Game1.warpFarmer("FarmHouse", (int)spot.X + 2, (int)spot.Y - 2, 2);
+        monitor.Log($"[INFO] {tank.Name} ({tank.getTilesWide()}x{tank.getTilesHigh()}) at {spot}, with {tank.heldItems.Count} fish.", LogLevel.Info);
     }
 
     // What the game's picker gives at one water's tile, in a given season, weather and time.
