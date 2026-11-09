@@ -276,10 +276,13 @@ def test_overlook_props_inside():
 
 
 def test_overlook_lake_corner():
-    # the lake's east bank ends as Town's shore does (Town x 83 rows 74-76): the vertical
-    # cycle's end 211, then 261 under it, then the diagonal's 214
+    # the lake's east bank ends as Town's shore at x 85 does (rows 67-70): the rock run's
+    # cycle carries on under the cap to its last two pieces, (5226,236) and (1230,236), then
+    # 261 turns it onto the diagonal's 214 (no 211: Town closes a run with that only after
+    # 5229 / 5306 / 5322, and alone under a plain piece it was a broken triangle)
     m = load(TMX)
-    assert (m.g["Back"][69][84], m.g["Buildings"][69][84]) == (5226, 211)
+    assert (m.g["Back"][68][84], m.g["Buildings"][68][84]) == (5226, 236)
+    assert (m.g["Back"][69][84], m.g["Buildings"][69][84]) == (1230, 236)
     assert (m.g["Back"][70][84], m.g["Buildings"][70][84]) == (1230, 261)
     assert (m.g["Back"][71][83], m.g["Buildings"][71][83]) == (1230, 214)
 

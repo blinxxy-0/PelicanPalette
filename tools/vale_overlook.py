@@ -537,12 +537,15 @@ STRIP_SIDE_TO = 65            # the side's last row; the face's lip row is the n
 STRIP_STAIRS_X = 90
 STRIP_BOX = (86, 57, 95, 75)  # what the strip clears of props, trees and decor first
 LAKE_SE = (84, 71)            # the lake's south-east water corner (OVERLOOK_BOX), cut by lay_lake_corner
-# the east bank's last pieces above the cut, upward: Town (83,74)'s end, and the painter's
-# own cycle piece over it (fixed: re-chosen each run against what the last run left, it
-# flipped between 5290 and 236)
-LAKE_SE_TURN = ((5226, 211), (1230, 5290))
-LAKE_SE_END = (1230, 261)     # under it, where the bank turns onto the diagonal (Town (83,75)): without it the
-                              # 211 ended in a vertical cut and the diagonal was two 214s, a ruler-straight line
+# The east bank's last pieces above the cut, upward: the rock run's cycle carried on under
+# its cap to its last two pieces, as Town's shore at x 85 ends (rows 67-69: (5226,236),
+# (1230,236), then 261 and 214). Town's other ending, 211 (x 83 row 74), closes a run of
+# 5229 / 5306 / 5322 that this short run has no room for: alone under a plain piece it was a
+# broken triangle with a cut. (Fixed, not the painter's: re-chosen each run against what the
+# last run left, the piece under the cap flipped between 5290 and 236.)
+LAKE_SE_TURN = ((1230, 236), (5226, 236))
+LAKE_SE_END = (1230, 261)     # under it, where the bank turns onto the diagonal (Town (85,69), (83,75)); the
+                              # diagonal's 214 follows (with two 214s it was a ruler-straight line)
 
 
 def lay_test_strip(tmx_path, exports):
