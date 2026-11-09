@@ -50,8 +50,7 @@ internal static class GildedGrove
         GameLocation.RegisterTileAction(FrameAction, (_, _, who, _) => OnFrame(who));
         GameLocation.RegisterTileAction(HiddenEaselAction, (_, _, who, tile) => OnHiddenEasel(who, tile));
         GameLocation.RegisterTileAction(FoundersEaselAction, (_, _, who, _) => OnFoundersEasel(who));
-        // Task 9 fills this in; until then it does nothing.
-        GameLocation.RegisterTileAction(EchoAction, (_, _, _, _) => false);
+        GameLocation.RegisterTileAction(EchoAction, (_, args, who, _) => OnEcho(who, args.Skip(1).FirstOrDefault()));
         helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
         helper.Events.Display.RenderedWorld += OnRenderedWorld;
         helper.Events.Player.Warped += (_, e) => { if (e.IsLocalPlayer) Motes.Clear(); };
@@ -349,6 +348,36 @@ internal static class GildedGrove
         b.Draw(sheet, at, FinishedCanvasSource, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
     }
 
+    // ---- The painted echoes ----
+
+    // The four buried artists, in the order the map places them (tools/build_vale_grove.py PIECES).
+    public static readonly string[] EchoIds = { "agnes", "hollis", "mabel", "bram" };
+    private const string PageBreak = "#$b#";
+
+    public static string EchoKey(string id) => "vale.echo." + id;
+
+    // An echo's memory as the pages it's shown in: the text's page breaks split here, so the marker
+    // (made for NPC dialogue) never shows on screen. Empty for an id that isn't one of the four.
+    public static List<string> EchoPages(string? id) =>
+        id != null && EchoIds.Contains(id)
+            ? PaintersGuide.Text(EchoKey(id)).Split(PageBreak).Select(p => p.Trim()).Where(p => p.Length > 0).ToList()
+            : new List<string>();
+
+    // Touch one: a memory in their own voice, a page at a time. Quiet, with no sound.
+    public static bool OnEcho(Farmer who, string? id)
+    {
+        if (!who.IsLocalPlayer || Game1.activeClickableMenu != null)
+            return false;
+        var pages = EchoPages(id);
+        if (pages.Count == 0)
+        {
+            Monitor?.Log($"The echo '{id}' isn't one of the four.", LogLevel.Warn);
+            return false;
+        }
+        Game1.drawObjectDialogue(pages);
+        return true;
+    }
+
     // ---- The light and the motes ----
 
     private sealed class Mote
@@ -452,6 +481,7 @@ internal static class GildedGrove
     {
         "vale.grove.frame", "vale.grove.founders.ask", "vale.grove.founders.taken", "vale.grove.founders.thanks",
         "vale.grove.founders.not_masterpiece", "vale.grove.founders.framed",
+        EchoKey("agnes"), EchoKey("hollis"), EchoKey("mabel"), EchoKey("bram"),
     };
 }
 #endif

@@ -51,9 +51,45 @@
         }
       }
     },
+    // ---- The painted fish: bites only in the Grove's pool (Data/Locations below), and in no other water.
+    // Not one of the Vale's five (data/vale_fish.json) and not a paint ingredient. Its id carries the
+    // Vale fish prefix (not the mod's own blinxxy.MuseArt_), so a still life of it fills the painting
+    // record's Fish tab like theirs do. The icon is a placeholder (tools: a recoloured Gilt Carp). ----
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt.Vale/PaintedFish",
+      "FromFile": "assets/PaintedFish.png"
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "blinxxy.MuseArt.Vale_PaintedFish": {
+          "Name": "Painted Fish",
+          "DisplayName": "{{i18n:fish.painted.name}}",
+          "Description": "{{i18n:fish.painted.description}}",
+          "Type": "Fish",
+          "Category": -4,
+          "Price": 450,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/PaintedFish",
+          "SpriteIndex": 0,
+          "Edibility": 10,
+          "ContextTags": [ "color_blue", "fish_has_roe", "fish_lake", "season_spring", "season_summer", "season_fall", "season_winter" ]
+        }
+      }
+    },
+    // name/difficulty/motion/min size/max size/times/seasons/weather/(unused)/max depth/spawn chance/depth multiplier/min fishing level/tutorial
+    {
+      "Action": "EditData",
+      "Target": "Data/Fish",
+      "Entries": {
+        "blinxxy.MuseArt.Vale_PaintedFish": "Painted Fish/75/smooth/10/30/600 2600/spring summer fall winter/both/684 .35/3/.3/.1/0/false"
+      }
+    },
     // The Grove (tools/build_vale_grove.py): reached only by the guide, left only by its frame
     // (ArtStudio/Vale/GildedGrove.cs). Nothing grows or spawns there, and it isn't on anyone's way.
-    // Its pool is fishable; its fish (the painted fish) comes with Task 9, so none yet.
+    // Its pool is fishable: the painted fish bites here and nowhere else (it's rare: most casts catch
+    // the game's usual junk instead).
     {
       "Action": "EditData",
       "Target": "Data/Locations",
@@ -66,7 +102,9 @@
           "CanPlantHere": false,
           "ArtifactSpots": [],
           "Forage": [],
-          "Fish": [],
+          "Fish": [
+            { "Id": "blinxxy.MuseArt.Vale_PaintedFish", "ItemId": "(O)blinxxy.MuseArt.Vale_PaintedFish", "Chance": 0.4 }
+          ],
           "MinDailyWeeds": 0,
           "MaxDailyWeeds": 0,
           "FirstDayWeedMultiplier": 0,

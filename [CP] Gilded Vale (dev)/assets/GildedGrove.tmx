@@ -2397,6 +2397,54 @@
   </tileset>
   <tileset firstgid="40000" name="z_blinxxy.MuseArt_GildedGrove" tilewidth="16" tileheight="16" tilecount="198" columns="22">
     <image source="GildedGrove.png" width="352" height="144" />
+    <tile id="157">
+      <animation>
+        <frame tileid="157" duration="700" />
+        <frame tileid="162" duration="700" />
+      </animation>
+    </tile>
+    <tile id="158">
+      <animation>
+        <frame tileid="158" duration="700" />
+        <frame tileid="163" duration="700" />
+      </animation>
+    </tile>
+    <tile id="159">
+      <animation>
+        <frame tileid="159" duration="700" />
+        <frame tileid="164" duration="700" />
+      </animation>
+    </tile>
+    <tile id="160">
+      <animation>
+        <frame tileid="160" duration="700" />
+        <frame tileid="165" duration="700" />
+      </animation>
+    </tile>
+    <tile id="179">
+      <animation>
+        <frame tileid="179" duration="700" />
+        <frame tileid="184" duration="700" />
+      </animation>
+    </tile>
+    <tile id="180">
+      <animation>
+        <frame tileid="180" duration="700" />
+        <frame tileid="185" duration="700" />
+      </animation>
+    </tile>
+    <tile id="181">
+      <animation>
+        <frame tileid="181" duration="700" />
+        <frame tileid="186" duration="700" />
+      </animation>
+    </tile>
+    <tile id="182">
+      <animation>
+        <frame tileid="182" duration="700" />
+        <frame tileid="187" duration="700" />
+      </animation>
+    </tile>
   </tileset>
   <layer id="1" name="Back" width="34" height="29">
     <data encoding="csv">

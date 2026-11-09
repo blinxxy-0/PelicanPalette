@@ -220,7 +220,11 @@ internal static class GuideTests
             }
 
             if (grove != null)
+            {
                 FoundersChecks(monitor, who, grove);
+                EchoChecks(monitor, who, grove);
+                GroveFishChecks(monitor, who, grove);
+            }
 
             var bad = PaintersGuide.StringKeys.Where(k => { string t = PaintersGuide.Text(k); return t.Length == 0 || t == k; }).ToList();
             Check(monitor, "guide: every guide string resolves", bad.Count == 0,
@@ -352,6 +356,107 @@ internal static class GuideTests
             if (hadFlag)
                 who.mailReceived.Add(GildedGrove.FoundersFlag);
         }
+    }
+
+    // ---- The painted echoes ----
+
+    // Four Echo actions on the Grove's map (ids agnes, hollis, mabel, bram), each showing its own
+    // memory: two pages, with the page-break marker never on screen.
+    private static void EchoChecks(IMonitor monitor, Farmer who, GameLocation grove)
+    {
+        var found = new List<string>();
+        int animated = 0;
+        for (int y = 0; y < grove.Map.Layers[0].LayerHeight; y++)
+            for (int x = 0; x < grove.Map.Layers[0].LayerWidth; x++)
+            {
+                string? action = grove.doesTileHaveProperty(x, y, "Action", "Buildings");
+                var words = action?.Split(' ');
+                if (words != null && words[0] == GildedGrove.EchoAction)
+                {
+                    found.Add(words.Length > 1 ? words[1] : "");
+                    if (grove.Map.GetLayer("Buildings").Tiles[x, y] is xTile.Tiles.AnimatedTile { TileFrames.Length: >= 2 }
+                        && grove.Map.GetLayer("Front").Tiles[x, y - 1] is xTile.Tiles.AnimatedTile { TileFrames.Length: >= 2 })
+                        animated++;
+                }
+            }
+        bool ids = found.OrderBy(i => i).SequenceEqual(GildedGrove.EchoIds.OrderBy(i => i));
+        var menuBefore = Game1.activeClickableMenu;
+        var placeBefore = who.currentLocation;
+        var detail = new List<string>();
+        bool allShown = true;
+        try
+        {
+            who.currentLocation = grove;
+            foreach (string id in GildedGrove.EchoIds)
+            {
+                Game1.activeClickableMenu = null;
+                var pages = GildedGrove.EchoPages(id);
+                bool shown = GildedGrove.OnEcho(who, id);
+                var box = Game1.activeClickableMenu as DialogueBox;
+                var onScreen = box?.dialogues ?? new List<string>();
+                bool ok = shown && pages.Count == 2 && onScreen.Count == 2 && onScreen.SequenceEqual(pages)
+                    && onScreen.All(p => p.Length > 0 && !p.Contains("#$b#") && !p.Contains("$b"));
+                allShown &= ok;
+                detail.Add($"{id}: {onScreen.Count} pages{(ok ? "" : " (BAD)")}");
+            }
+            Game1.activeClickableMenu = null;
+            bool unknown = GildedGrove.OnEcho(who, "nobody") || GildedGrove.OnEcho(who, null);
+            bool noMenu = Game1.activeClickableMenu == null;
+            Check(monitor, "echoes: four", found.Count == 4 && ids, $"found [{string.Join(",", found)}]");
+            Check(monitor, "echoes: each idles (foot and top are animated tiles)", animated == 4, $"{animated} of 4");
+            Check(monitor, "echoes: each shows its own memory, two pages, no marker", allShown, string.Join("; ", detail));
+            Check(monitor, "echoes: an unknown id shows nothing", !unknown && noMenu);
+        }
+        finally
+        {
+            Game1.activeClickableMenu = menuBefore;
+            who.currentLocation = placeBefore;
+        }
+    }
+
+    // ---- The painted fish ----
+
+    // It's in the Grove's fish list and the Vale's isn't; it has its data and its own icon; and the
+    // game's own fish picker gives it at the Grove's pool, never in the Vale's water.
+    private static void GroveFishChecks(IMonitor monitor, Farmer who, GameLocation grove)
+    {
+        const string id = "blinxxy.MuseArt.Vale_PaintedFish";
+        var locations = DataLoader.Locations(Game1.content);
+        bool InList(string loc) => locations.TryGetValue(loc, out var data) && data.Fish.Any(f => f.ItemId == "(O)" + id || f.Id == id);
+        Check(monitor, "grove fish: only here", InList(GildedGrove.Location) && !InList(ValeBus.Vale),
+            $"grove {InList(GildedGrove.Location)}, vale {InList(ValeBus.Vale)}");
+
+        var obj = Game1.objectData.TryGetValue(id, out var o) ? o : null;
+        var icon = ItemRegistry.GetDataOrErrorItem("(O)" + id);
+        Check(monitor, "grove fish: item, fishing data and its own icon",
+            obj != null && obj.Category == SObject.FishCategory && !obj.ExcludeFromFishingCollection
+            && DataLoader.Fish(Game1.content).ContainsKey(id) && !icon.IsErrorItem && icon.GetSourceRect().Width == 16
+            && icon.GetTexture() != null && obj.Texture == "Mods/blinxxy.MuseArt.Vale/PaintedFish",
+            obj == null ? "no object" : $"{obj.Texture}, price {obj.Price}");
+
+        // The pool: any water tile on the Grove's map.
+        Vector2? pool = null;
+        for (int y = 0; y < grove.Map.Layers[0].LayerHeight && pool == null; y++)
+            for (int x = 0; x < grove.Map.Layers[0].LayerWidth; x++)
+                if (grove.isWaterTile(x, y)) { pool = new Vector2(x, y); break; }
+        var vale = Game1.getLocationFromName(ValeBus.Vale);
+        int level = who.fishingLevel.Value;
+        try
+        {
+            who.fishingLevel.Value = 10;
+            int here = 0, there = 0;
+            if (pool != null)
+                for (int i = 0; i < 400; i++)
+                    if (GameLocation.GetFishFromLocationData(grove.Name, pool.Value, 5, who, false, false, grove)?.QualifiedItemId == "(O)" + id)
+                        here++;
+            foreach (var tile in new[] { new Vector2(61, 18), new Vector2(65, 63) })
+                for (int i = 0; i < 300 && vale != null; i++)
+                    if (GameLocation.GetFishFromLocationData(vale.Name, tile, 5, who, false, false, vale)?.QualifiedItemId == "(O)" + id)
+                        there++;
+            Check(monitor, "grove fish: the picker gives it in the Grove's pool, never in the Vale's water",
+                pool != null && here > 0 && there == 0, $"pool {pool}, grove {here}/400, vale {there}/600");
+        }
+        finally { who.fishingLevel.Value = level; }
     }
 
     // Co-op (tools/test/run_mp.ps1): the host offers, then the farmhand; then each player has their

@@ -525,6 +525,12 @@
   "vale.grove.founders.not_masterpiece": "The easel waits. It wants a masterpiece, and nothing less.",
   "vale.grove.founders.framed": "The easel won't take a painting in a frame. It wants the bare canvas. A Framer's Bench can take it out.",
 
+  // The painted echoes (docs/superpowers/specs/2026-11-08-vale-guide-text.md)
+  "vale.echo.agnes": "Same window. Same hills. Every morning since I came, and they still ask me why I keep painting the sky.#$b#Because it's never the same one. Look: yesterday's was all bruise and gold. Today's is milk. Not one sky the same. I could paint a thousand more.",
+  "vale.echo.hollis": "A woodcut's mostly what you take away. Every bit you cut prints white. Cut one line too many and the block's spoiled, and there's no painting over it.#$b#Took me years to learn what to leave out. Folk call that patience. It isn't. I'm just frightened of the knife.",
+  "vale.echo.mabel": "Glass on the bench is nothing much. Grey, a bit dusty. Hold it up to the window, though... There. That's the whole trick. You let the light through.#$b#Opal's at my bench again, loud as a kettle, and Jet's under it sorting the blues. They'll go off to the city one day, the pair of them. Good. Then they can come home and tell me all about it.",
+  "vale.echo.bram": "Every stone I carve, they want a line on it. Something to make the visitors stop. I pick each word with them, and cut it deep, so it lasts.#$b#Not mine. When it's my turn, leave it plain. Scratch the name on and let the stone do the talking. Stone's good at that. Better than me.",
+
   // The Vale's own fish (data/vale_fish.json)
   "fish.loach.name": "Claybank Loach",
   "fish.loach.description": "A little red fish that lives in the clay banks of the river, the same colour as the mud it hides in.",
@@ -535,5 +541,8 @@
   "fish.shiner.name": "Lakeblue Shiner",
   "fish.shiner.description": "So blue that the painters who saw it were told they'd made it up.",
   "fish.carp.name": "Gilt Carp",
-  "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake."
+  "fish.carp.description": "Rises in the fall, when the Gilded Tree's leaves drift down onto the lake.",
+  // The painted fish (data/vale_guide.json). PLACEHOLDER text: needs the author's review.
+  "fish.painted.name": "Painted Fish",
+  "fish.painted.description": "A rare fish, drawn with visible brushstrokes. It only lives in the Gilded Grove's pool."
 }

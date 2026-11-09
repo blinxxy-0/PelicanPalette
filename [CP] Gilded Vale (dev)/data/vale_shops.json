@@ -180,7 +180,11 @@
         "vale.grove.founders.taken": "{{i18n:vale.grove.founders.taken}}",
         "vale.grove.founders.thanks": "{{i18n:vale.grove.founders.thanks}}",
         "vale.grove.founders.not_masterpiece": "{{i18n:vale.grove.founders.not_masterpiece}}",
-        "vale.grove.founders.framed": "{{i18n:vale.grove.founders.framed}}"
+        "vale.grove.founders.framed": "{{i18n:vale.grove.founders.framed}}",
+        "vale.echo.agnes": "{{i18n:vale.echo.agnes}}",
+        "vale.echo.hollis": "{{i18n:vale.echo.hollis}}",
+        "vale.echo.mabel": "{{i18n:vale.echo.mabel}}",
+        "vale.echo.bram": "{{i18n:vale.echo.bram}}"
       }
     }
   ]

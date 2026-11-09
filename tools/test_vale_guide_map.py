@@ -31,6 +31,7 @@ class Map:
         self.props = {p.get("name"): p.get("value") for p in root.findall("properties/property")}
         self.layers = {l.get("name"): layer_data(l.find("data")) for l in root.findall("layer")}
         self.tile_props = {}               # gid -> {name: value}
+        self.animations = {}               # gid -> [gids of its frames]
         self.paths_first = None
         for ts in root.findall("tileset"):
             first = int(ts.get("firstgid"))
@@ -40,6 +41,9 @@ class Map:
                 p = {q.get("name"): q.get("value") for q in t.findall("properties/property")}
                 if p:
                     self.tile_props[first + int(t.get("id"))] = p
+                frames = [int(f.get("tileid")) for f in t.findall("animation/frame")]
+                if frames:
+                    self.animations[first + int(t.get("id"))] = [first + f for f in frames]
         self.tile_data = {}                # (layer, x, y) -> {name: value}
         for group in root.findall("objectgroup"):
             for o in group.findall("object"):
@@ -131,6 +135,27 @@ def test_grove_actions():
     assert len(m.actions("blinxxy.MuseArt_FoundersEasel")) == 1
     echoes = sorted(a[0] for a in m.actions("blinxxy.MuseArt_Echo").values() if len(a) == 1)
     assert echoes == sorted(ECHOES), echoes
+
+
+def test_echo_tiles_animated():
+    # each echo (its foot on Buildings, its top on Front above it) has a TMX animation of 2+ frames
+    m = grove()
+    echoes = {a[0]: p for p, a in m.actions("blinxxy.MuseArt_Echo").items() if len(a) == 1}
+    assert sorted(echoes) == sorted(ECHOES), echoes
+    for name, (x, y) in echoes.items():
+        for layer, ty in (("Buildings", y), ("Front", y - 1)):
+            gid = m.at(layer, x, ty)
+            frames = m.animations.get(gid, [])
+            assert len(frames) >= 2 and len(set(frames)) >= 2, f"{name} {layer} tile {gid}: {frames}"
+            assert frames[0] == gid, f"{name} {layer}: first frame should be the tile itself"
+
+
+def test_grove_fish_only_here():
+    # the painted fish is in the Grove's list and not in the Vale's
+    grove_fish = guide_entries("Data/Locations")["blinxxy.MuseArt_GildedGrove"]["Fish"]
+    assert any(f.get("ItemId") == "(O)blinxxy.MuseArt.Vale_PaintedFish" for f in grove_fish), grove_fish
+    vale = open(os.path.join(PACK, "data", "vale_fish.json"), encoding="utf-8").read()
+    assert "PaintedFish" not in vale
 
 
 def test_grove_reachable():

@@ -65,6 +65,12 @@ PIECE_ORDER = list(PIECES)
 #   player who has offered it a masterpiece (GildedGrove.FinishedCanvasSource, column 7). Only the
 #   canvas is drawn (rows 0-17), so the rest must match founders_easel.
 EXTRAS = ["founders_canvas"]
+# The echoes' second frames (the idle motion: a brush, a blade or a piece of glass moving), each 16 x 32,
+# in the columns after EXTRAS, top row and foot row like the pieces. Each echo's tiles (the top on Front,
+# the foot on Buildings) are TMX animations: frame 0 is the tile itself, frame 1 is here.
+ECHO_FRAMES = [n for n in PIECE_ORDER if n.startswith("echo_")]
+ECHO_FRAME_FIRST_COL = len(PIECE_ORDER) + len(EXTRAS)
+ECHO_FRAME_MS = 700
 # The pool: corners of its water (grid corners), its top corners cut on 45-degree diagonals
 # (west, east), its south shore flat. (The game's pieces turn a short diagonal into a staircase on
 # the west side; a longer one there joins up.)
@@ -365,8 +371,9 @@ def easel_sprite():
     return Image.open(os.path.join(ROOT, "ArtStudio", "assets", "bigcraftables.png")).convert("RGBA").crop((0, 0, 16, 32))
 
 
-def piece_art(name):
-    """PLACEHOLDERS, 16 x 32 each: the art batch's pieces replace these one by one."""
+def piece_art(name, frame=0):
+    """PLACEHOLDERS, 16 x 32 each: the art batch's pieces replace these one by one. The echoes also
+    have a second frame (frame=1): the working arm lifted a little, as a brush moves."""
     im = Image.new("RGBA", (16, 32))
     d = ImageDraw.Draw(im)
     if name == "frame":
@@ -409,7 +416,11 @@ def piece_art(name):
         line = tint + (210,)
         d.ellipse([5, 5, 10, 10], outline=line)
         d.line([(7, 11), (7, 22)], fill=line)
-        d.line([(7, 14), (12, 17)], fill=line)
+        if frame == 0:
+            d.line([(7, 14), (12, 17)], fill=line)
+        else:
+            d.line([(7, 14), (12, 14)], fill=line)
+            d.point([(13, 13)], fill=line)                      # the tool's tip, lifted
         d.line([(7, 14), (3, 18)], fill=line)
         d.line([(7, 22), (4, 30)], fill=line)
         d.line([(7, 22), (10, 30)], fill=line)
@@ -422,6 +433,8 @@ def build_sheet(exports):
     sheet.paste(pan, (0, 0))
     for i, name in enumerate(PIECE_ORDER + EXTRAS):
         sheet.paste(piece_art(name), (i * 16, PANORAMA[3] * 16))
+    for i, name in enumerate(ECHO_FRAMES):
+        sheet.paste(piece_art(name, 1), ((ECHO_FRAME_FIRST_COL + i) * 16, PANORAMA[3] * 16))
     sheet.save(os.path.join(ASSETS, SHEET))
     return sheet
 
@@ -439,6 +452,17 @@ def vanilla_tilesets():
     return [t for t in re.findall(r"  <tileset .*?</tileset>", text, re.S) if re.search(r'name="([^"]+)"', t).group(1) in keep]
 
 
+def animated_tiles():
+    """{local tile id: [frame local ids]} for the echoes' top and foot tiles."""
+    out = {}
+    ph = PANORAMA[3]
+    for i, name in enumerate(ECHO_FRAMES):
+        col = PIECE_ORDER.index(name)
+        for row in (ph, ph + 1):
+            out[row * SHEET_COLS + col] = [row * SHEET_COLS + col, row * SHEET_COLS + ECHO_FRAME_FIRST_COL + i]
+    return out
+
+
 def write(g, props, tile_props, sheet):
     out = ['<?xml version="1.0" encoding="utf-8"?>',
            f'<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="{W}" height="{H}" '
@@ -450,6 +474,12 @@ def write(g, props, tile_props, sheet):
     out.append(f'  <tileset firstgid="{SHEET_FIRST}" name="z_blinxxy.MuseArt_GildedGrove" tilewidth="16" tileheight="16" '
                f'tilecount="{(sheet.width // 16) * (sheet.height // 16)}" columns="{sheet.width // 16}">')
     out.append(f'    <image source="{SHEET}" width="{sheet.width}" height="{sheet.height}" />')
+    for tid, frames in sorted(animated_tiles().items()):
+        out.append(f'    <tile id="{tid}">')
+        out.append('      <animation>')
+        out += [f'        <frame tileid="{f}" duration="{ECHO_FRAME_MS}" />' for f in frames]
+        out.append('      </animation>')
+        out.append('    </tile>')
     out.append('  </tileset>')
     for i, layer in enumerate(LAYERS):
         out.append(f'  <layer id="{i + 1}" name="{layer}" width="{W}" height="{H}">')
