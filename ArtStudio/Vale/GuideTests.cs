@@ -813,9 +813,39 @@ internal static class GuideTests
             answer?.Invoke(who, "Yes");
         }
 
+        // A splash holds the player for its time (1.5 s, or 3 s grand), then lets go and calls back.
+        int splashTicks = 0;
+        bool splashDone = false, heldThrough = true;
+        void StartSplash(bool grand)
+        {
+            PaintSplash.HoldAt = null;
+            who.CanMove = true;
+            splashTicks = 0;
+            splashDone = false;
+            heldThrough = true;
+            PaintSplash.Play(PaintersGuide.Spots[0].Palette, grand, () => splashDone = true);
+        }
+        bool SplashOver()
+        {
+            splashTicks++;
+            if (PaintSplash.Playing && who.CanMove)
+                heldThrough = false;
+            return !PaintSplash.Playing;
+        }
+        void SplashCheck(string what, int ticks) =>
+            Check(monitor, what, splashDone && heldThrough && who.CanMove && Math.Abs(splashTicks - ticks) <= 2,
+                $"{splashTicks} ticks (expected {ticks}), held {heldThrough}, called back {splashDone}, can move {who.CanMove}");
+
         who.mailReceived.Add(PaintersGuide.GroveOpenFlag);
         var steps = new List<Step>
         {
+            new("guide: a splash ends and lets go", () => Settled(), () => StartSplash(false)),
+            new("guide: a splash ends and lets go", SplashOver, () =>
+            {
+                SplashCheck("guide: a splash ends and lets go", 90);
+                StartSplash(true);
+            }),
+            new("guide: the grand splash ends and lets go", SplashOver, () => SplashCheck("guide: the grand splash ends and lets go", 180)),
             new("grove: warp in", () => true, () => Game1.warpFarmer(ValeBus.Vale, 20, 7, 2)),
             new("grove: warp in", () => In(ValeBus.Vale), () =>
             {
