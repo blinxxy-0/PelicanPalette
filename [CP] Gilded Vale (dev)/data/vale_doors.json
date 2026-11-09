@@ -5,15 +5,27 @@
 // (The builders made these plain "Action Door" tiles; the Doors map property is theirs.)
 {
   "Changes": [
-    // Bea's room upstairs in the Vale House (25 11). The artists' room beside it (15 11) is
-    // hers too until her 10-heart event gives you its key (that rule comes with the event).
+    // Bea's room upstairs in the Vale House (25 11).
     {
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_ValeHouse",
       "When": { "ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true" },
       "MapTiles": [
-        { "Position": { "X": 25, "Y": 11 }, "Layer": "Buildings", "SetProperties": { "Action": "Door BeaThistle" } },
-        { "Position": { "X": 15, "Y": 11 }, "Layer": "Buildings", "SetProperties": { "Action": "Door BeaThistle" } }
+        { "Position": { "X": 25, "Y": 11 }, "Layer": "Buildings", "SetProperties": { "Action": "Door BeaThistle" } }
+      ]
+    },
+    // The artists' room beside it (15 11) isn't let out, whatever your hearts with Bea: it
+    // opens only with the key her 10-heart event gives you (the mail flag below). Its "owner"
+    // is no villager, so the game's 2-heart rule never opens it, and ValeResidents gives it
+    // its own card on the door instead of the game's "get to know her better".
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValeHouse",
+      "When": { "ValeResidents": "true", "HasFile:assets/bea/sprites.png": "true", "HasFile:assets/bea/portraits.png": "true",
+                "HasFlag |contains=blinxxy.MuseArt_ValeArtistsRoom": "false" },
+      "Update": "OnLocationChange",
+      "MapTiles": [
+        { "Position": { "X": 15, "Y": 11 }, "Layer": "Buildings", "SetProperties": { "Action": "Door blinxxy.MuseArt_ArtistsRoom" } }
       ]
     },
     // Tobin's bedroom behind the workshop (20 13); his kitchen and parlour (9 13) stay open.
