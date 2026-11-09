@@ -126,4 +126,6 @@ Sample lines:
   thing (the user: hand-drawn pieces were "rough"); spare candidates of earlier batches edited by
   `tools/art/vale_studio3_art.py`. Its door opens on Winter 1, Year 3. Bram's photograph goes on the dresser
   (his locked drawer is in it) after the reveal.
-- **Her NPC data** (`data/tess.json`): switched off until `assets/tess/sprites.png` and `portraits.png` exist.
+- **Her NPC data** (`data/tess.json`), behind the residents' switch (`ValeResidents`, off by default).
+- **Her art** (`art/tess/README.md`): the walk sheet recoloured from Emily's; six Higgsfield portraits from the
+  user's pick, no pencil in her hair (Margot has one). Spouse frames come with her marriage.
