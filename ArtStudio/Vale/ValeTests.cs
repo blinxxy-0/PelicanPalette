@@ -45,6 +45,7 @@ internal static class ValeTests
         (ModEntry.Id + "_ValeFern", new Point(23, 18), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValeSeeds FernAster", ModEntry.Id + "_ValeSeeds"),
         (ModEntry.Id + "_ValePottery", new Point(4, 18), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValePottery TobinClay", ModEntry.Id + "_ValePottery"),
         (ModEntry.Id + "_ValeStudio3", new Point(12, 10), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValeWood TessBrand", ModEntry.Id + "_ValeWood"),
+        (ModEntry.Id + "_ValeStudio2", new Point(4, 10), ModEntry.Id + "_ValeShop " + ModEntry.Id + "_ValeGlass OpalCorrie", ModEntry.Id + "_ValeGlass"),
     };
 
     // The bedroom doors (data/vale_doors.json), locked to each resident once they're on.

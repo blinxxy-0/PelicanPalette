@@ -9,10 +9,9 @@
 //   River (the fallback area: all water outside the lake): the Forest's river fish, the Loach.
 //   Lake (x 48-84, y 55-71): the Mountain lake's fish, the Shiner and the Gilt Carp.
 //   The Cascade Trout bites only in the two cascade pools, and the Falls Sculpin only in the
-//   waterfall basin, by bobber position inside the River area.
-//   The basin isn't built yet (session vale-map-gaps, branch claude/infallible-jang-a66ee9):
-//   its rectangle is the top of the river for now. Re-check it, and the lake's east edge (the
-//   overlook bluff), once that branch is merged.
+//   waterfall basin (x 76-85, y 6-12: the pool under the falls, not the river's long west
+//   leg or the falling water), by bobber position inside the River area.
+//   Both checked against the built map's water tiles (2026-11-09), the lake's east edge too.
 {
   "Changes": [
     // ---- The icons and the fish-tank sprites (tools/art/vale_fish_icons.py) ----
@@ -125,7 +124,7 @@
           { "Id": "blinxxy.MuseArt.Vale_ClaybankLoach", "ItemId": "(O)blinxxy.MuseArt.Vale_ClaybankLoach", "FishAreaId": "River", "Condition": "LOCATION_SEASON Here spring summer fall" },
           { "Id": "blinxxy.MuseArt.Vale_CascadeTrout_Upper", "ItemId": "(O)blinxxy.MuseArt.Vale_CascadeTrout", "FishAreaId": "River", "BobberPosition": { "X": 59, "Y": 28, "Width": 6, "Height": 9 }, "Condition": "LOCATION_SEASON Here spring fall" },
           { "Id": "blinxxy.MuseArt.Vale_CascadeTrout_Lower", "ItemId": "(O)blinxxy.MuseArt.Vale_CascadeTrout", "FishAreaId": "River", "BobberPosition": { "X": 59, "Y": 48, "Width": 6, "Height": 7 }, "Condition": "LOCATION_SEASON Here spring fall" },
-          { "Id": "blinxxy.MuseArt.Vale_FallsSculpin", "ItemId": "(O)blinxxy.MuseArt.Vale_FallsSculpin", "FishAreaId": "River", "BobberPosition": { "X": 76, "Y": 0, "Width": 13, "Height": 13 }, "Condition": "LOCATION_SEASON Here fall winter" },
+          { "Id": "blinxxy.MuseArt.Vale_FallsSculpin", "ItemId": "(O)blinxxy.MuseArt.Vale_FallsSculpin", "FishAreaId": "River", "BobberPosition": { "X": 76, "Y": 6, "Width": 10, "Height": 7 }, "Condition": "LOCATION_SEASON Here fall winter" },
           { "Id": "blinxxy.MuseArt.Vale_LakeblueShiner", "ItemId": "(O)blinxxy.MuseArt.Vale_LakeblueShiner", "FishAreaId": "Lake", "Condition": "LOCATION_SEASON Here spring summer" },
           { "Id": "blinxxy.MuseArt.Vale_GiltCarp", "ItemId": "(O)blinxxy.MuseArt.Vale_GiltCarp", "FishAreaId": "Lake", "Season": "Fall", "Chance": 0.5 },
 

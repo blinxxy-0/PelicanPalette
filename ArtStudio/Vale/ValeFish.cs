@@ -31,7 +31,7 @@ internal static class ValeFish
     {
         [Water.River] = new Vector2(61, 18),
         [Water.Pool] = new Vector2(61, 30),
-        [Water.Basin] = new Vector2(82, 4),
+        [Water.Basin] = new Vector2(82, 9),
         [Water.Lake] = new Vector2(65, 63),
     };
 

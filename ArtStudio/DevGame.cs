@@ -4772,6 +4772,10 @@ internal static class DevGame
                 Game1.game1.takeMapScreenshot(args.Length > 1 && float.TryParse(args[1], out float scale) ? scale : 0.5f,
                     "museart_" + Game1.currentLocation.NameOrUniqueName, () => { });
                 break;
+            case "shop":
+                // Any shop by id, its owners ignored (museart_menu shop <id>), to look at its list.
+                Utility.TryOpenShopMenu(args.ElementAtOrDefault(1) ?? "", "AnyOrNone", playOpenSound: false);
+                break;
             case "board":
                 Game1.activeClickableMenu = new Shop.CommissionBoardMenu(Game1.player);
                 break;
