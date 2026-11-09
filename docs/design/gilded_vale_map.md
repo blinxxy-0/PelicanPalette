@@ -102,7 +102,7 @@ The concept sheet's hidden things (its section 7), placed:
 |---|---|
 | A hidden easel overlooking the Vale | The Painter's clearing |
 | A painting hung backward | The open Old Studio |
-| A weathered sign listing former studios | By the Old Studios |
+| A weathered sign listing former studios | By the Old Studios, across the lane from the foot of Lupini's stairs (78-80, 43-45). Built 2026-11-08 with the studios' carved numerals (I, II, III) on their plaques and the signed house rules inside studio I: `tools/vale_studio_signs.py` |
 | A sculpture almost hidden by plants | The sculpture garden's south-west corner, behind a hedge |
 | A sketch tucked in a desk | The Vale House attic (Bea's 4-heart event) |
 | A bench that gives Lupini a special line | The overlook |
