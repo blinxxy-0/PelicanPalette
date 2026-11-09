@@ -8,10 +8,9 @@
 // assets/tess/sprites.png (Characters/TessBrand) and assets/tess/portraits.png
 // (Portraits/TessBrand) are in this pack. See data/residents.json.
 //
-// Still to come (each written for the user's approval first): her gift tastes, her
-// days (a schedule), what she says, her heart events, the wedding and married life.
-// Until then she stays home in Studio III, and in a test save don't give her a
-// Mermaid's Pendant: the game would start a wedding with nothing behind it.
+// Still to come (each written for the user's approval first): her heart events, the
+// wedding and married life. Until then, in a test save don't give her a Mermaid's
+// Pendant: the game would start a wedding with nothing behind it.
 {
   "Changes": [
     // ---- Who she is ----
@@ -61,7 +60,32 @@
     },
     { "Action": "Load", "Target": "Characters/TessBrand", "FromFile": "assets/tess/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"} },
     { "Action": "Load", "Target": "Portraits/TessBrand", "FromFile": "assets/tess/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"} },
-    // (her dialogue comes later; an empty sheet so the game has one to read)
-    { "Action": "Load", "Target": "Characters/Dialogue/TessBrand", "FromFile": "data/blank.json", "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"} }
+    // ---- Gifts: love / like / dislike / hate / neutral (text, then item IDs) ----
+    // Loves Hardwood, Mahogany Seed, Pine Tar, Maple Syrup, Pumpkin Soup; likes Wood, Oak
+    // Resin, any cooked dish (she's broke); dislikes Sap and Joja Cola; hates Trash and the
+    // Broken CD ("anything plastic-looking"). Paintings: the mod's rule; an art lover.
+    {
+      "Action": "EditData",
+      "Target": "Data/NPCGiftTastes",
+      "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"},
+      "Entries": { "TessBrand": "{{i18n:tess.gift.love}}/709 292 726 724 236/{{i18n:tess.gift.like}}/388 725 -7/{{i18n:tess.gift.dislike}}/92 167/{{i18n:tess.gift.hate}}/168 171/{{i18n:tess.gift.neutral}}/" }
+    },
+
+    // ---- A day in her life (data/tess_schedule.json) ----
+    { "Action": "Load", "Target": "Characters/schedules/TessBrand", "FromFile": "data/tess_schedule.json", "When": {"ValeResidents": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true"} },
+    // Tuesdays, the first bus to Robin's (a four-hour walk each way: there by about 10) for
+    // timber and, later, joinery; home by 6. Behind the town-trips switch like the others' days in town
+    // (data/vale_town_trips.json has the buses' NPC warps).
+    {
+      "Action": "EditData",
+      "Target": "Characters/schedules/TessBrand",
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/tess/sprites.png": "true", "HasFile:assets/tess/portraits.png": "true" },
+      "Entries": {
+        "Tue": "600 ScienceHouse 8 20 0/1400 blinxxy.MuseArt_ValeStudio3 7 5 0/2200 blinxxy.MuseArt_ValeStudio3 4 9 0"
+      }
+    },
+
+    // ---- What she says (data/tess_dialogue.json, written by tools/tess_dialogue.py) ----
+    { "Action": "Include", "FromFile": "data/tess_dialogue.json" }
   ]
 }
