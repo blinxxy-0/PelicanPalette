@@ -1,0 +1,57 @@
+// Opal Corrie (1.4): the louder of the Vale's glassworker twins. She/her; a friend to ten
+// hearts, not marriageable. She draws the designs and talks to everyone. Home from Zuzu City,
+// where she ran Corrie Glass, to the studio she grew up in. See docs/corrie_twins_brief.md.
+//
+// SWITCHED OFF until the art exists: every patch here has the same When, so OpalCorrie
+// only exists once the dev pack's config has ValeResidents: true AND both
+// assets/opal/sprites.png (Characters/OpalCorrie) and assets/opal/portraits.png
+// (Portraits/OpalCorrie) are in this pack. See data/residents.json.
+// Gift tastes, the schedule and dialogue come with the writing (each batch approved first).
+{
+  "Changes": [
+    // ---- Who she is ----
+    {
+      "Action": "EditData",
+      "Target": "Data/Characters",
+      "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"},
+      "Entries": {
+        "OpalCorrie": {
+          "DisplayName": "{{i18n:opal.name}}",
+          "Gender": "Female",
+          "Age": "Adult",
+          "Manner": "Neutral",
+          "SocialAnxiety": "Outgoing",
+          "Optimism": "Positive",
+          "IsDarkSkinned": false,
+          // Summer 2, the twins' shared birthday: free in vanilla, this mod and Stardew Valley
+          // Expanded (checked 2026-11-09: SVE's summer birthdays are Martin 6, Scarlett 7, Victor 23).
+          "BirthSeason": "Summer",
+          "BirthDay": 2,
+          "HomeRegion": "Other",
+          "CanBeRomanced": false,
+          // The twins, for the game's family words.
+          "FriendsAndFamily": { "JetCorrie": "[LocalizedText Strings\\Characters:Relative_Brother]" },
+          // Moves into Studio II on Spring 1, Year 3, after the sale and Robin's renovation
+          // (docs/design/vale_newcomers.md, section 3; data/vale_studios.json). Kent's way:
+          // vanilla's Kent has UnlockConditions "YEAR 2". And, like the other residents, not
+          // before the Vale's route is open (the mail flag blinxxy.MuseArt_ValeOpen).
+          "UnlockConditions": "YEAR 3, PLAYER_HAS_MAIL Host blinxxy.MuseArt_ValeOpen Any",
+          "Calendar": "HiddenUntilMet",
+          "SocialTab": "HiddenUntilMet",
+          "IntroductionsQuest": false,
+          // Not at Pelican Town's festivals yet, not anyone's Winter Star secret friend, and no
+          // Ginger Island trips (as the other residents).
+          "FlowerDanceCanDance": false,
+          "WinterStarParticipant": "FALSE",
+          "CanVisitIsland": "FALSE",
+          "Home": [
+            // Studio II, by she bed (tools/build_vale_interiors.py, "studio2").
+            { "Id": "Default", "Location": "blinxxy.MuseArt_ValeStudio2", "Tile": { "X": 13, "Y": 5 }, "Direction": "down" }
+          ]
+        }
+      }
+    },
+    { "Action": "Load", "Target": "Characters/OpalCorrie", "FromFile": "assets/opal/sprites.png", "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"} },
+    { "Action": "Load", "Target": "Portraits/OpalCorrie", "FromFile": "assets/opal/portraits.png", "When": {"ValeResidents": "true", "HasFile:assets/opal/sprites.png": "true", "HasFile:assets/opal/portraits.png": "true"} }
+  ]
+}

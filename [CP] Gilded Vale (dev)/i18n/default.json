@@ -7,6 +7,7 @@
   "location.vale-fern": "Fern's Cottage",
   "location.vale-emmett": "Emmett's Cottage",
   "location.vale-studio": "The Old Studio",
+  "location.vale-studio2": "Studio II",
 
   // CJB Cheats Menu's Warps tab (content.json); the buildings use their location names.
   "warp.bus-stop": "Bus Stop",
@@ -28,6 +29,8 @@
   "worldmap.old-tree": "The Old Tree",
   "worldmap.lake": "The Lake",
   "worldmap.bus": "The Bus Stop\nPam's bus to Pelican Town",
+  "opal.name": "Opal",
+  "jet.name": "Jet",
   "bea.name": "Bea",
   "bea.gift.love": "Oh, now that's for me, is it? Really for me? ...Thank you. This one's staying out of the kitchen.$h",
   "bea.gift.like": "That'll go straight in the kitchen. Thank you, really.$h",

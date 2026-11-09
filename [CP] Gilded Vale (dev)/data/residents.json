@@ -13,7 +13,8 @@
 //   2. the sprite sheet is in this pack:    assets/<slug>/sprites.png   -> Characters/<Name>
 //   3. the portrait sheet is in this pack:  assets/<slug>/portraits.png -> Portraits/<Name>
 //      slug -> Name:  bea -> BeaThistle,  tobin -> TobinClay,  lupini -> Lupini,
-//                     fern -> FernAster,  emmett -> EmmettWren
+//                     fern -> FernAster,  emmett -> EmmettWren,
+//                     opal -> OpalCorrie, jet -> JetCorrie
 // So the switch can be on while the art comes in one resident at a time: each turns on
 // as their two sheets land. In the world they also wait for the Vale's route to open
 // (UnlockConditions: the mail flag blinxxy.MuseArt_ValeOpen).
@@ -25,6 +26,9 @@
     { "Action": "Include", "FromFile": "data/lupini.json" },
     { "Action": "Include", "FromFile": "data/fern.json" },
     { "Action": "Include", "FromFile": "data/emmett.json" },
+    // The Corrie twins, glassworkers, from Spring 1, Year 3 (docs/corrie_twins_brief.md).
+    { "Action": "Include", "FromFile": "data/opal.json" },
+    { "Action": "Include", "FromFile": "data/jet.json" },
     { "Action": "Include", "FromFile": "data/vale_town_trips.json" },
     // Their shops and Bea's room for the night (not behind the switch: with nobody at a
     // counter they open on trust), and Lupini's letter opening the Vale.
@@ -47,7 +51,10 @@
         "Lupini": "the Night Market's painter",
         "TobinClay": "a potter, who knows the care in a made thing",
         "FernAster": "a gardener who presses flowers and loves colour",
-        "EmmettWren": "a fiddler who collects the songs of every town"
+        "EmmettWren": "a fiddler who collects the songs of every town",
+        // The Corrie twins (docs/design/vale_newcomers.md, section 6): artists themselves.
+        "OpalCorrie": "a glassworker who draws every window first",
+        "JetCorrie": "a glassworker who knows what a steady hand costs"
       }
     }
   ]
