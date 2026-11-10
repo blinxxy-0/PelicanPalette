@@ -10,7 +10,14 @@ using ArtStudio.Core;
 //
 // Usage: dotnet run -- [refs.json from museart_export_refs] (Muse's sketches
 // in muse_refs.json are always used), or dotnet run -- economy for what
-// paintings earn per hour (Economy.cs).
+// paintings earn per hour (Economy.cs), or dotnet run -- pottery for the
+// pottery wheel's stars by hand and difficulty (PotterySim.cs).
+
+if (args.FirstOrDefault() == "pottery")
+{
+    PotterySim.Run(args.Skip(1).ToArray());
+    return;
+}
 
 if (args.FirstOrDefault() == "economy")
 {

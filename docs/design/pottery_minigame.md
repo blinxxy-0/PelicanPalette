@@ -111,7 +111,9 @@ Decided (2026-11-07): its own skill; with Sculpting in 1.5; banding; a stoking m
 1. **Controls:** hands follow the mouse's height and you click a move (recommended), or you drag the profile directly.
 2. **Professions:** the first pass in section 8b.
 3. **Hand-building:** whether Pottery also makes clay figures and tiles by hand, besides the wheel's vessels, or leaves figures to Sculpting's carving in wood and stone.
-4. **Three skills in one release:** 1.5 now carries Sculpting and Pottery. It may want splitting (Pottery in 1.6, say) once both are prototyped.
+4. **Difficulty in throwing** (the calibration, section 10): patience never runs out on a throw that follows the outline, so Normal and Hard throw alike. Leave it (throwing is the relaxed stage, and glazing and firing carry the difficulty), shorten patience so a throw needs a rest or two (Hard first), or build Hard's planned extras (wheel speed, drying).
+5. **The jug's outline:** pulling up without shaping already gets 4 stars. A fuller belly would make it ask for shaping.
+6. **Three skills in one release:** 1.5 now carries Sculpting and Pottery. It may want splitting (Pottery in 1.6, say) once both are prototyped.
 
 ## 10. How to build it, if you like it
 
@@ -136,6 +138,21 @@ As painting was: a **prototype first**. A plain dev-only screen (`museart_potter
 - **Judge:** the share of time in the band, after a 2 s grace, with partial credit just outside it. The verdicts are Perfect (0.9 or more), Well fired (0.65 or more), or Underfired / Overfired. A kiln gift (a crackle, a drip, a flash) has a 50% chance on a perfect firing and 10% on a good one, and adds half a star. The pot's stars: the glaze's part is scaled by 0.7 + 0.3 × firing. A crack is 0 stars.
 - **Calibration, 10 per level:** a stoker who looks at the forecast every 2 s and adds hardwood when it's heading low scores 1.0 / 0.91 / 0.63 (Simplified / Normal / Hard). One who feeds whenever it's low, four times a second, overfeeds: 0.79 / 0.41 / 0 (cracked). Coal on a beat scores 0, and never feeding scores under 0.1.
 - **Not yet:** loading several pots, fuel from your inventory, the overnight cooling, and Tobin's firing days.
+
+**Throwing calibration (2026-11-09):** `dotnet run -- pottery` in `ArtStudio.Sim` (`PotterySim.cs`). The throwing rules, the centring wobble and the bot are game-free now (`ClayPot.cs`, `PotBot.cs`), so the simulation runs the menu's own code. Five hands throw every shape on every difficulty, 40 times each, centring included:
+
+| Hand | Simplified | Normal | Hard | 5 stars (Normal) |
+|---|---|---|---|---|
+| Perfect (the old greedy bot) | 4.75 | 4.75 | 4.75 | 50% |
+| Careful | 4.55 | 4.53 | 4.60 | 25% |
+| Average | 4.24 | 4.23 | 4.19 | 8% |
+| Rushed | 3.69 | 3.72 | 3.71 | 0% |
+| Restless (never lets it rest) | 3.69 | 3.72 | 3.71 | 0% |
+
+- **Five stars can be reached on every shape, but the vase and the jug need a plan.** The greedy bot gets 4.5 on both: pressing a neck in at full height leaves it thick (clay is conserved), and the judge allows a middle wall 3.4 at most. The jug gets 5 if you pull up through the neck after shaping it. The vase gets 5 only if you hold about four rows back, shape it, then pull the neck up to full height. The results now say so ("The neck's heavy: ...").
+- **The difficulty doesn't change the throw's stars, only the time.** A throw that follows the outline is done long before the clay tires: you can pull nonstop for 33 s on Normal (29 s on Hard) before it falls, and by then the pot is 22 rows tall, past every outline (11 to 16). So nobody collapses a pot by accident, and Hard only means waiting longer for the clay to firm up (41 s for a perfect throw, against 17 s). Glazing and firing do scale with difficulty (above). Section 9 asks what to do.
+- **The spread between hands** (4.75 down to 3.7) is as forgiving as painting's judge: a painting 35% wrong gets 4.2.
+- **Not really throwing:** a lump never touched gets 1 to 1.5 stars, and an outline pulled 6 rows short 0.5 to 1. But **pulling up without shaping gets 4.5 on the cup and 4 on the jug**, since both are close to the cylinder that pulling makes. That's fine for the cup, the first piece, but generous for the jug.
 
 ## 11. Visuals (a plan for review)
 

@@ -4,11 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <!-- The mod's game-free rules, compiled in directly so the sim always runs the shipping code. -->
   <ItemGroup>
     <Compile Include="..\ArtStudio\Core\**\*.cs" Link="Core\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- The pottery prototype's game-free rules (Debug-only in the mod, so DEBUG is defined here). -->
+    <Compile Include="..\ArtStudio\Pottery\ClayPot.cs;..\ArtStudio\Pottery\PotBot.cs" Link="Pottery\%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

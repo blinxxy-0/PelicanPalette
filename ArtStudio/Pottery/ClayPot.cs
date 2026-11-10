@@ -195,6 +195,8 @@ internal sealed class PotShape
     public float[] R { get; }
     public int Rows => R.Length;
 
+    public static PotShape Of(string name, float[] r) => new(name, r);   // the simulation's odd outlines
+
     private PotShape(string name, float[] r)
     {
         Name = name;
@@ -293,7 +295,13 @@ internal static class PotJudge
         int heavy = Enumerable.Range(0, pot.Rows).FirstOrDefault(i => pot.T[i] > HeavyWall(i, pot.Rows) + 0.3f, -1);
         if (thin >= 0)
             tips.Add($"The wall's thin {Part(thin, pot.Rows)}: pull less there.");
-        if (heavy >= 0)
+        // (the simulation, 2026-11-09: a neck pressed in at full height can't be thinned
+        // without overshooting; the 5-star vase holds a few rows back, then pulls the neck up)
+        bool Heavy(int i) => pot.T[i] > HeavyWall(i, pot.Rows) + 0.3f;
+        bool heavyNeck = Enumerable.Range(2 * pot.Rows / 3, Math.Max(0, pot.Rows - 2 - 2 * pot.Rows / 3)).Any(Heavy);
+        if (heavyNeck)
+            tips.Add("The neck's heavy: pressing in thickens it. Stop pulling a few rows short, press the neck in, then pull up through it to full height.");
+        if (heavy >= 0 && !(heavyNeck && heavy >= 2 * pot.Rows / 3))
             tips.Add($"The wall's heavy {Part(heavy, pot.Rows)}: pull up through it to thin it before you shape it. Pressing in thickens a wall.");
         if (r.Centring < 0.9f)
             tips.Add("It ran a little off-centre: hold the lump longer at the start.");

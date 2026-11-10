@@ -37,8 +37,9 @@ internal sealed class PotteryMenu : IClickableMenu
     private float _spin;
 
     // centring
-    private float _wobble, _wobbleV, _centredFor, _centringTime, _centring;
     private readonly Random _random = new();
+    private Centring _centringWheel = null!;   // set by Restart
+    private float _centring;
 
     // banding (Banding.cs): the glaze on the pot, the design to match, the glaze in the
     // brush, the banding wheel's turn, and how long the brush has been held (the hand
@@ -141,49 +142,14 @@ internal sealed class PotteryMenu : IClickableMenu
 
     // ---- Rules ----
 
-    // The simulation's greedy potter (for checking the rules): sweep pulls from the foot
-    // until it's tall enough, then press in or let out row by row towards the reference,
-    // resting whenever the clay tires.
-    private static void Bot(ClayPot pot, PotShape shape)
-    {
-        const float dt = 1f / 60f;
-        void RestIfTired()
-        {
-            if (pot.Patience < 0.35f)
-                for (int k = 0; k < 6000 && pot.Patience < 0.9f; k++)
-                    pot.Rest(dt);
-        }
-        for (int pass = 0; pass < 200 && pot.Rows < shape.Rows && !pot.Collapsed; pass++)
-            for (float at = 0; at < pot.Rows && pot.Rows < shape.Rows && !pot.Collapsed; at += 0.25f)
-            {
-                RestIfTired();
-                pot.Work(ThrowMove.PullUp, at, dt * 6);
-            }
-        for (int sweep = 0; sweep < 40 && !pot.Collapsed; sweep++)
-        {
-            float worst = 0;
-            for (int i = 0; i < Math.Min(pot.Rows, shape.Rows) && !pot.Collapsed; i++)
-            {
-                float diff = shape.R[i] - pot.R[i];
-                worst = MathF.Max(worst, MathF.Abs(diff));
-                if (MathF.Abs(diff) > 0.3f)
-                {
-                    RestIfTired();
-                    pot.Work(diff > 0 ? ThrowMove.LetOut : ThrowMove.PressIn, i, dt * 3);
-                }
-            }
-            if (worst < 0.4f)
-                break;
-        }
-    }
+    // The simulation's greedy potter (PotBot.cs), its hand perfect: to check the rules.
+    private static void Bot(ClayPot pot, PotShape shape) => PotBot.Throw(pot, shape, PotHand.Perfect);
 
     private void Restart()
     {
         _pot = new ClayPot(_rules);
         _stage = Stage.Centring;
-        _wobble = (_random.Next(2) == 0 ? -1 : 1) * 6f;
-        _wobbleV = 0;
-        _centredFor = _centringTime = 0;
+        _centringWheel = new Centring(_random);
         _result = null;
         _move = ThrowMove.PullUp;
         _glaze = null;
@@ -393,22 +359,11 @@ internal sealed class PotteryMenu : IClickableMenu
     // Keep your hands on the lump (the mouse, held) and it settles; let go and it wanders.
     private void UpdateCentring(float dt, bool held)
     {
-        _centringTime += dt;
         float hand = (ArtX(Game1.getMouseX()) - _art.CentreX) / _art.UnitPx;
-        bool onIt = held && MathF.Abs(hand - _wobble) < _rules.CentringBand;
-        if (onIt)
+        _centringWheel.Step(dt, held ? hand : null, _rules.CentringBand);
+        if (_centringWheel.Done)
         {
-            _wobbleV += -_wobble * 4f * dt;               // your hands pull it true
-            _wobbleV *= MathF.Pow(0.15f, dt);
-        }
-        else
-            _wobbleV += (MathF.Sign(_wobble == 0 ? 1 : _wobble) * 3f + (float)(_random.NextDouble() - 0.5) * 18f) * dt;
-        _wobbleV += (float)(_random.NextDouble() - 0.5) * 10f * dt;   // it never quite stops trying
-        _wobble = Math.Clamp(_wobble + _wobbleV * dt, -12f, 12f);
-        _centredFor = MathF.Abs(_wobble) < 0.8f ? _centredFor + dt : 0f;
-        if (_centredFor > 1.5f || _centringTime > 14f)
-        {
-            _centring = Math.Clamp(1f - MathF.Abs(_wobble) / 8f, 0f, 1f);
+            _centring = _centringWheel.Score;
             _stage = Stage.Throwing;
         }
     }
@@ -622,7 +577,7 @@ internal sealed class PotteryMenu : IClickableMenu
         }
         Color handColor = _move switch { ThrowMove.PullUp => new Color(160, 230, 140), ThrowMove.PressIn => new Color(250, 180, 90), _ => new Color(150, 200, 250) };
         _art.DrawScene(b, scene, _spin, _stage == Stage.Centring ? null : _pot, _shape, showReference: _stage != Stage.Centring,
-            lumpOffset: _wobble, handRow: RowAt(my), handColor: handColor,
+            lumpOffset: _centringWheel.Wobble, handRow: RowAt(my), handColor: handColor,
             showHand: overPot && _stage != Stage.Results,
             handX: _stage == Stage.Centring ? ArtX(mx) : float.NaN);
     }
@@ -638,11 +593,11 @@ internal sealed class PotteryMenu : IClickableMenu
         Ui.Fill(b, track, new Color(70, 48, 34));
         float bandW = track.Width * (0.8f / 12f);
         Ui.Fill(b, new Rectangle((int)(track.Center.X - bandW), track.Y + 3, (int)(bandW * 2), track.Height - 6), new Color(120, 180, 90));
-        int markX = track.Center.X + (int)(_wobble / 12f * (track.Width / 2 - 6));
+        int markX = track.Center.X + (int)(_centringWheel.Wobble / 12f * (track.Width / 2 - 6));
         Ui.Fill(b, new Rectangle(markX - 4, track.Y - 4, 8, track.Height + 8), new Color(232, 182, 140));
         Ui.Outline(b, track, new Color(40, 25, 15), 2);
-        bool trueNow = MathF.Abs(_wobble) < 0.8f;
-        string state = trueNow ? "Running true..." : MathF.Abs(_wobble) < 4f ? "Nearly true" : "Off true";
+        bool trueNow = _centringWheel.RunningTrue;
+        string state = trueNow ? "Running true..." : MathF.Abs(_centringWheel.Wobble) < 4f ? "Nearly true" : "Off true";
         Ui.TextCentered(b, state, panel.Center.X, track.Bottom + 18, trueNow ? new Color(60, 120, 40) : Game1.textColor);
         Ui.Text(b, Game1.parseText("Keep your hand over the lump as it wanders. Held, it settles.", Game1.smallFont, panel.Width - 40),
             new Vector2(panel.X + 20, track.Bottom + 60), Game1.textColor * 0.75f);
