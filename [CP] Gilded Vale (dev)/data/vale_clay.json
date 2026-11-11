@@ -1,0 +1,164 @@
+// Potter's Clay, Tobin's clay pit and his teaching wheel (1.5's pottery, in development;
+// docs/design/pottery_minigame.md, section 8). The rules are the C# mod's
+// (ArtStudio/Vale/ValeClay.cs; museart_claytest checks them).
+//
+// Potter's Clay is the wheel's clay, and not the game's Clay, which is grit and roots. Two
+// sources only: Tobin's counter (data/vale_shops.json) and digging at his pit.
+{
+  "Changes": [
+    // ---- The item (its icon: tools/art/potters_clay.py, a placeholder) ----
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt.Vale/PottersClay",
+      "FromFile": "assets/PottersClay.png"
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "blinxxy.MuseArt_PottersClay": {
+          "Name": "blinxxy.MuseArt_PottersClay",
+          "DisplayName": "{{i18n:clay.item.name}}",
+          "Description": "{{i18n:clay.item.description}}",
+          "Type": "Basic",
+          "Category": -16,
+          "Price": 25,
+          "Edibility": -300,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/PottersClay",
+          "SpriteIndex": 0,
+          "ContextTags": [ "color_gray" ]
+        }
+      }
+    },
+
+    // ---- The Slaking Tub: 3 Clay (field clay) in, 1 Potter's Clay out, 8 hours later ----
+    // Potters slake dry, rough clay in water and sieve the grit out. A machine in the game's
+    // own system (Data/Machines), so it behaves like a Keg (and Automate can run it). Its
+    // recipe is sold at Tobin's counter (data/vale_shops.json). Its sprite is a placeholder
+    // (tools/art/slaking_tub.py): frame 0 idle, frame 1 in use and ready.
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt.Vale/SlakingTub",
+      "FromFile": "assets/SlakingTub.png"
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/BigCraftables",
+      "Entries": {
+        "blinxxy.MuseArt_SlakingTub": {
+          "Name": "blinxxy.MuseArt_SlakingTub",
+          "DisplayName": "{{i18n:clay.tub.name}}",
+          "Description": "{{i18n:clay.tub.description}}",
+          "Price": 50,
+          "Fragility": 0,
+          "CanBePlacedIndoors": true,
+          "CanBePlacedOutdoors": true,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/SlakingTub",
+          "SpriteIndex": 0
+        }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "Entries": {
+        "(BC)blinxxy.MuseArt_SlakingTub": {
+          "OutputRules": [
+            {
+              "Id": "Slake",
+              "Triggers": [
+                { "Id": "Clay", "Trigger": "ItemPlacedInMachine", "RequiredItemId": "(O)330", "RequiredCount": 3 }
+              ],
+              "OutputItem": [
+                { "Id": "PottersClay", "ItemId": "(O)blinxxy.MuseArt_PottersClay", "MinStack": 1, "MaxStack": 1 }
+              ],
+              // 8 hours: a tub filled in the morning is ready by evening, and one filled at
+              // night by morning (the night runs the clock on to 6am)
+              "MinutesUntilReady": 480
+            }
+          ],
+          "InvalidCountMessage": "{{i18n:clay.tub.count}}",
+          "LoadEffects": [ { "Id": "Load", "Sounds": [ { "Id": "bubbles" } ] } ],
+          "ShowNextIndexWhileWorking": true,
+          "ShowNextIndexWhenReady": true
+        }
+      }
+    },
+    // ingredients/unused/yield/big craftable/unlock condition/display name: 30 Wood, 1 Copper
+    // Bar, 10 Clay; learned only by buying it from Tobin
+    {
+      "Action": "EditData",
+      "Target": "Data/CraftingRecipes",
+      "Entries": {
+        "blinxxy.MuseArt_SlakingTub": "388 30 334 1 330 10/Home/blinxxy.MuseArt_SlakingTub/true/null/{{i18n:clay.tub.name}}"
+      }
+    },
+
+    // ---- The clay pit on the riverbank below the pottery ----
+    // The clay bank painted into the map (tools/build_vale.py FEATURES "clay", tiles 50-57,
+    // 21-27): its pit of grey clay is solid, x 53-57, y 23-25 and x 54-56, y 26. Hoe any of
+    // it from the sand round it (from the north, y 22; the west, x 52; the south, y 27; or the
+    // east, x 58) to dig; right-click it to read Tobin's note and how much is left today.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_GildedVale",
+      "MapTiles": [
+        { "Position": { "X": 53, "Y": 23 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 54, "Y": 23 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 55, "Y": 23 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 56, "Y": 23 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 57, "Y": 23 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 53, "Y": 24 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 54, "Y": 24 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 55, "Y": 24 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 56, "Y": 24 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 57, "Y": 24 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 53, "Y": 25 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 54, "Y": 25 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 55, "Y": 25 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 56, "Y": 25 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 57, "Y": 25 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 54, "Y": 26 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 55, "Y": 26 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } },
+        { "Position": { "X": 56, "Y": 26 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_ClayPit" } }
+      ]
+    },
+
+    // ---- The teaching wheel in the pottery ----
+    // Two wheels stand in the workshop (tools/build_vale_buildings.py): Tobin's (13-14, 19),
+    // which keeps its description, and "the one he teaches you on" (17-18, 19), which throws.
+    {
+      "Action": "EditMap",
+      "Target": "Maps/blinxxy.MuseArt_ValePottery",
+      "MapTiles": [
+        { "Position": { "X": 17, "Y": 19 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_PotteryWheel" } },
+        { "Position": { "X": 18, "Y": 19 }, "Layer": "Buildings", "SetProperties": { "Action": "blinxxy.MuseArt_PotteryWheel" } }
+      ]
+    },
+
+    // ---- Their texts, for the C# mod ----
+    {
+      "Action": "EditData",
+      "Target": "Mods/blinxxy.MuseArt/ValeStrings",
+      "Entries": {
+        "clay.pit.note": "{{i18n:clay.pit.note}}",
+        "clay.pit.left": "{{i18n:clay.pit.left}}",
+        "clay.pit.dug_out": "{{i18n:clay.pit.dug_out}}",
+        "clay.pit.frozen": "{{i18n:clay.pit.frozen}}",
+        "clay.pit.last": "{{i18n:clay.pit.last}}",
+        "clay.wheel.ask": "{{i18n:clay.wheel.ask}}",
+        "clay.wheel.shape": "{{i18n:clay.wheel.shape}}",
+        "clay.wheel.cup": "{{i18n:clay.wheel.cup}}",
+        "clay.wheel.bowl": "{{i18n:clay.wheel.bowl}}",
+        "clay.wheel.vase": "{{i18n:clay.wheel.vase}}",
+        "clay.wheel.jug": "{{i18n:clay.wheel.jug}}",
+        "clay.wheel.leave": "{{i18n:clay.wheel.leave}}",
+        "clay.wheel.none": "{{i18n:clay.wheel.none}}",
+        "clay.wheel.field_clay": "{{i18n:clay.wheel.field_clay}}",
+        "clay.wheel.short": "{{i18n:clay.wheel.short}}",
+        "clay.wheel.lump": "{{i18n:clay.wheel.lump}}",
+        "clay.wheel.lumps": "{{i18n:clay.wheel.lumps}}"
+      }
+    }
+  ]
+}

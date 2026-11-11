@@ -21,6 +21,8 @@ internal static class GildedVale
         ValeGrounds.Register(helper, harmony, monitor);
         ValeOrchard.Register(helper, monitor);
         ValeFish.Register(helper, monitor);
+        // Potter's Clay: Tobin's clay pit and his teaching wheel (ValeClay.cs).
+        ValeClay.Register(helper, harmony, monitor);
         ValeStudios.Register(helper, harmony, monitor);
         StainedGlassLight.Register(helper, harmony, monitor);
 
