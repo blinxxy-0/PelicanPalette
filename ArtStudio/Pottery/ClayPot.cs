@@ -23,7 +23,8 @@ internal sealed record PotteryRules(
     float Drift,                // banding: how far your brush hand wanders (rows)
     float KilnBand,             // firing: the band's half-width (on the kiln gauge's 0 to 100)
     bool KilnCrack,             // firing: far too hot for too long cracks the pot
-    float GiveWay = 0f)         // seconds you can keep working clay out of patience before it falls (0: never)
+    float GiveWay = 0f,         // seconds you can keep working clay out of patience before it falls (0: never)
+    float GiftOdds = 1f)        // firing: how often kiln gifts come, against the usual (Kiln Keeper: 2)
 {
     public static PotteryRules For(string name) => name switch
     {

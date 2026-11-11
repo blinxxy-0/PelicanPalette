@@ -909,5 +909,21 @@
   "item.bench.description": "Takes a framed painting out of its frame overnight: the painting as it was, and the empty frame to use again.",
   "bench.loaded": "{{painting}} is on the bench. It'll be out of its frame by morning.",
   "bench.empty": "A framer's bench. Put a framed painting on it to take it out of its frame.",
-  "bench.working": "{{painting}} is still on the bench. Come back in the morning."
+  "bench.working": "{{painting}} is still on the bench. Come back in the morning.",
+
+  "pottery.skill.name": "Pottery",
+  "pottery.skill.hover": "Throwing, glazing and firing all count.",
+  "pottery.skill.level-up": "Your hands know the clay a little better.",
+  "pottery.profession.thrower": "Thrower",
+  "pottery.profession.thrower.description": "Your pots sell for {{percent}} more.",
+  "pottery.profession.glazer": "Glazer",
+  "pottery.profession.glazer.description": "Your brush hand drifts {{percent}} less while banding.",
+  "pottery.profession.productionpotter": "Production Potter",
+  "pottery.profession.productionpotter.description": "The clay's patience lasts {{percent}} longer, and a small lump makes two cups.",
+  "pottery.profession.masterofsets": "Master of Sets",
+  "pottery.profession.masterofsets.description": "Matching sets are worth double, with a {{percent}} wider tolerance.",
+  "pottery.profession.kilnkeeper": "Kiln Keeper",
+  "pottery.profession.kilnkeeper.description": "Stoking's band is {{percent}} wider, and kiln gifts come twice as often.",
+  "pottery.profession.alchemist": "Alchemist",
+  "pottery.profession.alchemist.description": "Common minerals give rare glazes: Copper Red from Copper Ore."
 }

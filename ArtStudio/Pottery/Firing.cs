@@ -50,6 +50,7 @@ internal sealed class Kiln
     public float Heat { get; private set; } = StartHeat;
     public float Peak { get; }
     public float Band { get; }
+    public float GiftOdds { get; }                            // against the usual chance (the Pottery skill's Kiln Keeper)
     public bool Cracked { get; private set; }
     public bool Done => Time >= Duration || Cracked;
     public readonly int[] Used = new int[Fuels.Length];
@@ -70,6 +71,7 @@ internal sealed class Kiln
     {
         Peak = PeakFor(glaze);
         Band = rules.KilnBand;
+        GiftOdds = rules.GiftOdds;
         _canCrack = rules.KilnCrack;
         _random = random;
         _gusts = rules.Name switch { "Simplified" => 0f, "Hard" => 7f, _ => 3.5f };
@@ -174,7 +176,7 @@ internal static class FiringJudge
         string verdict = kiln.Cracked ? "Cracked" : s >= 0.9f ? "Perfect" : s >= 0.65f ? "Well fired"
             : kiln.Below >= kiln.Above ? "Underfired" : "Overfired";
         // a kiln gift: likely from a perfect firing, rare from a good one
-        double chance = verdict == "Perfect" ? 0.5 : verdict == "Well fired" ? 0.1 : 0;
+        double chance = Math.Min(1.0, (verdict == "Perfect" ? 0.5 : verdict == "Well fired" ? 0.1 : 0) * kiln.GiftOdds);
         string? gift = random.NextDouble() < chance ? Gifts[random.Next(Gifts.Length)] : null;
         return new FiringResult(s, verdict, gift);
     }

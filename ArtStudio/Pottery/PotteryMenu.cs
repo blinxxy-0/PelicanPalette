@@ -212,6 +212,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void FinishBanding()
     {
         _glazeResult = GlazeJudge.Judge(_glaze!, _design!);
+        PotterySkill.OnGlazed(this, _glazeResult, _rules);
         _stage = Stage.Results;
     }
 
@@ -261,6 +262,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void FinishFiring()
     {
         _fireResult = FiringJudge.Judge(_kiln!, _random);
+        PotterySkill.OnFired(this, _fireResult, _rules);
         _stage = Stage.Results;
     }
 
@@ -371,6 +373,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void Finish()
     {
         _result = PotJudge.Judge(_pot, _shape, _centring);
+        PotterySkill.OnThrown(this, _result, _rules);
         _stage = Stage.Results;
     }
 
@@ -840,7 +843,7 @@ internal static class PotteryProto
             string shape = args.Length > 0 ? args[0] : "";
             string rules = args.Length > 1 ? args[1] : "normal";
             PotteryArt.Load(helper);
-            Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(rules), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"), args.Contains("band"), args.Contains("fire"));
+            Game1.activeClickableMenu = new PotteryMenu(shape, PotterySkill.RulesFor(Game1.player, PotteryRules.For(rules)), args.Contains("throw"), args.Contains("bot"), args.Contains("wreck"), args.Contains("band"), args.Contains("fire"));
         });
         // Every stage at both common sizes, with the layout audit (overlapping or spilling text),
         // to dialogue_snapshots/pottery_*.png.
