@@ -20,7 +20,7 @@ internal static class PotteryPiecesTests
     public static void Register(IModHelper helper, IMonitor monitor)
     {
         DevTools.AddCommand(helper, "museart_potitemtest", "Kept pots (1.5): the bots throw, glaze and fire each shape; the piece in your bag, its data through modData and a save, its price, quality, name, gifts, shops, a table, and its sprite (a sheet of them to dialogue_snapshots/potpieces.png).", (_, _) => Run(helper, monitor));
-        DevTools.AddCommand(helper, "museart_pots", "Sample pots of every shape and glaze. Usage: museart_pots [bag] (one of each shape) | place <x> <y> (every shape in every glaze, here, from that tile) | table <x> <y> <shape> <glaze 0-5> [gift] (on the table there) | gifts <x> <y> (a vase with each kiln gift, and a dull one)", (_, args) => Spawn(monitor, args));
+        DevTools.AddCommand(helper, "museart_pots", "Sample pots of every shape and glaze. Usage: museart_pots [bag] (one of each shape) | place <x> <y> (every shape in every glaze, here, from that tile) | table <x> <y> <shape> <glaze 0-5> [gift] (on the table there) | gifts <x> <y> (a vase with each kiln gift, and a dull one) | scene <x> <y> (two tables with pieces on them, and some on the floor beside)", (_, args) => Spawn(monitor, args));
     }
 
     private static void Check(IMonitor monitor, string what, bool ok, string detail = "") =>
@@ -79,6 +79,25 @@ internal static class PotteryPiecesTests
                         Place(PotteryPieces.Create(Sample(shape, g, seed: g + 1), who), Arg(1) + g, py);
                     py += 2;
                 }
+                break;
+            case "scene":
+                // for looking at in a room: a big table and an end table with pieces on them,
+                // and pieces on the floor beside them (anything lying about cleared first)
+                location.debris.Clear();
+                int sx = Arg(1), sy = Arg(2);
+                var tables = DataLoader.Furniture(Game1.content).Where(p => p.Value.Split('/')[1] == "table").ToList();
+                string big = tables.First(p => p.Value.Split('/')[3] == "2 2").Key, small = tables.FirstOrDefault(p => p.Value.Split('/')[3] == "1 1").Key ?? big;
+                var bigTable = ItemRegistry.Create<Furniture>("(F)" + big);
+                Place(bigTable, sx, sy);
+                bigTable.performObjectDropInAction(PotteryPieces.Create(Sample("vase", 1), who), false, null);
+                var endTable = ItemRegistry.Create<Furniture>("(F)" + small);
+                Place(endTable, sx + 3, sy + 1);
+                endTable.performObjectDropInAction(PotteryPieces.Create(Sample("cup", 3, "flash"), who), false, null);
+                Place(PotteryPieces.Create(Sample("jug", 5), who), sx + 5, sy + 1);
+                Place(PotteryPieces.Create(Sample("bowl", 4, "crackle"), who), sx + 6, sy + 1);
+                Place(PotteryPieces.Create(Sample("vase", 2, "drip"), who), sx + 7, sy + 1);
+                Place(PotteryPieces.Create(Sample("cup", 0), who), sx + 5, sy + 3);
+                Place(PotteryPieces.Create(Sample("bowl", 1, dull: true), who), sx + 6, sy + 3);
                 break;
             case "gifts":
                 int gx = Arg(1);
@@ -224,6 +243,7 @@ internal static class PotteryPiecesTests
             who.addItemToInventoryBool(iridium);
             who.CurrentToolIndex = who.Items.IndexOf(iridium);
             Check(monitor, "Pierre will take one from your hand", who.ActiveObject == iridium && pierre.tryToReceiveActiveObject(who, probe: true));
+            who.friendshipData.TryAdd("Pierre", new Friendship());
             int points = who.getFriendshipLevelForNPC("Pierre");
             pierre.receiveGift(iridium, who, updateGiftLimitInfo: false, showResponse: false);
             Check(monitor, "giving it is a loved gift", who.getFriendshipLevelForNPC("Pierre") >= points + 80, $"{points} -> {who.getFriendshipLevelForNPC("Pierre")}");
@@ -260,8 +280,40 @@ internal static class PotteryPiecesTests
         else
             Check(monitor, "a jug sits on a table", false, "no room here for a table");
 
-        // ---- every draw path, to a sheet to look at ----
+        // ---- every draw path, to a sheet to look at; the results screen with the kept piece ----
         Sheet(helper, monitor, who);
+        ResultsScreens(helper, monitor, who);
+    }
+
+    // The kiln's results with the piece kept (in the bag, and with a full bag at your feet),
+    // at both common sizes with the layout audit, to dialogue_snapshots/pottery_kept_*.png.
+    private static void ResultsScreens(IModHelper helper, IMonitor monitor, Farmer who)
+    {
+        string dir = Path.Combine(helper.DirectoryPath, "dialogue_snapshots");
+        var problems = new System.Collections.Generic.List<string>();
+        foreach (bool full in new[] { false, true })
+            foreach (var (w, h) in new[] { (1280, 720), (1920, 1080) })
+                DevTools.AtViewport(w, h, () =>
+                {
+                    var filler = new System.Collections.Generic.List<Item>();
+                    if (full)
+                        for (int i = 0; i < who.Items.Count; i++)
+                            if (who.Items[i] == null)
+                                filler.Add(who.Items[i] = ItemRegistry.Create("(O)390"));
+                    var menu = new PotteryMenu("vase", PotteryRules.For("normal"), fire: true);
+                    Game1.activeClickableMenu = menu;
+                    menu.FireBot("steady");
+                    Menus.Ui.Audit = new System.Collections.Generic.List<Menus.Ui.AuditEntry>();
+                    DevTools.Render(menu, Path.Combine(dir, $"pottery_kept{(full ? "_floor" : "")}_{w}.png"));
+                    problems.AddRange(Menus.Ui.AuditProblems().Select(p => $"{(full ? "full bag " : "")}@{w}x{h}: {p}"));
+                    Menus.Ui.Audit = null;
+                    menu.exitThisMenuNoSound();
+                    Game1.activeClickableMenu = null;
+                    foreach (var item in filler)
+                        who.removeItemFromInventory(item);
+                    Game1.currentLocation.debris.Clear();
+                });
+        Check(monitor, "the results show the kept piece, with no layout problems", problems.Count == 0, problems.Count == 0 ? Path.Combine(dir, "pottery_kept_*.png") : string.Join("; ", problems));
     }
 
     private static bool Same(Item a, Item b) =>

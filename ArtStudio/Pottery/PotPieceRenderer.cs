@@ -59,10 +59,10 @@ internal static class PotPieceRenderer
     {
         "bowl" => (14f, 13f, 0.8f),
         "cup" => (12f, 14f, 0.8f),
-        _ => (15f, 30f, 1.05f),
+        _ => (14f, 30f, 1.05f),
     };
 
-    private enum Kind : byte { None, Outer, Inner, Floor, Rim }
+    private enum Kind : byte { None, Outer, Inner, Rim }
 
     public static Color[] Build(PotPiece p, out int height, out Rectangle bounds)
     {
@@ -100,23 +100,6 @@ internal static class PotPieceRenderer
         var kind = new Kind[w * h];
         Array.Fill(depth, float.NegativeInfinity);
 
-        // A point on the pot (x across, y up the pot in pixels, z towards you), kept where
-        // it's nearest the eye.
-        void Plot(float x, float y, float z, Color c, Kind k)
-        {
-            float sx = cx + x, sy = baseY - y * cos + z * Tilt;
-            int ix = (int)MathF.Floor(sx), iy = (int)MathF.Floor(sy);
-            if (ix < 0 || ix >= w || iy < 0 || iy >= h)
-                return;
-            float d = z * cos + y * Tilt;
-            int i = iy * w + ix;
-            if (d <= depth[i])
-                return;
-            depth[i] = d;
-            colour[i] = c;
-            kind[i] = k;
-        }
-
         Color Glazed(int g, int shade) => PotRenderer.GlazeShade(g < 0 ? Bisque : Glazes.All[g].Colour, Math.Clamp(shade, 0, 5));
         int Bucket(float theta)
         {
@@ -125,68 +108,96 @@ internal static class PotPieceRenderer
         }
         int SliceAt(float y) => Math.Clamp((int)(y * PotGlaze.SlicesPerRow), 0, Math.Max(0, p.Slices - 1));
 
-        const int Around = 256;
-        float step = 0.2f / s;                       // a fifth of a pixel up the pot
-        float floorY = MathF.Min(1f, n * 0.15f);
-
-        // the outside: the wheel's light (PotRenderer), with the slope's light from above
-        for (float y = 0f; y <= n; y += step)
+        // The outside, a pixel at a time: down each column through its middle, the pot's near
+        // surface at every height, and for each pixel the point nearest its middle on the
+        // nearest layer (a bowl's flared rim hides its foot). Shaded with the wheel's light
+        // (PotRenderer), and the slope's light from above.
+        var hitY = new float[w * h];
+        var hitTheta = new float[w * h];
+        var off = new float[w * h];
+        float step = 0.04f / s;                      // a twenty-fifth of a pixel up the pot
+        for (int x = 0; x < w; x++)
         {
+            float fx = x + 0.5f - cx;
+            for (float y = 0f; y <= n; y += step)
+            {
+                float r = R(y) * u;
+                if (MathF.Abs(fx) >= r)
+                    continue;
+                float z = MathF.Sqrt(r * r - fx * fx);
+                float sy = baseY - y * s * cos + z * Tilt;
+                int iy = (int)MathF.Floor(sy);
+                if (iy < 0 || iy >= h)
+                    continue;
+                int i = iy * w + x;
+                float d = z * cos + y * s * Tilt, centre = MathF.Abs(sy - (iy + 0.5f));
+                bool nearer = d > depth[i] + 0.6f, sameLayer = MathF.Abs(d - depth[i]) <= 0.6f;
+                if (!nearer && !(sameLayer && centre < off[i]))
+                    continue;
+                depth[i] = MathF.Max(d, depth[i]);
+                off[i] = centre;
+                hitY[i] = y;
+                hitTheta[i] = MathF.Atan2(fx, z);
+                kind[i] = Kind.Outer;
+            }
+        }
+        for (int i = 0; i < w * h; i++)
+        {
+            if (kind[i] != Kind.Outer)
+                continue;
+            float y = hitY[i], theta = hitTheta[i];
             float slope = (R(MathF.Min(n, y + 0.5f)) - R(MathF.Max(0f, y - 0.5f))) * Aspect / cos;
             float nh = 1f / MathF.Sqrt(1f + slope * slope), ny = -slope * nh;
-            float r = R(y) * u;
-            int slice = SliceAt(y);
-            for (int a = 0; a < Around; a++)
+            float sin = MathF.Sin(theta), c = MathF.Cos(theta);
+            float light = nh * (0.62f * c - 0.32f * sin) + 0.06f + 0.35f * MathF.Max(0f, ny) - 0.2f * MathF.Max(0f, -ny);
+            int shade = (int)(light * 6);
+            int slice = SliceAt(y), bucket = Bucket(theta);
+            int g = p.GlazeAt(slice, bucket);
+            Color col = Glazed(g, shade);
+            if (g >= 0)
             {
-                float theta = a * MathF.Tau / Around - MathF.PI;
-                float sin = MathF.Sin(theta), c = MathF.Cos(theta);
-                float light = nh * (0.62f * c - 0.32f * sin) + 0.06f + 0.35f * MathF.Max(0f, ny) - 0.2f * MathF.Max(0f, -ny);
-                int shade = (int)(light * 6);
-                int bucket = Bucket(theta);
-                int g = p.GlazeAt(slice, bucket);
-                Color col = Glazed(g, shade);
-                if (g >= 0)
-                {
-                    var gl = Glazes.All[g];
-                    if (gl.Speckled && (((bucket * 2 + (int)(y * 2.5f)) * 73856093) ^ (slice * 19349663)) % 7 == 0)
-                        col = Glazed(g, shade - 3);                                         // iron flecks
-                    if (!p.Dull && c > 0f && sin > -0.66f && sin < -0.4f && ny > -0.5f)
-                        col = Color.Lerp(Glazed(g, 5), Color.White, 0.45f);                // the glaze's shine
-                }
-                Plot(r * sin, y * s, r * c, col, Kind.Outer);
+                var gl = Glazes.All[g];
+                if (gl.Speckled && Hash(i % w + bucket, i / w) % 6 == 0)
+                    col = Glazed(g, shade - 3);                                         // iron flecks
+                if (!p.Dull && c > 0f && sin > -0.66f && sin < -0.4f && ny > -0.5f)
+                    col = Color.Lerp(Glazed(g, 5), Color.White, 0.45f);                // the glaze's shine
             }
+            colour[i] = col;
         }
-        // the inside: glazed by the dip, darker deeper down, lit on the far right
+        // The top, a pixel at a time: the rim's ellipse, its lip lit, and the opening inside
+        // it showing the glazed inside, darker deeper down and lit on the far right. Nothing
+        // stands above the rim.
         int inside = p.Base;
-        for (float y = floorY; y <= n; y += step)
-        {
-            float r = (R(y) - Wall(y)) * u;
-            float deep = (n - y) / MathF.Max(1f, n);
-            for (int a = 0; a < Around; a++)
-            {
-                float theta = a * MathF.Tau / Around - MathF.PI;
-                float sin = MathF.Sin(theta), c = MathF.Cos(theta);
-                float light = 0.3f + 0.22f * sin - 0.12f * c - 0.9f * deep;
-                Plot(r * sin, y * s, r * c, Glazed(inside, (int)MathF.Floor(light * 6)), Kind.Inner);
-            }
-        }
-        // its floor
-        float floorR = (R(floorY) - Wall(floorY)) * u;
-        for (float rr = 0f; rr <= floorR; rr += 0.2f)
-            for (int a = 0; a < Around; a++)
-            {
-                float theta = a * MathF.Tau / Around;
-                Plot(rr * MathF.Sin(theta), floorY * s, rr * MathF.Cos(theta), Glazed(inside, n > 6 ? 0 : 1), Kind.Floor);
-            }
-        // the rim: the lip's top, lit, in the glaze at the top of the pot
+        float topY = baseY - n * s * cos;
         float rimOut = R(n) * u, rimIn = (R(n) - Wall(n)) * u;
         int top = SliceAt(n);
-        for (float rr = rimIn; rr <= rimOut + 0.01f; rr += 0.2f)
-            for (int a = 0; a < Around; a++)
+        // how much of the inside you see: all of a bowl's, lit; only the dark deep of a vase's
+        float open = Math.Clamp(rimIn / MathF.Max(1f, n * s * cos), 0f, 1f);
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
             {
-                float theta = a * MathF.Tau / Around - MathF.PI;
-                float sin = MathF.Sin(theta);
-                Plot(rr * sin, n * s + 0.01f, rr * MathF.Cos(theta), Glazed(p.GlazeAt(top, Bucket(theta)), sin < 0.3f ? 5 : 4), Kind.Rim);
+                int i = y * w + x;
+                float fx = x + 0.5f - cx, fy = y + 0.5f - topY;
+                float outer = (fx / rimOut) * (fx / rimOut) + (fy / (rimOut * Tilt)) * (fy / (rimOut * Tilt));
+                if (outer > 1f)
+                {
+                    if (fy < 0f && MathF.Abs(fx) < rimOut)
+                        kind[i] = Kind.None;
+                    continue;
+                }
+                float ix = rimIn > 0.3f ? fx / rimIn : 9f, iy = rimIn > 0.3f ? fy / (rimIn * Tilt) : 9f;
+                if (ix * ix + iy * iy < 1f)
+                {
+                    float light = 0.12f + 0.45f * open + 0.2f * ix - 0.2f * (iy + 1f) * (1f - 0.3f * open);
+                    colour[i] = Glazed(inside, Math.Clamp((int)MathF.Floor(light * 6), 0, 1 + (int)MathF.Round(3f * open)));
+                    kind[i] = Kind.Inner;
+                }
+                else
+                {
+                    float theta = MathF.Atan2(fx / rimOut, fy / (rimOut * Tilt));
+                    colour[i] = Glazed(p.GlazeAt(top, Bucket(theta)), fx < rimOut * 0.3f ? 5 : 4);
+                    kind[i] = Kind.Rim;
+                }
             }
 
         // A badly fired glaze is greyed, as the kiln shows it.
@@ -249,16 +260,29 @@ internal static class PotPieceRenderer
                 {
                     int x = i % w, y = i / w;
                     if ((x + 2 * y) % 5 == 0 && Hash(x, y) % 3 != 0 || (2 * x - y + 40) % 7 == 0 && Hash(y, x) % 2 == 0)
-                        colour[i] = Color.Lerp(colour[i], new Color(250, 244, 226), 0.3f);
+                        colour[i] = Color.Lerp(colour[i], new Color(250, 244, 226), 0.42f);
                 }
                 break;
             case "drip":
-                // runs of the glaze down to the foot, darker and glassy
-                foreach (int i in outer)
+                // runs of glaze from the middle of the pot down to the foot, deep and glassy,
+                // each with a bead of light where it stopped
+                for (int x = left + 1; x < right; x++)
                 {
-                    int x = i % w, y = i / w;
-                    if (Hash(x, 7) % 3 == 0 && y >= bottom - 2 - Hash(x, 3) % 2 && x > left && x < right)
-                        colour[i] = Color.Lerp(colour[i], new Color(colour[i].R / 2, colour[i].G / 2, colour[i].B / 2 + 12), 0.55f);
+                    if (Hash(x, 7) % 3 != 0)
+                        continue;
+                    int from = top + (bottom - top) * (4 + Hash(x, 3) % 3) / 10;
+                    int end = -1;
+                    for (int y = from; y <= bottom; y++)
+                    {
+                        int i = y * w + x;
+                        if (kind[i] != Kind.Outer)
+                            continue;
+                        Color c = colour[i];
+                        colour[i] = new Color((int)(c.R * 0.72f), (int)(c.G * 0.74f), Math.Min(255, (int)(c.B * 0.8f) + 8));
+                        end = i;
+                    }
+                    if (end >= w && kind[end - w] == Kind.Outer)
+                        colour[end - w] = Color.Lerp(colour[end - w], Color.White, 0.35f);
                 }
                 break;
             case "flash":

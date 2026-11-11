@@ -355,9 +355,11 @@ internal static class PotteryPieces
         if (!Kept.TryGetValue(pot, out var item))
             return;
         KeptWhere.TryGetValue(pot, out string? where);
-        Ui.Text(b, where == "floor" ? "Your bag's full: it's at your feet." : "Into your bag:", new Vector2(x, y), Game1.textColor * 0.7f);
+        // (wrapped to the panel: the full-bag line is long)
+        string said = Game1.parseText(where == "floor" ? "Your bag's full: it's at your feet." : "Into your bag:", Game1.smallFont, width);
+        Ui.Text(b, said, new Vector2(x, y), Game1.textColor * 0.7f);
         int icon = 72;
-        var box = new Rectangle(x, y + 32, icon, icon);
+        var box = new Rectangle(x, y + (int)Game1.smallFont.MeasureString(said).Y + 4, icon, icon);
         if (PotPieceRenderer.TextureFor(item) is { } sprite)
         {
             float scale = Math.Min(4f, MathF.Floor(icon / (float)Math.Max(sprite.Bounds.Width, sprite.Bounds.Height)));
