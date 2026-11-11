@@ -7,20 +7,26 @@ using ArtStudio.Pottery;
 //   dotnet run -- pottery [throws per cell, default 40]
 internal static class PotterySim
 {
+    private static PotteryRules? Tried;
+    private static PotteryRules Rules(string level) => Tried != null && Tried.Name == PotteryRules.For(level).Name ? Tried : PotteryRules.For(level);
+
     public static void Run(string[] args)
     {
         if (args.FirstOrDefault() == "rows") { Diag(); return; }
         int n = args.Length > 0 && int.TryParse(args[0], out int k) ? k : 40;
+        // trying a level's patience: pottery 40 hard <drain multiplier> <regen per second>
+        if (args.Length > 3)
+            Tried = PotteryRules.For(args[1]) with { DrainMultiplier = float.Parse(args[2]), Regen = float.Parse(args[3]) };
         var levels = new[] { "simplified", "normal", "hard" };
 
         Console.WriteLine($"== Throws: stars by hand and difficulty ({n} per shape, all four shapes) ==");
         Console.WriteLine($"  {"level",-10} {"hand",-8} {"stars",5} {"5*",4} {"<3*",4} {"fell",4}  {"shape",5} {"walls",5} {"centr",5}  {"min",4}  histogram 0..5");
         foreach (string level in levels)
         {
-            var rules = PotteryRules.For(level);
+            var rules = Rules(level);
             foreach (var hand in PotHand.All)
             {
-                var rs = new List<(PotResult R, float Secs)>();
+                var rs = new List<(PotResult R, float Secs, int Rests)>();
                 var rng = new Random(7);
                 foreach (string name in PotShape.Names)
                     for (int i = 0; i < n; i++)
@@ -28,7 +34,7 @@ internal static class PotterySim
                 var stars = rs.Select(x => x.R.Stars).ToList();
                 var standing = rs.Where(x => x.R.Stars > 0 || x.R.Shape > 0).ToList();
                 Console.WriteLine($"  {level,-10} {hand.Name,-8} {stars.Average(),5:0.00} {Pct(stars, s => s >= 5f),4} {Pct(stars, s => s < 3f),4} {Pct(rs, x => x.R.Shape == 0 && x.R.Walls == 0),4}  "
-                    + $"{Avg(standing, x => x.R.Shape),5:0.00} {Avg(standing, x => x.R.Walls),5:0.00} {rs.Average(x => x.R.Centring),5:0.00}  {stars.Min(),4:0.0}  {Histogram(stars)}  {rs.Average(x => x.Secs),4:0}s");
+                    + $"{Avg(standing, x => x.R.Shape),5:0.00} {Avg(standing, x => x.R.Walls),5:0.00} {rs.Average(x => x.R.Centring),5:0.00}  {stars.Min(),4:0.0}  {Histogram(stars)}  {rs.Average(x => x.Secs),4:0}s  rests {rs.Average(x => x.Rests):0.0}");
             }
         }
 
@@ -52,7 +58,7 @@ internal static class PotterySim
         {
             var cols = PotShape.Names.Select(name =>
             {
-                var pot = new ClayPot(PotteryRules.For(level));
+                var pot = new ClayPot(Rules(level));
                 float t = 0f;
                 for (int k = 0; t < 300f && !pot.Collapsed; k++, t += 0.1f)
                     pot.Work(ThrowMove.PullUp, (k * 0.25f) % pot.Rows, 0.1f);
@@ -119,14 +125,14 @@ internal static class PotterySim
         }
     }
 
-    private static (PotResult R, float Secs) One(string name, PotteryRules rules, PotHand hand, Random rng)
+    private static (PotResult R, float Secs, int Rests) One(string name, PotteryRules rules, PotHand hand, Random rng)
     {
         var pot = new ClayPot(rules);
         var shape = PotShape.Make(name, pot.Volume);
         var centring = new Centring(rng);
         float secs = PotBot.Centre(centring, hand, rules.CentringBand, rng);
-        secs += PotBot.Throw(pot, shape, hand, rng);
-        return (PotJudge.Judge(pot, shape, centring.Score), secs);
+        var (thrown, rests) = PotBot.Throw(pot, shape, hand, rng);
+        return (PotJudge.Judge(pot, shape, centring.Score), secs + thrown, rests);
     }
 
     private static void Lazy(string label, Action<ClayPot, PotShape> act)

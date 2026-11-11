@@ -103,14 +103,17 @@ internal static class PotBot
 
     // The greedy potter: sweep pulls from the foot until it's tall enough, then press in or
     // let out row by row towards the outline, resting whenever the clay tires. Returns the
-    // seconds taken, working and resting.
-    public static float Throw(ClayPot pot, PotShape shape, PotHand hand, Random? rng = null)
+    // seconds taken, working and resting, and how many times it rested.
+    public static (float Secs, int Rests) Throw(ClayPot pot, PotShape shape, PotHand hand, Random? rng = null)
     {
         rng ??= new Random(0);
         float time = 0f;
+        int rests = 0;
         float Noise(float spread) => spread > 0f ? Gauss(rng) * spread : 0f;
         void RestIfTired()
         {
+            if (pot.Patience < hand.RestAt)
+                rests++;
             if (pot.Patience < hand.RestAt)
                 for (int k = 0; k < 6000 && pot.Patience < hand.RestTo; k++)
                 {
@@ -177,7 +180,7 @@ internal static class PotBot
             PullTo(tall);
             Shape();
         }
-        return time;
+        return (time, rests);
     }
 }
 #endif

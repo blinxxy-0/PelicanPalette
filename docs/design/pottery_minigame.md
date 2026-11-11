@@ -46,7 +46,7 @@ The mod's rule for minigames applies: by default each stage asks one thing of yo
 | **Simplified** | No collapse: thin walls only lose points. Patience never runs out. Wide bands for centring, banding and stoking. Worth half. |
 | **Relaxed** | Normal with no time pressure anywhere. |
 | **Normal** | One pressure per stage: the wobble in centring, patience in throwing, timing in trimming, steady hands in banding, the heat in stoking. The clay firms up while you pause. |
-| **Hard** | The full juggle: you set the wheel's speed yourself (fast throws quicker but thins the walls faster), patience only comes back slowly, the clay dries as you work, and overfiring cracks pots. Worth the most. |
+| **Hard** | The full juggle: you set the wheel's speed yourself (fast throws quicker but thins the walls faster), patience runs out in under half Normal's time and comes back a little slower, clay worked on past it gives way (so a throw needs a rest or two), the clay dries as you work, and overfiring cracks pots. Worth the most. |
 
 ## 5. Glaze
 
@@ -111,7 +111,7 @@ Decided (2026-11-07): its own skill; with Sculpting in 1.5; banding; a stoking m
 1. **Controls:** hands follow the mouse's height and you click a move (recommended), or you drag the profile directly.
 2. **Professions:** the first pass in section 8b.
 3. **Hand-building:** whether Pottery also makes clay figures and tiles by hand, besides the wheel's vessels, or leaves figures to Sculpting's carving in wood and stone.
-4. **Difficulty in throwing** (the calibration, section 10): patience never runs out on a throw that follows the outline, so Normal and Hard throw alike. Leave it (throwing is the relaxed stage, and glazing and firing carry the difficulty), shorten patience so a throw needs a rest or two (Hard first), or build Hard's planned extras (wheel speed, drying).
+4. **Difficulty in throwing:** decided 2026-11-11, Hard's patience is shortened so a throw needs a rest or two (section 10). Whether Normal's should follow is open, once you've played Hard.
 5. **The jug's outline:** pulling up without shaping already gets 4 stars. A fuller belly would make it ask for shaping.
 6. **Three skills in one release:** 1.5 now carries Sculpting and Pottery. It may want splitting (Pottery in 1.6, say) once both are prototyped.
 
@@ -149,8 +149,14 @@ As painting was: a **prototype first**. A plain dev-only screen (`museart_potter
 | Rushed | 3.69 | 3.72 | 3.71 | 0% |
 | Restless (never lets it rest) | 3.69 | 3.72 | 3.71 | 0% |
 
+(Hard here is before the change below.)
+
 - **Five stars can be reached on every shape, but the vase and the jug need a plan.** The greedy bot gets 4.5 on both: pressing a neck in at full height leaves it thick (clay is conserved), and the judge allows a middle wall 3.4 at most. The jug gets 5 if you pull up through the neck after shaping it. The vase gets 5 only if you hold about four rows back, shape it, then pull the neck up to full height. The results now say so ("The neck's heavy: ...").
-- **The difficulty doesn't change the throw's stars, only the time.** A throw that follows the outline is done long before the clay tires: you can pull nonstop for 33 s on Normal (29 s on Hard) before it falls, and by then the pot is 22 rows tall, past every outline (11 to 16). So nobody collapses a pot by accident, and Hard only means waiting longer for the clay to firm up (41 s for a perfect throw, against 17 s). Glazing and firing do scale with difficulty (above). Section 9 asks what to do.
+- **The difficulty doesn't change the throw's stars, only the time.** A throw that follows the outline is done long before the clay tires: you can pull nonstop for 33 s on Normal (29 s on Hard) before it falls, and by then the pot is 22 rows tall, past every outline (11 to 16). So nobody collapses a pot by accident, and Hard only means waiting longer for the clay to firm up (41 s for a perfect throw, against 17 s). Glazing and firing do scale with difficulty (above). **Hard's patience, shortened (2026-11-11, the user's choice):**
+- **The change:** patience drains 3 times as fast as the base rate (it was 1.35; Normal is 1), and comes back at 0.03 a second (it was 0.01; Normal is 0.035). A rest from a low bar to nearly full takes about 18 s.
+- **It has teeth:** clay worked on for 2 s after its patience is gone gives way ("You kept working it after its patience ran out..."). Before, a tired pot only slumped a little, and the walls rule only brings down pots over 22 rows, so shorter patience alone changed nothing.
+- **The bots on Hard now:** perfect 4.75 stars with 1.8 rests a throw; careful 4.60, 1.3 rests; average 4.18, 0.9; rushed (rests only when nearly out) 3.61, 0.6; restless (never rests) 3.53, and 4% of its pots fall. Nonstop pulling gives way after 8 s (it was 29 s).
+- **A person is slower than the bot,** whose whole throw is about 8 s of handling. So a player will need more rests than these, and one who ignores the bar will lose pots more often than 4%. That needs checking in play.
 - **The spread between hands** (4.75 down to 3.7) is as forgiving as painting's judge: a painting 35% wrong gets 4.2.
 - **Not really throwing:** a lump never touched gets 1 to 1.5 stars, and an outline pulled 6 rows short 0.5 to 1. But **pulling up without shaping gets 4.5 on the cup and 4 on the jug**, since both are close to the cylinder that pulling makes. That's fine for the cup, the first piece, but generous for the jug.
 

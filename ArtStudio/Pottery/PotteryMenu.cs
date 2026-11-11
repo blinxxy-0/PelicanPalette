@@ -861,6 +861,7 @@ internal static class PotteryProto
                 ("results_hands", () => { var m = new PotteryMenu("jug", rules, bot: true); return m; }),
                 ("results", () => new PotteryMenu("vase", rules, bot: true)),
                 ("collapsed", () => new PotteryMenu("cup", rules, wreck: true)),
+                ("collapsed_tired", () => new PotteryMenu("vase", PotteryRules.For("hard"), wreck: true)),
                 ("banding", () => new PotteryMenu("vase", rules, band: true)),
                 ("banding_brush", () => { var m = new PotteryMenu("vase", rules, band: true); m.GlazeBot(1.2f, finish: false, bands: 1); m.FakeMouse = m.SceneCentre(0.45f); return m; }),
                 ("results_glazed", () => { var m = new PotteryMenu("jug", rules, band: true); m.GlazeBot(1.2f); return m; }),

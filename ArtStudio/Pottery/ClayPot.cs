@@ -22,12 +22,16 @@ internal sealed record PotteryRules(
     float CentringBand,         // how close your hands must stay to the lump (units)
     float Drift,                // banding: how far your brush hand wanders (rows)
     float KilnBand,             // firing: the band's half-width (on the kiln gauge's 0 to 100)
-    bool KilnCrack)             // firing: far too hot for too long cracks the pot
+    bool KilnCrack,             // firing: far too hot for too long cracks the pot
+    float GiveWay = 0f)         // seconds you can keep working clay out of patience before it falls (0: never)
 {
     public static PotteryRules For(string name) => name switch
     {
         "simplified" => new("Simplified", 0f, 1f, false, 6f, 0.35f, 10f, false),
-        "hard" => new("Hard", 1.35f, 0.01f, true, 2.2f, 2f, 4f, true),
+        // (Hard's patience, 2026-11-11, the user: a throw should need a rest or two, so it
+        // lasts under half as long as Normal's, comes back a little slower, and clay worked
+        // on past it gives way. The calibration: docs/design/pottery_minigame.md, section 10.)
+        "hard" => new("Hard", 3f, 0.03f, true, 2.2f, 2f, 4f, true, GiveWay: 2f),
         _ => new("Normal", 1f, 0.035f, true, 3.5f, 1.2f, 6f, false),
     };
 }
@@ -57,6 +61,7 @@ internal sealed class ClayPot
     public string? CollapseReason { get; private set; }
     public readonly float Volume;
     private float _risen;                        // clay pulled up, waiting to make the next row
+    private float _spentFor;                     // seconds worked with no patience left
 
     private readonly PotteryRules _rules;
 
@@ -146,6 +151,13 @@ internal sealed class ClayPot
         }
         float drain = move switch { ThrowMove.PullUp => DrainPull, ThrowMove.PressIn => DrainPress, _ => DrainLetOut };
         Patience = MathF.Max(0f, Patience - drain * _rules.DrainMultiplier * dt);
+        _spentFor = Patience <= 0f ? _spentFor + dt : 0f;
+        if (_rules.GiveWay > 0f && _spentFor > _rules.GiveWay)
+        {
+            Collapsed = true;
+            CollapseReason = "You kept working it after its patience ran out. Let it rest when the bar runs low.";
+            return;
+        }
         Settle(dt, working: true);
     }
 
