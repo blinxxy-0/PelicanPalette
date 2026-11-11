@@ -240,6 +240,8 @@ internal static class DevTools
                 monitor.Log($"dev_commands: {line}", LogLevel.Info);
                 if (Commands.TryGetValue(parts[0], out var command))
                     command(parts[0], parts.Skip(1).ToArray());
+                else if (parts[0] == "debug" && parts.Length > 1)
+                    StardewValley.DebugCommands.TryHandle(parts.Skip(1).ToArray());   // the game's own (debug ebi, friendship...)
                 else
                     monitor.Log($"Unknown command '{parts[0]}'.", LogLevel.Warn);
             }

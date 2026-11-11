@@ -251,6 +251,9 @@
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx", "When": { "HasFlag": "blinxxy.MuseArt_ValeHallOpen" } },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeFern", "FromFile": "assets/ValeFern.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeEmmett", "FromFile": "assets/ValeEmmett.tmx" },
+    // Emmett's heart events, the amphitheatre's brambles till his 6 hearts, his pack on its peg
+    // (tools/build_emmett_events.py)
+    { "Action": "Include", "FromFile": "data/emmett_events.json" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio", "FromFile": "assets/ValeStudio.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio2", "FromFile": "assets/ValeStudio2.tmx" },
     { "Action": "Include", "FromFile": "data/vale_studio2.json" },
