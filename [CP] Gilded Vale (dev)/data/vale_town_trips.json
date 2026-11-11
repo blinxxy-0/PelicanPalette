@@ -88,14 +88,14 @@
         "fall_20": "700 Forest 84 40 2/1500 blinxxy.MuseArt_ValeHouse 13 23 3/2300 blinxxy.MuseArt_ValeAtelier 18 6 2"
       }
     },
-    // Emmett, Fridays once he's at 4 hearts (the brief: after his 4-heart event; swap this
-    // for HasSeenEvent when the event exists): the stage in the morning, then the Saloon
+    // Emmett, Fridays after his 4-heart event (the brief; tools/build_emmett_events.py, whose
+    // 6- and 8-heart events keep off Fridays when this is on): the stage in the morning, then the Saloon
     // for the evening (it opens at noon), by Sable's table, where Sam's in awe of him, and
     // the last bus home at 10.
     {
       "Action": "EditData",
       "Target": "Characters/schedules/EmmettWren",
-      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true", "Hearts:EmmettWren": "4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" },
+      "When": { "ValeResidents": "true", "ValeResidentsTownTrips": "true", "HasFile:assets/emmett/sprites.png": "true", "HasFile:assets/emmett/portraits.png": "true", "HasSeenEvent": "blinxxy.MuseArt_Emmett4h" },
       "Entries": {
         "Fri": "900 blinxxy.MuseArt_GildedVale 37 56 2/1430 Saloon 6 21 0/2200 blinxxy.MuseArt_ValeEmmett 6 6 2"
       }
