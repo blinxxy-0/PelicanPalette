@@ -231,14 +231,28 @@ internal static class PaintersGuide
     private static bool ReduceActiveItemPrefix(Farmer __instance) =>
         __instance.CurrentItem?.QualifiedItemId != "(O)" + GuideItemId;
 
+    // Lupini's own spot, the one you stopped at on his 4-heart walk (tools/build_lupini_events.py): a
+    // stool and a rock like the guide's, by Bea's washing line, the bus's turning circle or Tobin's clay
+    // pit. It isn't one of the guide's eight and never counts towards them: touching it says what he
+    // saw there (vale.lupini_spot.<id>), guide or no guide.
+    public static readonly string[] ChosenSpots = { "washing", "bus", "claypit" };
+
     // The tile action: blinxxy.MuseArt_PaintSpot <spotId>. An old tile with no id does nothing.
     public static bool OnTouch(Farmer who, string[] args)
     {
         if (args.Length < 2 || !Spots.Any(s => s.Id == args[1]))
-            return false;
+            return args.Length >= 2 && TouchChosen(args[1]);
         if (PaintSplash.Playing)
             return true;
         Touch(who, args[1]);
+        return true;
+    }
+
+    private static bool TouchChosen(string id)
+    {
+        if (!ChosenSpots.Contains(id))
+            return false;
+        Game1.drawObjectDialogue(Text($"vale.lupini_spot.{id}"));
         return true;
     }
 
