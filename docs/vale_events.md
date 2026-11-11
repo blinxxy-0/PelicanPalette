@@ -10,6 +10,8 @@ Portrait codes are the ones their dialogue already uses: `$0` neutral, `$h` happ
 
 ## Bea Thistle
 
+*Built 2026-11-11 (2 to 10 hearts): `tools/build_bea_events.py`; how, and what changed in building, under her 10 hearts below.*
+
 ### 2 hearts: food for twelve (the tea room, an afternoon)
 
 **Trigger:** you enter the Vale House between noon and 4pm, not on a Sunday (the tea room shuts at noon) or a rainy day, with 2+ hearts.
@@ -185,6 +187,8 @@ The rest of each arc, from the same briefs. As above: where each resident alread
 
 ## Bea Thistle
 
+*Built 2026-11-11: see "How Bea's are built" after her 10 hearts.*
+
 ### 6 hearts: the offer (the plaza, an afternoon)
 
 **Trigger:** you cross the plaza between 1pm and 4pm on a fine day (her tea-garden hours), with 6+ hearts and her 4-heart event seen.
@@ -233,6 +237,46 @@ The rest of each arc, from the same briefs. As above: where each resident alread
   - "What do you want for dinner?" → `$h` She laughs, properly. "Stew. Obviously."
 
 **After:** the artists' room is yours: its bed works any night, free (the mail flag `blinxxy.MuseArt_ValeArtistsRoom`, which the room-booking code already honours), and its door opens for you. Now and then a visiting artist turns up at a tea table (the brief's small one-off scenes, to come).
+
+#### How Bea's are built (2026-11-11)
+
+- `tools/build_bea_events.py` writes `data/bea_events.json` (included from `content.json`): the five
+  events (text in i18n as `bea.event.*`, right after her own keys), the trigger actions for the new
+  sign, her changed lines, the keepsake, and the map pieces below. Event IDs `blinxxy.MuseArt_Bea2h`
+  to `Bea10h`, each needing the one before.
+- **When, as built** (where she is on her schedule, `data/bea_schedule.json`; on fine days she's in
+  the tea garden from 1pm to 4:30, and on Thursdays at Pierre's when the town-trips switch is on):
+  - 2: the Vale House, noon to 1pm (noon to 4pm in winter), not Sundays or Thursdays, not in rain.
+  - 4: the Vale House, Wednesdays 9am to noon.
+  - 6: the Vale (it plays by the fountain), 1pm to 4pm, fine weather, not winter, not Sundays or
+    Thursdays.
+  - 8: the Vale House, Wednesdays 7pm to 10pm.
+  - 10: the Vale House, 9am to noon, not Thursdays, the day after the new sign goes up. The sign
+    goes up the morning after you're at 10 hearts with her 8 seen (`blinxxy.MuseArt_BeaNewSign`,
+    then `_BeaNewSignDayAfter`); it stands by the path outside her door and reads "The Vale House.
+    Under new management (the same management)."
+- **Remembered choices** (mail flags): 4 hearts `blinxxy.MuseArt_BeaBooksShelf` / `_BeaBooksAttic` /
+  `_BeaBooksRead`; 6 hearts `blinxxy.MuseArt_BeaOfferSell` / `_BeaOfferOwn` / `_BeaOfferWant`. Her 10
+  hearts has a version for each guest-book answer.
+- **What they leave behind:** a Pink Cake (2); the Vale House Sketch, a 2x2 painting (4); her Thu4
+  line about the guest books (after 4) and her Mon8 line about the stew (after 8), both new text; a
+  week of short lines after 6 (the conversation topic `blinxxy.MuseArt_BeaOffer`, 7 days); the hotel
+  folder on the end of her counter from 6 to 8; after 10, the guest books where you said (the tea
+  room's bookcase says so, or a shelf in the upstairs hall, or a book open on her counter) and the
+  artists' room: the key gives `blinxxy.MuseArt_ValeArtistsRoom` and the game's own
+  `doorUnlockblinxxy.MuseArt_ArtistsRoom` (its door opens at once), and its bed is made a bed you
+  can sleep in.
+- **The attic** is the upstairs hall with the attic's things brought down into it (trunks, the dummy,
+  the broken easel, an old desk, dust), all placeholder props.
+- **Cameos:** the hotel group's man is the game's Morris sprite; the two young artists are the
+  game's sprites of Leah's city exes (front frames only, so they face the room). Nobody else in the
+  Vale is moved.
+- **Wording changed in building:** the attic line (we're in the hall: "Up a ladder from the hall,
+  under the eaves: the attic. Most of it ends up in the hall between you. Trunks, a dressmaker's
+  dummy, a broken easel, dust."); "read me another one" shows her happy as an emote (it has no
+  spoken line); the hotel man's line goes in the narration box with "He shakes her hand" (he has no portrait, and as a speech bubble it faded before it could be read); stage directions are
+  narration boxes; no sitting (her sheet has no sitting frames), so at the dinner table you stand
+  behind it.
 
 ---
 
