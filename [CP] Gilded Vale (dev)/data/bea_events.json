@@ -237,7 +237,7 @@
       },
       "PatchMode": "Overlay",
       "Priority": "Late",
-      "Update": "OnLocationChange",
+      "Update": "OnLocationChange, OnTimeChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/bea/sprites.png": "true",
@@ -259,7 +259,7 @@
       },
       "PatchMode": "Overlay",
       "Priority": "Late",
-      "Update": "OnLocationChange",
+      "Update": "OnLocationChange, OnTimeChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/bea/sprites.png": "true",
@@ -281,7 +281,7 @@
       },
       "PatchMode": "Overlay",
       "Priority": "Late",
-      "Update": "OnLocationChange",
+      "Update": "OnLocationChange, OnTimeChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/bea/sprites.png": "true",
@@ -303,7 +303,7 @@
       },
       "PatchMode": "Overlay",
       "Priority": "Late",
-      "Update": "OnLocationChange",
+      "Update": "OnLocationChange, OnTimeChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/bea/sprites.png": "true",
@@ -315,7 +315,7 @@
       "LogName": "The artists' room's bed, yours",
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_ValeHouse",
-      "Update": "OnLocationChange",
+      "Update": "OnLocationChange, OnTimeChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/bea/sprites.png": "true",

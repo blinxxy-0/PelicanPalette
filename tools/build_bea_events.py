@@ -489,10 +489,11 @@ def main():
         # the map pieces
         *[{"LogName": f"Bea's events: {name}", "Action": "EditMap", "Target": f"Maps/{loc}", "FromFile": f"assets/{name}.tmx",
            "ToArea": {"X": x, "Y": y, "Width": 1, "Height": max(dy for _, dy, _ in cells) + 1}, "PatchMode": "Overlay",
-           "Priority": "Late", "Update": "OnLocationChange", "When": {**WHEN, **when}}
+           "Priority": "Late", "Update": "OnLocationChange, OnTimeChange", "When": {**WHEN, **when}}
           for name, (loc, x, y, cells, _, when) in PIECES.items()],
-        # the artists' room's bed, yours after her 10 hearts (as the guest bed: tools/build_vale_house.py)
-        {"LogName": "The artists' room's bed, yours", "Action": "EditMap", "Target": f"Maps/{HOUSE}", "Update": "OnLocationChange",
+        # the artists' room's bed, yours after her 10 hearts (as the guest bed: tools/build_vale_house.py);
+        # on the clock too, since her event leaves you standing in that room
+        {"LogName": "The artists' room's bed, yours", "Action": "EditMap", "Target": f"Maps/{HOUSE}", "Update": "OnLocationChange, OnTimeChange",
          "When": {**WHEN, "HasFlag": ARTISTS_ROOM},
          "MapTiles": [{"Position": {"X": x, "Y": y}, "Layer": "Back", "SetProperties": props}
                       for x in (17, 18) for y in (5, 6, 7)

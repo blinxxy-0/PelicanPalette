@@ -77,6 +77,14 @@ internal static class ValeTests
         // them into), e.g. museart_debugcmd friendship BeaThistle 2000, museart_debugcmd ebi <event id>
         DevTools.AddCommand(helper, "museart_debugcmd", "Runs one of the game's debug commands. Usage: museart_debugcmd friendship BeaThistle 2000",
             (_, args) => DebugCommands.TryHandle(args));
+        DevTools.AddCommand(helper, "museart_eventstate", "Logs where the playing event is: its command, the farmer, the pause and fade state.", (_, _) =>
+        {
+            var e = Game1.CurrentEvent;
+            monitor.Log(e == null ? "no event" :
+                $"event {e.id}: command {e.CurrentCommand} '{(e.CurrentCommand < e.eventCommands.Length ? e.eventCommands[e.CurrentCommand] : "-")}'; "
+                + $"farmer {Game1.player.TilePoint} moving {Game1.player.isMoving()}; pauseTime {Game1.pauseTime}; dialogueUp {Game1.dialogueUp}; "
+                + $"menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}; fade {Game1.globalFade}/{Game1.fadeToBlack}", LogLevel.Info);
+        });
     }
 
     private static (int Money, bool Booked)? _passOut;
@@ -339,7 +347,10 @@ internal static class ValeTests
         GameLocation? house = Game1.getLocationFromName(ValeResidents.ValeHouse);
         if (house == null)
             return;
-        if (who.mailReceived.Contains(ValeResidents.ArtistsRoomMail))
+        if (who.mailReceived.Contains(ValeResidents.ArtistsRoomMail)
+            && house.doesTileHaveProperty(15, 11, "Action", "Buildings") == "Door " + ValeResidents.ArtistsRoomDoor)
+            Info(monitor, "the artists' room's bed is made yours when the map next refreshes (the clock's next ten minutes, or coming in)");
+        else if (who.mailReceived.Contains(ValeResidents.ArtistsRoomMail))
             Check(monitor, "with her key, the artists' room's bed is one you can sleep in",
                 house.doesTileHaveProperty(17, 6, "TouchAction", "Back") == "Sleep" && house.doesTileHaveProperty(18, 7, "Bed", "Back") == "T");
         var door = new Point(15, 11);
@@ -383,7 +394,21 @@ internal static class ValeTests
             return;
         Farmer who = Game1.player;
         bool keyed = who.mailReceived.Contains(ValeResidents.ArtistsRoomMail);
+        // (an open door has taken its tile off the map, and its action with it: as after Bea's
+        // 10-heart event, which opens it in front of you)
+        if (house.interiorDoors.TryGetValue(new Point(15, 11), out bool isOpen) && isOpen)
+        {
+            Info(monitor, "the artists' room door (15 11) is standing open, so its lock can't be read");
+            return;
+        }
         string artists = house.doesTileHaveProperty(15, 11, "Action", "Buildings");
+        if (keyed && artists == "Door " + ValeResidents.ArtistsRoomDoor)
+        {
+            // just given the key: the map's lock comes off at the next location change, and till
+            // then the game's doorUnlock flag opens it (CheckBeaEvents checks that)
+            Info(monitor, "the artists' room's lock is still on its door until you next come in; the key opens it meanwhile");
+            return;
+        }
         string want = Game1.characterData.ContainsKey(ValeResidents.Bea) && !keyed ? "Door " + ValeResidents.ArtistsRoomDoor : "Door";
         Check(monitor, $"the artists' room door (15 11) is '{want}'", artists == want, artists ?? "no action");
         if (artists != "Door " + ValeResidents.ArtistsRoomDoor)
