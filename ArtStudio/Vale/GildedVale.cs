@@ -25,6 +25,8 @@ internal static class GildedVale
         ValeClay.Register(helper, harmony, monitor);
         ValeStudios.Register(helper, harmony, monitor);
         StainedGlassLight.Register(helper, harmony, monitor);
+        LupiniEvents.Monitor = monitor;
+        LupiniEvents.Register(helper);
 
         // Lupini's painting spots are found, not easels (the painters' guide design, section 4):
         // touch a spot's paint rock with the guide to find its view. blinxxy.MuseArt_PaintSpot <spotId>;

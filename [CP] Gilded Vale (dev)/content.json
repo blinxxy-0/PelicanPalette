@@ -245,10 +245,10 @@
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeAtelier", "FromFile": "assets/ValeAtelier.tmx" },
     // The Exhibition Hall is closed and dusty until Lupini's 8-heart event reopens it: its
     // closed map (ValeHallClosed.tmx, "hall_closed" in tools/build_vale_buildings.py) until the
-    // player has the mail flag blinxxy.MuseArt_ValeHallOpen, then the open hall. The flag is a
-    // placeholder: the 8-heart event (not written yet) will set it.
+    // player has the mail flag blinxxy.MuseArt_ValeHallOpen, then the open hall. Lupini's 8-heart
+    // event sets the flag (tools/build_lupini_events.py); the open hall from the next door you go through.
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHallClosed.tmx", "Priority": "Low" },
-    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx", "When": { "HasFlag": "blinxxy.MuseArt_ValeHallOpen" } },
+    { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeHall", "FromFile": "assets/ValeHall.tmx", "When": { "HasFlag": "blinxxy.MuseArt_ValeHallOpen" }, "Update": "OnLocationChange" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeFern", "FromFile": "assets/ValeFern.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeEmmett", "FromFile": "assets/ValeEmmett.tmx" },
     { "Action": "Load", "Target": "Maps/blinxxy.MuseArt_ValeStudio", "FromFile": "assets/ValeStudio.tmx" },
@@ -281,6 +281,8 @@
     { "Action": "Include", "FromFile": "data/vale_studios.json" },
     // Studio III, Tess Brand's (after the sale above: its door opens when she moves in).
     { "Action": "Include", "FromFile": "data/tess_studio.json" },
+    // Lupini's heart events, and what they change: his spot, the Old Studio, the sign (tools/build_lupini_events.py).
+    { "Action": "Include", "FromFile": "data/lupini_events.json" },
     // Pathoschild's Central Station, when it's installed, runs the bus: the Vale is one of
     // its stops (ArtStudio/Vale/ValeBus.cs is the bus without it). Open once the route's
     // letter has come and the bus is mended, as for the Desert.

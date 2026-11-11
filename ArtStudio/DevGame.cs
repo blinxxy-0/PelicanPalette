@@ -190,7 +190,7 @@ internal static class DevGame
             if (!Context.IsWorldReady || args.Length == 0 || !DataLoader.Mail(Game1.content).TryGetValue(args[0], out string text)) return;
             Game1.activeClickableMenu = new StardewValley.Menus.LetterViewerMenu(text.Split("[#]")[0], args[0]);
         });
-        DevTools.AddCommand(helper, "museart_eventpaths", "Walks every step of Sable's events against the real maps and reports anyone walking through walls, furniture, props or each other.", (_, _) => EventPaths(monitor));
+        DevTools.AddCommand(helper, "museart_eventpaths", "Walks every step of Sable's events against the real maps and reports anyone walking through walls, furniture, props or each other. Usage: museart_eventpaths [location ...] (default: Sable's and Julian's)", (_, args) => EventPaths(monitor, args));
         DevTools.AddCommand(helper, "museart_route", "Prints event 'move' commands for the shortest walkable route. Usage: museart_route JoshHouse 9 23 6 19 [x y ...]", (_, args) => Route(monitor, args));
         DevTools.AddCommand(helper, "museart_tiles", "Says whether each tile can be stood on. Usage: museart_tiles JoshHouse 2 19 5 20", (_, args) => Tiles(monitor, args));
         DevTools.AddCommand(helper, "museart_outfittest", "Checks Sable dresses for the weather: the coat outdoors in winter, everyday clothes indoors and in other seasons, the linen shirt on Ginger Island.", (_, args) => OutfitTest(monitor, args));
@@ -1396,13 +1396,14 @@ internal static class DevGame
     private static readonly string[] EventLocations =
         { Shop.ArtShop.LocationName, "Forest", "JoshHouse", Shop.ArtShop.BackRoom, "ArchaeologyHouse", "BusStop", "Saloon", "ScienceHouse", Social.MargotEvents.CottageHome };
 
-    private static void EventPaths(IMonitor monitor)
+    private static void EventPaths(IMonitor monitor, string[]? locations = null)
     {
         if (!Context.IsWorldReady) return;
-        foreach (string locationName in EventLocations)
+        foreach (string locationName in locations is { Length: > 0 } ? locations : EventLocations)
         {
             var events = Game1.content.Load<System.Collections.Generic.Dictionary<string, string>>("Data/Events/" + locationName);
-            foreach (var (key, script) in events.Where(e => e.Key.StartsWith(ModEntry.Id)))
+            // (keys without preconditions are fork and switchEvent targets, not whole events)
+            foreach (var (key, script) in events.Where(e => e.Key.StartsWith(ModEntry.Id) && e.Key.Contains('/')))
             {
                 string id = key.Split('/')[0];
                 var commands = Event.ParseCommands(script);

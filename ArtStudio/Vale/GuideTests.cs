@@ -331,6 +331,7 @@ internal static class GuideTests
     {
         var tiles = new Dictionary<string, List<Point>>();
         var bad = new List<string>();
+        var chosen = new List<string>();
         var layer = vale.Map.GetLayer("Buildings");
         for (int y = 0; y < layer.LayerHeight; y++)
             for (int x = 0; x < layer.LayerWidth; x++)
@@ -339,6 +340,12 @@ internal static class GuideTests
                 string[] words = action?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
                 if (words.Length == 0 || words[0] != GildedVale.PaintSpotAction)
                     continue;
+                // Lupini's chosen spot (his 4-heart walk) is a painting spot too, but not one of the guide's
+                if (words.Length == 2 && PaintersGuide.ChosenSpots.Contains(words[1]))
+                {
+                    chosen.Add($"{words[1]} at ({x}, {y})");
+                    continue;
+                }
                 if (words.Length != 2 || !PaintersGuide.Spots.Any(s => s.Id == words[1]))
                 {
                     bad.Add($"'{action}' at ({x}, {y})");
@@ -355,7 +362,8 @@ internal static class GuideTests
             string.Join(", ", tiles.Select(kv => $"{kv.Key} at {kv.Value[0]}"))
             + (bad.Count > 0 ? "; bad: " + string.Join(", ", bad) : "")
             + (notRocks.Count > 0 ? "; not on one rock: " + string.Join(", ", notRocks) : "")
-            + (missing.Count > 0 ? "; missing: " + string.Join(", ", missing) : ""));
+            + (missing.Count > 0 ? "; missing: " + string.Join(", ", missing) : "")
+            + (chosen.Count > 0 ? "; Lupini's chosen spot: " + string.Join(", ", chosen) : ""));
 
         var placeBefore = who.currentLocation;
         var detail = new List<string>();
