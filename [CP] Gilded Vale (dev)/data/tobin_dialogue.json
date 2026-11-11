@@ -28,6 +28,9 @@
         "Mon2": "{{i18n:tobin.dialogue.Mon2}}",
         "Wed2": "{{i18n:tobin.dialogue.Wed2}}",
         "Fri2": "{{i18n:tobin.dialogue.Fri2}}",
+        // (the clay pit and Potter's Clay, data/vale_clay.json)
+        "Thu2": "{{i18n:tobin.dialogue.Thu2}}",
+        "Sun2": "{{i18n:tobin.dialogue.Sun2}}",
         "Mon4": "{{i18n:tobin.dialogue.Mon4}}",
         "Tue4": "{{i18n:tobin.dialogue.Tue4}}",
         "Wed4": "{{i18n:tobin.dialogue.Wed4}}",

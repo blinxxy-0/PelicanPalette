@@ -77,12 +77,15 @@
               "Dialogues": [
                 { "Id": "Shelf", "Dialogue": "{{i18n:tobin.shop.shelf}}" },
                 { "Id": "Clay", "Dialogue": "{{i18n:tobin.shop.clay}}" },
-                { "Id": "Pots", "Dialogue": "{{i18n:tobin.shop.pots}}" }
+                { "Id": "Pots", "Dialogue": "{{i18n:tobin.shop.pots}}" },
+                { "Id": "PottersClay", "Dialogue": "{{i18n:tobin.shop.potters_clay}}" }
               ]
             },
             { "Id": "Closed", "Name": "None", "ClosedMessage": "{{i18n:tobin.shop.closed}}" }
           ],
           "Items": [
+            // the wheel's clay (data/vale_clay.json), year-round, a lump at a time
+            { "Id": "PottersClay", "ItemId": "(O)blinxxy.MuseArt_PottersClay", "Price": 80 },
             { "Id": "Clay", "ItemId": "(O)330", "Price": 60 },
             { "Id": "GardenPot", "ItemId": "(BC)62", "Price": 300 },
             { "Id": "BrickFloor", "ItemId": "(O)293", "Price": 120 }
