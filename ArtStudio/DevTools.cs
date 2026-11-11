@@ -240,6 +240,11 @@ internal static class DevTools
                 monitor.Log($"dev_commands: {line}", LogLevel.Info);
                 if (Commands.TryGetValue(parts[0], out var command))
                     command(parts[0], parts.Skip(1).ToArray());
+                // (and the game's own debug commands: 'debug ebi <event>', 'debug friendship <npc> <points>')
+                else if (parts[0] == "debug" && parts.Length > 1)
+                    StardewValley.DebugCommands.TryHandle(parts.Skip(1).ToArray());
+                else if (parts[0] == "close")       // whatever menu is open (a letter, say)
+                    Game1.exitActiveMenu();
                 else
                     monitor.Log($"Unknown command '{parts[0]}'.", LogLevel.Warn);
             }
