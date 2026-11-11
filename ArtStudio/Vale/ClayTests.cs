@@ -44,8 +44,128 @@ internal static class ClayTests
         CheckShop();
         CheckPit();
         CheckWheel();
+        CheckTub();
         Game1.exitActiveMenu();
         monitor.Log($"museart_claytest: {_pass} passed, {_fail} failed.", _fail == 0 ? LogLevel.Info : LogLevel.Error);
+    }
+
+    // ---- The Slaking Tub: 3 Clay in, 1 Potter's Clay out, 8 hours later ----
+
+    public const string TubId = ModEntry.Id + "_SlakingTub";
+    public const string QualifiedTubId = "(BC)" + TubId;
+
+    // An open tile on the farm near the house's front, for a tub.
+    public static Vector2? FreeFarmTile(GameLocation farm, Point near)
+    {
+        for (int r = 1; r < 12; r++)
+            for (int y = near.Y - r; y <= near.Y + r; y++)
+                for (int x = near.X - r; x <= near.X + r; x++)
+                {
+                    var tile = new Vector2(x, y);
+                    if (farm.CanItemBePlacedHere(tile) && !farm.objects.ContainsKey(tile) && !farm.terrainFeatures.ContainsKey(tile))
+                        return tile;
+                }
+        return null;
+    }
+
+    private static void CheckTub()
+    {
+        var who = Game1.player;
+        var farm = Game1.getFarm();
+        // put back afterwards: the recipe, and the farmer's wood, copper bars, clay and potter's clay
+        bool knew = who.craftingRecipes.ContainsKey(TubId);
+        var counts = new[] { "(O)388", "(O)334", "(O)330", ValeClay.QualifiedItemId, QualifiedTubId }.ToDictionary(id => id, id => who.Items.CountId(id));
+        Vector2? placed = null;
+        try
+        {
+            Check("the Slaking Tub exists, a big craftable", ItemRegistry.Exists(QualifiedTubId) && ItemRegistry.Create(QualifiedTubId) is StardewValley.Object { bigCraftable.Value: true } t && t.DisplayName == "Slaking Tub",
+                ItemRegistry.Create(QualifiedTubId).DisplayName);
+            var data = ItemRegistry.GetDataOrErrorItem(QualifiedTubId);
+            Check("its sprite loads: 16x32 frames, idle and in use", !data.IsErrorItem && data.GetTexture() is { Width: 32, Height: 32 }, data.TextureName);
+            Check("it's a machine in the game's own system (Data/Machines)", DataLoader.Machines(Game1.content).TryGetValue(QualifiedTubId, out var machine)
+                && machine.OutputRules.Count == 1 && machine.OutputRules[0].MinutesUntilReady == 480);
+
+            // the recipe at Tobin's counter, for those who don't know it yet
+            who.craftingRecipes.Remove(TubId);
+            const string shopId = ModEntry.Id + "_ValePottery";
+            var entry = DataLoader.Shops(Game1.content)[shopId].Items.FirstOrDefault(i => i.ItemId == QualifiedTubId);
+            Check("Tobin's shop sells the tub's recipe", entry is { IsRecipe: true }, entry == null ? "not listed" : $"{entry.Price}g");
+            bool opened = Utility.TryOpenShopMenu(shopId, "None", playOpenSound: false) && Game1.activeClickableMenu is ShopMenu;
+            var recipe = (Game1.activeClickableMenu as ShopMenu)?.forSale.FirstOrDefault(i => i.QualifiedItemId == QualifiedTubId);
+            Check("... and the open shop shows it as a recipe", opened && recipe is { IsRecipe: true }, recipe == null ? "not for sale" : $"{(Game1.activeClickableMenu as ShopMenu)!.itemPriceAndStock[recipe].Price}g");
+            Game1.exitActiveMenu();
+
+            // crafting it
+            who.craftingRecipes.TryAdd(TubId, 0);
+            var craft = new CraftingRecipe(TubId, false);
+            Check("the recipe: 30 Wood, 1 Copper Bar, 10 Clay", craft.bigCraftable && craft.recipeList.Count == 3 && craft.recipeList["388"] == 30 && craft.recipeList["334"] == 1 && craft.recipeList["330"] == 10,
+                string.Join(", ", craft.recipeList.Select(p => $"{p.Value} {p.Key}")));
+            Give(who, "(O)388", 30); Give(who, "(O)334", 1); Give(who, "(O)330", 10);
+            int woodBefore = who.Items.CountId("(O)388");
+            Check("with the ingredients, it can be crafted", craft.doesFarmerHaveIngredientsInInventory());
+            var made = craft.createItem();
+            craft.consumeIngredients(null);
+            Check("crafting makes a Slaking Tub and takes the ingredients", made.QualifiedItemId == QualifiedTubId && who.Items.CountId("(O)388") == woodBefore - 30, made.QualifiedItemId);
+
+            // set down on the farm
+            var tile = FreeFarmTile(farm, farm.GetMainFarmHouseEntry() + new Point(3, 3));
+            if (tile is not { } spot)
+            {
+                Check("a free farm tile for the tub", false);
+                return;
+            }
+            bool put = ((StardewValley.Object)made).placementAction(farm, (int)spot.X * 64, (int)spot.Y * 64, who);
+            placed = spot;
+            var tub = farm.objects.TryGetValue(spot, out var o) ? o : null;
+            Check("it's set down on the farm", put && tub?.QualifiedItemId == QualifiedTubId, $"{spot}");
+            if (tub == null)
+                return;
+
+            // what it takes
+            var two = ItemRegistry.Create("(O)330", 2);
+            Check("2 Clay is refused, and kept", !tub.performObjectDropInAction(two, false, who) && two.Stack == 2 && tub.heldObject.Value == null);
+            Game1.hudMessages.Clear();
+            var stone = ItemRegistry.Create("(O)390", 5);
+            Check("other things are refused (Stone)", !tub.performObjectDropInAction(stone, false, who) && stone.Stack == 5 && tub.heldObject.Value == null);
+            var pots = ItemRegistry.Create(ValeClay.QualifiedItemId, 5);
+            Check("Potter's Clay is refused too", !tub.performObjectDropInAction(pots, false, who) && pots.Stack == 5 && tub.heldObject.Value == null);
+            var five = ItemRegistry.Create("(O)330", 5);
+            bool took = tub.performObjectDropInAction(five, false, who);
+            Check("3 Clay from a stack of 5 go in", took && five.Stack == 2, $"{five.Stack} left");
+            Check("... and it's slaking: Potter's Clay in 8 hours, shown in use", tub.heldObject.Value?.QualifiedItemId == ValeClay.QualifiedItemId && tub.MinutesUntilReady == 480 && !tub.readyForHarvest.Value && tub.showNextIndex.Value,
+                $"{tub.heldObject.Value?.QualifiedItemId}, {tub.MinutesUntilReady} min");
+            Check("a full tub takes no more", !tub.performObjectDropInAction(ItemRegistry.Create("(O)330", 3), false, who));
+            tub.minutesElapsed(470);
+            Check("not ready after 7 h 50", !tub.readyForHarvest.Value, $"{tub.MinutesUntilReady} min left");
+            tub.minutesElapsed(10);
+            Check("ready after 8 hours", tub.readyForHarvest.Value && tub.heldObject.Value?.QualifiedItemId == ValeClay.QualifiedItemId);
+            Check("one filled at 10pm is ready by 6am (the night counts)", Utility.CalculateMinutesUntilMorning(2200) >= 480, $"{Utility.CalculateMinutesUntilMorning(2200)} min");
+            int potters = who.Items.CountId(ValeClay.QualifiedItemId);
+            tub.checkForAction(who);
+            Check("the Potter's Clay is collected", who.Items.CountId(ValeClay.QualifiedItemId) == potters + 1 && tub.heldObject.Value == null && !tub.readyForHarvest.Value,
+                $"{who.Items.CountId(ValeClay.QualifiedItemId) - potters} collected");
+        }
+        finally
+        {
+            Game1.exitActiveMenu();
+            if (placed is { } p)
+                farm.objects.Remove(p);
+            if (!knew)
+                who.craftingRecipes.Remove(TubId);
+            foreach (var (id, n) in counts)
+            {
+                who.Items.ReduceId(id, 9999);
+                if (n > 0)
+                    Give(who, id, n);
+            }
+        }
+    }
+
+    private static void Give(Farmer who, string id, int n)
+    {
+        var item = ItemRegistry.Create(id, n);
+        if (!who.addItemToInventoryBool(item))
+            _monitor.Log($"clay test: no room for {n} {id}", LogLevel.Warn);
     }
 
     // ---- The item ----

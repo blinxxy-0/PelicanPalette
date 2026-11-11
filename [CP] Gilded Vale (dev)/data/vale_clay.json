@@ -31,6 +31,69 @@
       }
     },
 
+    // ---- The Slaking Tub: 3 Clay (field clay) in, 1 Potter's Clay out, 8 hours later ----
+    // Potters slake dry, rough clay in water and sieve the grit out. A machine in the game's
+    // own system (Data/Machines), so it behaves like a Keg (and Automate can run it). Its
+    // recipe is sold at Tobin's counter (data/vale_shops.json). Its sprite is a placeholder
+    // (tools/art/slaking_tub.py): frame 0 idle, frame 1 in use and ready.
+    {
+      "Action": "Load",
+      "Target": "Mods/blinxxy.MuseArt.Vale/SlakingTub",
+      "FromFile": "assets/SlakingTub.png"
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/BigCraftables",
+      "Entries": {
+        "blinxxy.MuseArt_SlakingTub": {
+          "Name": "blinxxy.MuseArt_SlakingTub",
+          "DisplayName": "{{i18n:clay.tub.name}}",
+          "Description": "{{i18n:clay.tub.description}}",
+          "Price": 50,
+          "Fragility": 0,
+          "CanBePlacedIndoors": true,
+          "CanBePlacedOutdoors": true,
+          "Texture": "Mods/blinxxy.MuseArt.Vale/SlakingTub",
+          "SpriteIndex": 0
+        }
+      }
+    },
+    {
+      "Action": "EditData",
+      "Target": "Data/Machines",
+      "Entries": {
+        "(BC)blinxxy.MuseArt_SlakingTub": {
+          "OutputRules": [
+            {
+              "Id": "Slake",
+              "Triggers": [
+                { "Id": "Clay", "Trigger": "ItemPlacedInMachine", "RequiredItemId": "(O)330", "RequiredCount": 3 }
+              ],
+              "OutputItem": [
+                { "Id": "PottersClay", "ItemId": "(O)blinxxy.MuseArt_PottersClay", "MinStack": 1, "MaxStack": 1 }
+              ],
+              // 8 hours: a tub filled in the morning is ready by evening, and one filled at
+              // night by morning (the night runs the clock on to 6am)
+              "MinutesUntilReady": 480
+            }
+          ],
+          "InvalidCountMessage": "{{i18n:clay.tub.count}}",
+          "LoadEffects": [ { "Id": "Load", "Sounds": [ { "Id": "bubbles" } ] } ],
+          "ShowNextIndexWhileWorking": true,
+          "ShowNextIndexWhenReady": true
+        }
+      }
+    },
+    // ingredients/unused/yield/big craftable/unlock condition/display name: 30 Wood, 1 Copper
+    // Bar, 10 Clay; learned only by buying it from Tobin
+    {
+      "Action": "EditData",
+      "Target": "Data/CraftingRecipes",
+      "Entries": {
+        "blinxxy.MuseArt_SlakingTub": "388 30 334 1 330 10/Home/blinxxy.MuseArt_SlakingTub/true/null/{{i18n:clay.tub.name}}"
+      }
+    },
+
     // ---- The clay pit on the riverbank below the pottery ----
     // The clay bank painted into the map (tools/build_vale.py FEATURES "clay", tiles 50-57,
     // 21-27): its pit of grey clay is solid, x 53-57, y 23-25 and x 54-56, y 26. Hoe any of

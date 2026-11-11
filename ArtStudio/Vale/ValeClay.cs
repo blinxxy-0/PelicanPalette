@@ -77,6 +77,24 @@ internal static class ValeClay
                 var who = Game1.player;
                 if (args.FirstOrDefault() == "dig")
                     Dig(who.currentLocation, who, who.GetGrabTile().ToPoint(), null);
+                else if (args.FirstOrDefault() == "tub")
+                {
+                    // three Slaking Tubs in a row in front of you, for screenshots: idle, slaking, ready
+                    var start = who.GetGrabTile();
+                    for (int k = 0; k < 3; k++)
+                    {
+                        var tile = start + new Vector2(k * 2 - 2, 0);
+                        who.currentLocation.objects.Remove(tile);
+                        var tub = ItemRegistry.Create<StardewValley.Object>(ClayTests.QualifiedTubId);
+                        tub.placementAction(who.currentLocation, (int)tile.X * 64, (int)tile.Y * 64, who);
+                        if (k > 0 && who.currentLocation.objects.TryGetValue(tile, out var placed))
+                        {
+                            placed.performObjectDropInAction(ItemRegistry.Create("(O)330", 3), false, who);
+                            if (k == 2)
+                                placed.minutesElapsed(placed.MinutesUntilReady);
+                        }
+                    }
+                }
                 else if (args.FirstOrDefault() == "wheel")
                 {
                     who.addItemToInventory(ItemRegistry.Create(QualifiedItemId, 3));
