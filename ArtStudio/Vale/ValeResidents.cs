@@ -24,7 +24,8 @@ internal static class ValeResidents
     // wake. The guest bed (TouchAction Sleep) says the room's booked until then.
     public const int RoomPrice = 200;
     internal const string RoomNightKey = ModEntry.Id + "/ValeRoomNight";
-    // Bea's 10-heart event will give you the artists' room for free (to come): this mail flag.
+    // Bea's 10-heart event gives you the artists' room for free (tools/build_bea_events.py): this
+    // mail flag, and the game's own doorUnlock flag for its door (ArtistsRoomDoorUnlock).
     public const string ArtistsRoomMail = ModEntry.Id + "_ValeArtistsRoom";
 
     // Where Bea serves: behind her tea counter (data/bea_schedule.json, 21 21), the row
@@ -68,6 +69,7 @@ internal static class ValeResidents
         harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.passOutFromTired)),
             prefix: new HarmonyMethod(typeof(ValeResidents), nameof(PassOutPrefix)));
         helper.Events.GameLoop.DayStarted += (_, _) => TuckedInMessage();
+        helper.Events.GameLoop.DayStarted += (_, _) => KeyOpensDoor(Game1.player);
 
         harmony.Patch(AccessTools.Method(typeof(GameLocation), nameof(GameLocation.ShowLockedDoorMessage)),
             prefix: new HarmonyMethod(typeof(ValeResidents), nameof(LockedDoorPrefix)));
@@ -147,6 +149,18 @@ internal static class ValeResidents
     // 10-heart key: no villager has that name, so the game's 2-heart rule never opens it,
     // and its locked message would be blank. This is its card on the door instead.
     public const string ArtistsRoomDoor = ModEntry.Id + "_ArtistsRoom";
+
+    // The game's "Door <name>" action opens for anyone with the mail flag doorUnlock<name>. Bea's
+    // 10-heart event gives it with her key, so the door opens the moment you have it (the map's
+    // lock itself only comes off at the next location change); this keeps the two together for a
+    // key given any other way.
+    public const string ArtistsRoomDoorUnlock = "doorUnlock" + ArtistsRoomDoor;
+
+    internal static void KeyOpensDoor(Farmer who)
+    {
+        if (who.mailReceived.Contains(ArtistsRoomMail))
+            who.mailReceived.Add(ArtistsRoomDoorUnlock);
+    }
 
     internal static bool LockedDoorPrefix(string[] action)
     {
