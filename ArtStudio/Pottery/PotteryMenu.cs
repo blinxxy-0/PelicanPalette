@@ -262,6 +262,7 @@ internal sealed class PotteryMenu : IClickableMenu
     {
         _fireResult = FiringJudge.Judge(_kiln!, _random);
         _stage = Stage.Results;
+        PotteryPieces.OnFired(this, _shape.Name, _pot, _glaze, _fireResult, Stars);
     }
 
     internal float FireScore => _fireResult?.Score ?? 0f;
@@ -784,6 +785,7 @@ internal sealed class PotteryMenu : IClickableMenu
             Row("Glaze", I18n.Rating(g.Overall));
         if (_fireResult is { } f)
             Row("Firing", f.Verdict);
+        PotteryPieces.DrawKept(b, _pot, right.X + 8, y + 12, right.Width - 16);
     }
 
     private void DrawBottomBar(SpriteBatch b, int mx, int my)
