@@ -87,9 +87,11 @@ def play(frames, ms, flip=False):
 
 
 def stop_playing(frame, flip=False):
-    """He stops: the fiddle stops, and he holds still on a frame."""
-    still = f"animate {E} {'true' if flip else 'false'} true 1000 {frame}"
-    return ["stopSound gusviolin", f"stopAnimation {E}", still]
+    """He stops: the fiddle stops, and he stands facing up (UP), or holds still on a sitting frame
+    (an animation of one frame, which faceDirection can't undo: only used while he sits)."""
+    if frame == UP:
+        return ["stopSound gusviolin", f"stopAnimation {E}", f"faceDirection {E} 0"]
+    return ["stopSound gusviolin", f"stopAnimation {E}", f"animate {E} {'true' if flip else 'false'} true 1000 {frame}"]
 
 
 def bow():
@@ -223,9 +225,9 @@ def heart6(trips, tiles):
         f"warp {FN} 31 56", f"move {FN} 2 0 1", f"move {FN} 0 -3 0", f"faceDirection {FN} 0", f"emote {FN} 8",
         say("Fern arrives to make sure nobody's killing anything rare."),
         f"faceDirection {FN} 1", "pause 600", f"faceDirection {FN} 0",
-        # Bea, down the east stairs with the tea
-        f"warp {B} 45 48", f"move {B} 0 6 2", f"move {B} -2 0 3", f"faceDirection {B} 3",
-        sprite(7, 42, 54, 56),
+        # Bea, along the forecourt from the plaza's stairs with the tea
+        f"warp {B} 47 56", f"move {B} -4 0 3", f"faceDirection {B} 0",
+        sprite(7, 42, 55, 57),
         say("Bea brings tea, and stays."),
         "pause 400", "globalFade", "viewport -1000 -1000",
         *[f"changeMapTile Buildings2 {x} {y} {c}" for x, y, c in tiles],
@@ -233,14 +235,14 @@ def heart6(trips, tiles):
         # evening: the seats clear, everyone in their places
         f"warp {E} 37 54", f"faceDirection {E} 0", "warp farmer 38 56", "faceDirection farmer 0",
         f"warp {B} 35 52", f"faceDirection {B} 1", f"warp {T} 36 52", f"faceDirection {T} 3",
-        f"warp {FN} 45 51", f"faceDirection {FN} 3",
+        f"warp {FN} 42 51", f"faceDirection {FN} 3",
         "viewport 37 51", "globalFadeToClear", "pause 600",
         say("By evening the seats are clear for the first time in decades."),
         f"faceDirection {E} 2",
         speak(E, "When I walked in here, it was all brambles. I thought, nobody's sat here for forty years. Nobody will.$0"),
         "move farmer 2 0 1", "move farmer 0 -5 0", "faceDirection farmer 2",
         f"emote {B} 12", f"shake {T} 300",
-        f"warp {L} 37 44", f"move {L} 0 3 2", f"faceDirection {L} 2",
+        f"warp {L} 37 45", f"move {L} 0 3 2", f"faceDirection {L} 2",
         say("The residents take their seats: Bea and Tobin in the front row, arguing; Fern on the steps; Lupini, late, at the very back."),
         f"faceDirection {B} 2", f"faceDirection {T} 2", f"faceDirection {E} 0", "pause 400",
         *play(PLAY_UP, 160), "pause 3000",
@@ -321,8 +323,8 @@ def heart10():
     return key, script(
         "continue", "89 59", f"farmer 92 63 0 {E} 89 58 3", "skippable",
         f"positionOffset {E} {SIT_OVERLOOK[0]} {SIT_OVERLOOK[1]}", f"animate {E} false true 1000 {SIT_L}",
-        sprite(pack, 89, 59, 61), "pause 500",
-        "move farmer 0 -2 0", "move farmer -3 0 3", "faceDirection farmer 0", "pause 300",
+        sprite(pack, 89, 59, 60), "pause 500",
+        "move farmer 0 -1 0", "move farmer -3 0 3", "faceDirection farmer 0", "pause 300",
         say("Emmett sits on the bench with his old travelling pack at his feet, stuffed full, the fiddle case strapped on top, his long coat on."),
         speak(E, "Every spring. Same thing. I pack the bag, I walk up here, and I look at the road out of the Vale.$0"),
         speak(E, "Five years, I've never gone. But I've never unpacked either. It's sat by my bed, packed, for five years. In case."),
@@ -333,7 +335,7 @@ def heart10():
         f"stopAnimation {E}", f"positionOffset {E} {-SIT_OVERLOOK[0]} {-SIT_OVERLOOK[1]}", f"warp {E} 90 58",
         f"faceDirection {E} 3", "pause 500",
         *[c for item in laid for c in ("playSound leafrustle", item, "pause 700")],
-        "removeTemporarySprites", sprite(emptied, 89, 59, 61), *laid,
+        "removeTemporarySprites", sprite(emptied, 89, 59, 60), *laid,
         say("Then he opens the pack and lays things out on the bench, one at a time: a spare shirt, a tin cup, the songbook, a map of the Republic with every town crossed through."),
         f"faceDirection {E} 2",
         speak(E, "I'm unpacking it. In front of you. So I can't pretend I didn't.$l"),
@@ -345,7 +347,7 @@ def heart10():
                 speak(E, "The bag? No. It's empty. It's very light now.$h")]),
         ]),
         "pause 400", f"faceDirection {E} 3", "pause 300",
-        "removeTemporarySprites", sprite(emptied, 89, 59, 61), *laid[:3],
+        "removeTemporarySprites", sprite(emptied, 89, 59, 60), *laid[:3],
         f"faceDirection {E} 2",
         say("He folds the map with every town crossed through and gives it to you."),
         speak(E, "Here. I won't be needing it. Every town in Ferngill, and I've finally found the one I'm from.$u"),
@@ -426,20 +428,20 @@ def draw_on_bench(what):
         rect(d, 2, 5, 8, 6, (190, 174, 140))
         rect(d, 4, 3, 6, 3, (196, 70, 56))                   # a red thread: his neckerchief tucked in it
     elif what == "cup":
-        rect(d, 3, 9, 6, 12, (170, 176, 182))
-        rect(d, 3, 9, 6, 9, (206, 212, 216))
-        rect(d, 7, 10, 7, 11, (140, 146, 152))               # the handle
+        rect(d, 3, 8, 6, 11, (170, 176, 182))
+        rect(d, 3, 8, 6, 8, (206, 212, 216))
+        rect(d, 7, 9, 7, 10, (140, 146, 152))                # the handle
     elif what == "book":
-        rect(d, 2, 14, 8, 19, (110, 64, 36))
-        rect(d, 3, 15, 7, 18, (142, 88, 50))
-        rect(d, 3, 13, 5, 13, (236, 226, 198))               # scraps of paper sticking out
-        rect(d, 6, 14, 7, 14, (236, 226, 198))
+        rect(d, 2, 13, 8, 17, (110, 64, 36))
+        rect(d, 3, 14, 7, 16, (142, 88, 50))
+        rect(d, 3, 12, 5, 12, (236, 226, 198))               # scraps of paper sticking out
+        rect(d, 6, 13, 7, 13, (236, 226, 198))
     elif what == "map":
-        rect(d, 2, 21, 8, 25, (226, 206, 160))
-        rect(d, 2, 21, 8, 21, (240, 226, 188))
-        for x, y in ((3, 22), (5, 23), (7, 22), (4, 24), (7, 24)):
+        rect(d, 2, 19, 8, 23, (226, 206, 160))
+        rect(d, 2, 19, 8, 19, (240, 226, 188))
+        for x, y in ((3, 20), (5, 21), (7, 20), (4, 22), (7, 22)):
             rect(d, x, y, x, y, (156, 60, 44))                # towns, crossed through
-        rect(d, 5, 21, 5, 25, (196, 176, 130))               # the fold
+        rect(d, 5, 19, 5, 23, (196, 176, 130))               # the fold
     return outline(im)
 
 
