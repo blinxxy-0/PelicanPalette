@@ -22,8 +22,15 @@ internal static class LupiniEvents
         GameStateQuery.Register(RainedYesterdayQuery, (_, context) => RainedYesterday(context.Player ?? Game1.player));
         DevTools.AddCommand(helper, "museart_lupinitest",
             "Lupini's heart events: 'hearts <n>' sets your hearts with him; 'rain T|F' sets yesterday's rain; 'sun' or 'rainy' sets today's "
-            + "weather; 'check' says which of his events would play if you walked into the Vale (or the Forest) now, and why not.",
-            (_, args) => Test(args));
+            + "weather; 'met <npc>' marks a villager met; 'close' closes any menu; 'items' lists your bag and his flags; 'check' says which of his events would play if you walked into the Vale (or the Forest) now, and why not; "
+            + "'debug <command> <args>' runs one of the game's debug commands (ebi, friendship...).",
+            (_, args) =>
+            {
+                if (args.FirstOrDefault() == "debug" && args.Length > 1)
+                    DebugCommands.TryHandle(args.Skip(1).ToArray());
+                else
+                    Test(args);
+            });
     }
 
     private static void Test(string[] args)
@@ -48,6 +55,25 @@ internal static class LupiniEvents
                 weather.Weather = rain ? Game1.weather_rain : Game1.weather_sunny;
                 weather.IsRaining = rain;
                 Game1.isRaining = rain;
+                break;
+            case "met":
+                if (!who.friendshipData.ContainsKey(args[1]))
+                    who.friendshipData[args[1]] = new Friendship();
+                break;
+            case "state":
+                {
+                    var ev = Game1.currentLocation?.currentEvent ?? who.currentLocation?.currentEvent;
+                    Monitor?.Log($"current {Game1.currentLocation?.NameOrUniqueName}, player in {who.currentLocation?.NameOrUniqueName}, eventUp {Game1.eventUp}, "
+                        + $"event {ev?.id ?? "none"} at {ev?.CurrentCommand} '{(ev != null ? ev.GetCurrentCommand() : "")}', globalFade {Game1.globalFade}, "
+                        + $"fadeToBlack {Game1.fadeToBlack} {Game1.fadeToBlackAlpha:0.00}, dialogueUp {Game1.dialogueUp}, menu {Game1.activeClickableMenu?.GetType().Name ?? "none"}", LogLevel.Info);
+                    break;
+                }
+            case "close":
+                Game1.exitActiveMenu();
+                break;
+            case "items":
+                Monitor?.Log("Bag: " + string.Join(", ", who.Items.Where(i => i != null).Select(i => $"{i.QualifiedItemId} '{i.DisplayName}' x{i.Stack}")), LogLevel.Info);
+                Monitor?.Log("Flags: " + string.Join(", ", who.mailReceived.Where(m => m.Contains("Lupini") || m.Contains("ValeHallOpen"))), LogLevel.Info);
                 break;
             case "check":
                 foreach (string name in new[] { ModEntry.Id + "_GildedVale", "Forest" })

@@ -232,7 +232,7 @@ internal static class PaintersGuide
         __instance.CurrentItem?.QualifiedItemId != "(O)" + GuideItemId;
 
     // Lupini's own spot, the one you stopped at on his 4-heart walk (tools/build_lupini_events.py): a
-    // stool and a rock like the guide's, by Bea's washing line, the bus's turning circle or Tobin's clay
+    // paint rock like the guide's, by Bea's washing line, the bus's turning circle or Tobin's clay
     // pit. It isn't one of the guide's eight and never counts towards them: touching it says what he
     // saw there (vale.lupini_spot.<id>), guide or no guide.
     public static readonly string[] ChosenSpots = { "washing", "bus", "claypit" };

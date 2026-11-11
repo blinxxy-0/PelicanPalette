@@ -29,12 +29,12 @@
       },
       "Entries": {
         "blinxxy.MuseArt_Lupini2h/Friendship Lupini 500/Time 900 1200/Weather sunny/G blinxxy.MuseArt_RAINED_YESTERDAY": "continue/19 7/farmer 15 7 1 Lupini 20 6 2/skippable/setSkipActions AddItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniEventProps 0 0 32 16 9999 1 9999 19 7 false false 0 0 1 0 0 0/pause 600/move farmer 3 0 1/pause 300/message \"{{i18n:lupini-event.2h.01}}\"/speak Lupini \"{{i18n:lupini-event.2h.02}}\"/speak Lupini \"{{i18n:lupini-event.2h.03}}\"/quickQuestion  #{{i18n:lupini-event.2h.04}}#{{i18n:lupini-event.2h.05}}#{{i18n:lupini-event.2h.06}}(break)speak Lupini \"{{i18n:lupini-event.2h.07}}\"\\switchEvent blinxxy.MuseArt_Lupini2h_again(break)speak Lupini \"{{i18n:lupini-event.2h.08}}\"(break)message \"{{i18n:lupini-event.2h.09}}\"\\speak Lupini \"{{i18n:lupini-event.2h.10}}\"/faceDirection Lupini 3/message \"{{i18n:lupini-event.2h.11}}\"/speak Lupini \"{{i18n:lupini-event.2h.12}}\"/speak Lupini \"{{i18n:lupini-event.2h.13}}\"/message \"{{i18n:lupini-event.2h.14}}\"/speak Lupini \"{{i18n:lupini-event.2h.15}}\"/addItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/pause 300/end",
-        "blinxxy.MuseArt_Lupini2h_again": "quickQuestion  #{{i18n:lupini-event.2h.05}}#{{i18n:lupini-event.2h.06}}(break)speak Lupini \"{{i18n:lupini-event.2h.08}}\"(break)message \"{{i18n:lupini-event.2h.09}}\"\\speak Lupini \"{{i18n:lupini-event.2h.10}}\"/faceDirection Lupini 3/message \"{{i18n:lupini-event.2h.11}}\"/speak Lupini \"{{i18n:lupini-event.2h.12}}\"/speak Lupini \"{{i18n:lupini-event.2h.13}}\"/message \"{{i18n:lupini-event.2h.14}}\"/speak Lupini \"{{i18n:lupini-event.2h.15}}\"/addItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/pause 300/end",
-        "blinxxy.MuseArt_Lupini4h/Friendship Lupini 1000/Time 1600 1800/Weather sunny/SawEvent blinxxy.MuseArt_Lupini2h": "continue/73 25/farmer 73 28 0 Lupini 73 24 2/skippable/pause 500/move farmer 0 -2 0/pause 300/speak Lupini \"{{i18n:lupini-event.4h.01}}\"/globalFade/viewport -1000 -1000/warp Lupini 89 61/faceDirection Lupini 3/warp farmer 90 61/faceDirection farmer 3/viewport 90 60/globalFadeToClear/pause 400/message \"{{i18n:lupini-event.4h.02}}\"/speak Lupini \"{{i18n:lupini-event.4h.03}}\"/globalFade/viewport -1000 -1000/warp Lupini 47 64/faceDirection Lupini 1/warp farmer 46 64/faceDirection farmer 1/viewport 47 63/globalFadeToClear/pause 400/speak Lupini \"{{i18n:lupini-event.4h.04}}\"/globalFade/viewport -1000 -1000/warp Lupini 42 64/faceDirection Lupini 3/warp farmer 43 64/faceDirection farmer 3/viewport 41 64/globalFadeToClear/pause 400/speak Lupini \"{{i18n:lupini-event.4h.05}}\"/message \"{{i18n:lupini-event.4h.06}}\"/speak Lupini \"{{i18n:lupini-event.4h.07}}\"/quickQuestion  #{{i18n:lupini-event.4h.08}}#{{i18n:lupini-event.4h.09}}#{{i18n:lupini-event.4h.10}}(break)addMailReceived blinxxy.MuseArt_LupiniSpot_washing\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniSpot_washing Received\\globalFade\\viewport -1000 -1000\\warp Lupini 16 17\\faceDirection Lupini 0\\warp farmer 17 17\\faceDirection farmer 0\\viewport 16 16\\globalFadeToClear\\pause 400\\message \"{{i18n:lupini-event.4h.11}}\"(break)addMailReceived blinxxy.MuseArt_LupiniSpot_bus\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniSpot_bus Received\\globalFade\\viewport -1000 -1000\\warp Lupini 13 4\\faceDirection Lupini 3\\warp farmer 14 4\\faceDirection farmer 3\\viewport 13 5\\globalFadeToClear\\pause 400\\message \"{{i18n:lupini-event.4h.12}}\"(break)addMailReceived blinxxy.MuseArt_LupiniSpot_claypit\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniSpot_claypit Received\\globalFade\\viewport -1000 -1000\\warp Lupini 50 25\\faceDirection Lupini 1\\warp farmer 50 26\\faceDirection farmer 1\\viewport 51 24\\globalFadeToClear\\pause 400\\speak Lupini \"{{i18n:lupini-event.4h.13}}\"/message \"{{i18n:lupini-event.4h.14}}\"/pause 1500/speak Lupini \"{{i18n:lupini-event.4h.15}}\"/speak Lupini \"{{i18n:lupini-event.4h.16}}\"/pause 300/end",
-        "blinxxy.MuseArt_Lupini6h/Friendship Lupini 1500/Time 1300 1600/SawEvent blinxxy.MuseArt_Lupini4h/G PLAYER_HAS_MET Current MargotPell": "continue/73 40/farmer 73 43 0 Lupini 73 39 2/skippable/changeMapTile Buildings 73 37 5/changeMapTile Buildings 73 38 15/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniEventProps 32 0 32 16 9999 1 9999 74 39 false false 0 0 1 0 0 0/pause 500/move farmer 0 -3 0/pause 300/message \"{{i18n:lupini-event.6h.01}}\"/speak Lupini \"{{i18n:lupini-event.6h.02}}\"/faceDirection Lupini 0/pause 400/globalFade/viewport -1000 -1000/changeLocation blinxxy.MuseArt_ValeStudio/warp farmer 8 15/faceDirection farmer 3/warp Lupini 6 15/faceDirection Lupini 3/viewport 8 14/globalFadeToClear/pause 600/message \"{{i18n:lupini-event.6h.03}}\"/move Lupini 0 -1 0/move Lupini 3 0 1/faceDirection Lupini 0/faceDirection farmer 0/pause 400/message \"{{i18n:lupini-event.6h.04}}\"/speak Lupini \"{{i18n:lupini-event.6h.05}}\"/move Lupini 4 0 1/move Lupini 0 -1 0/faceDirection Lupini 0/move farmer 3 0 1/move farmer 0 -1 0/faceDirection farmer 0/pause 400/message \"{{i18n:lupini-event.6h.06}}\"/speak Lupini \"{{i18n:lupini-event.6h.07}}\"/speak Lupini \"{{i18n:lupini-event.6h.08}}\"/message \"{{i18n:lupini-event.6h.09}}\"/faceDirection Lupini 3/faceDirection farmer 1/quickQuestion  #{{i18n:lupini-event.6h.10}}#{{i18n:lupini-event.6h.11}}#{{i18n:lupini-event.6h.12}}(break)addMailReceived blinxxy.MuseArt_LupiniStudio_restore\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_restore Received\\speak Lupini \"{{i18n:lupini-event.6h.13}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_finish\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_finish Received\\message \"{{i18n:lupini-event.6h.14}}\"\\speak Lupini \"{{i18n:lupini-event.6h.15}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_leave\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_leave Received\\speak Lupini \"{{i18n:lupini-event.6h.16}}\"/message \"{{i18n:lupini-event.6h.17}}\"/speak Lupini \"{{i18n:lupini-event.6h.18}}\"/pause 300/end",
-        "blinxxy.MuseArt_Lupini6h/Friendship Lupini 1500/Time 1300 1600/SawEvent blinxxy.MuseArt_Lupini4h/G !PLAYER_HAS_MET Current MargotPell": "continue/73 40/farmer 73 43 0 Lupini 73 39 2/skippable/changeMapTile Buildings 73 37 5/changeMapTile Buildings 73 38 15/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniEventProps 32 0 32 16 9999 1 9999 74 39 false false 0 0 1 0 0 0/pause 500/move farmer 0 -3 0/pause 300/message \"{{i18n:lupini-event.6h.01}}\"/speak Lupini \"{{i18n:lupini-event.6h.02}}\"/faceDirection Lupini 0/pause 400/globalFade/viewport -1000 -1000/changeLocation blinxxy.MuseArt_ValeStudio/warp farmer 8 15/faceDirection farmer 3/warp Lupini 6 15/faceDirection Lupini 3/viewport 8 14/globalFadeToClear/pause 600/message \"{{i18n:lupini-event.6h.03}}\"/move Lupini 0 -1 0/move Lupini 3 0 1/faceDirection Lupini 0/faceDirection farmer 0/pause 400/message \"{{i18n:lupini-event.6h.04}}\"/speak Lupini \"{{i18n:lupini-event.6h.05}}\"/move Lupini 4 0 1/move Lupini 0 -1 0/faceDirection Lupini 0/move farmer 3 0 1/move farmer 0 -1 0/faceDirection farmer 0/pause 400/message \"{{i18n:lupini-event.6h.06}}\"/speak Lupini \"{{i18n:lupini-event.6h.07}}\"/faceDirection Lupini 3/faceDirection farmer 1/quickQuestion  #{{i18n:lupini-event.6h.10}}#{{i18n:lupini-event.6h.11}}#{{i18n:lupini-event.6h.12}}(break)addMailReceived blinxxy.MuseArt_LupiniStudio_restore\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_restore Received\\speak Lupini \"{{i18n:lupini-event.6h.13}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_finish\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_finish Received\\message \"{{i18n:lupini-event.6h.14}}\"\\speak Lupini \"{{i18n:lupini-event.6h.15}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_leave\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_leave Received\\speak Lupini \"{{i18n:lupini-event.6h.16}}\"/message \"{{i18n:lupini-event.6h.17}}\"/speak Lupini \"{{i18n:lupini-event.6h.18}}\"/pause 300/end",
-        "blinxxy.MuseArt_Lupini10h/Friendship Lupini 2500/Time 600 700/SawEvent blinxxy.MuseArt_Lupini8h/SawEvent blinxxy.MuseArt_Sable8h": "continue/92 58/farmer 92 62 0 Lupini 90 57 0 Sable -100 -100 2/skippable/setSkipActions AddItem (F)blinxxy.MuseArt_LupiniEasel 1#AddItem (F)blinxxy.MuseArt_LupiniDawn 1/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 90 55 false false 56 0 1 0 0 0/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 92 55 false false 56 0 1 0 0 0/pause 600/move farmer 0 -5 0/pause 300/message \"{{i18n:lupini-event.10h.01}}\"/speak Lupini \"{{i18n:lupini-event.10h.02}}\"/speak Lupini \"{{i18n:lupini-event.10h.03}}\"/speak Lupini \"{{i18n:lupini-event.10h.04}}\"/message \"{{i18n:lupini-event.10h.05}}\"/globalFade 0.005/pause 1500/globalFadeToClear 0.005/pause 1200/message \"{{i18n:lupini-event.10h.06}}\"/warp Sable 92 69/faceDirection Sable 0/move Sable 0 -4 0/pause 800/message \"{{i18n:lupini-event.10h.07}}\"/speak Lupini \"{{i18n:lupini-event.10h.08}}\"/pause 1500/move Sable 2 0 1/faceDirection Sable 0/pause 600/message \"{{i18n:lupini-event.10h.09}}\"/globalFade/warp Sable 94 57/faceDirection Sable 0/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 94 55 false false 56 0 1 0 0 0/globalFadeToClear/pause 800/message \"{{i18n:lupini-event.10h.10}}\"/pause 1500/faceDirection Lupini 1/faceDirection farmer 3/speak Lupini \"{{i18n:lupini-event.10h.11}}\"/message \"{{i18n:lupini-event.10h.12}}\"/speak Lupini \"{{i18n:lupini-event.10h.13}}\"/addItem (F)blinxxy.MuseArt_LupiniEasel 1/addItem (F)blinxxy.MuseArt_LupiniDawn 1/pause 300/end",
-        "blinxxy.MuseArt_Lupini10h/Friendship Lupini 2500/Time 600 700/SawEvent blinxxy.MuseArt_Lupini8h/!SawEvent blinxxy.MuseArt_Sable8h": "continue/92 58/farmer 92 62 0 Lupini 90 57 0/skippable/setSkipActions AddItem (F)blinxxy.MuseArt_LupiniEasel 1#AddItem (F)blinxxy.MuseArt_LupiniDawn 1/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 90 55 false false 56 0 1 0 0 0/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 92 55 false false 56 0 1 0 0 0/pause 600/move farmer 0 -5 0/pause 300/message \"{{i18n:lupini-event.10h.01}}\"/speak Lupini \"{{i18n:lupini-event.10h.02}}\"/speak Lupini \"{{i18n:lupini-event.10h.03}}\"/speak Lupini \"{{i18n:lupini-event.10h.04}}\"/message \"{{i18n:lupini-event.10h.05}}\"/globalFade 0.005/pause 1500/globalFadeToClear 0.005/pause 1200/faceDirection Lupini 1/faceDirection farmer 3/speak Lupini \"{{i18n:lupini-event.10h.11}}\"/message \"{{i18n:lupini-event.10h.12}}\"/speak Lupini \"{{i18n:lupini-event.10h.13}}\"/addItem (F)blinxxy.MuseArt_LupiniEasel 1/addItem (F)blinxxy.MuseArt_LupiniDawn 1/pause 300/end"
+        "blinxxy.MuseArt_Lupini2h_again": "pause 100/quickQuestion  #{{i18n:lupini-event.2h.05}}#{{i18n:lupini-event.2h.06}}(break)speak Lupini \"{{i18n:lupini-event.2h.08}}\"(break)message \"{{i18n:lupini-event.2h.09}}\"\\speak Lupini \"{{i18n:lupini-event.2h.10}}\"/faceDirection Lupini 3/message \"{{i18n:lupini-event.2h.11}}\"/speak Lupini \"{{i18n:lupini-event.2h.12}}\"/speak Lupini \"{{i18n:lupini-event.2h.13}}\"/message \"{{i18n:lupini-event.2h.14}}\"/speak Lupini \"{{i18n:lupini-event.2h.15}}\"/addItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/pause 300/end",
+        "blinxxy.MuseArt_Lupini4h/Friendship Lupini 1000/Time 1600 1800/Weather sunny/SawEvent blinxxy.MuseArt_Lupini2h": "continue/73 27/farmer 73 27 0 Lupini 73 24 2/skippable/pause 500/move farmer 0 -1 0/pause 300/speak Lupini \"{{i18n:lupini-event.4h.01}}\"/globalFade/viewport -1000 -1000/warp Lupini 90 58/faceDirection Lupini 3/warp farmer 91 58/faceDirection farmer 3/viewport 86 61/globalFadeToClear/pause 400/message \"{{i18n:lupini-event.4h.02}}\"/speak Lupini \"{{i18n:lupini-event.4h.03}}\"/globalFade/viewport -1000 -1000/warp Lupini 47 65/faceDirection Lupini 1/warp farmer 46 65/faceDirection farmer 1/viewport 46 67/globalFadeToClear/pause 400/speak Lupini \"{{i18n:lupini-event.4h.04}}\"/globalFade/viewport -1000 -1000/warp Lupini 45 64/faceDirection Lupini 3/warp farmer 46 64/faceDirection farmer 3/viewport 43 66/globalFadeToClear/pause 400/speak Lupini \"{{i18n:lupini-event.4h.05}}\"/message \"{{i18n:lupini-event.4h.06}}\"/speak Lupini \"{{i18n:lupini-event.4h.07}}\"/quickQuestion  #{{i18n:lupini-event.4h.08}}#{{i18n:lupini-event.4h.09}}#{{i18n:lupini-event.4h.10}}(break)addMailReceived blinxxy.MuseArt_LupiniSpot_washing\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniSpot_washing Received\\globalFade\\viewport -1000 -1000\\warp Lupini 17 17\\faceDirection Lupini 0\\warp farmer 16 17\\faceDirection farmer 0\\viewport 17 18\\globalFadeToClear\\pause 400\\message \"{{i18n:lupini-event.4h.11}}\"(break)addMailReceived blinxxy.MuseArt_LupiniSpot_bus\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniSpot_bus Received\\globalFade\\viewport -1000 -1000\\warp Lupini 13 3\\faceDirection Lupini 2\\warp farmer 14 3\\faceDirection farmer 2\\viewport 13 6\\globalFadeToClear\\pause 400\\message \"{{i18n:lupini-event.4h.12}}\"(break)addMailReceived blinxxy.MuseArt_LupiniSpot_claypit\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniSpot_claypit Received\\globalFade\\viewport -1000 -1000\\warp Lupini 50 24\\faceDirection Lupini 1\\warp farmer 51 25\\faceDirection farmer 1\\viewport 51 27\\globalFadeToClear\\pause 400\\speak Lupini \"{{i18n:lupini-event.4h.13}}\"/message \"{{i18n:lupini-event.4h.14}}\"/pause 1500/speak Lupini \"{{i18n:lupini-event.4h.15}}\"/speak Lupini \"{{i18n:lupini-event.4h.16}}\"/pause 300/end",
+        "blinxxy.MuseArt_Lupini6h/Friendship Lupini 1500/Time 1300 1600/SawEvent blinxxy.MuseArt_Lupini4h/G PLAYER_HAS_MET Current MargotPell": "continue/73 40/farmer 73 43 0 Lupini 73 39 2/skippable/changeMapTile Buildings 73 37 5/changeMapTile Buildings 73 38 15/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniEventProps 32 0 32 16 9999 1 9999 74 39 false false 0 0 1 0 0 0/pause 500/move farmer 0 -3 0/pause 300/message \"{{i18n:lupini-event.6h.01}}\"/speak Lupini \"{{i18n:lupini-event.6h.02}}\"/faceDirection Lupini 0/pause 400/globalFade/viewport -1000 -1000/changeLocation blinxxy.MuseArt_ValeStudio/warp farmer 8 15/faceDirection farmer 3/warp Lupini 6 15/faceDirection Lupini 3/viewport 8 17/globalFadeToClear/pause 600/message \"{{i18n:lupini-event.6h.03}}\"/move Lupini 0 -1 0/move Lupini 3 0 1/faceDirection Lupini 0/faceDirection farmer 0/pause 400/message \"{{i18n:lupini-event.6h.04}}\"/speak Lupini \"{{i18n:lupini-event.6h.05}}\"/move Lupini 4 0 1/move Lupini 0 -1 0/faceDirection Lupini 0/move farmer 3 0 1/move farmer 0 -1 0/faceDirection farmer 0/viewport move 2 -1 800/pause 400/message \"{{i18n:lupini-event.6h.06}}\"/speak Lupini \"{{i18n:lupini-event.6h.07}}\"/speak Lupini \"{{i18n:lupini-event.6h.08}}\"/message \"{{i18n:lupini-event.6h.09}}\"/faceDirection Lupini 3/faceDirection farmer 1/quickQuestion  #{{i18n:lupini-event.6h.10}}#{{i18n:lupini-event.6h.11}}#{{i18n:lupini-event.6h.12}}(break)addMailReceived blinxxy.MuseArt_LupiniStudio_restore\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_restore Received\\speak Lupini \"{{i18n:lupini-event.6h.13}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_finish\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_finish Received\\message \"{{i18n:lupini-event.6h.14}}\"\\speak Lupini \"{{i18n:lupini-event.6h.15}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_leave\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_leave Received\\speak Lupini \"{{i18n:lupini-event.6h.16}}\"/message \"{{i18n:lupini-event.6h.17}}\"/speak Lupini \"{{i18n:lupini-event.6h.18}}\"/pause 300/end",
+        "blinxxy.MuseArt_Lupini6h/Friendship Lupini 1500/Time 1300 1600/SawEvent blinxxy.MuseArt_Lupini4h/G !PLAYER_HAS_MET Current MargotPell": "continue/73 40/farmer 73 43 0 Lupini 73 39 2/skippable/changeMapTile Buildings 73 37 5/changeMapTile Buildings 73 38 15/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniEventProps 32 0 32 16 9999 1 9999 74 39 false false 0 0 1 0 0 0/pause 500/move farmer 0 -3 0/pause 300/message \"{{i18n:lupini-event.6h.01}}\"/speak Lupini \"{{i18n:lupini-event.6h.02}}\"/faceDirection Lupini 0/pause 400/globalFade/viewport -1000 -1000/changeLocation blinxxy.MuseArt_ValeStudio/warp farmer 8 15/faceDirection farmer 3/warp Lupini 6 15/faceDirection Lupini 3/viewport 8 17/globalFadeToClear/pause 600/message \"{{i18n:lupini-event.6h.03}}\"/move Lupini 0 -1 0/move Lupini 3 0 1/faceDirection Lupini 0/faceDirection farmer 0/pause 400/message \"{{i18n:lupini-event.6h.04}}\"/speak Lupini \"{{i18n:lupini-event.6h.05}}\"/move Lupini 4 0 1/move Lupini 0 -1 0/faceDirection Lupini 0/move farmer 3 0 1/move farmer 0 -1 0/faceDirection farmer 0/viewport move 2 -1 800/pause 400/message \"{{i18n:lupini-event.6h.06}}\"/speak Lupini \"{{i18n:lupini-event.6h.07}}\"/faceDirection Lupini 3/faceDirection farmer 1/quickQuestion  #{{i18n:lupini-event.6h.10}}#{{i18n:lupini-event.6h.11}}#{{i18n:lupini-event.6h.12}}(break)addMailReceived blinxxy.MuseArt_LupiniStudio_restore\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_restore Received\\speak Lupini \"{{i18n:lupini-event.6h.13}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_finish\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_finish Received\\message \"{{i18n:lupini-event.6h.14}}\"\\speak Lupini \"{{i18n:lupini-event.6h.15}}\"(break)addMailReceived blinxxy.MuseArt_LupiniStudio_leave\\setSkipActions AddMail Current blinxxy.MuseArt_LupiniStudio_leave Received\\speak Lupini \"{{i18n:lupini-event.6h.16}}\"/message \"{{i18n:lupini-event.6h.17}}\"/speak Lupini \"{{i18n:lupini-event.6h.18}}\"/pause 300/end",
+        "blinxxy.MuseArt_Lupini10h/Friendship Lupini 2500/Time 600 700/SawEvent blinxxy.MuseArt_Lupini8h/SawEvent blinxxy.MuseArt_Sable8h": "continue/88 63/farmer 92 66 0 Lupini 90 61 3 Sable -100 -100 2/skippable/setSkipActions AddItem (F)blinxxy.MuseArt_LupiniEasel 1#AddItem (F)blinxxy.MuseArt_LupiniDawn 1/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 89 60 false false 61 0 1 0 0 0/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 89 63 false false 64 0 1 0 0 0/pause 600/move farmer 0 -2 0/move farmer -2 0 3/pause 300/message \"{{i18n:lupini-event.10h.01}}\"/speak Lupini \"{{i18n:lupini-event.10h.02}}\"/speak Lupini \"{{i18n:lupini-event.10h.03}}\"/speak Lupini \"{{i18n:lupini-event.10h.04}}\"/message \"{{i18n:lupini-event.10h.05}}\"/globalFade 0.005/pause 1500/globalFadeToClear 0.005/pause 1200/warp Sable 92 69/faceDirection Sable 0/move Sable 0 -4 0/faceDirection Sable 3/pause 600/message \"{{i18n:lupini-event.10h.06}}\"/message \"{{i18n:lupini-event.10h.07}}\"/speak Lupini \"{{i18n:lupini-event.10h.08}}\"/pause 1500/move Sable 2 0 1/faceDirection Sable 0/pause 600/message \"{{i18n:lupini-event.10h.09}}\"/globalFade/warp Sable 91 58/faceDirection Sable 3/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 90 57 false false 58 0 1 0 0 0/viewport 88 62/globalFadeToClear/pause 800/message \"{{i18n:lupini-event.10h.10}}\"/pause 1500/faceDirection Lupini 2/faceDirection farmer 0/speak Lupini \"{{i18n:lupini-event.10h.11}}\"/message \"{{i18n:lupini-event.10h.12}}\"/speak Lupini \"{{i18n:lupini-event.10h.13}}\"/addItem (F)blinxxy.MuseArt_LupiniEasel 1/addItem (F)blinxxy.MuseArt_LupiniDawn 1/pause 300/end",
+        "blinxxy.MuseArt_Lupini10h/Friendship Lupini 2500/Time 600 700/SawEvent blinxxy.MuseArt_Lupini8h/!SawEvent blinxxy.MuseArt_Sable8h": "continue/88 63/farmer 92 66 0 Lupini 90 61 3/skippable/setSkipActions AddItem (F)blinxxy.MuseArt_LupiniEasel 1#AddItem (F)blinxxy.MuseArt_LupiniDawn 1/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 89 60 false false 61 0 1 0 0 0/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniItems 16 0 16 32 9999 1 9999 89 63 false false 64 0 1 0 0 0/pause 600/move farmer 0 -2 0/move farmer -2 0 3/pause 300/message \"{{i18n:lupini-event.10h.01}}\"/speak Lupini \"{{i18n:lupini-event.10h.02}}\"/speak Lupini \"{{i18n:lupini-event.10h.03}}\"/speak Lupini \"{{i18n:lupini-event.10h.04}}\"/message \"{{i18n:lupini-event.10h.05}}\"/globalFade 0.005/pause 1500/globalFadeToClear 0.005/pause 1200/faceDirection Lupini 2/faceDirection farmer 0/speak Lupini \"{{i18n:lupini-event.10h.11}}\"/message \"{{i18n:lupini-event.10h.12}}\"/speak Lupini \"{{i18n:lupini-event.10h.13}}\"/addItem (F)blinxxy.MuseArt_LupiniEasel 1/addItem (F)blinxxy.MuseArt_LupiniDawn 1/pause 300/end"
       }
     },
     {
@@ -55,7 +55,7 @@
         "HasFile:assets/emmett/portraits.png": "true"
       },
       "Entries": {
-        "blinxxy.MuseArt_Lupini8h/Friendship Lupini 2000/Time 1800 2100/Weather sunny/SawEvent blinxxy.MuseArt_Lupini6h": "continue/44 42/farmer 44 45 0 Lupini -100 -100 2 BeaThistle -100 -100 2 TobinClay -100 -100 2 FernAster -100 -100 2 EmmettWren -100 -100 2/skippable/addMailReceived blinxxy.MuseArt_ValeHallOpen/setSkipActions AddMail Current blinxxy.MuseArt_ValeHallOpen Received/pause 500/move farmer 0 -3 0/pause 400/message \"{{i18n:lupini-event.8h.01}}\"/globalFade/changeToTemporaryMap blinxxy.MuseArt_LupiniHallEvent false/warp farmer 11 21/faceDirection farmer 0/warp Lupini 12 21/faceDirection Lupini 0/warp TobinClay 16 17/faceDirection TobinClay 1/warp BeaThistle 16 18/faceDirection BeaThistle 0/warp FernAster 22 17/faceDirection FernAster 3/warp EmmettWren 27 21/faceDirection EmmettWren 3/viewport 16 17/globalFadeToClear/pause 800/message \"{{i18n:lupini-event.8h.02}}\"/message \"{{i18n:lupini-event.8h.03}}\"/pause 600/faceDirection Lupini 3/faceDirection farmer 1/message \"{{i18n:lupini-event.8h.04}}\"/speak Lupini \"{{i18n:lupini-event.8h.05}}\"/speak Lupini \"{{i18n:lupini-event.8h.06}}\"/faceDirection Lupini 1/pause 300/message \"{{i18n:lupini-event.8h.07}}\"/speak Lupini \"{{i18n:lupini-event.8h.08}}\"/faceDirection Lupini 3/quickQuestion  #{{i18n:lupini-event.8h.09}}#{{i18n:lupini-event.8h.10}}(break)speak Lupini \"{{i18n:lupini-event.8h.11}}\"\\move Lupini 0 -3 0\\move Lupini 7 0 1\\move Lupini 0 -4 0\\faceDirection Lupini 2\\message \"{{i18n:lupini-event.8h.12}}\"(break)speak Lupini \"{{i18n:lupini-event.8h.13}}\"/pause 400/message \"{{i18n:lupini-event.8h.14}}\"/pause 600/end"
+        "blinxxy.MuseArt_Lupini8h/Friendship Lupini 2000/Time 1800 2100/Weather sunny/SawEvent blinxxy.MuseArt_Lupini6h": "continue/45 42/farmer 45 45 0 Lupini -100 -100 2 BeaThistle -100 -100 2 TobinClay -100 -100 2 FernAster -100 -100 2 EmmettWren -100 -100 2/skippable/addMailReceived blinxxy.MuseArt_ValeHallOpen/setSkipActions AddMail Current blinxxy.MuseArt_ValeHallOpen Received/pause 500/move farmer 0 -3 0/pause 400/message \"{{i18n:lupini-event.8h.01}}\"/globalFade/changeToTemporaryMap blinxxy.MuseArt_LupiniHallEvent false/warp farmer 11 21/faceDirection farmer 0/warp Lupini 12 21/faceDirection Lupini 0/warp TobinClay 19 17/faceDirection TobinClay 3/warp BeaThistle 20 18/faceDirection BeaThistle 3/warp FernAster 22 17/faceDirection FernAster 3/warp EmmettWren 27 21/faceDirection EmmettWren 3/viewport 17 18/globalFadeToClear/pause 800/message \"{{i18n:lupini-event.8h.02}}\"/viewport move 0 -4 1500/pause 1600/message \"{{i18n:lupini-event.8h.03}}\"/viewport move 0 4 1500/pause 1600/pause 600/faceDirection Lupini 3/faceDirection farmer 1/message \"{{i18n:lupini-event.8h.04}}\"/speak Lupini \"{{i18n:lupini-event.8h.05}}\"/speak Lupini \"{{i18n:lupini-event.8h.06}}\"/faceDirection Lupini 1/pause 300/message \"{{i18n:lupini-event.8h.07}}\"/speak Lupini \"{{i18n:lupini-event.8h.08}}\"/faceDirection Lupini 3/quickQuestion  #{{i18n:lupini-event.8h.09}}#{{i18n:lupini-event.8h.10}}(break)speak Lupini \"{{i18n:lupini-event.8h.11}}\"\\move Lupini 0 -3 0\\move Lupini 4 0 1\\move Lupini 0 -3 0\\move Lupini 4 0 1\\faceDirection Lupini 0\\message \"{{i18n:lupini-event.8h.12}}\"(break)speak Lupini \"{{i18n:lupini-event.8h.13}}\"/pause 400/message \"{{i18n:lupini-event.8h.14}}\"/pause 600/end"
       }
     },
     {
@@ -70,7 +70,7 @@
       },
       "Entries": {
         "blinxxy.MuseArt_Lupini2h/Friendship Lupini 500/DayOfWeek Sat/DayOfMonth 6 20/!Season winter/Time 1100 1400/Weather sunny/G blinxxy.MuseArt_RAINED_YESTERDAY": "continue/82 40/farmer 78 40 1 Lupini 84 40 3/skippable/setSkipActions AddItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/temporaryAnimatedSprite Mods\\blinxxy.MuseArt\\LupiniEventProps 0 0 32 16 9999 1 9999 82 40 false false 0 0 1 0 0 0/pause 600/move farmer 3 0 1/pause 300/message \"{{i18n:lupini-event.2h.01}}\"/speak Lupini \"{{i18n:lupini-event.2h.02}}\"/speak Lupini \"{{i18n:lupini-event.2h.03}}\"/quickQuestion  #{{i18n:lupini-event.2h.04}}#{{i18n:lupini-event.2h.05}}#{{i18n:lupini-event.2h.06}}(break)speak Lupini \"{{i18n:lupini-event.2h.07}}\"\\switchEvent blinxxy.MuseArt_Lupini2h_again(break)speak Lupini \"{{i18n:lupini-event.2h.08}}\"(break)message \"{{i18n:lupini-event.2h.09}}\"\\speak Lupini \"{{i18n:lupini-event.2h.10}}\"/faceDirection Lupini 3/message \"{{i18n:lupini-event.2h.11}}\"/speak Lupini \"{{i18n:lupini-event.2h.12}}\"/speak Lupini \"{{i18n:lupini-event.2h.13}}\"/message \"{{i18n:lupini-event.2h.14}}\"/speak Lupini \"{{i18n:lupini-event.2h.15}}\"/addItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/pause 300/end",
-        "blinxxy.MuseArt_Lupini2h_again": "quickQuestion  #{{i18n:lupini-event.2h.05}}#{{i18n:lupini-event.2h.06}}(break)speak Lupini \"{{i18n:lupini-event.2h.08}}\"(break)message \"{{i18n:lupini-event.2h.09}}\"\\speak Lupini \"{{i18n:lupini-event.2h.10}}\"/faceDirection Lupini 3/message \"{{i18n:lupini-event.2h.11}}\"/speak Lupini \"{{i18n:lupini-event.2h.12}}\"/speak Lupini \"{{i18n:lupini-event.2h.13}}\"/message \"{{i18n:lupini-event.2h.14}}\"/speak Lupini \"{{i18n:lupini-event.2h.15}}\"/addItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/pause 300/end"
+        "blinxxy.MuseArt_Lupini2h_again": "pause 100/quickQuestion  #{{i18n:lupini-event.2h.05}}#{{i18n:lupini-event.2h.06}}(break)speak Lupini \"{{i18n:lupini-event.2h.08}}\"(break)message \"{{i18n:lupini-event.2h.09}}\"\\speak Lupini \"{{i18n:lupini-event.2h.10}}\"/faceDirection Lupini 3/message \"{{i18n:lupini-event.2h.11}}\"/speak Lupini \"{{i18n:lupini-event.2h.12}}\"/speak Lupini \"{{i18n:lupini-event.2h.13}}\"/message \"{{i18n:lupini-event.2h.14}}\"/speak Lupini \"{{i18n:lupini-event.2h.15}}\"/addItem (F)blinxxy.MuseArt_LupiniPuddleSketch 1/pause 300/end"
       }
     },
     {
@@ -151,50 +151,8 @@
       "MapTiles": [
         {
           "Position": {
-            "X": 15,
-            "Y": 17
-          },
-          "Layer": "Front2",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1100
-        },
-        {
-          "Position": {
-            "X": 15,
-            "Y": 18
-          },
-          "Layer": "Buildings",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1132,
-          "SetProperties": {
-            "Action": "blinxxy.MuseArt_PaintSpot washing"
-          }
-        },
-        {
-          "Position": {
-            "X": 16,
-            "Y": 17
-          },
-          "Layer": "Front2",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1101
-        },
-        {
-          "Position": {
-            "X": 16,
-            "Y": 18
-          },
-          "Layer": "Buildings",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1133,
-          "SetProperties": {
-            "Action": "blinxxy.MuseArt_PaintSpot washing"
-          }
-        },
-        {
-          "Position": {
             "X": 17,
-            "Y": 19
+            "Y": 17
           },
           "Layer": "Front2",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
@@ -203,16 +161,19 @@
         {
           "Position": {
             "X": 17,
-            "Y": 20
+            "Y": 18
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1134
+          "SetIndex": 1134,
+          "SetProperties": {
+            "Action": "blinxxy.MuseArt_PaintSpot washing"
+          }
         },
         {
           "Position": {
             "X": 18,
-            "Y": 19
+            "Y": 17
           },
           "Layer": "Front2",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
@@ -221,11 +182,14 @@
         {
           "Position": {
             "X": 18,
-            "Y": 20
+            "Y": 18
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1135
+          "SetIndex": 1135,
+          "SetProperties": {
+            "Action": "blinxxy.MuseArt_PaintSpot washing"
+          }
         }
       ]
     },
@@ -249,7 +213,7 @@
           },
           "Layer": "Front2",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1100
+          "SetIndex": 1102
         },
         {
           "Position": {
@@ -258,7 +222,7 @@
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1132,
+          "SetIndex": 1134,
           "SetProperties": {
             "Action": "blinxxy.MuseArt_PaintSpot bus"
           }
@@ -266,45 +230,6 @@
         {
           "Position": {
             "X": 13,
-            "Y": 2
-          },
-          "Layer": "Front2",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1101
-        },
-        {
-          "Position": {
-            "X": 13,
-            "Y": 3
-          },
-          "Layer": "Buildings",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1133,
-          "SetProperties": {
-            "Action": "blinxxy.MuseArt_PaintSpot bus"
-          }
-        },
-        {
-          "Position": {
-            "X": 15,
-            "Y": 2
-          },
-          "Layer": "Front2",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1102
-        },
-        {
-          "Position": {
-            "X": 15,
-            "Y": 3
-          },
-          "Layer": "Buildings",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1134
-        },
-        {
-          "Position": {
-            "X": 16,
             "Y": 2
           },
           "Layer": "Front2",
@@ -313,12 +238,15 @@
         },
         {
           "Position": {
-            "X": 16,
+            "X": 13,
             "Y": 3
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1135
+          "SetIndex": 1135,
+          "SetProperties": {
+            "Action": "blinxxy.MuseArt_PaintSpot bus"
+          }
         }
       ]
     },
@@ -337,49 +265,7 @@
       "MapTiles": [
         {
           "Position": {
-            "X": 49,
-            "Y": 23
-          },
-          "Layer": "Front2",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1100
-        },
-        {
-          "Position": {
-            "X": 49,
-            "Y": 24
-          },
-          "Layer": "Buildings",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1132,
-          "SetProperties": {
-            "Action": "blinxxy.MuseArt_PaintSpot claypit"
-          }
-        },
-        {
-          "Position": {
             "X": 50,
-            "Y": 23
-          },
-          "Layer": "Front2",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1101
-        },
-        {
-          "Position": {
-            "X": 50,
-            "Y": 24
-          },
-          "Layer": "Buildings",
-          "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1133,
-          "SetProperties": {
-            "Action": "blinxxy.MuseArt_PaintSpot claypit"
-          }
-        },
-        {
-          "Position": {
-            "X": 46,
             "Y": 23
           },
           "Layer": "Front2",
@@ -388,16 +274,19 @@
         },
         {
           "Position": {
-            "X": 46,
+            "X": 50,
             "Y": 24
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1134
+          "SetIndex": 1134,
+          "SetProperties": {
+            "Action": "blinxxy.MuseArt_PaintSpot claypit"
+          }
         },
         {
           "Position": {
-            "X": 47,
+            "X": 51,
             "Y": 23
           },
           "Layer": "Front2",
@@ -406,12 +295,15 @@
         },
         {
           "Position": {
-            "X": 47,
+            "X": 51,
             "Y": 24
           },
           "Layer": "Buildings",
           "SetTilesheet": "z_blinxxy.MuseArt_GildedValeBuildings",
-          "SetIndex": 1135
+          "SetIndex": 1135,
+          "SetProperties": {
+            "Action": "blinxxy.MuseArt_PaintSpot claypit"
+          }
         }
       ]
     },
@@ -469,12 +361,13 @@
       "Target": "Maps/blinxxy.MuseArt_LupiniHallEvent",
       "FromFile": "assets/lupini/HallPainting_restore.tmx",
       "ToArea": {
-        "X": 18,
+        "X": 19,
         "Y": 11,
         "Width": 2,
         "Height": 2
       },
       "PatchMode": "Overlay",
+      "Update": "OnLocationChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/lupini/sprites.png": "true",
@@ -488,12 +381,13 @@
       "Target": "Maps/blinxxy.MuseArt_LupiniHallEvent",
       "FromFile": "assets/lupini/HallPainting_finish.tmx",
       "ToArea": {
-        "X": 18,
+        "X": 19,
         "Y": 11,
         "Width": 2,
         "Height": 2
       },
       "PatchMode": "Overlay",
+      "Update": "OnLocationChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/lupini/sprites.png": "true",
@@ -507,12 +401,13 @@
       "Target": "Maps/blinxxy.MuseArt_LupiniHallEvent",
       "FromFile": "assets/lupini/HallPainting_leave.tmx",
       "ToArea": {
-        "X": 18,
+        "X": 19,
         "Y": 11,
         "Width": 2,
         "Height": 2
       },
       "PatchMode": "Overlay",
+      "Update": "OnLocationChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/lupini/sprites.png": "true",
@@ -532,6 +427,7 @@
         "Height": 2
       },
       "PatchMode": "Overlay",
+      "Update": "OnLocationChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/lupini/sprites.png": "true",
@@ -551,6 +447,7 @@
         "Height": 2
       },
       "PatchMode": "Overlay",
+      "Update": "OnLocationChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/lupini/sprites.png": "true",
@@ -570,6 +467,7 @@
         "Height": 2
       },
       "PatchMode": "Overlay",
+      "Update": "OnLocationChange",
       "When": {
         "ValeResidents": "true",
         "HasFile:assets/lupini/sprites.png": "true",

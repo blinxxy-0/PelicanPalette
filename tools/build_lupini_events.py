@@ -16,8 +16,9 @@ Remembered choices, as mail flags:
 What the events change (this file's map and data patches; the art is tools/art/lupini_event_art.py,
 all of it placeholder):
   - 2 hearts: the puddle sketch, a framed painting (furniture).
-  - 4 hearts: the spot you chose gets a stool and a rock like his others, copied from the
-    rooftops' (GildedValeBuildings 1100-1103 over 1132-1135), its stool's feet carrying
+  - 4 hearts: the spot you chose gets a paint rock like his others (the user, 2026-11-11: the Vale's
+    painting spots are just the rock now, no stool), copied from the rooftops' (GildedValeBuildings
+    paint_rock_clean, 1102-1103 over 1134-1135), its two foot tiles carrying
     blinxxy.MuseArt_PaintSpot <washing|bus|claypit> (ArtStudio/Vale/PaintersGuide.cs ChosenSpots:
     not one of the guide's eight). Bea's washing line stands west of the Vale House for the walk.
   - 6 hearts: the big Old Studio is boarded up (its door planked over, a line instead of the warp)
@@ -124,7 +125,9 @@ def heart2(at):
         quick([("The puddle?", [speak(L, "Everyone says that. Wrong. Try again.$h"), f"switchEvent {AGAIN}"]),
                CLOUDS, FROG]),
         *tail2(to_you),
-    ), script(quick([CLOUDS, FROG]), *tail2(to_you))
+        # (switchEvent starts the new script at its command 0, and a box closing doesn't move an event
+        # on from command 0 (DialogueBox: only when CurrentCommand > 0), so the question isn't first)
+    ), script("pause 100", quick([CLOUDS, FROG]), *tail2(to_you))
 
 
 VALE2 = ("19 7", "15 7", 3, "20 6", 2, (19, 7), 3)       # the cobbles under the sign, the puddle at 19-20, 7
@@ -133,13 +136,13 @@ FOREST2 = ("82 40", "78 40", 3, "84 40", 3, (82, 40), 3)  # his Saturday spot by
 
 # ================================================================ 4 hearts
 
-# where you stop: the farmer's and his tiles (he sits where the stool will be), facings, the viewport
+# where you stop: the farmer's and his tiles (he stops where his rock will be), facings, the viewport
 STOPS = {
-    "washing": dict(view="16 16", lupini="16 17", lf=0, farmer="17 17", ff=0,
+    "washing": dict(view="17 18", lupini="17 17", lf=0, farmer="16 17", ff=0,
                     then=[say("Sheets on the line, the light through them.")]),
-    "bus": dict(view="13 5", lupini="13 4", lf=3, farmer="14 4", ff=3,
+    "bus": dict(view="13 6", lupini="13 3", lf=2, farmer="14 3", ff=2,
                 then=[say("The empty road, the bus shelter, the long shadows.")]),
-    "claypit": dict(view="51 24", lupini="50 25", lf=1, farmer="50 26", ff=1,
+    "claypit": dict(view="51 27", lupini="50 24", lf=1, farmer="51 25", ff=1,
                     then=[speak(L, "He'll be unbearable.$u")]),
 }
 
@@ -158,18 +161,19 @@ def heart4():
         answers.append((text, [f"addMailReceived {SPOT[spot]}", skip(f"AddMail Current {SPOT[spot]} Received"),
                                *walk_to(s["view"], s["lupini"], s["lf"], s["farmer"], s["ff"]), *s["then"]]))
     return script(
-        "continue", "73 25", f"farmer 73 28 0 {L} 73 24 2", "skippable",
-        "pause 500", "move farmer 0 -2 0", "pause 300",
+        "continue", "73 27", f"farmer 73 27 0 {L} 73 24 2", "skippable",
+        "pause 500", "move farmer 0 -1 0", "pause 300",
         speak(L, "My friend! Walk with me. I need somewhere to paint, and I've painted everywhere.$h"),
         # the overlook
-        *walk_to("90 60", "89 61", 3, "90 61", 3),
+        # (beside the bench, the overlook's paint rock below them)
+        *walk_to("86 61", "90 58", 3, "91 58", 3),
         say("At the overlook he stops, frames it with his hands, and walks on."),
         speak(L, "Too famous. It's on every postcard, and half of them are mine.$u"),
         # the lake
-        *walk_to("47 63", "47 64", 1, "46 64", 1),
+        *walk_to("46 67", "47 65", 1, "46 65", 1),
         speak(L, "Too blue. Nobody believes it."),
         # the old tree
-        *walk_to("41 64", "42 64", 3, "43 64", 3),
+        *walk_to("43 66", "45 64", 3, "46 64", 3),
         speak(L, "Too gold. It's showing off, and it knows it."),
         say("He gets quieter as you go."),
         speak(L, "Do you know, I can't remember the last time I painted something because I wanted to look at it.$s"),
@@ -212,13 +216,13 @@ def heart6(margot):
         # inside (the Old Studio as built: tools/build_vale_buildings.py "studio")
         "globalFade", "viewport -1000 -1000", f"changeLocation {STUDIO}",
         "warp farmer 8 15", "faceDirection farmer 3", f"warp {L} 6 15", f"faceDirection {L} 3",
-        "viewport 8 14", "globalFadeToClear", "pause 600",
+        "viewport 8 17", "globalFadeToClear", "pause 600",
         say("Dust, a cot, a washstand. On the easel, a landscape of the Vale, three-quarters finished. The sky's done; the valley floor is bare canvas."),
         f"move {L} 0 -1 0", f"move {L} 3 0 1", f"faceDirection {L} 0", "faceDirection farmer 0", "pause 400",
         say("The note, in pencil: 'Back after lunch.' No name, no date."),
         speak(L, "Whoever it was, they never came back from lunch.$s"),
         f"move {L} 4 0 1", f"move {L} 0 -1 0", f"faceDirection {L} 0",
-        "move farmer 3 0 1", "move farmer 0 -1 0", "faceDirection farmer 0", "pause 400",
+        "move farmer 3 0 1", "move farmer 0 -1 0", "faceDirection farmer 0", "viewport move 2 -1 800", "pause 400",
         say("He turns the backward painting round: the same view, finished, and worse."),
         speak(L, "They tried it twice. The unfinished one's better. It usually is.$u"),
         *conservator,
@@ -233,7 +237,9 @@ def heart6(margot):
 # ================================================================ 8 hearts
 
 # the open Hall (ValeHall.tmx): the end wall's two pictures, where its patches put them (HALL_WALL)
-HALL_WALL = {"painting": (18, 11), "sketch": (21, 11)}
+# (the north wall between the doorways: the painting in place of the game's 2 x 2 picture at 19-20, the
+# sketch in the gap after it; this is the scene's copy of the Hall, so the real one keeps its picture)
+HALL_WALL = {"painting": (19, 11), "sketch": (21, 11)}
 
 
 def heart8():
@@ -241,7 +247,7 @@ def heart8():
     off = "-100 -100 2"
     wall_x, wall_y = HALL_WALL["painting"]
     return script(
-        "continue", "44 42", f"farmer 44 45 0 {L} {off} {BEA} {off} {TOBIN} {off} {FERN} {off} {EMMETT} {off}", "skippable",
+        "continue", "45 42", f"farmer 45 45 0 {L} {off} {BEA} {off} {TOBIN} {off} {FERN} {off} {EMMETT} {off}", "skippable",
         # the dust sheets are off: the Hall's open for good (content.json's map swap)
         f"addMailReceived {HALL_OPEN}", skip(f"AddMail Current {HALL_OPEN} Received"),
         "pause 500", "move farmer 0 -3 0", "pause 400",
@@ -249,13 +255,16 @@ def heart8():
         "globalFade", f"changeToTemporaryMap {HALL_EVENT} false",
         "warp farmer 11 21", "faceDirection farmer 0",
         f"warp {L} 12 21", f"faceDirection {L} 0",
-        f"warp {TOBIN} 16 17", f"faceDirection {TOBIN} 1",
-        f"warp {BEA} 16 18", f"faceDirection {BEA} 0",
+        f"warp {TOBIN} 19 17", f"faceDirection {TOBIN} 3",
+        f"warp {BEA} 20 18", f"faceDirection {BEA} 3",
         f"warp {FERN} 22 17", f"faceDirection {FERN} 3",
         f"warp {EMMETT} 27 21", f"faceDirection {EMMETT} 3",
-        "viewport 16 17", "globalFadeToClear", "pause 800",
+        "viewport 17 18", "globalFadeToClear", "pause 800",
         say("The dust sheets are off. The residents are there with cups of Bea's tea: Tobin by a plinth of his bowls, Fern beside a case of her pressed flowers, Emmett tuning in a corner."),
+        # (up to the end wall, where his two pictures hang, and back)
+        "viewport move 0 -4 1500", "pause 1600",
         say("No judges, no prices. On the end wall, two pictures and nothing else of Lupini's: the unfinished painting from the Old Studio, and his sketch from your walk."),
+        "viewport move 0 4 1500", "pause 1600",
         "pause 600", f"faceDirection {L} 3", "faceDirection farmer 1",
         say("He's standing at the back, as far from his own wall as the room allows."),
         speak(L, "I'm terrified. Isn't that ridiculous? I've had shows in three cities.$s"),
@@ -267,7 +276,8 @@ def heart8():
         quick([
             ("Go and stand by your wall.", [
                 speak(L, "You're very bossy for a farmer.$u"),
-                f"move {L} 0 -3 0", f"move {L} {wall_x + 1 - 12} 0 1", f"move {L} 0 -4 0", f"faceDirection {L} 2",
+                # (round the reception desk, between the cases, to the end wall: under his two pictures)
+                f"move {L} 0 -3 0", f"move {L} 4 0 1", f"move {L} 0 -3 0", f"move {L} {wall_x + 1 - 16} 0 1", f"faceDirection {L} 0",
                 say("He goes. Someone asks him about the sketch, and he talks for twenty minutes.")]),
             ("Stay back here with me.", [
                 speak(L, "Yes. The view's better from the back. It always is.$h")]),
@@ -281,27 +291,30 @@ def heart8():
 # ================================================================ 10 hearts
 
 def heart10(sable):
-    """10 hearts: something nobody will see (the overlook, dawn). Their easels at its north edge,
-    looking out over the Vale towards the falls."""
+    """10 hearts: something nobody will see (the overlook, dawn). Their easels along the bluff's west
+    rim, looking out over the lake and the Vale (the overlook's own paint spot between
+    them); each painter stands at the side of an easel, facing it. Sable's, once fetched from the
+    shed, goes up by the bench."""
     off = "-100 -100 2"
-    actors = f"farmer 92 62 0 {L} 90 57 0" + (f" {SABLE} {off}" if sable else "")
+    actors = f"farmer 92 66 0 {L} 90 61 3" + (f" {SABLE} {off}" if sable else "")
     with_sable = [
+        f"warp {SABLE} 92 69", f"faceDirection {SABLE} 0", f"move {SABLE} 0 -4 0", f"faceDirection {SABLE} 3", "pause 600",
         say("Footsteps on the path. Sable, with a sketchbook, sees the two of you and stops."),
-        f"warp {SABLE} 92 69", f"faceDirection {SABLE} 0", f"move {SABLE} 0 -4 0", "pause 800",
         say("Lupini doesn't turn round."),
         speak(L, "There's a third easel in the shed, if you're staying.$u"),
         "pause 1500",
         f"move {SABLE} 2 0 1", f"faceDirection {SABLE} 0", "pause 600",
         say("A long pause; Sable fetches it and sets it up."),
-        "globalFade", f"warp {SABLE} 94 57", f"faceDirection {SABLE} 0", easel(94, 55), "globalFadeToClear", "pause 800",
+        "globalFade", f"warp {SABLE} 91 58", f"faceDirection {SABLE} 3", easel(90, 57), "viewport 88 62",
+        "globalFadeToClear", "pause 800",
         say("Nobody says anything for the rest of the scene, and it's the most the two of them have ever said to each other."),
         "pause 1500",
     ] if sable else []
     return script(
-        "continue", "92 58", actors, "skippable",
+        "continue", "88 63", actors, "skippable",
         skip(f"AddItem (F){ITEM['Easel']} 1", f"AddItem (F){ITEM['Dawn']} 1"),
-        easel(90, 55), easel(92, 55),
-        "pause 600", "move farmer 0 -5 0", "pause 300",
+        easel(89, 60), easel(89, 63),
+        "pause 600", "move farmer 0 -2 0", "move farmer -2 0 3", "pause 300",
         say("Two easels stand at the edge, facing the Vale. He's at one, painting."),
         speak(L, "There you are. That one's yours. Don't argue, it's too early.$0"),
         speak(L, "I'm painting something I'll never show. Nobody's going to buy it, or review it, or hang it. When it's done I'm going to put it in a cupboard."),
@@ -310,7 +323,7 @@ def heart10(sable):
         # (the scene fades through the sunrise; no minigame)
         "globalFade 0.005", "pause 1500", "globalFadeToClear 0.005", "pause 1200",
         *with_sable,
-        f"faceDirection {L} 1", "faceDirection farmer 3",
+        f"faceDirection {L} 2", "faceDirection farmer 0",
         speak(L, "Do you know, I haven't enjoyed anything this much since I was twenty. I was very bad at painting at twenty.$l"),
         say("He gives you his old travelling easel."),
         speak(L, "It's carried every Lupini I ever liked. It won't make you better. It'll make you go outside.$h"),
@@ -389,17 +402,33 @@ def map_tiles(col, row, w, h, cols=10):
     return [(row + r) * cols + col + c for r in range(h) for c in range(w)]
 
 
-# where the chosen spot's stool and rock stand: the left foot tile of each (2 x 2, top on Front2,
-# foot on Buildings), on open grass, nothing straddling a path or a wall
+# where the chosen spot's paint rock stands: the left foot tile (2 x 2, top on Front2, foot on Buildings),
+# on open grass, nothing straddling a path or a wall, clear of the map's trees and bushes (Paths layer)
 CHOSEN = {
-    "washing": ((15, 18), (17, 20)),   # west of the Vale House, below Bea's washing line (15-18, 14-15)
-    "bus": ((12, 3), (15, 3)),         # north of the bus's turning circle, looking down the road at the shelter
-    "claypit": ((49, 24), (46, 24)),   # on the grass west of Tobin's clay pit, looking at it
+    "washing": (17, 18),   # west of the Vale House, below Bea's washing line (15-18, 14-15); the tree at (14, 21)
+    "bus": (12, 3),        # north of the bus's turning circle, under the trees, looking down the road at the shelter
+    "claypit": (50, 24),   # on the grass west of Tobin's clay pit, looking at it; the big bush at 47-49 x 25-26
 }
 WASHING_LINE = (15, 14)                # its top-left tile: 4 x 2, the posts' feet and hems on row 15
-STOOL = ((1100, 1101), (1132, 1133))   # the rooftops' stool and rock (tools/vale_spots.py's template)
-ROCK = ((1102, 1103), (1134, 1135))
+ROCK_AT = (46, 4)                      # the rooftops' paint rock's left foot (tools/vale_spots.py SPOTS), copied
 VALE_SHEET = "z_blinxxy.MuseArt_GildedValeBuildings"
+
+
+def rock_tiles(tmx):
+    """The rooftops' paint rock as the map has it (paint_rock_clean): its top's and its foot's tile
+    indices on the Vale's buildings sheet, read from the map so a rebuilt sheet can't leave them stale."""
+    root = ET.parse(tmx).getroot()
+    sheets = sorted((int(t.get("firstgid")), t.get("name")) for t in root.findall("tileset"))
+    layers = {l.get("name"): l for l in root.findall("layer")}
+
+    def index(layer, x, y):
+        l = layers[layer]
+        gid = [int(v) for v in l.find("data").text.replace(",", " ").split()][y * int(l.get("width")) + x] & 0x1FFFFFFF
+        first, name = max((f, n) for f, n in sheets if f <= gid)
+        assert name == VALE_SHEET, (layer, x, y, name)
+        return gid - first
+    x, y = ROCK_AT
+    return tuple(index("Front2", x + i, y - 1) for i in (0, 1)), tuple(index("Buildings", x + i, y) for i in (0, 1))
 
 
 def check_clear(tmx, tiles):
@@ -415,16 +444,12 @@ def check_clear(tmx, tiles):
 
 
 def spot_tiles(spot):
-    (sx, sy), (rx, ry) = CHOSEN[spot]
-    action = {"Action": f"blinxxy.MuseArt_PaintSpot {spot}"}
-    tiles = []
-    for (x, y), (top, foot), props in (((sx, sy), STOOL, action), ((rx, ry), ROCK, None)):
-        for i in (0, 1):
-            tiles.append({"Position": {"X": x + i, "Y": y - 1}, "Layer": "Front2", "SetTilesheet": VALE_SHEET, "SetIndex": top[i]})
-            t = {"Position": {"X": x + i, "Y": y}, "Layer": "Buildings", "SetTilesheet": VALE_SHEET, "SetIndex": foot[i]}
-            if props:
-                t["SetProperties"] = props
-            tiles.append(t)
+    x, y = CHOSEN[spot]
+    (top, foot), tiles = rock_tiles(os.path.join(PACK, "assets", "GildedVale.tmx")), []
+    for i in (0, 1):
+        tiles.append({"Position": {"X": x + i, "Y": y - 1}, "Layer": "Front2", "SetTilesheet": VALE_SHEET, "SetIndex": top[i]})
+        tiles.append({"Position": {"X": x + i, "Y": y}, "Layer": "Buildings", "SetTilesheet": VALE_SHEET, "SetIndex": foot[i],
+                      "SetProperties": {"Action": f"blinxxy.MuseArt_PaintSpot {spot}"}})
     return tiles
 
 
@@ -448,8 +473,8 @@ def map_patches():
 
     wx, wy = WASHING_LINE
     check_clear(vale_tmx, [(wx + i, wy + j) for i in range(4) for j in range(2)])
-    for spot, feet in CHOSEN.items():
-        check_clear(vale_tmx, [(x + i, y - j) for x, y in feet for i in (0, 1) for j in (0, 1)])
+    for x, y in CHOSEN.values():
+        check_clear(vale_tmx, [(x + i, y - j) for i in (0, 1) for j in (0, 1)])
 
     late = {"PatchMode": "Overlay", "Priority": "Late", "Update": "OnLocationChange"}
     patches = [
@@ -476,11 +501,11 @@ def map_patches():
             when = {**WHEN, "HasFlag |contains=" + ",".join(STUDIO_CHOICE[k] for k in ("restore", "finish")): "false"}
         patches.append({"LogName": f"Lupini 8: the unfinished painting, {state}", "Action": "EditMap", "Target": f"Maps/{HALL_EVENT}",
                         "FromFile": f"assets/lupini/HallPainting_{state}.tmx", "ToArea": {"X": px, "Y": py, "Width": 2, "Height": 2},
-                        "PatchMode": "Overlay", "When": when})
+                        "PatchMode": "Overlay", "Update": "OnLocationChange", "When": when})
     for spot in ("washing", "bus", "claypit"):
         patches.append({"LogName": f"Lupini 8: his sketch of the {spot}", "Action": "EditMap", "Target": f"Maps/{HALL_EVENT}",
                         "FromFile": f"assets/lupini/HallSketch_{spot}.tmx", "ToArea": {"X": sx, "Y": sy, "Width": 1, "Height": 2},
-                        "PatchMode": "Overlay", "When": {**WHEN, "HasFlag": SPOT[spot]}})
+                        "PatchMode": "Overlay", "Update": "OnLocationChange", "When": {**WHEN, "HasFlag": SPOT[spot]}})
     return patches
 
 
@@ -519,9 +544,9 @@ def main():
     }
     spot_lines = {
         f"vale.lupini_spot.{k}": lines.add(f"lupini-event.spot.{k}", v) for k, v in (
-            ("washing", "Lupini's stool by Bea's washing line, where you stopped on his walk. Sheets on the line, the light through them."),
-            ("bus", "Lupini's stool by the turning circle, where you stopped on his walk. The empty road, the bus shelter, the long shadows."),
-            ("claypit", "Lupini's stool by Tobin's clay pit, where you stopped on his walk. Tobin pretends he hasn't noticed it."))}
+            ("washing", "Lupini's paint rock by Bea's washing line, where you stopped on his walk. Sheets on the line, the light through them."),
+            ("bus", "Lupini's paint rock by the turning circle, where you stopped on his walk. The empty road, the bus shelter, the long shadows."),
+            ("claypit", "Lupini's paint rock by Tobin's clay pit, where you stopped on his walk. Tobin pretends he hasn't noticed it."))}
     boarded = lines.add("lupini-event.studio_boarded", "The door's boarded shut. Through a gap in the planks: dust, and the corner of an easel.")
 
     changes = [

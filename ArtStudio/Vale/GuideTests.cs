@@ -340,7 +340,7 @@ internal static class GuideTests
                 string[] words = action?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
                 if (words.Length == 0 || words[0] != GildedVale.PaintSpotAction)
                     continue;
-                // Lupini's chosen spot (his 4-heart walk) is a stool too, but not one of the guide's
+                // Lupini's chosen spot (his 4-heart walk) is a painting spot too, but not one of the guide's
                 if (words.Length == 2 && PaintersGuide.ChosenSpots.Contains(words[1]))
                 {
                     chosen.Add($"{words[1]} at ({x}, {y})");
