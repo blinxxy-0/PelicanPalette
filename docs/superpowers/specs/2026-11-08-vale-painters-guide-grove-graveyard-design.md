@@ -45,7 +45,7 @@ This design makes the spots the steps of a quest. Finishing the quest opens a se
 
 ## 4. The spots
 
-**What a spot is:** each spot keeps its stool and paint rock. **Only the stool is touchable.** The rock is scenery. Neither one opens an easel any more. The `blinxxy.MuseArt_PaintSpot` action (`ArtStudio/Vale/GildedVale.cs`) stops calling `ArtHooks.OpenEasel`, and the rock's tile loses the action. You can still paint any view the usual way, with an easel you set down yourself (plein air, `docs/wiki/Portraits-and-Plein-Air.md`).
+**What a spot is:** (changed 2026-11-11: the user didn't like the stool and kit, so each spot is now only its paint rock, and the rock is touched, as the stool was below.) Each spot keeps its stool and paint rock. **Only the stool is touchable.** The rock is scenery. Neither one opens an easel any more. The `blinxxy.MuseArt_PaintSpot` action (`ArtStudio/Vale/GildedVale.cs`) stops calling `ArtHooks.OpenEasel`, and the rock's tile loses the action. You can still paint any view the usual way, with an easel you set down yourself (plein air, `docs/wiki/Portraits-and-Plein-Air.md`).
 
 **Before you have the guide** (my call): touching a stool gives a plain line ("The stool's seat is worn smooth. Someone sat here for years, looking at something.") with no splash, and it doesn't count. The guide is what wakes the spots, so every player starts at 0 of 8.
 

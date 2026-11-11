@@ -4,9 +4,9 @@
 // (lupini_sit_left, data/lupini.json). The work poses (painting from behind) still need
 // their frames, then go in Data/AnimationDescriptions the same way.
 {
-  // Fine days: painting outdoors at one of the Vale's painting spots (the stools
-  // and rocks with blinxxy.MuseArt_PaintSpot), a different one each day, standing
-  // beside the spot so its stool is free to touch; back at his easel at 4;
+  // Fine days: painting outdoors at one of the Vale's painting spots (the paint
+  // rocks with blinxxy.MuseArt_PaintSpot; their stools went 2026-11-11), a different one each day, standing
+  // beside the spot so its rock is free to touch; back at his easel at 4;
   // the Vale House in the evening (at the table across from Tobin); bed at 11.
   // Monday: the graveyard in the old clearing (tools/vale_graveyard.py), beside its bench by the
   // gate, sketching the stones, looking down over them as the bench does.

@@ -257,7 +257,8 @@ def test_overlook_feet_only():
 
 def test_overlook_paint_spot_moved():
     # the lake painting spot's two pieces are on the bluff, none left where reachable_spot
-    # had put them (88,58) and (88,61); only the stool carries the PaintSpot action, with the
+    # had put them (88,58) and (88,61); since 2026-11-11 the stool is gone (tools/vale_spots.py) and
+    # the rock carries the PaintSpot action, with the
     # spot's id (the painters' guide: the rock is scenery, tools/vale_spots.py)
     from vale_overlook import OVERLOOK_BOX, ROCK, SPOT_ID, STOOL
     from vale_spots import Pieces
@@ -265,8 +266,8 @@ def test_overlook_paint_spot_moved():
     spot = {(x, y): p["Action"] for (layer, x, y), p in m.props.items()
             if layer == "Buildings" and p.get("Action", "").startswith("blinxxy.MuseArt_PaintSpot") and in_any_box(x, y)
             and OVERLOOK_BOX[0] <= x <= OVERLOOK_BOX[2] and OVERLOOK_BOX[1] <= y <= OVERLOOK_BOX[3]}
-    assert spot == {(STOOL[0] + i, STOOL[1]): "blinxxy.MuseArt_PaintSpot " + SPOT_ID for i in (0, 1)}, spot
-    assert Pieces(os.path.dirname(TMX)).find(m, OVERLOOK_BOX) == {STOOL: "stool", ROCK: "rock"}
+    assert spot == {(ROCK[0] + i, ROCK[1]): "blinxxy.MuseArt_PaintSpot " + SPOT_ID for i in (0, 1)}, spot
+    assert Pieces(os.path.dirname(TMX)).find(m, OVERLOOK_BOX) == {ROCK: "rock"}
 
 
 def test_schedules_moved():

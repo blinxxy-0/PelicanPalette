@@ -41,7 +41,7 @@ The first touch with the guide shows the name and the line; later touches show o
 > The Lost Parterre
 
 **`vale.guide.spot.parterre.line`**
-> The gardener says nothing here is lost, only resting. From this stool you can see the old pattern under the hedges, like a drawing showing through the paint.
+> The gardener says nothing here is lost, only resting. From this rock you can see the old pattern under the hedges, like a drawing showing through the paint.
 
 **`vale.guide.spot.falls.name`**
 > The Falls
@@ -65,8 +65,8 @@ The first touch with the guide shows the name and the line; later touches show o
 
 ## The guide
 
-**`vale.guide.plain_stool`** (verbatim from the spec)
-> The stool's seat is worn smooth. Someone sat here for years, looking at something.
+**`vale.guide.plain_rock`** (was `plain_stool`; the stools went, 2026-11-11)
+> Old paint is dried on the rock in layers. Someone wiped their brushes here for years, looking at something.
 
 **`vale.guide.board`** (the board by the guest books, shown when you touch it)
 > A small frame by the guest books. Inside it, a thin book spotted with old paint: The Old Painters' Guide to the Viewpoints.
@@ -192,7 +192,7 @@ Memories in the artists' own voices, from their own time. They don't know you're
 Lines that weren't in the first draft, copied from the i18n files.
 
 **`vale.guide.item.description`** (the guide's item description)
-> A thin book spotted with old paint. Right-click to turn its pages, or touch a worn stool with it.
+> A thin book spotted with old paint. Right-click to turn its pages, or touch a paint-spattered rock with it.
 
 **`vale.guide.in_grove`** (stepping into the last page while already in the Grove)
 > You're already standing in the last page.

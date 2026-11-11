@@ -93,9 +93,9 @@ All of them decoratable rooms, built the way Margot's were: straight walls, the 
 
 ## 7. Views to paint
 
-**The eight painting spots,** each a stool with Lupini's paint box and the rock he wipes his brushes on. Only the stool is touched: with the old painters' guide in hand, it's found (`tools/vale_spots.py`; the painters' guide design, `docs/superpowers/specs/2026-11-08-vale-painters-guide-grove-graveyard-design.md`, section 4). You paint the view with an easel of your own, the usual way.
+**The eight painting spots,** each the paint rock Lupini wipes his brushes on. Each had a stool with his paint box beside it, which carried the action; the user didn't like the stool and kit, so they went (2026-11-11), and the rock is touched instead: with the old painters' guide in hand, it's found (`tools/vale_spots.py`; the painters' guide design, `docs/superpowers/specs/2026-11-08-vale-painters-guide-grove-graveyard-design.md`, section 4). You paint the view with an easel of your own, the usual way.
 
-| # | Spot | Stool (left foot) | Where |
+| # | Spot | Stool, now gone (left foot) | Where |
 |---|---|---|---|
 | 1 | The Rooftops | 43, 4 | The high street, by its hedge |
 | 2 | The North Light | 79, 16 | Lupini's garden, by the atelier |

@@ -1099,7 +1099,8 @@ FIXED_SPOTS = {"spot_lake_stool", "spot_lake_rock", "spot_parterre_stool", "spot
                "spot_falls_stool", "spot_falls_rock", "spot_tree_stool", "spot_tree_rock",
                "spot_stage_stool", "spot_stage_rock"}
 # Each stool's name in the painters' guide (ArtStudio/Vale/PaintersGuide.cs Spots): its foot
-# gets `blinxxy.MuseArt_PaintSpot <id>`. The rocks are scenery, with no action (tools/vale_spots.py).
+# gets `blinxxy.MuseArt_PaintSpot <id>`. (Since 2026-11-11, tools/vale_spots.py, run after the build,
+# takes the stools out and moves each action to its rock: the user didn't like the stool and kit.)
 SPOT_IDS = {"spot_street_stool": "rooftops", "spot_atelier_stool": "northlight",
             "spot_meadow_stool": "wildflowers", "spot_lake_stool": "lakewindow",
             "spot_parterre_stool": "parterre", "spot_falls_stool": "falls", "spot_tree_stool": "tree",

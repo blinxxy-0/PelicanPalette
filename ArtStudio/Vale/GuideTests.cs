@@ -324,7 +324,7 @@ internal static class GuideTests
     private static readonly string[] MapSpots = { "rooftops", "northlight", "wildflowers", "lakewindow", "parterre", "falls", "tree", "stage" };
 
     // Every PaintSpot tile on the Vale's map names one of the guide's spots, each on both foot tiles of
-    // one stool, and the four that stand today are there. Then each, through its tile action as the game
+    // one paint rock, and the four that stand today are there. Then each, through its tile action as the game
     // runs it: without the guide, the plain line and no find; with it, that spot found (its splash
     // starts); again, the line, and still one found.
     private static void SpotChecks(IMonitor monitor, Farmer who, GameLocation vale, Action settle)
@@ -348,13 +348,13 @@ internal static class GuideTests
                     tiles[words[1]] = list = new List<Point>();
                 list.Add(new Point(x, y));
             }
-        // found row by row, so a stool's two foot tiles come left then right
-        var notStools = tiles.Where(kv => kv.Value.Count != 2 || kv.Value[1] != kv.Value[0] + new Point(1, 0)).Select(kv => kv.Key).ToList();
+        // found row by row, so a rock's two foot tiles come left then right
+        var notRocks = tiles.Where(kv => kv.Value.Count != 2 || kv.Value[1] != kv.Value[0] + new Point(1, 0)).Select(kv => kv.Key).ToList();
         var missing = MapSpots.Where(id => !tiles.ContainsKey(id)).ToList();
-        Check(monitor, "guide: spots on the map", bad.Count == 0 && notStools.Count == 0 && missing.Count == 0,
+        Check(monitor, "guide: spots on the map", bad.Count == 0 && notRocks.Count == 0 && missing.Count == 0,
             string.Join(", ", tiles.Select(kv => $"{kv.Key} at {kv.Value[0]}"))
             + (bad.Count > 0 ? "; bad: " + string.Join(", ", bad) : "")
-            + (notStools.Count > 0 ? "; not on one stool: " + string.Join(", ", notStools) : "")
+            + (notRocks.Count > 0 ? "; not on one rock: " + string.Join(", ", notRocks) : "")
             + (missing.Count > 0 ? "; missing: " + string.Join(", ", missing) : ""));
 
         var placeBefore = who.currentLocation;
@@ -368,7 +368,7 @@ internal static class GuideTests
                 foreach (var s in PaintersGuide.Spots)
                     who.mailReceived.Remove(PaintersGuide.FoundFlag(s.Id));
                 who.mailReceived.Remove(PaintersGuide.GuideTakenFlag);
-                var foot = feet[feet.Count - 1];           // the stool's right foot: either tile works
+                var foot = feet[feet.Count - 1];           // the rock's right foot: either tile works
                 string action = vale.doesTileHaveProperty(foot.X, foot.Y, "Action", "Buildings")!;
                 var at = new xTile.Dimensions.Location(foot.X, foot.Y);
 
@@ -397,7 +397,7 @@ internal static class GuideTests
             settle();
             who.currentLocation = placeBefore;
         }
-        Check(monitor, "guide: each spot's stool, through its tile action", all && tiles.Count > 0, string.Join("; ", detail));
+        Check(monitor, "guide: each spot's rock, through its tile action", all && tiles.Count > 0, string.Join("; ", detail));
     }
 
     // The guide's frame in the Vale House: its tile action, by the guest books, with floor in front
@@ -874,7 +874,7 @@ internal static class GuideTests
             Grab("the last page");
             who.mailReceived.Remove(PaintersGuide.GuideTakenFlag);
             PaintersGuide.Touch(who, "rooftops");
-            Grab("a stool, no guide");
+            Grab("a rock, no guide");
             who.currentLocation = Game1.getLocationFromName("Farm");
             PaintersGuide.UseGuide(who);
             Grab("the guide outside the Vale");

@@ -1,10 +1,12 @@
 """Lupini's painting spots carry their names (the painters' guide design, section 4,
 docs/superpowers/specs/2026-11-08-vale-painters-guide-grove-graveyard-design.md).
 
-Each spot is a stool and a paint rock (build_vale PICKS spot_*_stool / spot_*_rock),
-both 2 x 2: a top on Front2 over a solid foot on Buildings. Only the stool is touched:
-both its foot tiles get `blinxxy.MuseArt_PaintSpot <spotId>` (ArtStudio/Vale/
-PaintersGuide.cs, Spots), and the rock is scenery, with no action. The clearing's
+Each spot is a paint rock (build_vale PICKS spot_*_rock), 2 x 2: a top on Front2 over a
+solid foot on Buildings. Both its foot tiles get `blinxxy.MuseArt_PaintSpot <spotId>`
+(ArtStudio/Vale/PaintersGuide.cs, Spots). The spots had a painter's stool beside the rock,
+which carried the action; the user didn't like the stool and kit (2026-11-11), so this takes
+each stool out (its foot and top, and its action) and gives the rock its job. The stool tiles
+in SPOTS are where each stood, kept so a re-run can check they're gone. The clearing's
 spot (the old Painter's clearing, x 3-12, y 10-22) goes: the clearing becomes the
 graveyard (section 6). The lake spot stays where the overlook put it.
 
@@ -147,22 +149,29 @@ def _lay(m, pieces, sid, kind, foot, cells):
 
 
 def patch_map(m, pieces):
-    template = dict(zip(("stool", "rock"), SPOTS[TEMPLATE]))
-    for kind, foot in template.items():
-        assert pieces.at(m, *foot) == kind, f"{TEMPLATE}: no {kind} at {foot}"
-    cells = {kind: _cells(m, foot) for kind, foot in template.items()}
-    for sid, (stool, rock) in NEW_SPOTS.items():
-        _lay(m, pieces, sid, "stool", stool, cells["stool"])
-        _lay(m, pieces, sid, "rock", rock, cells["rock"])
+    rock_cells = _cells(m, SPOTS[TEMPLATE][1])
+    assert pieces.at(m, *SPOTS[TEMPLATE][1]) == "rock", f"{TEMPLATE}: no rock at {SPOTS[TEMPLATE][1]}"
+    for sid, (_, rock) in NEW_SPOTS.items():
+        _lay(m, pieces, sid, "rock", rock, rock_cells)
 
     for sid, (stool, rock) in SPOTS.items():
         box = SPOT_BOX[sid]
-        for (x, y), kind in ((stool, "stool"), (rock, "rock")):
-            assert pieces.at(m, x, y) == kind, f"{sid}: no {kind} at ({x}, {y})"
+        x, y = stool
+        if pieces.at(m, x, y) == "stool":
+            # the stool goes: its foot, its top, and its action
             for dx in (0, 1):
                 _inside(box, x + dx, y)
                 _inside(box, x + dx, y - 1)
-                _set_action(m, x + dx, y, action(sid) if kind == "stool" else None)
+                m.g["Buildings"][y][x + dx] = 0
+                m.g["Front2"][y - 1][x + dx] = 0
+        for dx in (0, 1):
+            _set_action(m, x + dx, y, None)
+        x, y = rock
+        assert pieces.at(m, x, y) == "rock", f"{sid}: no rock at ({x}, {y})"
+        for dx in (0, 1):
+            _inside(box, x + dx, y)
+            _inside(box, x + dx, y - 1)
+            _set_action(m, x + dx, y, action(sid))
 
     # the clearing's stool and rock: their feet, their tops on Front2, their actions
     box = SPOT_BOXES["spot_clearing"]

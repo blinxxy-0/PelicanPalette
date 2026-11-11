@@ -372,12 +372,17 @@ def vale_map():
     return Map(VALE_TMX)
 
 
-def test_rocks_have_no_action():
+def test_no_stools_left():
+    # the spots are their paint rocks alone (the user, 2026-11-11: no stool and kit; the rock does
+    # the stool's job), and no action is left where a stool stood
+    import vale_spots
     m = vale_map()
-    rocks = [p for p, k in spot_pieces(m).items() if k == "rock"]
-    assert rocks, "no paint rocks found"
-    acting = {(x + dx, y) for x, y in rocks for dx in (0, 1)} & {(x, y) for (_, x, y) in spot_actions(m)}
-    assert not acting, f"PaintSpot on a rock: {sorted(acting)}"
+    pieces = spot_pieces(m)
+    assert "stool" not in pieces.values(), f"stools left: {[p for p, k in pieces.items() if k == 'stool']}"
+    actions = {(x, y) for (_, x, y) in spot_actions(m)}
+    for sid, (stool, _) in vale_spots.SPOTS.items():
+        left = {(stool[0] + dx, stool[1]) for dx in (0, 1)} & actions
+        assert not left, f"{sid}: an action where its stool stood, {sorted(left)}"
 
 
 def test_every_spot_action_has_a_known_id():
@@ -386,13 +391,13 @@ def test_every_spot_action_has_a_known_id():
     assert not bad, bad
 
 
-def spot_stool(m, sid):
-    """The left foot tile of the stool that carries spot sid: it's on both foot tiles of exactly one
-    stool, and nowhere else."""
-    stools = [p for p, k in spot_pieces(m).items() if k == "stool"]
+def spot_rock(m, sid):
+    """The left foot tile of the paint rock that carries spot sid: it's on both foot tiles of
+    exactly one rock, and nowhere else."""
+    rocks = [p for p, k in spot_pieces(m).items() if k == "rock"]
     tiles = sorted((x, y) for (_, x, y), a in spot_actions(m).items() if a == [sid])
-    on = [s for s in stools if tiles == [s, (s[0] + 1, s[1])]]
-    assert len(on) == 1, f"{sid}: on {tiles}, stools {stools}"
+    on = [r for r in rocks if tiles == [r, (r[0] + 1, r[1])]]
+    assert len(on) == 1, f"{sid}: on {tiles}, rocks {rocks}"
     return on[0]
 
 
@@ -410,12 +415,12 @@ def gap(tile, rect):
 
 
 def test_all_eight_spots():
-    # each of the guide's eight spots is on both foot tiles of exactly one stool, and only there
+    # each of the guide's eight spots is on both foot tiles of exactly one paint rock, and only there
     # (PENDING_SPOTS: placed once the user has seen where; see test_stage_spot_clear)
     m = vale_map()
     for sid in guide_ids():
         if sid not in PENDING_SPOTS:
-            spot_stool(m, sid)
+            spot_rock(m, sid)
 
 
 # Spots not on the map yet: test_all_eight_spots leaves them out (and test_stage_spot_clear is expected
@@ -435,7 +440,7 @@ def test_stage_spot_clear():
     # off its seats, its stage and the stage's approach
     import vale_spots
     m = vale_map()
-    stool = spot_stool(m, "stage")
+    stool = spot_rock(m, "stage")
     assert "stage" in vale_spots.SPOTS, "vale_spots.SPOTS has no stage spot"
     rock = vale_spots.SPOTS["stage"][1]
     assert spot_pieces(m).get(rock) == "rock", f"no rock at {rock}"
@@ -447,13 +452,15 @@ def test_stage_spot_clear():
 
 
 def test_parterre_spot():
-    # inside the Lost Parterre, at least 3 tiles from the statue hidden in its hedge
+    # its rock stands inside the Lost Parterre (its foot: its top may overhang the north edge, in
+    # the corner where it has always stood), at least 3 tiles from the statue hidden in its hedge
     from vale_patch import SCULPTURE_BOX
     m = vale_map()
-    stool = spot_stool(m, "parterre")
-    for t in spot_tiles(stool):
-        assert gap(t, LOST_PARTERRE) == 0, f"the parterre's stool at {t}: outside {LOST_PARTERRE}"
-        assert gap(t, SCULPTURE_BOX) >= 3, f"the parterre's stool at {t}: {gap(t, SCULPTURE_BOX)} from the hidden statue"
+    rock = spot_rock(m, "parterre")
+    for t in spot_tiles(rock):
+        if t[1] == rock[1]:
+            assert gap(t, LOST_PARTERRE) == 0, f"the parterre's rock at {t}: outside {LOST_PARTERRE}"
+        assert gap(t, SCULPTURE_BOX) >= 3, f"the parterre's rock at {t}: {gap(t, SCULPTURE_BOX)} from the hidden statue"
 
 
 def test_falls_spot():
@@ -464,18 +471,19 @@ def test_falls_spot():
     import vale_spots
     from vale_patch import FALLS_BOX
     m = vale_map()
-    x, y = spot_stool(m, "falls")
+    x, y = spot_rock(m, "falls")
     tiles = spot_tiles((x, y))
-    assert all(gap(t, FALLS_BOX) <= 2 for t in tiles), f"the falls' stool at {tiles}: away from {FALLS_BOX}"
+    # (the spot is its rock since 2026-11-11, 4 tiles west of where its stool stood: at most 6 out)
+    assert all(gap(t, FALLS_BOX) <= 6 for t in tiles), f"the falls' rock at {tiles}: away from {FALLS_BOX}"
     near = {(tx + dx, ty + dy) for tx, ty in tiles for dx in range(-2, 3) for dy in range(-2, 3)}
-    assert any(m.water(*t) for t in near), f"the falls' stool at {(x, y)}: no water by it"
-    north = vale_spots.SPOTS["northlight"][0]
+    assert any(m.water(*t) for t in near), f"the falls' rock at {(x, y)}: no water by it"
+    north = vale_spots.SPOTS["northlight"][1]
     for t in tiles:
         far = min(gap(t, (nx, ny, nx, ny)) for nx, ny in spot_tiles(north))
-        assert far >= 8, f"the falls' stool at {t}: {far} from the north light's stool"
+        assert far >= 8, f"the falls' rock at {t}: {far} from the north light's rock"
     front = [t for t in ((x, y + 1), (x + 1, y + 1)) if m.walkable(*t)]
     reach = m.reach(BUS_STOP)
-    assert any(t in reach for t in front), f"the falls' stool at {(x, y)}: nowhere reachable in front ({front})"
+    assert any(t in reach for t in front), f"the falls' rock at {(x, y)}: nowhere reachable in front ({front})"
 
 
 def test_tree_spot():
@@ -485,18 +493,18 @@ def test_tree_spot():
     import vale_spots
     from PIL import Image
     m = vale_map()
-    stool = spot_stool(m, "tree")
+    stool = spot_rock(m, "tree")
     art, left, bottom = bv.PICKS["old_tree"][:3]
     im = bv.tile_piece(Image.open(os.path.join(ROOT, bv.ART, art + ".png")).convert("RGBA"), 0)
     tree = (left, bottom - im.height // 16 + 1, left + im.width // 16 - 1, bottom)
     trunk = (left + 3, bottom, left + 4, bottom)
     wild = vale_spots.SPOTS["wildflowers"]
     near = min(gap(t, trunk) for t in spot_tiles(stool))
-    assert near <= 5, f"the tree's stool at {stool}: {near} from the trunk"
+    assert near <= 5, f"the tree's rock at {stool}: {near} from the trunk"
     for t in spot_tiles(stool):
-        assert gap(t, tree) > 0, f"the tree's stool at {t}: under the tree {tree}"
+        assert gap(t, tree) > 0, f"the tree's rock at {t}: under the tree {tree}"
         for foot in wild:
-            assert all(gap(t, (wx, wy, wx, wy)) >= 5 for wx, wy in spot_tiles(foot)), f"the tree's stool at {t}: by the wildflowers' spot"
+            assert all(gap(t, (wx, wy, wx, wy)) >= 5 for wx, wy in spot_tiles(foot)), f"the tree's rock at {t}: by the wildflowers' spot"
 
 
 def test_new_spots_not_under_trees():
@@ -573,16 +581,17 @@ def test_only_guide_boxes_changed():
 
 
 def test_spots_in_routes():
-    # vale_routes.PLACES stands in front of each spot's stool, on walkable ground
+    # each spot's rock has walkable ground in front of it, for you to touch it from (vale_routes.PLACES
+    # named the tile in front of the stools; with the stools gone, any walkable tile in front will do)
     import vale_routes
     m = vale_map()
     places = set(vale_routes.PLACES.values())
     for sid in guide_ids():
         if sid in PENDING_SPOTS:
             continue
-        x, y = spot_stool(m, sid)
-        front = [p for p in ((x, y + 1), (x + 1, y + 1)) if p in places]
-        assert front and all(m.walkable(*p) for p in front), f"{sid}: in front of ({x}, {y}): {front}"
+        x, y = spot_rock(m, sid)
+        front = [p for p in ((x, y + 1), (x + 1, y + 1)) if m.walkable(*p)]
+        assert front, f"{sid}: nothing walkable in front of its rock at ({x}, {y})"
 
 
 # ---- The graveyard (design section 6) ----

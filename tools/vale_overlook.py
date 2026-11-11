@@ -494,6 +494,7 @@ EASELS = (90, 92, 58)
 STOOL = (90, 60)
 ROCK = (90, 63)
 LUPINI_STAND = (90, 61)
+# (Since 2026-11-11 the stool is gone and the rock carries the action: tools/vale_spots.py.)
 # Its name in the painters' guide (ArtStudio/Vale/PaintersGuide.cs Spots): only the stool
 # carries the action, `blinxxy.MuseArt_PaintSpot lakewindow`; the rock is scenery (tools/vale_spots.py)
 SPOT_ID = "lakewindow"
@@ -602,15 +603,19 @@ PAINT_SPOT = "blinxxy.MuseArt_PaintSpot"
 
 
 def _spot_pieces(m, assets):
-    """Lupini's lake painting spot as it stands in the box: its two 2 x 2 pieces, the stool
-    and the rock, each [(dx, dy, layer, gid)] from its left base tile, known by their pixels
+    """Lupini's lake painting spot as it stands in the box: its 2 x 2 pieces, the stool (None
+    once tools/vale_spots.py has taken it out, as on the committed map since 2026-11-11) and
+    the rock, each [(dx, dy, layer, gid)] from its left base tile, known by their pixels
     (vale_spots.Pieces; wherever reachable_spot, or an earlier run, put them)."""
     from vale_spots import Pieces
     found = Pieces(assets).find(m, OVERLOOK_BOX)
     kinds = sorted(found.values())
-    assert kinds == ["rock", "stool"], f"the lake spot's pieces in the box: {found}"
+    assert kinds in (["rock", "stool"], ["rock"]), f"the lake spot's pieces in the box: {found}"
     pieces = []
     for kind in ("stool", "rock"):
+        if kind not in kinds:
+            pieces.append(None)
+            continue
         (x, y), = [p for p, k in found.items() if k == kind]
         cells = []
         for dx in (0, 1):
@@ -693,9 +698,13 @@ def patch_file(tmx_path, exports):
 
     _lay_cells(m, BENCH[0], BENCH[1] - 1, PROPS["bench_w"])
     for (sx, sy), cells in ((STOOL, stool), (ROCK, rock)):
-        _lay_cells(m, sx, sy, cells)
-    for dx in (0, 1):           # only the stool is touched; the rock is scenery
-        m.props[("Buildings", STOOL[0] + dx, STOOL[1])] = {"Action": f"{PAINT_SPOT} {SPOT_ID}"}
+        if cells:
+            _lay_cells(m, sx, sy, cells)
+    # the stool's action, while it stands (tools/vale_spots.py, run after this, takes the stool
+    # out and gives the rock the action); with no stool, the rock has it already
+    piece = STOOL if stool else ROCK
+    for dx in (0, 1):
+        m.props[("Buildings", piece[0] + dx, piece[1])] = {"Action": f"{PAINT_SPOT} {SPOT_ID}"}
     sx0, sy0, sx1, sy1 = SHED
     for j, row in enumerate(SHED_ART):
         y = sy0 + j

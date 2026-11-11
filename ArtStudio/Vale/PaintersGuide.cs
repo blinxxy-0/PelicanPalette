@@ -12,7 +12,7 @@ using StardewValley.Quests;
 namespace ArtStudio.Vale;
 
 // The old painters' guide's eight spots (the Vale painters' guide design, section 4):
-// touch a stool with the guide and the view is found, once. Progress is per player,
+// touch a spot's paint rock with the guide and the view is found, once. Progress is per player,
 // kept as mailReceived flags. The rules live in Touch; what the player sees and hears
 // (the splash, the boxes) is OnTouch, so the checks can run the rules alone.
 internal static class PaintersGuide
@@ -248,7 +248,7 @@ internal static class PaintersGuide
         switch (result)
         {
             case TouchResult.NoGuide:
-                Game1.drawObjectDialogue(Text("vale.guide.plain_stool"));
+                Game1.drawObjectDialogue(Text("vale.guide.plain_rock"));
                 break;
             case TouchResult.FirstFind:
                 PaintSplash.Play(spot.Palette, false, () => Game1.drawObjectDialogue(new List<string>
@@ -270,7 +270,7 @@ internal static class PaintersGuide
     // The strings this code shows (all in the dev pack's ValeStrings); the checks resolve each one.
     public static IEnumerable<string> StringKeys =>
         Spots.SelectMany(s => new[] { $"vale.guide.spot.{s.Id}.name", $"vale.guide.spot.{s.Id}.line" })
-            .Concat(new[] { "vale.guide.plain_stool", "vale.guide.last_page", "vale.guide.board", "vale.guide.take", "vale.guide.again",
+            .Concat(new[] { "vale.guide.plain_rock", "vale.guide.last_page", "vale.guide.board", "vale.guide.take", "vale.guide.again",
                 "vale.guide.page.title", "vale.guide.page.unfound", "vale.guide.step_in", "vale.guide.not_here", "vale.guide.in_grove",
                 "quest.painters_guide.title", "quest.painters_guide.description", "quest.painters_guide.objective", "vale.guide.item.description" })
             .Concat(GildedGrove.StringKeys)
