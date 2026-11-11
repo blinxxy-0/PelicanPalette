@@ -15,7 +15,7 @@ Writes into "[CP] Gilded Vale (dev)/assets/fern/":
   stakes.png        32x32: the ring of stakes round the nest, for the meadow's map patch
   night_vine.png    32x48: the vine in flower, for the seedhouse's map patch (its 2x3 tiles)
   vine_cutting.png  16x32: the vine cutting, a pot plant (furniture, 1x2)
-  path_<season>.png the sculpture garden's one path, swept flagstones over the gravel, as tiles
+  path_<season>.png the sculpture garden's paths, all of them, swept flagstones over the gravel, as tiles
                     (tools/build_fern_events.py PATH_AREA; the tile list is path_tiles.json)
 
 The night vine and the path are made from the pack's own art: the vine's tiles from
@@ -31,9 +31,9 @@ PACK = "[CP] Gilded Vale (dev)"
 ASSETS = os.path.join(PACK, "assets")
 OUT = os.path.join(ASSETS, "fern")
 CLEAR = (0, 0, 0, 0)
-# the garden's one path: the east-west walk through the parterre, x 7-27, rows 41-44
+# the garden's paths: every walk in the parterre, from the cottage door to the south wall
 # (tools/build_fern_events.py places the patch over this area)
-PATH_AREA = (7, 41, 21, 4)
+PATH_AREA = (6, 38, 22, 9)          # the whole sculpture garden inside its walls, the cottage door's step on top
 VINE_TILES = (12, 0, 2, 3)          # ValeFernInterior.png: the vine and its trellis, 2x3 tiles
 
 
@@ -224,7 +224,7 @@ def vine_cutting():
     return selout(im, 0.66)
 
 
-# ---------------------------------------------------------------- the one path
+# ---------------------------------------------------------------- the paths
 
 def gravel(c):
     """The parterre's gravel: warm orange (spring, summer) or brown (fall), with its yellow edge
@@ -263,22 +263,18 @@ def flagstones(w, h, seed=7):
 
 
 PATH_LAYERS = ("Back2", "Buildings")      # the parterre's gravel is painted on both (Buildings: under the birdbath and the statue)
-PATH_BAND = (41 * 16 + 7, 44 * 16 + 4)    # world pixel rows: the east-west walk; the side paths leave it here
-
-
-def band_edge(X, top):
-    """Where the swept stone gives way to a side path's gravel: a wavy line round PATH_BAND's
-    edge (never a ruler-straight cut across a path; docs/terrain_painting.md, section 1)."""
-    import math
-    phase = 0.0 if top else 2.1
-    wave = 2.4 * math.sin(X / 5.3 + phase) + 1.3 * math.sin(X / 2.2 + phase * 1.7)
-    return (PATH_BAND[0] if top else PATH_BAND[1]) + int(round(wave))
+# above the beds' row only the central walk up to the cottage door is path (the cold frames'
+# wood, beside it, is the colour of gravel), from 2 px below the cottage's foot: its columns
+DOOR_WALK = (int(11.5 * 16), int(13.5 * 16))
 
 
 def path_tiles():
-    """The path's tiles in all four seasons: each tile of PATH_AREA (on Back2 or Buildings) with
-    gravel in it within PATH_BAND (as the spring sheet has it), the gravel re-laid as flagstones,
-    the path's edge a darker shade of the stone. The side paths stay gravel. Winter: the same
+    """Every walk in the sculpture garden, flagstoned, in all four seasons (the user, 2026-11-11:
+    after her 10 hearts every path, not one): each of the garden's own tiles in PATH_AREA (on
+    Back2 or Buildings) with gravel in it (as the spring sheet has it, cleared by
+    tools/vale_parterre_paths.py), the gravel re-laid as flagstones and its edge against the grass
+    a darker shade of the stone, so the walks keep their wavering, tufted edges. Tiles used
+    elsewhere on the map too (the paint spot's rock and stool) are left alone. Winter: the same
     flagstones, colder, swept clear of the snow."""
     tmx = open(os.path.join(ASSETS, "GildedVale.tmx"), encoding="utf-8").read()
     layers = {}
@@ -294,13 +290,19 @@ def path_tiles():
         i = gid - first
         return sheet.crop(((i % 32) * 16, (i // 32) * 16, (i % 32) * 16 + 16, (i // 32) * 16 + 16))
 
-    def ours(gid):
-        return first <= gid < first + 10000
+    uses = {}
+    for name in re.findall(r'<layer id="\d+" name="([^"]+)"', tmx):
+        data = re.search(rf'name="{re.escape(name)}"[^>]*>\s*<data encoding="csv">(.*?)</data>', tmx, re.S).group(1)
+        for row in data.strip().split("\n"):
+            for v in row.strip().rstrip(",").split(","):
+                uses[int(v)] = uses.get(int(v), 0) + 1
 
-    # the masks: the gravel's pixels in spring within the band, each layer's own and all together
+    def ours(gid):
+        return first <= gid < first + 10000 and uses.get(gid) == 1
+
+    # the masks: the gravel's pixels in spring, each layer's own and all together
     W, H = aw * 16, ah * 16
     masks = {name: [[False] * W for _ in range(H)] for name in PATH_LAYERS}
-    loose = [[False] * W for _ in range(H)]      # gravel anywhere in the area, in the band or not
     for name, rows in layers.items():
         for ty in range(ah):
             for tx in range(aw):
@@ -311,10 +313,8 @@ def path_tiles():
                         for x in range(16):
                             X, Y = tx * 16 + x, ty * 16 + y
                             wx, wy = ax * 16 + X, ay * 16 + Y
-                            if gravel(t[x, y]) > 0:
-                                loose[Y][X] = True
-                                if band_edge(wx, True) <= wy < band_edge(wx, False):
-                                    masks[name][Y][X] = True
+                            if gravel(t[x, y]) > 0 and (wy >= 39 * 16 or (wy >= 38 * 16 + 2 and DOOR_WALK[0] <= wx < DOOR_WALK[1])):
+                                masks[name][Y][X] = True
     union = [[any(masks[n][y][x] for n in PATH_LAYERS) for x in range(W)] for y in range(H)]
     stones = flagstones(W, H)
     tiles = []           # (layer, x, y) of each tile in the area that changes, in sheet order
@@ -338,10 +338,8 @@ def path_tiles():
                         c = stones[Y][X]
                         if gravel(tile(sheets["spring"], gid).getpixel((x, y))) == 2:
                             c = shade(c, 0.72)
-                        # the stone's edge is darker against grass, hedge or plinth; where a side
-                        # path's gravel runs on, the stone just meets it
-                        edge = any(not (0 <= X + dx < W and 0 <= Y + dy < H)
-                                   or not (union[Y + dy][X + dx] or loose[Y + dy][X + dx])
+                        # the stone's edge is darker against grass, hedge or plinth
+                        edge = any(0 <= X + dx < W and 0 <= Y + dy < H and not union[Y + dy][X + dx]
                                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
                         if season == "winter":
                             c = (int(c[0] * 0.92), int(c[1] * 0.96), min(255, int(c[2] * 1.06)), 255)

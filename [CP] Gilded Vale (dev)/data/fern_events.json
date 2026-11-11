@@ -252,15 +252,15 @@
       }
     },
     {
-      "LogName": "Fern's one path through the sculpture garden (spring)",
+      "LogName": "Fern's flagstoned paths in the sculpture garden (spring)",
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_GildedVale",
       "FromFile": "assets/FernPath_spring.tmx",
       "ToArea": {
-        "X": 7,
-        "Y": 41,
-        "Width": 21,
-        "Height": 4
+        "X": 6,
+        "Y": 38,
+        "Width": 22,
+        "Height": 9
       },
       "PatchMode": "Overlay",
       "Priority": "Late",
@@ -274,15 +274,15 @@
       }
     },
     {
-      "LogName": "Fern's one path through the sculpture garden (summer)",
+      "LogName": "Fern's flagstoned paths in the sculpture garden (summer)",
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_GildedVale",
       "FromFile": "assets/FernPath_summer.tmx",
       "ToArea": {
-        "X": 7,
-        "Y": 41,
-        "Width": 21,
-        "Height": 4
+        "X": 6,
+        "Y": 38,
+        "Width": 22,
+        "Height": 9
       },
       "PatchMode": "Overlay",
       "Priority": "Late",
@@ -296,15 +296,15 @@
       }
     },
     {
-      "LogName": "Fern's one path through the sculpture garden (fall)",
+      "LogName": "Fern's flagstoned paths in the sculpture garden (fall)",
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_GildedVale",
       "FromFile": "assets/FernPath_fall.tmx",
       "ToArea": {
-        "X": 7,
-        "Y": 41,
-        "Width": 21,
-        "Height": 4
+        "X": 6,
+        "Y": 38,
+        "Width": 22,
+        "Height": 9
       },
       "PatchMode": "Overlay",
       "Priority": "Late",
@@ -318,15 +318,15 @@
       }
     },
     {
-      "LogName": "Fern's one path through the sculpture garden (winter)",
+      "LogName": "Fern's flagstoned paths in the sculpture garden (winter)",
       "Action": "EditMap",
       "Target": "Maps/blinxxy.MuseArt_GildedVale",
       "FromFile": "assets/FernPath_winter.tmx",
       "ToArea": {
-        "X": 7,
-        "Y": 41,
-        "Width": 21,
-        "Height": 4
+        "X": 6,
+        "Y": 38,
+        "Width": 22,
+        "Height": 9
       },
       "PatchMode": "Overlay",
       "Priority": "Late",

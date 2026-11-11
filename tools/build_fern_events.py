@@ -19,7 +19,8 @@ What they leave behind (map patches by flag, Overlay, like Bram's stone):
     event to the end of that season (mail flag blinxxy.MuseArt_FernStakes, taken away on day 1);
   - the night vine in flower in the seedhouse on summer nights from 8pm, after the 8-heart event
     (assets/FernNightVine.tmx);
-  - the one path through the sculpture garden (assets/FernPath_<season>.tmx): cleared overnight
+  - every path in the sculpture garden flagstoned (assets/FernPath_<season>.tmx; the user, 2026-11-11:
+    all of them, after her 10 hearts): laid overnight
     once the 10-heart event can happen (blinxxy.MuseArt_FernPathCleared, set by a morning trigger),
     so it's there when she shows it you, and for good after.
 And mail: the honey (three mornings after the 2-heart event), "Not yet" (at 8 hearts outside
@@ -46,7 +47,7 @@ SEED_COUNT = 5
 STAKES_AT = (31, 63)           # the ring's top-left tile (2x2): the meadow's east edge, clear of its grass and its trees' crowns
 MOWER_AT = (25, 61)            # the Heritage Society's mower, at the meadow's edge by the terrace
 VINE_AT = (24, 12)             # the night vine's top-left tile in the seedhouse (2x3)
-PATH_AREA = (7, 41, 21, 4)     # tools/art/fern_event_art.py PATH_AREA
+PATH_AREA = (6, 38, 22, 9)     # tools/art/fern_event_art.py PATH_AREA: the whole garden
 
 
 def F(hearts):
@@ -275,7 +276,7 @@ def map_patches():
     # the night vine in flower: its top two rows on Front, its foot on Buildings, as the room has it
     tmx("FernNightVine.tmx", 2, 3, "fern/night_vine.png", 32, 48,
         {"Buildings": {(x, 2): 4 + x for x in range(2)}, "Front": {(x, y): y * 2 + x for y in range(2) for x in range(2)}})
-    # the one path: the garden's own Back2 and Buildings tiles, re-laid (the art script's list;
+    # the garden's paths: its own Back2 and Buildings tiles, re-laid (the art script's list;
     # a Buildings tile stays solid, as the birdbath's and the statue's are)
     tiles = json.load(open(os.path.join(PACK, "assets", "fern", "path_tiles.json")))
     ax, ay, aw, ah = PATH_AREA
@@ -295,7 +296,7 @@ def map_patches():
              (*STAKES_AT, 2, 2), {"HasFlag |contains=blinxxy.MuseArt_FernStakes": "true"}),
         edit("The night vine in flower (after Fern's 8 hearts: summer nights)", f"Maps/{COTTAGE}", "FernNightVine.tmx",
              (*VINE_AT, 2, 3), {"HasSeenEvent |contains=" + EV[8]: "true", "Season": "summer", "Query: {{Time}} >= 2000": "true"}),
-        *[edit(f"Fern's one path through the sculpture garden ({season})", f"Maps/{VALE}", f"FernPath_{season}.tmx", PATH_AREA,
+        *[edit(f"Fern's flagstoned paths in the sculpture garden ({season})", f"Maps/{VALE}", f"FernPath_{season}.tmx", PATH_AREA,
                {"HasFlag |contains=blinxxy.MuseArt_FernPathCleared": "true", "Season": season})
           for season in ("spring", "summer", "fall", "winter")],
     ]
