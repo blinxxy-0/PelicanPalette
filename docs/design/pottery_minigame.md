@@ -162,6 +162,14 @@ As painting was: a **prototype first**. A plain dev-only screen (`museart_potter
 - **The spread between hands** (4.75 down to 3.7) is as forgiving as painting's judge: a painting 35% wrong gets 4.2.
 - **Not really throwing:** a lump never touched gets 1 to 1.5 stars, and an outline pulled 6 rows short 0.5 to 1. But **pulling up without shaping gets 4.5 on the cup and 4 on the jug**, since both are close to the cylinder that pulling makes. That's fine for the cup, the first piece, but generous for the jug.
 
+**After the user's playtest (2026-11-11)**, which found it too forgiving, the glaze free, the patience coming back too fast, the clay sliding off the wheel and the stages feeling like separate minigames:
+- **One piece of work at a wheel:** throw, then glaze, then fire. After the throw the results offer "Glaze it" or "Throw again", which takes fresh clay. After glazing they offer only "Fire it", and after firing "Done". There's no "Next shape", "Glaze again" or "Fire again" at a wheel; the dev prototype (`museart_pottery`) keeps its free buttons.
+- **Glazes cost minerals,** one for each glaze a pot wears, the first time it touches the pot (section 5's table: Quartz, Jade, Iron Ore, Aquamarine, Coal, Fire Quartz; an Alchemist can use Copper Ore for Copper red). The swatches show how many you have, and a stroke with none says so.
+- **Patience is nearly a one-way budget:** resting gives back only 15% of what's been spent (8% on Hard), and clay worked past its patience gives way on Normal too (3 s; Hard 2 s). The bar shows the part that's gone for good. Hard drains 1.6x (it was 3x with full rests).
+- **Centring follows the wheel:** the lump is carried round, so it sways about the axis once a turn, as far as it's off true (never past the wheel head). You ride the sway to press it true; off it, it works loose.
+- **A stricter judge:** a silhouette now scores from 76% overlap to full marks at 97% (it was 55% to 95%), walls fall off faster, smoothness is stricter, and centring is worth 25%. Glazing's hand drifts 1.6 rows on Normal (it was 1.2) and 2.4 on Hard; the kiln's band is 5 on Normal (6) and 3.5 on Hard (4).
+- **The simulation after (Normal, throws):** perfect 4.75, careful 4.15, average 3.23 (29% under 3 stars), rushed 2.25 (70% under 3). Hard: 4.75 / 4.17 / 3.17 / 1.90. The bots handle a pot in about 10 to 15 s; a person is slower, so patience will run out sooner in play than here.
+
 ## 11. Visuals (a plan for review)
 
 The prototype is plain rectangles. The aim is a screen that sits beside the easel's as one family: the same menu frame, framed panels, gold stars and word grades. Mockup of the pot: `art/pottery/visual_mock_v1.png` (left, now; right, proposed).

@@ -168,7 +168,7 @@ FEATURES = {
 }
 
 W, H = 96, 76
-VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook", "vale_terrace_stairs", "vale_spots", "vale_graveyard", "vale_parterre_paths"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
+VALE_PIECES = ["vale_sculpture", "vale_falls", "vale_overlook", "vale_terrace_stairs", "vale_spots", "vale_graveyard", "vale_parterre_paths", "vale_tea_chair"]   # modules whose patch_file(tmx_path, exports) runs on the written map (tools/vale_patch.py)
 LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Paths", "Front", "Front2", "AlwaysFront"]
 STAMP_LAYERS = ["Back", "Back2", "Back3", "Buildings", "Buildings2", "Front", "AlwaysFront"]
 

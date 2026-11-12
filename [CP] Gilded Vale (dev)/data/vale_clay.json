@@ -157,7 +157,8 @@
         "clay.wheel.field_clay": "{{i18n:clay.wheel.field_clay}}",
         "clay.wheel.short": "{{i18n:clay.wheel.short}}",
         "clay.wheel.lump": "{{i18n:clay.wheel.lump}}",
-        "clay.wheel.lumps": "{{i18n:clay.wheel.lumps}}"
+        "clay.wheel.lumps": "{{i18n:clay.wheel.lumps}}",
+        "clay.glaze.need": "{{i18n:clay.glaze.need}}"
       }
     }
   ]

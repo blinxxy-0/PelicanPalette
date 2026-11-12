@@ -9,42 +9,55 @@ namespace ArtStudio.Pottery;
 // (ArtStudio.Sim, `dotnet run -- pottery`) runs the same rules the menu does.
 internal sealed class Centring
 {
-    public const float TrueWithin = 0.8f;   // units: running true
+    // An off-centre lump doesn't wander about the wheel: it's carried round by it, so seen from the
+    // front it sways side to side about the axis, once a turn, as far as it's off true. Your hands
+    // ride that sway (the mouse, held over the lump) and press it true; off it, or let go, and the
+    // lump works further off. It can't leave the wheel: the sway never grows past MaxSway. (The user,
+    // 2026-11-11: "the clay sometimes goes fully off the spinny thing with no real regard for physics".)
+    public const float TrueWithin = 0.6f;   // units of sway: running true
     public const float HoldTrue = 1.5f;     // seconds true and it's done
     public const float MaxTime = 14f;       // or done anyway, as true as it got
-    public const float Range = 12f;
+    public const float MaxSway = 6f;        // units: the most it's ever off (inside the wheel head)
+    public const float Range = 12f;         // units the screen's off-true meter spans either side
+    public const float Turn = MathF.Tau * 0.8f;   // radians a second: the wheel slow, for centring
+    private const float Settle = 2.2f, Push = 1.4f, Creep = 0.7f;   // sway per second: pressed true, pushed off, let go
 
     private readonly Random _random;
-    private float _v, _trueFor, _time;
+    private float _trueFor, _time;
 
-    public float Wobble { get; private set; }
+    public float Sway { get; private set; }       // how far off true it is (units)
+    public float Phase { get; private set; }      // where the wheel is in its turn (radians)
+    public float Wobble => Sway * MathF.Sin(Phase);   // where the lump is across the wheel, this instant
     public bool Done { get; private set; }
-    public bool RunningTrue => MathF.Abs(Wobble) < TrueWithin;
-    public float Score => Math.Clamp(1f - MathF.Abs(Wobble) / 8f, 0f, 1f);
+    public bool RunningTrue => Sway < TrueWithin;
+    public float Score => Math.Clamp(1f - Sway / 4f, 0f, 1f);
 
     public Centring(Random random)
     {
         _random = random;
-        Wobble = (random.Next(2) == 0 ? -1 : 1) * 6f;
+        Sway = 5f + (float)random.NextDouble() * 1f;
+        Phase = (float)(random.NextDouble() * MathF.Tau);
     }
 
     // `hand`: where your hands are across the lump (units from the wheel's centre), or
-    // null when you aren't holding it.
+    // null when you aren't holding it. On it is within `band` of where the lump is now.
     public void Step(float dt, float? hand, float band)
     {
         if (Done)
             return;
         _time += dt;
-        bool onIt = hand is float h && MathF.Abs(h - Wobble) < band;
-        if (onIt)
+        Phase = (Phase + Turn * dt) % MathF.Tau;
+        float change;
+        if (hand is float h)
         {
-            _v += -Wobble * 4f * dt;               // your hands pull it true
-            _v *= MathF.Pow(0.15f, dt);
+            float off = MathF.Abs(h - Wobble);
+            // on it: settles, faster the closer you ride it; off it: you shove it further off
+            change = off < band ? -Settle * (1f - 0.6f * off / band) : Push;
         }
         else
-            _v += (MathF.Sign(Wobble == 0 ? 1 : Wobble) * 3f + (float)(_random.NextDouble() - 0.5) * 18f) * dt;
-        _v += (float)(_random.NextDouble() - 0.5) * 10f * dt;   // it never quite stops trying
-        Wobble = Math.Clamp(Wobble + _v * dt, -Range, Range);
+            change = Creep;
+        change += (float)(_random.NextDouble() - 0.5) * 0.8f;          // it never quite stops trying
+        Sway = Math.Clamp(Sway + change * dt, 0f, MaxSway);
         _trueFor = RunningTrue ? _trueFor + dt : 0f;
         if (_trueFor > HoldTrue || _time > MaxTime)
             Done = true;
@@ -84,17 +97,18 @@ internal static class PotBot
     public static float Gauss(Random rng) =>
         MathF.Sqrt(-2f * MathF.Log(1f - (float)rng.NextDouble())) * MathF.Cos(MathF.Tau * (float)rng.NextDouble());
 
-    // Hands following the wobble, a little behind it and wandering. Returns seconds taken.
+    // Hands riding the lump's sway. A person reads its rhythm and moves with it rather than
+    // chasing it, so the bot aims where the lump will be, a little early or late: its timing
+    // error wanders about 0 with a spread of `Lag` seconds, and its hand wanders `Wander` units.
+    // Returns seconds taken.
     public static float Centre(Centring c, PotHand hand, float band, Random rng)
     {
-        var seen = new Queue<float>();
-        int lagSteps = Math.Max(1, (int)(hand.Lag / Dt));
-        float err = 0f, time = 0f;
+        float timing = 0f, err = 0f, time = 0f;
         while (!c.Done)
         {
-            seen.Enqueue(c.Wobble);
-            float aimAt = seen.Count > lagSteps ? seen.Dequeue() : seen.Peek();
+            timing = timing * 0.97f + Gauss(rng) * hand.Lag * 0.25f;
             err = err * 0.97f + Gauss(rng) * hand.Wander * 0.25f;
+            float aimAt = c.Sway * MathF.Sin(c.Phase + Centring.Turn * timing);
             c.Step(Dt, aimAt + err, band);
             time += Dt;
         }
@@ -112,10 +126,11 @@ internal static class PotBot
         float Noise(float spread) => spread > 0f ? Gauss(rng) * spread : 0f;
         void RestIfTired()
         {
-            if (pot.Patience < hand.RestAt)
+            if (pot.Patience < hand.RestAt && pot.Patience < MathF.Min(hand.RestTo, pot.MaxPatience) - 0.001f)
                 rests++;
+            // (rest only as far as the clay can come back: MaxPatience)
             if (pot.Patience < hand.RestAt)
-                for (int k = 0; k < 6000 && pot.Patience < hand.RestTo; k++)
+                for (int k = 0; k < 6000 && pot.Patience < MathF.Min(hand.RestTo, pot.MaxPatience) - 0.001f; k++)
                 {
                     pot.Rest(Dt);
                     time += Dt;

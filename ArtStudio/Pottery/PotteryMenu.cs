@@ -40,6 +40,19 @@ internal sealed class PotteryMenu : IClickableMenu
     // take a fresh lump for the shape first, and do nothing if there isn't enough (it says why).
     // Null in the dev prototype, where throws are free.
     internal Func<string, bool>? TakeClay;
+    // ... how many lumps a shape takes (for the "Throw again" button's label),
+    internal Func<string, int>? LumpsFor;
+    // ... and the glazes cost their minerals: how many of a glaze's you have, and taking one the
+    // first time a glaze touches this pot (a dip or a band). Null in the prototype: glazes free.
+    internal Func<int, int>? GlazeStock;
+    internal Func<int, bool>? TakeGlaze;
+    private readonly HashSet<int> _glazesUsed = new();
+    private bool _strokeBlocked;
+    // At a real wheel the pot is one piece of work: thrown, then glazed, then fired. Its results
+    // offer only the next step (and, after the throw, starting again with fresh clay). The user,
+    // 2026-11-11: "why am i not just immediately forced into glazing and firing? feels like
+    // minigame pieces". The prototype keeps its free buttons.
+    private bool AtWheel => TakeClay != null;
     private float _spin;
 
     // centring
@@ -154,6 +167,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void Restart()
     {
         _xp = 0;
+        _glazesUsed.Clear();
         _pot = new ClayPot(_rules);
         _stage = Stage.Centring;
         _centringWheel = new Centring(_random);
@@ -200,18 +214,30 @@ internal sealed class PotteryMenu : IClickableMenu
         _bandAngle += BandingTurn * dt;
         if (held && !_wasHeld)
         {
+            _strokeBlocked = !UseGlaze(_glazeIdx);
             _holdTime = 0f;
             _phase1 = (float)(_random.NextDouble() * MathF.Tau);
             _phase2 = (float)(_random.NextDouble() * MathF.Tau);
             _lastBucket = BrushBucket(_bandAngle);
         }
         _wasHeld = held;
-        if (!held)
+        if (!held || _strokeBlocked)
             return;
         _holdTime += dt;
         float now = BrushBucket(_bandAngle);
         _glaze!.Paint(_glazeIdx, BrushHeight(Game1.getMouseY(), true), _lastBucket, now);
         _lastBucket = now;
+    }
+
+    // A glaze's first touch on this pot takes its mineral (at a wheel); false if there's none.
+    private bool UseGlaze(int glaze)
+    {
+        if (TakeGlaze == null || _glazesUsed.Contains(glaze))
+            return true;
+        if (!TakeGlaze(glaze))
+            return false;
+        _glazesUsed.Add(glaze);
+        return true;
     }
 
     internal float GlazeScore => _glazeResult?.Overall ?? 0f;
@@ -408,7 +434,8 @@ internal sealed class PotteryMenu : IClickableMenu
                 case "wood": _kiln?.Add(Fuel.Wood); break;
                 case "hard": _kiln?.Add(Fuel.Hardwood); break;
                 case "coal": _kiln?.Add(Fuel.Coal); break;
-                case "dip": _glaze?.Dip(_glazeIdx); break;
+                case "dip": if (_glaze != null && UseGlaze(_glazeIdx)) _glaze.Dip(_glazeIdx); break;
+                case "leave": exitThisMenu(); break;
                 case "sponge": _glaze?.Sponge(); break;
                 case var k when k.StartsWith("g") && int.TryParse(k[1..], out int gi): _glazeIdx = gi; break;
                 case "next":
@@ -515,6 +542,13 @@ internal sealed class PotteryMenu : IClickableMenu
                    : p > 0.25f ? Color.Lerp(new Color(220, 150, 60), new Color(110, 170, 80), (p - 0.25f) / 0.25f)
                    : Color.Lerp(new Color(200, 70, 50), new Color(220, 150, 60), p / 0.25f);
         Ui.Fill(b, new Rectangle(bar.X + 3, bar.Y + 3, (int)((bar.Width - 6) * p), bar.Height - 6), fill);
+        // what resting can't bring back: hatched dark from MaxPatience to the end
+        float max = _pot.MaxPatience;
+        if (max < 1f)
+        {
+            int lostX = bar.X + 3 + (int)((bar.Width - 6) * max);
+            Ui.Fill(b, new Rectangle(lostX, bar.Y + 3, bar.Right - 3 - lostX, bar.Height - 6), new Color(30, 18, 12));
+        }
         Ui.Outline(b, bar, new Color(40, 25, 15), 2);
         string state = _rules.Regen > 0.5f ? "never tires" : p < 0.25f ? "slumping!" : "";
         if (state.Length > 0)
@@ -605,18 +639,21 @@ internal sealed class PotteryMenu : IClickableMenu
         var panel = new Rectangle(right.X, right.Y, right.Width, 330);
         Ui.Paper(b, panel);
         Ui.TextCentered(b, "Centring", panel.Center.X, panel.Y + 18);
-        // the off-true gauge: the lump's drift, and the band it runs true in
+        // the off-true gauge: the sway's width, swinging as the lump does, and the band it runs true in
         var track = new Rectangle(panel.X + 24, panel.Y + 70, panel.Width - 48, 30);
         Ui.Fill(b, track, new Color(70, 48, 34));
-        float bandW = track.Width * (0.8f / 12f);
+        float half = track.Width / 2f - 6;
+        float bandW = half * (Centring.TrueWithin / Centring.MaxSway);
         Ui.Fill(b, new Rectangle((int)(track.Center.X - bandW), track.Y + 3, (int)(bandW * 2), track.Height - 6), new Color(120, 180, 90));
-        int markX = track.Center.X + (int)(_centringWheel.Wobble / 12f * (track.Width / 2 - 6));
+        float sway = half * (_centringWheel.Sway / Centring.MaxSway);
+        Ui.Fill(b, new Rectangle((int)(track.Center.X - sway), track.Center.Y - 2, (int)(sway * 2), 4), new Color(232, 182, 140) * 0.5f);
+        int markX = track.Center.X + (int)(_centringWheel.Wobble / Centring.MaxSway * half);
         Ui.Fill(b, new Rectangle(markX - 4, track.Y - 4, 8, track.Height + 8), new Color(232, 182, 140));
         Ui.Outline(b, track, new Color(40, 25, 15), 2);
         bool trueNow = _centringWheel.RunningTrue;
-        string state = trueNow ? "Running true..." : MathF.Abs(_centringWheel.Wobble) < 4f ? "Nearly true" : "Off true";
+        string state = trueNow ? "Running true..." : _centringWheel.Sway < 2.5f ? "Nearly true" : "Off true";
         Ui.TextCentered(b, state, panel.Center.X, track.Bottom + 18, trueNow ? new Color(60, 120, 40) : Game1.textColor);
-        Ui.Text(b, Game1.parseText("Keep your hand over the lump as it wanders. Held, it settles.", Game1.smallFont, panel.Width - 40),
+        Ui.Text(b, Game1.parseText("It sways as the wheel turns. Hold the mouse on it and ride the sway: it settles. Off it, it works loose.", Game1.smallFont, panel.Width - 40),
             new Vector2(panel.X + 20, track.Bottom + 60), Game1.textColor * 0.75f);
     }
 
@@ -690,9 +727,16 @@ internal sealed class PotteryMenu : IClickableMenu
             Ui.Button(b, r, "", selected: _glazeIdx == i, hovered: r.Contains(mx, my));
             Swatch(b, new Rectangle(r.X + 12, r.Y + 12, cell - 24, cell - 24), i);
             _buttons[$"g{i}"] = r;
+            if (GlazeStock != null && !_glazesUsed.Contains(i))
+            {
+                // how many of its mineral you have (a glaze already on this pot is paid for)
+                int have = GlazeStock(i);
+                string n = have > 9 ? "9+" : have.ToString();
+                Ui.Text(b, n, new Vector2(r.Right - 4 - Ui.TextWidth(n) * 0.7f, r.Bottom - 22), have > 0 ? Game1.textColor : new Color(170, 50, 30), 0.7f);
+            }
         }
         var g = Glazes.All[_glazeIdx];
-        Ui.TextCentered(b, $"{_glazeIdx + 1}  {g.Name}", panel.Center.X, panel.Y + 192);
+        Ui.TextCentered(b, GlazeStock == null ? $"{_glazeIdx + 1}  {g.Name}" : $"{g.Name}: {g.Mineral}", panel.Center.X, panel.Y + 192);
         var dip = new Rectangle(panel.X + 20, panel.Y + 236, panel.Width - 40, 48);
         var sponge = new Rectangle(dip.X, dip.Bottom + 10, dip.Width, 48);
         Ui.Button(b, dip, $"Dip in {g.Name.ToLowerInvariant()}", hovered: dip.Contains(mx, my));
@@ -824,6 +868,33 @@ internal sealed class PotteryMenu : IClickableMenu
             var r = new Rectangle(bottom.Right - 180, bottom.Y, 180, bottom.Height);
             Ui.Button(b, r, "Finished", hovered: r.Contains(mx, my));
             _buttons["done"] = r;
+        }
+        else if (_stage == Stage.Results && AtWheel)
+        {
+            // one piece of work: the next step only (and a fresh start after the throw)
+            var main = new Rectangle(bottom.Right - 220, bottom.Y, 220, bottom.Height);
+            if (_glazeResult == null && !_pot.Collapsed)
+            {
+                Ui.Button(b, main, "Glaze it", hovered: main.Contains(mx, my));
+                _buttons["glaze"] = main;
+            }
+            else if (_fireResult == null && !_pot.Collapsed)
+            {
+                Ui.Button(b, main, "Fire it", hovered: main.Contains(mx, my));
+                _buttons["fire"] = main;
+            }
+            else
+            {
+                Ui.Button(b, main, _pot.Collapsed ? "Leave" : "Done", hovered: main.Contains(mx, my));
+                _buttons["leave"] = main;
+            }
+            if (_glazeResult == null)
+            {
+                int lumps = LumpsFor?.Invoke(_shape.Name) ?? 1;
+                var again = new Rectangle(main.X - 300, bottom.Y, 280, bottom.Height);
+                Ui.Button(b, again, $"Throw again ({lumps} {(lumps == 1 ? "lump" : "lumps")})", hovered: again.Contains(mx, my));
+                _buttons["again"] = again;
+            }
         }
         else if (_stage == Stage.Results)
         {

@@ -1240,6 +1240,7 @@
   "clay.wheel.none": "The teaching wheel, clean and dry. A note chalked on its tray: 'Potter's clay. Buy it at the counter, or dig it at the pit. -T'",
   "clay.wheel.field_clay": "A note chalked on the wheel's tray: 'Not field clay. It's grit and roots: it tears on the wheel and cracks in the kiln. Potter's clay. Buy it at the counter, or dig it at the pit. -T'",
   "clay.wheel.short": "{0} takes {1} of Potter's Clay. You have {2}.",
+  "clay.glaze.need": "{0} glaze takes {1}. You have none.",
   "clay.wheel.lump": "{0} lump",
   "clay.wheel.lumps": "{0} lumps",
   "clay.tub.name": "Slaking Tub",
@@ -1538,7 +1539,7 @@
   "vale.studio3.drawers_open": "An old dresser. The drawer that was locked isn't any more. Inside, a bundle of letters tied with string.",
   "vale.studio3.bed": "A bed Tess built: the joints pegged, not nailed, the headboard carved. Opal's quilt on it.",
   "vale.studio3.chair": "A chair in pale birch, plainer than Bram's and lighter. Her own.",
-  "vale.studios.sale.letter": "Hi! A heads-up from the shop.^^I've taken a job out in the Gilded Vale: one of the Old Studios has sold, and somebody wants it fit to live in by the end of the month. So on weekdays until then I'll be out there with my toolbox.^^The shop's still open. If I'm not behind the counter, leave your order and the money in the box and I'll see to it. And if you've got building work on the farm, that comes first, the Vale can wait a day.^^   -Robin",
+  "vale.studios.sale.letter": "Hi! A heads-up from the shop.^^I've taken a job out in the Gilded Vale: one of the Old Studios has sold, and the buyer wants it fit to live in by the end of the month. I'll be out there on weekdays until then.^^The shop's still open. If I'm not behind the counter, leave your order and the money in the box. Building work on the farm still comes first.^^   -Robin",
   "vale.studios.sale.letter.title": "Robin's away on a job",
   "vale.studios.sale.robin_away": "Robin's not here. A note on the counter: 'Out in the Gilded Vale on a job, back this evening. Orders in the box, I'll see to them. -R'",
   "vale.studios.sale.robin_book": "Her order book lies open beside the box."

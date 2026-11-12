@@ -219,8 +219,11 @@ internal static class ValeClay
             .ToArray();
         location.createQuestionDialogue(string.Format(S("clay.wheel.ask", "You have {0} of Potter's Clay. What will you throw?"), Lumps(have)), answers, (farmer, answer) =>
         {
+            // once the question box has closed: opening the wheel from inside its answer left the
+            // game thinking a dialogue was still up, and you stood frozen after the wheel until
+            // another question was answered (the user, 2026-11-11)
             if (answer != "Leave")
-                Throw(farmer, answer);
+                Game1.afterDialogues = () => Throw(farmer, answer);
         });
     }
 
@@ -239,8 +242,38 @@ internal static class ValeClay
         Game1.activeClickableMenu = new PotteryMenu(shape, PotterySkill.RulesFor(who, PotteryRules.For(Rules())))
         {
             TakeClay = next => TakeAgain(who, next),
+            LumpsFor = LumpsFor,
+            GlazeStock = glaze => GlazeMinerals(who, glaze).Sum(id => who.Items.CountId(id)),
+            TakeGlaze = glaze => TakeGlazeMineral(who, glaze),
         };
         return true;
+    }
+
+    // What each glaze is made from (pottery_minigame.md section 5; Glazes.All's order): Clear from
+    // Quartz, Celadon from Jade, Tenmoku from Iron Ore, Cobalt from Aquamarine, Ash from Coal, Copper
+    // red from Fire Quartz. One for each glaze a pot wears (the user, 2026-11-11: "the glaze is
+    // infinite?"). An Alchemist (Pottery 10) can make Copper red from Copper Ore too.
+    private static readonly string[] GlazeMineral = { "(O)80", "(O)70", "(O)380", "(O)62", "(O)382", "(O)82" };
+
+    private static IEnumerable<string> GlazeMinerals(Farmer who, int glaze)
+    {
+        yield return GlazeMineral[glaze];
+        if (Glazes.All[glaze].Name == "Copper red" && PotterySkill.Has(who, "Alchemist"))
+            yield return "(O)378";
+    }
+
+    private static bool TakeGlazeMineral(Farmer who, int glaze)
+    {
+        foreach (string id in GlazeMinerals(who, glaze))
+            if (who.Items.CountId(id) > 0)
+            {
+                who.Items.ReduceId(id, 1);
+                return true;
+            }
+        var g = Glazes.All[glaze];
+        Game1.addHUDMessage(new HUDMessage(string.Format(S("clay.glaze.need", "{0} glaze takes {1}. You have none."), g.Name, g.Mineral), HUDMessage.error_type));
+        Game1.playSound("cancel");
+        return false;
     }
 
     // Another throw from the open wheel ("Throw again", "Next shape"): its clay, or a message.
