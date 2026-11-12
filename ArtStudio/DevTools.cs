@@ -265,6 +265,34 @@ internal static class DevTools
         return PaintingItems.Create(new PaintingData { Size = size, Cells = cells, Purity = new Purity[size, size], Subject = subject, Stars = stars, Painter = painter }, quality, 100);
     }
 
+    // Runs a test with room in the bag, and the bag put back as it was afterwards: everything but the
+    // tools is set aside first, and whatever the test left behind is taken away. (The suites run one
+    // after another in a session filled the bag: the skill test's real firings leave pots, the clay
+    // test its clay and tubs. Then a keg couldn't give its wine and the pots fell to the floor.)
+    internal static void WithCleanBag(Farmer who, Action test)
+    {
+        if (!Context.IsWorldReady)
+        {
+            test();
+            return;
+        }
+        var saved = who.Items.ToList();
+        int held = who.CurrentToolIndex;
+        for (int i = 0; i < who.Items.Count; i++)
+            if (who.Items[i] is not StardewValley.Tool)
+                who.Items[i] = null;
+        try
+        {
+            test();
+        }
+        finally
+        {
+            for (int i = 0; i < who.Items.Count; i++)
+                who.Items[i] = i < saved.Count ? saved[i] : null;
+            who.CurrentToolIndex = Math.Clamp(held, 0, Math.Max(0, who.Items.Count - 1));
+        }
+    }
+
     internal static void GivePalette(Farmer who)
     {
         var palette = PaletteItem.Find(who);

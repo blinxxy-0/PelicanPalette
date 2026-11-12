@@ -19,7 +19,7 @@ internal static class PotteryPiecesTests
 {
     public static void Register(IModHelper helper, IMonitor monitor)
     {
-        DevTools.AddCommand(helper, "museart_potitemtest", "Kept pots (1.5): the bots throw, glaze and fire each shape; the piece in your bag, its data through modData and a save, its price, quality, name, gifts, shops, a table, and its sprite (a sheet of them to dialogue_snapshots/potpieces.png).", (_, _) => Run(helper, monitor));
+        DevTools.AddCommand(helper, "museart_potitemtest", "Kept pots (1.5): the bots throw, glaze and fire each shape; the piece in your bag, its data through modData and a save, its price, quality, name, gifts, shops, a table, and its sprite (a sheet of them to dialogue_snapshots/potpieces.png).", (_, _) => DevTools.WithCleanBag(Game1.player, () => Run(helper, monitor)));
         DevTools.AddCommand(helper, "museart_pots", "Sample pots of every shape and glaze. Usage: museart_pots [bag] (one of each shape) | place <x> <y> (every shape in every glaze, here, from that tile) | table <x> <y> <shape> <glaze 0-5> [gift] (on the table there) | gifts <x> <y> (a vase with each kiln gift, and a dull one) | scene <x> <y> (two tables with pieces on them, and some on the floor beside)", (_, args) => Spawn(monitor, args));
     }
 
@@ -134,7 +134,7 @@ internal static class PotteryPiecesTests
             Game1.activeClickableMenu = menu;
             menu.FireBot("steady");
             var last = PotteryPieces.LastFired;
-            Check(monitor, $"{shape}: the fired pot goes into the bag", last != null && Pots() == before + 1 && who.Items.Contains(last.Value.Item), $"{Pots() - before} new");
+            Check(monitor, $"{shape}: the fired pot goes into the bag", last != null && Pots() == before + 1 && who.Items.Contains(last.Value.Item), $"{Pots() - before} new; open: {Game1.activeClickableMenu?.GetType().Name ?? "none"}, level {PotterySkill.Level(who)}");
             if (last is not { } fired)
             {
                 Game1.activeClickableMenu = null;
@@ -241,7 +241,8 @@ internal static class PotteryPiecesTests
         if (Game1.getCharacterFromName("Pierre") is NPC pierre)
         {
             who.addItemToInventoryBool(iridium);
-            who.CurrentToolIndex = who.Items.IndexOf(iridium);
+            // (a full bag: IndexOf is -1, and holding slot -1 crashes the game's update)
+            who.CurrentToolIndex = Math.Max(0, who.Items.IndexOf(iridium));
             Check(monitor, "Pierre will take one from your hand", who.ActiveObject == iridium && pierre.tryToReceiveActiveObject(who, probe: true));
             who.friendshipData.TryAdd("Pierre", new Friendship());
             int points = who.getFriendshipLevelForNPC("Pierre");

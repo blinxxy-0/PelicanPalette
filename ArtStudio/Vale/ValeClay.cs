@@ -101,7 +101,7 @@ internal static class ValeClay
                     Wheel(who.currentLocation, who);
                 }
                 else
-                    ClayTests.Run(monitor);
+                    DevTools.WithCleanBag(Game1.player, () => ClayTests.Run(monitor));
             });
     }
 
@@ -235,7 +235,25 @@ internal static class ValeClay
         }
         who.Items.ReduceId(QualifiedItemId, need);
         PotteryArt.Load(_helper);
-        Game1.activeClickableMenu = new PotteryMenu(shape, PotteryRules.For(Rules()));
+        // the player's Pottery professions apply at the wheel (PotterySkill.RulesFor)
+        Game1.activeClickableMenu = new PotteryMenu(shape, PotterySkill.RulesFor(who, PotteryRules.For(Rules())))
+        {
+            TakeClay = next => TakeAgain(who, next),
+        };
+        return true;
+    }
+
+    // Another throw from the open wheel ("Throw again", "Next shape"): its clay, or a message.
+    private static bool TakeAgain(Farmer who, string shape)
+    {
+        int need = LumpsFor(shape), have = who.Items.CountId(QualifiedItemId);
+        if (have < need)
+        {
+            Game1.addHUDMessage(new HUDMessage(string.Format(S("clay.wheel.short", "{0} takes {1} of Potter's Clay. You have {2}."), S("clay.wheel." + shape, shape), Lumps(need), Lumps(have)), HUDMessage.error_type));
+            Game1.playSound("cancel");
+            return false;
+        }
+        who.Items.ReduceId(QualifiedItemId, need);
         return true;
     }
 

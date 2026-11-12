@@ -112,8 +112,11 @@ internal static class ValeResidents
     internal static void BookRoom(Farmer who, NPC? bea)
     {
         string line;
-        if (BookedTonight(who) || who.mailReceived.Contains(ArtistsRoomMail))
+        if (BookedTonight(who))
             line = S("room.already", "Your room's upstairs, first on the left. The bed's made, and the roof's one of the good ones.");
+        else if (who.mailReceived.Contains(ArtistsRoomMail))
+            // after her 10 hearts: the artists' room, not the guest room (first on the left)
+            line = S("room.artists", "You've got a key, love. The artists' room is yours, any night you like. Mind the stairs.");
         else if (who.Money < RoomPrice)
             line = S("room.money", "Two hundred for the night, love. Come back when the farm's been kind to you.");
         else

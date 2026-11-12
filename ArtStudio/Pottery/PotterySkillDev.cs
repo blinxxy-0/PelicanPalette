@@ -25,7 +25,7 @@ internal static class PotterySkillDev
         DevTools.AddCommand(helper, "museart_potteryskill", "The Pottery skill (1.5): prints level, XP and professions. Usage: museart_potteryskill [level <0-10> | xp <n> | prof <Thrower|Glazer|ProductionPotter|MasterOfSets|KilnKeeper|Alchemist> [off] | reset]", (_, args) =>
             Command(monitor, args));
         DevTools.AddCommand(helper, "museart_potteryskilltest", "Checks the Pottery skill: registration, XP from a bot's throw, glaze and firing, and each profession's effect on the rules.", (_, _) =>
-            Test(helper, monitor));
+            DevTools.WithCleanBag(Game1.player, () => Test(helper, monitor)));
         DevTools.AddCommand(helper, "museart_snappotteryskill", "Renders the Pottery level-up screens and the skills page at 1280x720 and 1920x1080 to dialogue_snapshots/potteryskill_*.png.", (_, _) =>
             Snap(helper, monitor));
     }

@@ -34,6 +34,12 @@ internal sealed class PotteryMenu : IClickableMenu
     private PotShape _shape;
     private ThrowMove _move = ThrowMove.PullUp;
     private PotResult? _result;
+    private int _xp;                     // the Pottery skill's XP from this pot so far (PotterySkill), shown on the results
+
+    // Opened from a wheel that takes Potter's Clay (Vale/ValeClay.cs): "Throw again" and "Next shape"
+    // take a fresh lump for the shape first, and do nothing if there isn't enough (it says why).
+    // Null in the dev prototype, where throws are free.
+    internal Func<string, bool>? TakeClay;
     private float _spin;
 
     // centring
@@ -147,6 +153,7 @@ internal sealed class PotteryMenu : IClickableMenu
 
     private void Restart()
     {
+        _xp = 0;
         _pot = new ClayPot(_rules);
         _stage = Stage.Centring;
         _centringWheel = new Centring(_random);
@@ -212,7 +219,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void FinishBanding()
     {
         _glazeResult = GlazeJudge.Judge(_glaze!, _design!);
-        PotterySkill.OnGlazed(this, _glazeResult, _rules);
+        _xp += PotterySkill.OnGlazed(this, _glazeResult, _rules);
         _stage = Stage.Results;
     }
 
@@ -262,7 +269,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void FinishFiring()
     {
         _fireResult = FiringJudge.Judge(_kiln!, _random);
-        PotterySkill.OnFired(this, _fireResult, _rules);
+        _xp += PotterySkill.OnFired(this, _fireResult, _rules);
         _stage = Stage.Results;
         PotteryPieces.OnFired(this, _shape.Name, _pot, _glaze, _fireResult, Stars);
     }
@@ -374,7 +381,7 @@ internal sealed class PotteryMenu : IClickableMenu
     private void Finish()
     {
         _result = PotJudge.Judge(_pot, _shape, _centring);
-        PotterySkill.OnThrown(this, _result, _rules);
+        _xp += PotterySkill.OnThrown(this, _result, _rules);
         _stage = Stage.Results;
     }
 
@@ -392,7 +399,10 @@ internal sealed class PotteryMenu : IClickableMenu
                 case "press": _move = ThrowMove.PressIn; break;
                 case "out": _move = ThrowMove.LetOut; break;
                 case "done": if (_stage == Stage.Banding) FinishBanding(); else Finish(); break;
-                case "again": Restart(); break;
+                case "again":
+                    if (TakeClay == null || TakeClay(_shape.Name))
+                        Restart();
+                    break;
                 case "glaze": StartBanding(); break;
                 case "fire": StartFiring(); break;
                 case "wood": _kiln?.Add(Fuel.Wood); break;
@@ -402,7 +412,10 @@ internal sealed class PotteryMenu : IClickableMenu
                 case "sponge": _glaze?.Sponge(); break;
                 case var k when k.StartsWith("g") && int.TryParse(k[1..], out int gi): _glazeIdx = gi; break;
                 case "next":
-                    _shape = PotShape.Make(PotShape.Names[(Array.IndexOf(PotShape.Names, _shape.Name) + 1) % PotShape.Names.Length], _pot.Volume);
+                    string nextShape = PotShape.Names[(Array.IndexOf(PotShape.Names, _shape.Name) + 1) % PotShape.Names.Length];
+                    if (TakeClay != null && !TakeClay(nextShape))
+                        break;
+                    _shape = PotShape.Make(nextShape, _pot.Volume);
                     _art.FitTo(_shape);
                     Restart();
                     break;
@@ -788,6 +801,8 @@ internal sealed class PotteryMenu : IClickableMenu
             Row("Glaze", I18n.Rating(g.Overall));
         if (_fireResult is { } f)
             Row("Firing", f.Verdict);
+        if (_xp > 0)
+            Row("Pottery", $"+{_xp} XP");
         PotteryPieces.DrawKept(b, _pot, right.X + 8, y + 12, right.Width - 16);
     }
 

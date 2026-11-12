@@ -28,7 +28,7 @@ internal static class GuideTests
         _helper = helper;
         DevTools.AddCommand(helper, "museart_guidetest",
             "Checks the painters' guide's rules (no guide no find, a first find, a repeat, the eighth completes, an unknown id is refused), then the Gilded Grove: its season, its easels, the warp in and the frame home.",
-            (_, _) => Run(monitor));
+            (_, _) => DevTools.WithCleanBag(Game1.player, () => Run(monitor)));
         DevTools.AddCommand(helper, "museart_foundertest",
             "Co-op checks for the Founders' easel. 'offer': this player offers a test masterpiece for real and keeps the frame and the flag. 'check': every player online has offered and holds their own Founders' Frame.",
             (_, args) => FoundersCoop(monitor, args.FirstOrDefault() ?? ""));
@@ -837,8 +837,11 @@ internal static class GuideTests
     {
         if (Game1.activeClickableMenu is not DialogueBox box)
             return new List<string>();
+        // A villager's pages: the game takes each page's portrait code out only when it shows that
+        // page (Dialogue.checkForSpecialCharacters), so later pages still carry theirs here; take
+        // them out as it will. (Bea's two-page guide line failed on its second page's $u, 2026-11-11.)
         if (box.characterDialogue is { } d)
-            return d.dialogues.Select(l => l.Text ?? "").ToList();
+            return d.dialogues.Select(l => System.Text.RegularExpressions.Regex.Replace(l.Text ?? "", @"\$(neutral|[hsula]|\d+)", "")).ToList();
         return box.dialogues.ToList();
     }
 

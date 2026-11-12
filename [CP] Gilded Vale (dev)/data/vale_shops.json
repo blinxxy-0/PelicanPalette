@@ -215,6 +215,7 @@
         "counter.leave": "{{i18n:bea.counter.leave}}",
         "room.booked": "{{i18n:bea.room.booked}}",
         "room.already": "{{i18n:bea.room.already}}",
+        "room.artists": "{{i18n:bea.room.artists}}",
         "room.money": "{{i18n:bea.room.money}}",
         "room.locked": "{{i18n:bea.room.locked}}",
         "artists.locked": "{{i18n:bea.artists.locked}}",
