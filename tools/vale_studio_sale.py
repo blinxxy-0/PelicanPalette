@@ -892,10 +892,10 @@ WORDS = {
     ("3", "carved"): "Studio III, cut into the bare wood by hand. No gold. Under it, a card in the door frame: T. Brand, woodcarver.",
 }
 TIMBER_WORDS = "Sawn planks, stacked on bearers to keep them off the wet. Stencilled on the end of every one: ROBIN."
-LETTER = ("Hi! A heads-up from the shop.^^I've taken a job out in the Gilded Vale: one of the Old Studios has sold, "
-          "and the buyer wants it fit to live in by the end of the month. I'll be out there on weekdays until then.^^"
-          "The shop's still open. If I'm not behind the counter, leave your order and the money in the box. "
-          "Building work on the farm still comes first.^^   -Robin")   # one page: her name had spilled onto a second (the user, 2026-11-11)
+LETTER = ("Hi! A heads-up from the shop.^^I've taken a job in the Gilded Vale: one of the Old Studios has sold, "
+          "and the buyer wants it ready by the end of the month. I'll be out there on weekdays.^^"
+          "If I'm not behind the counter, leave your order and the money in the box. "
+          "Building on the farm still comes first.^   -Robin")   # one page: her name had spilled onto a second (the user, 2026-11-11)
 LETTER_TITLE = "Robin's away on a job"
 BOOK = "Her order book lies open beside the box."
 NOTE = ("Robin's not here. A note on the counter: 'Out in the Gilded Vale on a job, back this evening. "

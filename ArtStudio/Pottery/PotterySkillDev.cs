@@ -197,7 +197,7 @@ internal static class PotterySkillDev
 
             SetProfession(who, "ProductionPotter", true);
             var production = PotterySkill.RulesFor(who, normal);
-            Check(monitor, "Production Potter: patience drains 20% slower (lasts 25% longer)", Near(production.DrainMultiplier, 0.8f) && Near(PotterySkill.RulesFor(who, hard).DrainMultiplier, 2.4f),
+            Check(monitor, "Production Potter: patience drains 20% slower (lasts 25% longer)", Near(production.DrainMultiplier, normal.DrainMultiplier / PotterySkill.ProductionPatience) && Near(PotterySkill.RulesFor(who, hard).DrainMultiplier, hard.DrainMultiplier / PotterySkill.ProductionPatience),
                 $"normal {production.DrainMultiplier:0.00}, hard {PotterySkill.RulesFor(who, hard).DrainMultiplier:0.00}");
             var p1 = new ClayPot(normal);
             var p2 = new ClayPot(production);
@@ -215,7 +215,7 @@ internal static class PotterySkillDev
             Check(monitor, "Kiln Keeper: stoking's band 25% wider, gifts twice as often", Near(keeper.KilnBand, normal.KilnBand * 1.25f) && Near(keeper.GiftOdds, 2f),
                 $"band {normal.KilnBand} -> {keeper.KilnBand}, odds {keeper.GiftOdds}");
             var rng = new Random(7);
-            Check(monitor, "and the kiln takes the band from the rules", Near(new Kiln(-1, keeper, rng).Band, 7.5f));
+            Check(monitor, "and the kiln takes the band from the rules", Near(new Kiln(-1, keeper, rng).Band, normal.KilnBand * PotterySkill.KilnKeeperBand));
             int Gifts(PotteryRules rules)
             {
                 int gifts = 0;

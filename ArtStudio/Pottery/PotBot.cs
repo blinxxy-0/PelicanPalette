@@ -14,13 +14,13 @@ internal sealed class Centring
     // ride that sway (the mouse, held over the lump) and press it true; off it, or let go, and the
     // lump works further off. It can't leave the wheel: the sway never grows past MaxSway. (The user,
     // 2026-11-11: "the clay sometimes goes fully off the spinny thing with no real regard for physics".)
-    public const float TrueWithin = 0.6f;   // units of sway: running true
+    public const float TrueWithin = 0.4f;   // units of sway: running true
     public const float HoldTrue = 1.5f;     // seconds true and it's done
     public const float MaxTime = 14f;       // or done anyway, as true as it got
-    public const float MaxSway = 6f;        // units: the most it's ever off (inside the wheel head)
+    public const float MaxSway = 3.5f;      // units: the most it's ever off (the lump is nearly as wide as the head)
     public const float Range = 12f;         // units the screen's off-true meter spans either side
     public const float Turn = MathF.Tau * 0.8f;   // radians a second: the wheel slow, for centring
-    private const float Settle = 2.2f, Push = 1.4f, Creep = 0.7f;   // sway per second: pressed true, pushed off, let go
+    private const float Settle = 1.2f, Push = 1.0f, Creep = 0.5f;   // sway per second: pressed true, pushed off, let go
 
     private readonly Random _random;
     private float _trueFor, _time;
@@ -30,12 +30,12 @@ internal sealed class Centring
     public float Wobble => Sway * MathF.Sin(Phase);   // where the lump is across the wheel, this instant
     public bool Done { get; private set; }
     public bool RunningTrue => Sway < TrueWithin;
-    public float Score => Math.Clamp(1f - Sway / 4f, 0f, 1f);
+    public float Score => Math.Clamp(1f - Sway / 2.5f, 0f, 1f);
 
     public Centring(Random random)
     {
         _random = random;
-        Sway = 5f + (float)random.NextDouble() * 1f;
+        Sway = 2.6f + (float)random.NextDouble() * 0.8f;
         Phase = (float)(random.NextDouble() * MathF.Tau);
     }
 

@@ -651,9 +651,9 @@ internal sealed class PotteryMenu : IClickableMenu
         Ui.Fill(b, new Rectangle(markX - 4, track.Y - 4, 8, track.Height + 8), new Color(232, 182, 140));
         Ui.Outline(b, track, new Color(40, 25, 15), 2);
         bool trueNow = _centringWheel.RunningTrue;
-        string state = trueNow ? "Running true..." : _centringWheel.Sway < 2.5f ? "Nearly true" : "Off true";
+        string state = trueNow ? "Running true..." : _centringWheel.Sway < 1.5f ? "Nearly true" : "Off true";
         Ui.TextCentered(b, state, panel.Center.X, track.Bottom + 18, trueNow ? new Color(60, 120, 40) : Game1.textColor);
-        Ui.Text(b, Game1.parseText("It sways as the wheel turns. Hold the mouse on it and ride the sway: it settles. Off it, it works loose.", Game1.smallFont, panel.Width - 40),
+        Ui.Text(b, Game1.parseText("Hold the mouse on it and ride its sway: it settles. Off it, it works loose.", Game1.smallFont, panel.Width - 40),
             new Vector2(panel.X + 20, track.Bottom + 60), Game1.textColor * 0.75f);
     }
 
@@ -727,16 +727,15 @@ internal sealed class PotteryMenu : IClickableMenu
             Ui.Button(b, r, "", selected: _glazeIdx == i, hovered: r.Contains(mx, my));
             Swatch(b, new Rectangle(r.X + 12, r.Y + 12, cell - 24, cell - 24), i);
             _buttons[$"g{i}"] = r;
-            if (GlazeStock != null && !_glazesUsed.Contains(i))
-            {
-                // how many of its mineral you have (a glaze already on this pot is paid for)
-                int have = GlazeStock(i);
-                string n = have > 9 ? "9+" : have.ToString();
-                Ui.Text(b, n, new Vector2(r.Right - 4 - Ui.TextWidth(n) * 0.7f, r.Bottom - 22), have > 0 ? Game1.textColor : new Color(170, 50, 30), 0.7f);
-            }
+            // none of its mineral (and not on this pot yet): dimmed
+            if (GlazeStock != null && !_glazesUsed.Contains(i) && GlazeStock(i) == 0)
+                Ui.Fill(b, new Rectangle(r.X + 6, r.Y + 6, cell - 12, cell - 12), new Color(40, 25, 15) * 0.6f);
         }
         var g = Glazes.All[_glazeIdx];
-        Ui.TextCentered(b, GlazeStock == null ? $"{_glazeIdx + 1}  {g.Name}" : $"{g.Name}: {g.Mineral}", panel.Center.X, panel.Y + 192);
+        string label = GlazeStock == null ? $"{_glazeIdx + 1}  {g.Name}"
+            : _glazesUsed.Contains(_glazeIdx) ? $"{g.Name}: on the pot"
+            : $"{g.Name}: {g.Mineral} ({GlazeStock(_glazeIdx)})";
+        Ui.TextCentered(b, label, panel.Center.X, panel.Y + 192, GlazeStock != null && !_glazesUsed.Contains(_glazeIdx) && GlazeStock(_glazeIdx) == 0 ? new Color(170, 50, 30) : Game1.textColor);
         var dip = new Rectangle(panel.X + 20, panel.Y + 236, panel.Width - 40, 48);
         var sponge = new Rectangle(dip.X, dip.Bottom + 10, dip.Width, 48);
         Ui.Button(b, dip, $"Dip in {g.Name.ToLowerInvariant()}", hovered: dip.Contains(mx, my));
@@ -922,6 +921,17 @@ internal sealed class PotteryMenu : IClickableMenu
 
 internal static class PotteryProto
 {
+    // A menu as Tobin's wheel opens it (Vale/ValeClay.cs), for the snapshots: clay always there,
+    // two lumps for the tall shapes, and a few of some glazes' minerals (none of others).
+    private static PotteryMenu AtAWheel(PotteryMenu m)
+    {
+        m.TakeClay = _ => true;
+        m.LumpsFor = shape => shape is "vase" or "jug" ? 2 : 1;
+        m.GlazeStock = glaze => glaze % 3 == 2 ? 0 : glaze * 4 + 1;
+        m.TakeGlaze = _ => true;
+        return m;
+    }
+
     public static void Register(IModHelper helper, IMonitor monitor)
     {
         DevTools.AddCommand(helper, "museart_pottery", "The pottery wheel prototype (1.5). Usage: museart_pottery [cup|bowl|vase|jug] [simplified|normal|hard] [throw|bot|wreck|band|fire] (throw: skip centring; bot: a greedy potter throws it, to check the rules; wreck: pull till it collapses; band: the bot throws it, then you glaze it; fire: the bots throw and glaze it, then you fire it)", (_, args) =>
@@ -960,6 +970,12 @@ internal static class PotteryProto
                 ("firing", () => { var m = new PotteryMenu("vase", rules, fire: true); m.FireBot("steady", until: 22f, finish: false); return m; }),
                 ("results_fired", () => { var m = new PotteryMenu("jug", rules, fire: true); m.FireBot("steady"); return m; }),
                 ("results_cracked", () => { var m = new PotteryMenu("cup", PotteryRules.For("hard"), fire: true); m.FireBot("coal"); return m; }),
+                // at a wheel: one piece of work, the next step only; the swatches show minerals in hand
+                ("wheel_results", () => AtAWheel(new PotteryMenu("vase", rules, bot: true))),
+                ("wheel_collapsed", () => AtAWheel(new PotteryMenu("jug", rules, wreck: true))),
+                ("wheel_banding", () => AtAWheel(new PotteryMenu("vase", rules, band: true))),
+                ("wheel_glazed", () => { var m = AtAWheel(new PotteryMenu("jug", rules, band: true)); m.GlazeBot(1.2f); return m; }),
+                ("wheel_fired", () => { var m = AtAWheel(new PotteryMenu("cup", rules, fire: true)); m.FireBot("steady"); return m; }),
             };
             // the firing against the bots' stoking, on each difficulty (the averages of 10)
             foreach (string level in new[] { "simplified", "normal", "hard" })
@@ -978,7 +994,7 @@ internal static class PotteryProto
             // the glaze judge against the bot's hands: perfect, and wandering as Normal's and
             // Hard's do, never corrected (the averages of 20)
             foreach (string shape in PotShape.Names)
-                foreach (var (label, reach) in new[] { ("perfect", 0f), ("simplified", 0.35f), ("normal", 1.2f), ("hard", 2f) })
+                foreach (var (label, reach) in new[] { ("perfect", 0f), ("simplified", PotteryRules.For("simplified").Drift), ("normal", PotteryRules.NormalDrift), ("hard", PotteryRules.HardDrift) })
                 {
                     float sum = 0f;
                     for (int k = 0; k < 20; k++)

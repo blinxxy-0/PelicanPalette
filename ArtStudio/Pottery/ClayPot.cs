@@ -32,16 +32,16 @@ internal sealed record PotteryRules(
     // back only a little of what's been spent, so a throw is one budget of handling: work surely.
     // Clay worked on past its patience gives way on Normal too. Calibrated: pottery_minigame.md
     // section 10.)
-    public const float HardDrain = 1.6f, NormalDrift = 1.6f, HardDrift = 2.4f, NormalKilnBand = 5f, HardKilnBand = 3.5f;
+    public const float HardDrain = 1.6f, NormalDrift = 1.6f, HardDrift = 2.4f, NormalKilnBand = 5f, HardKilnBand = 4f;
 
     public static PotteryRules For(string name) => name switch
     {
-        "simplified" => new("Simplified", 0f, 1f, false, 6f, 0.35f, 10f, false),
+        "simplified" => new("Simplified", 0f, 1f, false, 3f, 0.35f, 10f, false),
         // Hard: patience drains faster and comes back least; the brush wanders more; the kiln's
         // band is narrower and overfiring cracks. (It once drained 3x with full rests, so a throw
         // needed a rest or two; with rests giving little back, that's 1.6x.)
-        "hard" => new("Hard", HardDrain, 0.03f, true, 2.8f, HardDrift, HardKilnBand, true, GiveWay: 2f, Recover: 0.08f),
-        _ => new("Normal", 1f, 0.04f, true, 3.5f, NormalDrift, NormalKilnBand, false, GiveWay: 3f, Recover: 0.15f),
+        "hard" => new("Hard", HardDrain, 0.03f, true, 1.5f, HardDrift, HardKilnBand, true, GiveWay: 2f, Recover: 0.08f),
+        _ => new("Normal", 1f, 0.04f, true, 2.1f, NormalDrift, NormalKilnBand, false, GiveWay: 3f, Recover: 0.15f),
     };
 }
 
