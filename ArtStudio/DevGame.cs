@@ -185,6 +185,27 @@ internal static class DevGame
             if (args.ElementAtOrDefault(1) == "load")
                 monitor.Log($"TryLoadSchedule: {npc.TryLoadSchedule()} '{npc.dayScheduleName.Value}'", LogLevel.Info);
         });
+        // For compatibility checks (another mod's courtship replies, say): hands an NPC the given item
+        // as if from your hand, warping them beside you first, and logs the reply the game opens.
+        DevTools.AddCommand(helper, "museart_offer", "Hands an NPC an item from your hand and logs their reply. Usage: museart_offer MargotPell (O)458 [hearts]", (_, args) =>
+        {
+            if (!Context.IsWorldReady || args.Length < 2 || Game1.getCharacterFromName(args[0]) is not NPC npc) return;
+            var who = Game1.player;
+            if (args.Length > 2 && int.TryParse(args[2], out int hearts))
+            {
+                who.friendshipData.TryAdd(npc.Name, new Friendship());
+                who.friendshipData[npc.Name].Points = hearts * 250;
+            }
+            var item = ItemRegistry.Create(args[1]);
+            who.addItemToInventoryBool(item);
+            who.CurrentToolIndex = Math.Max(0, who.Items.IndexOf(item));
+            Game1.warpCharacter(npc, who.currentLocation, who.Tile + new Microsoft.Xna.Framework.Vector2(1, 0));
+            Game1.exitActiveMenu();
+            npc.tryToReceiveActiveObject(who);
+            string said = Game1.activeClickableMenu is StardewValley.Menus.DialogueBox box
+                ? (box.characterDialogue?.dialogues.FirstOrDefault()?.Text ?? box.getCurrentString()) : "(no reply box)";
+            monitor.Log($"offer: {npc.Name} <- {args[1]}: {said}", LogLevel.Info);
+        });
         DevTools.AddCommand(helper, "museart_letter", "Opens a letter, to look at. Usage: museart_letter blinxxy.MuseArt_MargotLetter", (_, args) =>
         {
             if (!Context.IsWorldReady || args.Length == 0 || !DataLoader.Mail(Game1.content).TryGetValue(args[0], out string text)) return;
@@ -552,7 +573,7 @@ internal static class DevGame
     {
         if (!Context.IsWorldReady) return;
         if (args.FirstOrDefault() == "outside")
-            Game1.warpFarmer("Forest", 83, 36, 0);
+            Game1.warpFarmer("Forest", Shop.ShopSite.At(83, 36).X, Shop.ShopSite.At(83, 36).Y, 0);
         else if (args.Length == 3 && int.TryParse(args[1], out int x) && int.TryParse(args[2], out int y))
             Game1.warpFarmer(args[0], x, y, 2);
         else
@@ -576,15 +597,15 @@ internal static class DevGame
         var shop = Game1.getLocationFromName(Shop.ArtShop.LocationName);
         Check(monitor, "the art shop location exists", shop != null);
         var forest = Game1.getLocationFromName("Forest");
-        string? door = forest?.doesTileHaveProperty(83, 33, "Action", "Buildings");
+        string? door = forest?.doesTileHaveProperty(Shop.ShopSite.At(83, 33).X, Shop.ShopSite.At(83, 33).Y, "Action", "Buildings");
         Check(monitor, "the Forest has the shop's door", door?.StartsWith("LockedDoorWarp 9 13 " + Shop.ArtShop.LocationName) == true, door ?? "none");
-        Check(monitor, "the building blocks movement", forest != null && !forest.isTilePassable(new xTile.Dimensions.Location(80, 32), Game1.viewport));
-        Check(monitor, "the yard fence blocks movement", forest != null && !forest.isTilePassable(new xTile.Dimensions.Location(78, 37), Game1.viewport));
-        Check(monitor, "the yard gate is open", forest != null && forest.isTilePassable(new xTile.Dimensions.Location(83, 37), Game1.viewport));
-        Check(monitor, "the signpost has its action", forest?.doesTileHaveProperty(87, 33, "Action", "Buildings") == ModEntry.Id + "_Sign");
+        Check(monitor, "the building blocks movement", forest != null && !forest.isTilePassable(new xTile.Dimensions.Location(Shop.ShopSite.At(80, 32).X, Shop.ShopSite.At(80, 32).Y), Game1.viewport));
+        Check(monitor, "the yard fence blocks movement", forest != null && !forest.isTilePassable(new xTile.Dimensions.Location(Shop.ShopSite.At(78, 37).X, Shop.ShopSite.At(78, 37).Y), Game1.viewport));
+        Check(monitor, "the yard gate is open", forest != null && forest.isTilePassable(new xTile.Dimensions.Location(Shop.ShopSite.At(83, 37).X, Shop.ShopSite.At(83, 37).Y), Game1.viewport));
+        Check(monitor, "the signpost has its action", forest?.doesTileHaveProperty(Shop.ShopSite.At(87, 33).X, Shop.ShopSite.At(87, 33).Y, "Action", "Buildings") == ModEntry.Id + "_Sign");
         Check(monitor, "the shop's counter has its action", shop?.doesTileHaveProperty(3, 5, "Action", "Buildings") == ModEntry.Id + "_Counter");
         Check(monitor, "the commission board has its action", shop?.doesTileHaveProperty(7, 3, "Action", "Buildings") == ModEntry.Id + "_Board");
-        Check(monitor, "the shop's exit leads back to the Forest", shop?.warps.Any(w => w.TargetName == "Forest" && w.TargetX == 83 && w.TargetY == 34) == true);
+        Check(monitor, "the shop's exit leads back to the Forest", shop?.warps.Any(w => w.TargetName == "Forest" && w.TargetX == Shop.ShopSite.At(83, 34).X && w.TargetY == Shop.ShopSite.At(83, 34).Y) == true);
 
         var stock = DataLoader.Shops(Game1.content).TryGetValue(Shop.ArtShop.ShopId, out var data) ? data : null;
         Check(monitor, "the shop has stock", stock?.Items?.Count > 10, $"{stock?.Items?.Count ?? 0} entries");

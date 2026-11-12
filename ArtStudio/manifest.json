@@ -8,7 +8,8 @@
   "MinimumApiVersion": "4.0.0",
   "Dependencies": [
     { "UniqueID": "spacechase0.SpaceCore", "MinimumVersion": "1.28.0" },
-    { "UniqueID": "spacechase0.GenericModConfigMenu", "IsRequired": false }
+    { "UniqueID": "spacechase0.GenericModConfigMenu", "IsRequired": false },
+    { "UniqueID": "Pathoschild.ContentPatcher", "IsRequired": false }
   ],
   "UpdateKeys": [ "Nexus:54599" ]
 }

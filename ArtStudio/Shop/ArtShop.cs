@@ -27,7 +27,20 @@ internal static class ArtShop
 
     // The building and its yard in the Forest, kept clear of weeds, stones,
     // bushes and trees (on existing saves, and wherever the Forest spawns them).
-    private static readonly Rectangle Footprint = new(76, 28, 13, 11);
+    // (At the moved site with Aymeric's alternate house installed: ShopSite.)
+    private static Rectangle Footprint => new(76 + ShopSite.Offset.X, 28 + ShopSite.Offset.Y, 13, 11);
+    // What's kept clear each morning: the footprint, and at the moved site a ring round it too (it
+    // stands in SVE's woods, and a tree just outside the yard spread its crown over the fence).
+    private static Rectangle Cleared
+    {
+        get
+        {
+            var area = Footprint;
+            if (ShopSite.Moved)
+                area = new Rectangle(area.X - 2, area.Y - 1, area.Width + 4, area.Height + 3);
+            return area;
+        }
+    }
 
     private static IMonitor _monitor = null!;
     private static IReflectionHelper _reflection = null!;
@@ -152,7 +165,7 @@ internal static class ArtShop
 
     // Sable paints at the yard easel on Friday mornings, standing on this
     // tile (Forest 80, 36; the easel is the tile above).
-    public static readonly Point YardEaselSpot = new(80, 36);
+    public static Point YardEaselSpot => ShopSite.At(80, 36);
     private const string WatchedKey = ModEntry.Id + "/WatchedSable";
     public const int WatchMinutes = 30, WatchXp = 15;
 
@@ -260,14 +273,15 @@ internal static class ArtShop
     {
         var forest = Game1.getLocationFromName("Forest");
         if (forest == null) return;
-        for (int x = Footprint.Left; x < Footprint.Right; x++)
-        for (int y = Footprint.Top; y < Footprint.Bottom; y++)
+        var cleared = Cleared;
+        for (int x = cleared.Left; x < cleared.Right; x++)
+        for (int y = cleared.Top; y < cleared.Bottom; y++)
         {
             var tile = new Vector2(x, y);
             forest.objects.Remove(tile);
             forest.terrainFeatures.Remove(tile);
         }
-        var tileArea = new Rectangle(Footprint.X * 64, Footprint.Y * 64, Footprint.Width * 64, Footprint.Height * 64);
+        var tileArea = new Rectangle(cleared.X * 64, cleared.Y * 64, cleared.Width * 64, cleared.Height * 64);
         foreach (var clump in forest.resourceClumps.Where(c => c.getBoundingBox().Intersects(tileArea)).ToList())
             forest.resourceClumps.Remove(clump);
         foreach (var feature in forest.largeTerrainFeatures.Where(f => f.getBoundingBox().Intersects(tileArea)).ToList())

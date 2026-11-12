@@ -9,6 +9,7 @@
     "MinimumVersion": "2.9.0"
   },
   "Dependencies": [
-    { "UniqueID": "blinxxy.MuseArt.CP" }
+    { "UniqueID": "blinxxy.MuseArt.CP" },
+    { "UniqueID": "blinxxy.MuseArt" }
   ]
 }

@@ -114,6 +114,7 @@
     {
       "Action": "EditMap",
       "Target": "Maps/Forest",
+      "When": { "blinxxy.MuseArt/ShopMoved": "false" },
       "FromFile": "assets/ArtShopExteriorPatch.tmx",
       "ToArea": { "X": 76, "Y": 27, "Width": 13, "Height": 12 },
       "PatchMode": "Overlay",
@@ -128,6 +129,7 @@
     {
       "Action": "EditMap",
       "Target": "Maps/Forest",
+      "When": { "blinxxy.MuseArt/ShopMoved": "false" },
       "MapTiles": [
         { "Position": { "X": 76, "Y": 27 }, "Layer": "Back", "SetProperties": { "NoSpawn": "All", "Spawnable": null } },
         { "Position": { "X": 77, "Y": 27 }, "Layer": "Back", "SetProperties": { "NoSpawn": "All", "Spawnable": null } },
@@ -421,10 +423,12 @@
     {
       "Action": "EditData",
       "Target": "Mods/CJBok.CheatsMenu/Warps",
-      "When": { "HasMod": "CJBok.CheatsMenu" },
+      "When": { "HasMod": "CJBok.CheatsMenu", "blinxxy.MuseArt/ShopMoved": "false" },
       "Entries": {
         "{{ModId}}_ArtShop": { "Id": "{{ModId}}_ArtShop", "SectionId": "forest", "DisplayName": "{{i18n:location.art-shop}}", "Location": "Forest", "Tile": "83, 34" }
       }
-    }
+    },
+    // The shop moved, when Aymeric's alternate house is on its ground (tools/shop_moved_site.py; last, so it wins)
+    { "Action": "Include", "FromFile": "data/shop_moved.json" }
   ]
 }

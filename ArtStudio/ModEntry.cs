@@ -33,6 +33,7 @@ public class ModEntry : Mod
         var harmony = new Harmony(ModManifest.UniqueID);
         PaintingPatches.Apply(harmony, Monitor);
         ArtHooks.Apply(harmony, helper, Monitor);
+        Shop.ShopSite.Init(helper, Monitor);
         Shop.ArtShop.Apply(harmony, helper, Monitor);
         Social.Julian.Register(helper);
         Social.Margot.Register(helper);

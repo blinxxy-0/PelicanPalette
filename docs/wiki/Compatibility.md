@@ -8,6 +8,8 @@
 - **[Remapping](https://www.nexusmods.com/stardewvalley/mods/29049) and map recolours:** the shop draws itself on the world map, in the same spot on vanilla and SVE maps, and its shadow takes on the colour of whatever ground is under it.
 - **[Polyamory Sweet](https://www.nexusmods.com/stardewvalley/mods/20599):** Sable can be one of several spouses. The shop's trust and the 14-heart exhibition go by Sable's own relationship, not which spouse is "first".
 - **[Alec Revisited](https://www.nexusmods.com/stardewvalley/mods/10697)** (and its SVE patch): compatible. Alec's house sits just north of the shop; the shop is added to the forest after other mods, so it's never painted over.
+- **[Aymeric de Borel](https://www.nexusmods.com/stardewvalley/mods/23851)** (SVE): compatible. His usual house is elsewhere in the forest. His alternate house (the version made to fit with [Eugene](https://www.nexusmods.com/stardewvalley/mods/9222)) is built on the shop's ground, so with it installed the shop moves by itself to the open woods just west of his house, below SVE's crop field. Its yard, door, Sable's walks and the events there all move with it, and SMAPI's log says so when it happens. Nothing to set up.
+- **[Eugene](https://www.nexusmods.com/stardewvalley/mods/9222)** and **[Unique Courtship Response](https://www.nexusmods.com/stardewvalley/mods/8284):** compatible. Sable and the mod's other romances keep their own bouquet and pendant lines with Unique Courtship Response installed.
 - **Other mods:**
   - Anything that changes the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
   - Paintings are ordinary objects (stored with the mod's data), so they're safe in chests, Automate and other inventory mods.

@@ -93,6 +93,7 @@ Change these with Generic Mod Config Menu, or in `PelicanPalette/PelicanPalette/
 
 - Works with **Stardew Valley Expanded**: the shop, Sable's schedules, events and festival spots (Julian's Fair table included) all fit SVE's maps.
 - Other mods that change the stretch of Cindersap Forest west of the path from Marnie's may overlap the shop.
+- **Aymeric de Borel's alternate house** (the Eugene-compatible version) is built on the shop's ground: with it installed, the shop moves by itself to the open woods just west of his house, with its yard, door, Sable's walks and events. Eugene and Unique Courtship Response are compatible too.
 - **Multiplayer:** works in co-op. Each player has their own Painting skill, painting record, commissions, consigned paintings and Fair contest entry; the portfolio book and plan chest belong to the farm. Sable's easels show your own consigned paintings. Paintings don't move the clock in multiplayer, where time is shared.
 
 ## Translating

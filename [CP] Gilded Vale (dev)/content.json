@@ -336,6 +336,8 @@
         "{{ModId}}_Studio": { "Id": "{{ModId}}_Studio", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-studio}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "73, 39" },
         "{{ModId}}_Studio2": { "Id": "{{ModId}}_Studio2", "SectionId": "{{ModId}}_GildedVale", "DisplayName": "{{i18n:location.vale-studio2}}", "Location": "blinxxy.MuseArt_GildedVale", "Tile": "86, 39" }
       }
-    }
+    },
+    // Lupini by the art shop, if it moved (tools/shop_moved_site.py; last, so it wins)
+    { "Action": "Include", "FromFile": "data/shop_moved.json" }
   ]
 }
