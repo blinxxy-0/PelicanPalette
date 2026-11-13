@@ -50,7 +50,9 @@ NEW_SPOTS = {
     # a little west. Not on the basin's south bank: that's beside the north light's stool (79, 16),
     # and "can't be two right next to each other"; and the stool's top hung over the water. Just
     # west of the pine at (75, 4), whose canopy (x 74-76) hides the cliff's end
-    "falls": ((72, 4), (68, 4)),
+    "falls": ((72, 4), (72, 4)),
+    # (the rock stood at (68, 4), a little west, beside the stool; with the stool gone it moved up to
+    # the stool's place by the falls, the user's choice, 2026-11-12: MOVED_ROCKS)
     # on the tree's lawn, east of it between the canopy and the lakeside sand (south of the tree
     # is under the woods' canopies, and west of it is the wildflowers' spot); the rock above it
     "tree": ((43, 66), (43, 63)),
@@ -63,6 +65,7 @@ NEW_SPOTS = {
 }
 SPOTS.update(NEW_SPOTS)
 TEMPLATE = "rooftops"
+MOVED_ROCKS = {"falls": (68, 4)}           # a rock taken up from where it stood (its foot's left tile)
 CLEARING = (3, 10, 12, 22)                   # the old Painter's clearing: its spot goes
 BOXES = {name: box for name, box in SPOT_BOXES.items()}
 SPOT_BOX = {sid: SPOT_BOXES["spot_" + sid] for sid in SPOTS}
@@ -151,6 +154,12 @@ def _lay(m, pieces, sid, kind, foot, cells):
 def patch_map(m, pieces):
     rock_cells = _cells(m, SPOTS[TEMPLATE][1])
     assert pieces.at(m, *SPOTS[TEMPLATE][1]) == "rock", f"{TEMPLATE}: no rock at {SPOTS[TEMPLATE][1]}"
+    for sid, (x, y) in MOVED_ROCKS.items():
+        if pieces.at(m, x, y) == "rock" and (x, y) != SPOTS[sid][1]:
+            for dx in (0, 1):
+                m.g["Buildings"][y][x + dx] = 0
+                m.g["Front2"][y - 1][x + dx] = 0
+                _set_action(m, x + dx, y, None)
     for sid, (_, rock) in NEW_SPOTS.items():
         _lay(m, pieces, sid, "rock", rock, rock_cells)
 

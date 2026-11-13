@@ -41,6 +41,17 @@ internal static class ValeResidents
 
     public static void Register(IModHelper helper, Harmony harmony)
     {
+        // Emmett's 8-heart event ends with Bea gone up to bed; she was still at her counter until
+        // 11:30. When it finishes, she goes up (her 11:30 place, upstairs) for the night.
+        bool inEmmett8 = false;
+        helper.Events.GameLoop.UpdateTicked += (_, _) =>
+        {
+            bool now = Game1.CurrentEvent?.id == ModEntry.Id + "_Emmett8h";
+            if (inEmmett8 && !now)
+                BeaToBed();
+            inEmmett8 = now;
+        };
+
         // "blinxxy.MuseArt_ValeShop <shop id> <owner> <x> <y> <w> <h>": open the shop if its
         // owner is in that tile area. If they're away, the shop's own closed message. If they
         // aren't in the world at all (the dev switch is off, or the Vale isn't open yet), it
@@ -107,6 +118,17 @@ internal static class ValeResidents
             else if (answer == "Room")
                 BookRoom(farmer, bea);
         });
+    }
+
+    // Bea upstairs for the night, as at 11:30 (bea_schedule.json: the Vale House, 26, 6).
+    internal static void BeaToBed()
+    {
+        if (Game1.getCharacterFromName(Bea) is not NPC bea || Game1.getLocationFromName(ModEntry.Id + "_ValeHouse") is not GameLocation house)
+            return;
+        bea.controller = null;
+        bea.Halt();
+        Game1.warpCharacter(bea, house, new Microsoft.Xna.Framework.Vector2(26, 6));
+        bea.faceDirection(2);
     }
 
     internal static void BookRoom(Farmer who, NPC? bea)

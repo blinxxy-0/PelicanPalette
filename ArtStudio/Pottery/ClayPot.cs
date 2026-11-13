@@ -239,7 +239,9 @@ internal sealed class PotShape
             "vase" => u => u < 0.7f ? 6f + 5.5f * MathF.Sin(MathF.PI * u / 0.7f * 0.75f)
                          : u < 0.88f ? 6f + 5.5f * MathF.Sin(MathF.PI * 0.75f) - (u - 0.7f) / 0.18f * 5.5f
                          : 4.3f + (u - 0.88f) / 0.12f * 2.2f,
-            "jug" => u => 8.5f + 1.8f * MathF.Sin(MathF.PI * u) - 2.2f * MathF.Max(0f, u - 0.75f) / 0.25f,
+            // a round belly on a narrower foot, necked in under the rim (the user, 2026-11-12: it was
+            // so near a cylinder that pulling alone, never shaping, scored 4 stars)
+            "jug" => u => 6.2f + 4.4f * MathF.Sin(MathF.PI * MathF.Min(1f, u / 0.85f)) - 2.6f * MathF.Max(0f, u - 0.72f) / 0.28f,
             _ => u => 7f + 1.4f * u,           // the cup: straight, a little flared
         };
         // as many rows as the clay makes at good walls

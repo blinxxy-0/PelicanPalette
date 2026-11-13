@@ -380,7 +380,9 @@ def test_no_stools_left():
     pieces = spot_pieces(m)
     assert "stool" not in pieces.values(), f"stools left: {[p for p, k in pieces.items() if k == 'stool']}"
     actions = {(x, y) for (_, x, y) in spot_actions(m)}
-    for sid, (stool, _) in vale_spots.SPOTS.items():
+    for sid, (stool, rock) in vale_spots.SPOTS.items():
+        if stool == rock:
+            continue                # the rock moved up to where its stool stood (the falls)
         left = {(stool[0] + dx, stool[1]) for dx in (0, 1)} & actions
         assert not left, f"{sid}: an action where its stool stood, {sorted(left)}"
 
@@ -474,7 +476,7 @@ def test_falls_spot():
     x, y = spot_rock(m, "falls")
     tiles = spot_tiles((x, y))
     # (the spot is its rock since 2026-11-11, 4 tiles west of where its stool stood: at most 6 out)
-    assert all(gap(t, FALLS_BOX) <= 6 for t in tiles), f"the falls' rock at {tiles}: away from {FALLS_BOX}"
+    assert all(gap(t, FALLS_BOX) <= 2 for t in tiles), f"the falls rock at {tiles}: away from {FALLS_BOX}"
     near = {(tx + dx, ty + dy) for tx, ty in tiles for dx in range(-2, 3) for dy in range(-2, 3)}
     assert any(m.water(*t) for t in near), f"the falls' rock at {(x, y)}: no water by it"
     north = vale_spots.SPOTS["northlight"][1]

@@ -374,9 +374,9 @@ The rest of each arc, from the same briefs. As above: where each resident alread
 **Trigger:** you enter the sculpture garden between 8am and noon, with 10 hearts, dating Fern, and her 8-heart event seen.
 
 **Scene:**
-- One path through the garden has been cleared: swept flagstones, the hedges either side trimmed back just enough. The rest is as wild as ever. Fern stands at the end of it with shears, sweaty and pleased.
+- The paths through the garden have been cleared: swept flagstones, the hedges either side trimmed back just enough. The rest is as wild as ever. Fern stands at the end of one with shears, sweaty and pleased.
 - `$h` "One path. Just one. Look."
-- Along it, statues you couldn't see before: a woman with a book (the oldest, her moss still on), a boy with a kite, a pair of dancers. `$0` "I wrote to the Heritage Society. I said they could have one path, cleaned and swept, for visitors. The rest stays wild. They said yes." She sounds amazed. "They said yes!"
+- Along it, statues you couldn't see before: a woman with a book (the oldest, her moss still on), a boy with a kite, a pair of dancers. `$0` "I wrote to the Heritage Society. I said they could have the paths, cleaned and swept, for visitors. The rest stays wild. They said yes." She sounds amazed. "They said yes!"
 - If you told her "some" at 4 hearts: `$l` "You said some. I couldn't stop thinking about some."
 - `$l` "It's not neither. It's both, chosen carefully. Like your farm: a bit you shape, and a wild bit you leave."
 - "Walk it with me? You're the first."

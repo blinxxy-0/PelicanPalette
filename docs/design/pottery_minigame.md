@@ -109,7 +109,7 @@ A SpaceCore skill from 1 to 10, like Painting. XP comes from throwing, glazing a
 
 ## 9. Decisions for you
 
-Decided (2026-11-07): its own skill; with Sculpting in 1.5; banding; a stoking minigame. Still open:
+Decided (2026-11-07): its own skill; banding; a stoking minigame. Decided (2026-11-12): **Pottery ships in 1.5 and Sculpting moves to 1.6**; **the wheel only** (vessels: no hand-built figures or tiles; figures stay Sculpting's); the professions as first drafted (built); Hard's patience shortened, then patience nearly permanent on every difficulty (section 10). Still open:
 1. **Controls:** hands follow the mouse's height and you click a move (recommended), or you drag the profile directly.
 2. **Professions:** the first pass in section 8b.
 3. **Hand-building:** whether Pottery also makes clay figures and tiles by hand, besides the wheel's vessels, or leaves figures to Sculpting's carving in wood and stone.

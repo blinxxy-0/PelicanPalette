@@ -220,12 +220,12 @@ def heart10(some, day):
     lines = [
         "continue", "18 42", f"farmer 28 42 3 {FERN} 10 42 1", "skippable",
         "pause 600",
-        say("One path through the garden has been cleared: swept flagstones, the hedges either side trimmed back just enough. The rest is as wild as ever. Fern stands at the end of it with shears, sweaty and pleased."),
+        say("The paths through the garden have been cleared: swept flagstones, the hedges either side trimmed back just enough. The rest is as wild as ever. Fern stands at the end of one with shears, sweaty and pleased."),
         "move farmer -10 0 3", "pause 300",
-        speak(FERN, "One path. Just one. Look.$h"),
+        speak(FERN, "The paths. Just the paths. Look.$h"),
         say("Along it, statues you couldn't see before: a woman with a book (the oldest, her moss still on), a boy with a kite, a pair of dancers."),
         f"move {FERN} 7 0 1",
-        speak(FERN, "I wrote to the Heritage Society. I said they could have one path, cleaned and swept, for visitors. The rest stays wild. They said yes.$0"),
+        speak(FERN, "I wrote to the Heritage Society. I said they could have the paths, cleaned and swept, for visitors. The rest stays wild. They said yes.$0"),
         say("She sounds amazed."),
         speak(FERN, "They said yes!$h"),
     ]
