@@ -245,6 +245,8 @@ internal static class ValeClay
             LumpsFor = LumpsFor,
             GlazeStock = glaze => GlazeMinerals(who, glaze).Sum(id => who.Items.CountId(id)),
             TakeGlaze = glaze => TakeGlazeMineral(who, glaze),
+            FuelStock = fuel => who.Items.CountId(FuelItem[(int)fuel]),
+            TakeFuel = fuel => TakeFuelItem(who, fuel),
         };
         return true;
     }
@@ -260,6 +262,23 @@ internal static class ValeClay
         yield return GlazeMineral[glaze];
         if (Glazes.All[glaze].Name == "Copper red" && PotterySkill.Has(who, "Alchemist"))
             yield return "(O)378";
+    }
+
+    // The kiln's fuel from your bag, one per feed (pottery_minigame.md section 3: Wood, Hardwood, Coal;
+    // the user, 2026-11-12, so every stage costs something, as clay and glazes do).
+    private static readonly string[] FuelItem = { "(O)388", "(O)709", "(O)382" };
+
+    private static bool TakeFuelItem(Farmer who, Fuel fuel)
+    {
+        string id = FuelItem[(int)fuel];
+        if (who.Items.CountId(id) > 0)
+        {
+            who.Items.ReduceId(id, 1);
+            return true;
+        }
+        Game1.addHUDMessage(new HUDMessage(string.Format(S("clay.fuel.none", "No {0} left in your bag."), Kiln.Fuels[(int)fuel].Name), HUDMessage.error_type));
+        Game1.playSound("cancel");
+        return false;
     }
 
     private static bool TakeGlazeMineral(Farmer who, int glaze)

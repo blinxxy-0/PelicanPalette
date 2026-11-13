@@ -46,6 +46,9 @@ internal sealed class PotteryMenu : IClickableMenu
     // first time a glaze touches this pot (a dip or a band). Null in the prototype: glazes free.
     internal Func<int, int>? GlazeStock;
     internal Func<int, bool>? TakeGlaze;
+    // ... and the kiln burns fuel from your bag: how much of each you have, and taking one per feed.
+    internal Func<Fuel, int>? FuelStock;
+    internal Func<Fuel, bool>? TakeFuel;
     private readonly HashSet<int> _glazesUsed = new();
     private bool _strokeBlocked;
     // At a real wheel the pot is one piece of work: thrown, then glazed, then fired. Its results
@@ -431,9 +434,9 @@ internal sealed class PotteryMenu : IClickableMenu
                     break;
                 case "glaze": StartBanding(); break;
                 case "fire": StartFiring(); break;
-                case "wood": _kiln?.Add(Fuel.Wood); break;
-                case "hard": _kiln?.Add(Fuel.Hardwood); break;
-                case "coal": _kiln?.Add(Fuel.Coal); break;
+                case "wood": Feed(Fuel.Wood); break;
+                case "hard": Feed(Fuel.Hardwood); break;
+                case "coal": Feed(Fuel.Coal); break;
                 case "dip": if (_glaze != null && UseGlaze(_glazeIdx)) _glaze.Dip(_glazeIdx); break;
                 case "leave": exitThisMenu(); break;
                 case "sponge": _glaze?.Sponge(); break;
@@ -458,7 +461,7 @@ internal sealed class PotteryMenu : IClickableMenu
         {
             if (key >= Keys.D1 && key < Keys.D1 + Kiln.Fuels.Length)
             {
-                _kiln!.Add((Fuel)(key - Keys.D1));
+                Feed((Fuel)(key - Keys.D1));
                 Game1.playSound("woodyStep");
             }
             return;
@@ -793,6 +796,14 @@ internal sealed class PotteryMenu : IClickableMenu
     }
 
     // Right, while firing: the fuels (keys 1 to 3).
+    // A feed of the fire from your hand: at a wheel it takes one from your bag (none: it says so).
+    private void Feed(Fuel fuel)
+    {
+        if (_kiln == null || _kiln.Done || (TakeFuel != null && !TakeFuel(fuel)))
+            return;
+        _kiln.Add(fuel);
+    }
+
     private void DrawFuel(SpriteBatch b, int mx, int my)
     {
         var right = RightArea;
@@ -805,7 +816,9 @@ internal sealed class PotteryMenu : IClickableMenu
         for (int i = 0; i < Kiln.Fuels.Length; i++)
         {
             var r = new Rectangle(panel.X + 20, y, panel.Width - 40, 48);
-            Ui.Button(b, r, $"{i + 1}  {Kiln.Fuels[i].Name}", hovered: r.Contains(mx, my));
+            int? have = FuelStock?.Invoke((Fuel)i);
+            Ui.Button(b, r, have is int n ? $"{i + 1}  {Kiln.Fuels[i].Name} ({n})" : $"{i + 1}  {Kiln.Fuels[i].Name}",
+                enabled: have is not 0, hovered: r.Contains(mx, my));
             _buttons[keys[i]] = r;
             y += 58;
         }
@@ -929,6 +942,8 @@ internal static class PotteryProto
         m.LumpsFor = shape => shape is "vase" or "jug" ? 2 : 1;
         m.GlazeStock = glaze => glaze % 3 == 2 ? 0 : glaze * 4 + 1;
         m.TakeGlaze = _ => true;
+        m.FuelStock = fuel => fuel == Fuel.Coal ? 0 : 12;
+        m.TakeFuel = fuel => fuel != Fuel.Coal;
         return m;
     }
 
@@ -975,6 +990,7 @@ internal static class PotteryProto
                 ("wheel_collapsed", () => AtAWheel(new PotteryMenu("jug", rules, wreck: true))),
                 ("wheel_banding", () => AtAWheel(new PotteryMenu("vase", rules, band: true))),
                 ("wheel_glazed", () => { var m = AtAWheel(new PotteryMenu("jug", rules, band: true)); m.GlazeBot(1.2f); return m; }),
+                ("wheel_firing", () => { var m = AtAWheel(new PotteryMenu("vase", rules, fire: true)); m.FireBot("steady", until: 12f, finish: false); return m; }),
                 ("wheel_fired", () => { var m = AtAWheel(new PotteryMenu("cup", rules, fire: true)); m.FireBot("steady"); return m; }),
             };
             // the firing against the bots' stoking, on each difficulty (the averages of 10)

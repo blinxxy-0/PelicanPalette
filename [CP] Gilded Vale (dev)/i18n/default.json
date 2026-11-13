@@ -1241,6 +1241,7 @@
   "clay.wheel.field_clay": "A note chalked on the wheel's tray: 'Not field clay. It's grit and roots: it tears on the wheel and cracks in the kiln. Potter's clay. Buy it at the counter, or dig it at the pit. -T'",
   "clay.wheel.short": "{0} takes {1} of Potter's Clay. You have {2}.",
   "clay.glaze.need": "{0} glaze takes {1}. You have none.",
+  "clay.fuel.none": "No {0} left in your bag.",
   "clay.wheel.lump": "{0} lump",
   "clay.wheel.lumps": "{0} lumps",
   "clay.tub.name": "Slaking Tub",

@@ -368,6 +368,17 @@ internal static class ClayTests
             who.addItemToInventory(ItemRegistry.Create(ValeClay.QualifiedItemId, 3));
             threw = ValeClay.Throw(who, "jug");
             Check("a jug takes two lumps and opens the wheel", threw && Game1.activeClickableMenu is PotteryMenu && who.Items.CountId(ValeClay.QualifiedItemId) == 1, $"{who.Items.CountId(ValeClay.QualifiedItemId)} left");
+            // the kiln at a wheel burns fuel from your bag: one per feed, and none left refuses
+            if (Game1.activeClickableMenu is PotteryMenu wheel && wheel.TakeFuel != null && wheel.FuelStock != null)
+            {
+                who.Items.ReduceId("(O)388", who.Items.CountId("(O)388"));
+                who.addItemToInventory(ItemRegistry.Create("(O)388", 2));
+                bool first = wheel.TakeFuel(Fuel.Wood), second = wheel.TakeFuel(Fuel.Wood), third = wheel.TakeFuel(Fuel.Wood);
+                Check("the wheel's kiln burns Wood from your bag, one a feed, and refuses with none left",
+                    first && second && !third && who.Items.CountId("(O)388") == 0 && wheel.FuelStock(Fuel.Wood) == 0, $"{first}/{second}/{third}");
+            }
+            else
+                Check("the wheel's kiln burns Wood from your bag, one a feed, and refuses with none left", false, "no fuel hooks on the wheel");
             Game1.activeClickableMenu?.exitThisMenuNoSound();
             Game1.exitActiveMenu();
 
